@@ -1,0 +1,91 @@
+<?php	
+	 $materialModel = new Model_Material();
+	 $materialList = $materialModel->getActiveMaterialByBId($this->bId);
+	 
+	 $default_markup = 0;
+	 $default_tax = 0;
+	 $wpModel = new Model_WoParameter();
+	 $wpDetails = $wpModel->getWoParameterByBid($this->bId);
+	 if($wpDetails){
+     if($wpDetails[0]['override_markup']==1) {	
+     $default_markup = $wpDetails[0]['dft_markup'];	 
+	 }
+		 $default_tax = $wpDetails[0]['auto_charge'];
+	 }	
+?>
+<script type="text/javascript">
+	var material_cost = [];
+	var material_markup = [];
+	<?php 
+	     if($materialList){
+			 foreach($materialList as $ml){
+			 ?>
+				 material_cost['<?php echo $ml['mid'];?>'] = '<?php echo $ml['cost'];?>';
+				 material_markup['<?php echo $ml['mid'];?>'] = '<?php echo $ml['markup'];?>';
+			<?php
+			 }
+		 }
+	?>
+</script>
+<div id="ct_material_fm_div">
+	<h1>Add New Material(s) Charge(s)</h1>	
+	<div class="message">
+		<span id="success_msg" class="success"></span>
+		<span id="error_msg" class="error"></span>
+	</div>
+	<div id="material_form_ data">
+		 <div class="cw_row">
+			 <label>Description</label>
+			 <div class="cw-ibox-row">
+				 <span class="field_error" id="cwerr_desc"></span>
+				 <select name="material_id" id="material_id" onchange="setMaterial(this.value)">
+					 <option value="">-- Select --</option>
+					 <?php
+					 if($materialList){ 
+					     foreach ($materialList as  $ml) { ?>
+							<option value="<?php echo $ml['mid']; ?>">
+								<?php echo stripslashes($ml['description']); ?>
+							</option>
+					<?php }
+					} ?>
+				 </select>
+			 </div>
+		 </div>
+		 <div class="cw_row">
+			  <label>Cost</label>
+			  <div class="cw-ibox-row">
+				 <span class="field_error" id="cwerr_cost"></span>				 
+					   <input type="text" name="cost" id="cost" onkeypress="return isNumber(event)">			 
+			  </div>
+		 </div>
+		 <div class="cw_row">
+			  <label>Markup(%)</label>
+			  <div class="cw-ibox-row">
+				 <span class="field_error" id="cwerr_markup"></span>				 
+					   <input type="text" name="markup" id="markup" onkeypress="return isNumber(event)"  value="<?php echo $default_markup; ?>" >			 
+			  </div>
+		 </div>	
+		 <div class="cw_row">
+			  <label>Quantity</label>
+			  <div class="cw-ibox-row">
+				 <span class="field_error" id="cwerr_qty"></span>				 
+					   <input type="text" name="quantity" id="quantity" onkeypress="return isNumber(event)">			 
+			  </div>
+		 </div>		 
+		 <div class="cw_row">
+			 <label>Tax</label>
+			 <div class="cw-ibox-row">				 
+				   <select name="show_tax" id="show_tax" onchange="selectTax(this.value)" >
+					   <option value="1" <?php echo ($default_tax=='1')?'selected="selected"':''?>>Yes</option>
+					   <option value="0" <?php echo ($default_tax=='0')?'selected="selected"':''?>>No</option>
+				   </select>
+				  <input type="hidden" name="tax" id="tax" value="<?php echo $default_tax;?>"/> 
+			 </div>
+		 </div>
+	</div>
+	<div class="buttons">
+	<input type="hidden" id="addtempmaterial" value="">
+				   <button type="button" name="save_material" id="save_material" value="Save" onclick="saveMaterialDataTemp('<?php echo $this->woId;?>')">Save</button>
+				   <button type="button" name="cancel" id="cancel" value="Cancel" onclick="cancelMaterial()">Cancel</button>
+	  </div>
+</div>

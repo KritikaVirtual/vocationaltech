@@ -1,0 +1,41 @@
+<?php if ($this->roleId == 1) { ?>
+<?php $buildingData = $this->buildingData; ?>
+<div class="tuser-list">
+    <table width="100%" class="building_table_grid">
+        <tr>
+            <th width="17%">Building Name</th>	
+            <th width="23%">Address</th>
+            <th width="7%">Phone</th>
+            <th width="7%">City</th>
+            <th width="7%">State</th>
+            <th width="11%">Active</th>
+            <th width="10%" style="border:none;">Action</th>
+        </tr>
+        <?php if ($buildingData) {
+            foreach ($buildingData as $bv) {
+                ?>
+                <tr>
+                    <td ><?php echo $bv->buildingName; ?></td>
+                    <td ><?php echo $bv->address; ?></td>
+                    <td ><?php echo $bv->phoneNumber; ?></td>
+                    <td ><?php echo $bv->city; ?></td>
+                    <td ><?php echo $bv->state; ?></td>
+                    <td ><?php echo ($bv->status == '1') ? 'Yes' : 'No'; ?></td>
+
+                    <td> <?php /* <a href="javascript:void(0);" onclick="editBuilding('<?php echo $bv->cust_id; ?>','<?php echo $bv->build_id; ?>')"  title="Edit"><img src="<?php echo BASEURL . 'public/images/edit.png'; ?>"></a> */ ?>
+                    <?php if($bv->module_id != 1) {   ?>    <a onclick="deletebuilding('<?php echo $bv->module_id; ?>', '<?php echo $bv->build_id; ?>')" title="Delete" href="javascript:void(0);"><img src="<?php echo BASEURL . 'public/images/delete.png'; ?>"></a>
+                    <?php } ?>
+                    </td>
+                </tr>
+                <?php
+            }
+        } else {
+            echo '<tr><td colspan="7"> No Building access </td></tr>';
+        }
+        ?>
+
+    </table>
+</div>
+<?php } else { ?> 
+        You don't have access for this module.
+    <?php } ?>

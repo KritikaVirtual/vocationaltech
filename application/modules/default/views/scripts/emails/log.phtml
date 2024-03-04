@@ -1,0 +1,50 @@
+<div class="container-right">
+	<section style="z-index:9999" class="w-48 fr ch-home-form">
+        <section class="ch-form-header ">
+            <h3>Search Email </h3>
+        </section>
+        
+        <div id="search">
+        	<form method="GET" action="<?php echo BASEURL.'emails/log';?>" name="searchFrm">
+        		<div class="row">
+        			<label> Email </label> <input type="text" value="<?php if(isset($this->email)) echo $this->email; ?>" name="email" id="inptSearch" /> <input type="submit" name="search" value="Search" />
+        		</div>
+        	</form>	
+        </div>
+
+       
+        <div id="log_list">
+        	<?php
+			if(!empty($this->logList)){
+
+			?>
+			   <table class="reference" style="width:100%">
+				  <tr>
+				    <th>S.No.</th>
+				    <th>Email</th>
+				    <th>Reason</th>
+				    <th> Status </th>
+				    <th>Date</th>
+				  </tr>
+				  <?php $i=1; foreach ($this->logList as $key => $value) {?>
+
+				  	<tr>
+					    <td><?php echo $i; ?></td>
+					    <td><?php echo $value['email']; ?></td>
+					    <td><?php echo $value['log_message']; ?></td>
+					    <td><?php if($value['email_status'] == 0 ) echo 'Not send'; else echo "Sent"; ?></td>
+					    <td><?php echo $value['created_date']; ?></td>
+				  	</tr>
+				  	
+				  <?php $i++; } ?>
+				  
+				</table> 
+			<?php	
+			}
+			else{
+				echo "No log found.";
+			}
+			?>
+        </div>
+       </section> 
+</div>

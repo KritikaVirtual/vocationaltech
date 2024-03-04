@@ -1,0 +1,188 @@
+<?php    $this->headLink()->appendStylesheet($this->baseUrl() . '/public/tabs.css');
+         $this->headLink()->appendStylesheet($this->baseUrl() . '/public/css/bootstrap.css');
+         $this->headLink()->appendStylesheet($this->baseUrl() . '/public/css/bootstrap-editable.css');?>
+<?php
+	$this->headScript()->appendFile($this->baseUrl() . '/public/js/user_info.js');
+	echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/bootstrap.js');
+	echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/bootstrap-editable.js');
+
+	// to check the read,write and no access
+	$user_info = $this->acessHelper->checkAccess($this->roleId,$this->user_info_id); 
+	/*override access by custom user access if exist */
+	$customeAccessmodel = new Model_UserAccess();
+	$customeAccessmodeld = $customeAccessmodel->getUserCustomAccess($this->userId,$this->user_info_id);
+	if($customeAccessmodeld[0]) {
+		$user_info = $customeAccessmodeld[0];
+	}
+	/* end overriding access */
+	/*
+	 * users info section
+	 */
+	$user_order = ($this->user_order == 'ASC')?'DESC':'ASC'; 
+	$email_order = ($this->email_order == 'ASC')?'DESC':'ASC'; 
+	$companyModel = new Model_Company();
+	$buildId      = $this->select_build_id;
+	$userList = $this->userList;
+?>
+<?php
+	$roleMapper = new Model_Role();
+	$roleDetail = $roleMapper->getRole();
+	//var_dump($roleDetail);
+	$role_data = array();
+	foreach($roleDetail as $rd){
+		$role_data[$rd['roleID']] = $rd['title'];
+	}
+	$search_by = '';
+	$service_value = '';
+	if(!empty($this->search) && isset($this->search['search_by'])){
+			$search_by = $this->search['search_by'];
+			$service_value=$this->search['search_value']; 
+	} 
+?>
+<div class="container-right" id="userinfo-data">
+<?php  
+    if($this->roleId!=1 && $user_info->is_access == 0){ 
+		if($this->custID!=null && $this->custID && $this->companyListing!='' && $this->companyListing!=false){?>
+			<div id="contents">
+				<ol id="toc">
+					<?php 
+						$j = 1;
+						foreach($this->companyListing as $cb){ ?>
+						<?php /*<li><a href="#page-<?php echo $j; ?>"><span><?php echo $cb['buildingName']; ?></span></a></li>*/?>
+						<li><a href="<?php echo $this->baseUrl().'/company/users/bid/'.$cb['build_id']; ?>" <?php if($cb['build_id']==$this->select_build_id) echo 'class="active"';?>><span><?php echo $cb['buildingName']; ?></span></a></li> 
+					<?php $j++; } ?>
+				</ol>					
+					<div class="content" id="page">
+						<div id="page" class="content">
+							 <span class="vendor-heading"><h1>User Information</h1></span>
+							 <div id="vendor_search_div">
+								 <div id="search_form_div">
+									 <div id="search_message"></div>
+									 <form name="search_form" id="search_form" method="post" onsubmit="return checkSearch(this)">
+										 <div id="form_field"><div style='float:left;'>
+											<label class='labelcenter' >Search For</label>
+											</div>
+											<select name="search_by" id="search_by" onchange="showServiceDropdown(this)">
+												<option value="last_name" <?php echo ($search_by=='last_name')?'selected':''?>>Last Name</option>
+												<option value="first_name" <?php echo ($search_by=='first_name')?'selected':''?>>First Name</option>
+												<option value="email" <?php echo ($search_by=='email')?'selected':''?>>Email</option>
+											</select>
+											<div class="text-select-div">
+											<div id="search_txt" ><input type="text" name="search_value" id="search_value" value="<?php echo  stripslashes(htmlentities($service_value)); ?>"/></div>
+										   
+											</div>
+										  </div>
+										  <div class="form-button">
+											   <input type="submit" name="search" id="search" value="Search"/>
+											   <input type="button" name="reset" id="reset" value="Reset" onclick="window.location.href='<?php echo BASEURL.'company/users/bid/'.$this->select_build_id;?>'"/>
+										  </div>  
+									 </form>
+									 
+								 </div>
+							 </div>
+							 <div id="message">
+								<span class="success_message"></span>
+								<span class="error-txt"></span>
+							 </div>
+							 <div id="vendor_data_div">
+								 <table id="vendor_data_table" class="building_table_grid" width="100%">
+								  
+									 <tr>
+										 <th>&nbsp;</th>
+										 <th><a href="<?php echo BASEURL.'company/users/bid/'.$this->select_build_id . '/user_dir/lastName'.'/user_order/'.$user_order; ?>" 
+							  class="<?php if($this->user_dir=='lastName') { echo $this->user_order; } else { echo 'ASC';} ?>">System User</a></th>
+										 <th><a href="<?php echo BASEURL.'company/users/bid/'.$this->select_build_id .'/user_dir/email'.'/user_order/'.$user_order; ?>" 
+							  class="<?php if($this->user_dir=='email') { echo $this->user_order; } else { echo 'ASC';} ?>">Email</a></th>
+										 <th>Contact Number</th>
+										 <?php if($user_info->is_write == 1) { ?>
+										 <th>Action</th>
+										 <?php } ?>
+									</tr>
+									 <?php if($userList){ 
+											foreach($userList as $ul){ 
+												 $deletUserByGroup = 'Yes';
+												 $distributionGroup ='';
+											     $group_Ids=''; 
+											     $userGroupModel = new Model_EmailGroupUsers();
+											     $emailGroup = $userGroupModel->getGroupByUserId($ul->uid);										 
+											     if($emailGroup){ 
+												    foreach($emailGroup as $eg){ 
+														$groupId = $eg->group_id;
+														   if($eg->building_id == $this->select_build_id){
+															   $groups_users = $userGroupModel->getUsersByGid($groupId);
+															//echo 'Count User'.count($groups_users);
+															//echo 'Gropd name:'.$eg->group_name;
+															   if(count($groups_users)==1){
+																   $distributionGroup .= ($distributionGroup!='')?',':'';
+																   $distributionGroup .= $eg->group_name;
+																   $deletUserByGroup = 'No';
+															    }
+																$group_Ids .= ($group_Ids!='')?',':'';
+																$group_Ids .= $groupId;
+														}
+											       }
+												}
+												$uid = $ul->user_id;
+												?>
+											<tr>
+												<td><div class="open_plus" id="open_div_<?php echo $uid;?>"><a href="#editAccountUsers" <?php if($user_info->is_write == 1) { ?> onclick="javascript:editAccountUsers('<?php echo $this->baseUrl().'/company/edituser/uid/'.$uid.'/bid/'.$this->select_build_id; ?>');" class="modalbox"  <?php } ?> title="Edit" ><?php echo '&nbsp;&nbsp;';?></a></div></div>
+												   <div class="open_close" id="close_div_<?php echo $uid;?>" style="display:none"><a href="javascript:void(0);" id="<?php echo $uid;?>" onClick="hideVendor(<?php echo $uid;?>)";><?php echo '&nbsp;&nbsp;';?></a></div></div></td>
+												<td><?php echo stripslashes($ul->lastName.', '.$ul->firstName); ?></td>
+												<td><?php echo $ul->email;?></td>
+												<td><?php echo $ul->phoneNumber;?></td>
+												<?php if($user_info->is_write == 1) { ?>
+												<td>
+													<a href="javascript:void(0);" onclick="return sendemail('<?php echo $uid; ?>', '<?php echo $this->select_build_id; ?>','<?php echo $this->userCount;?>');" title="Send"><img width="25" height="25" src="<?php echo BASEURL .'public/images/send-email.png'; ?>"></a>
+													 <a href="#editAccountUsers" onclick="javascript:editAccountUsers('<?php echo $this->baseUrl().'/company/edituser/uid/'.$uid.'/bid/'.$this->select_build_id; ?>');" class="modalbox" title="Edit"><img src="<?php echo BASEURL .'public/images/edit.png' ?>"></a>
+													 <input type="hidden" name="distribution_group" id="distribution_group_<?php echo $ul->uid;?>" value="<?php echo $distributionGroup;?>"/>
+													 <input type="hidden" name="group_Ids" id="group_Ids_<?php echo $ul->uid;?>" value="<?php echo $group_Ids;?>"/>
+													 <a onclick="removeUser('<?php echo $ul->uid;?>','<?php echo $buildId;?>','<?php echo $this->userCount;?>','<?php echo $deletUserByGroup?>')" title="Delete" href="javascript:void(0);"><img src="<?php echo BASEURL .'public/images/delete.png'; ?>"></a>
+													 
+												</td>
+												<?php } ?>
+											</tr>
+											<tr id="vendor_tr_<?php echo $uid;?>" class="trvendor-class" style="display:none">
+												<td>&nbsp;</td>
+												<td id="vendor_data_<?php echo $uid;?>" colspan="8" class="tdvendor-class"></td>
+											</tr>	
+										   <?php
+											}
+										 }else {?>
+									<tr>
+										<td colspan="<?php if($user_info->is_write == 1) { echo '8'; } else { echo '9'; }?>">No User Exist..</td>
+									</tr>		 
+									 <?php }?>
+									 <?php if($user_info->is_write==1){?>		 
+									<?php /*	 <tr>
+											 <th colspan="<?php if($user_info->is_write == 1) { echo '8'; } else { echo '9'; }?>" style="text-align:left">
+												<a class="modalbox" onclick="javascript:addNewVendor('<?php echo $this->baseUrl().'/vendor/createvendor/bid/'.$this->select_build_id; ?>');" href="#addNewVendor">Add New User</a>
+											</th>
+										 </tr> <?php */  ?>
+									 <?php }?>
+								 </table> 
+								  <?php if(count($this->userList)>1 && !empty($this->userList)){ 
+											echo "<div class='userpagination'>";
+											echo '<tr><td colspan="6">';
+											$params=array();
+										 echo $this->paginationControl($this->userList, 'Sliding', 'user_pagination.phtml',$params); 
+										 echo '</td></tr>';
+										 echo "</div>";
+										 }?>
+										 
+		  </div>
+							 </div>
+					</div>			
+				    
+	   <?php }
+		   else{
+			   echo 'No Building has assign to you.';
+		   }  
+	}else {?>
+	    You don't have access for this module.
+<?php }  ?>
+	
+</div>
+
+<div class="messageBox"></div>
+<div class="loader" style="display:none;" > <img src="<?php echo BASEURL.'public/images/loader.gif';?>"><div>
+

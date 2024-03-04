@@ -1,0 +1,333 @@
+<?php echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/conference.js'); ?>
+
+<?php
+//echo $this->tenantId;
+//echo "sadasd";
+
+//$isvId="";
+//if($tenantInfo->role_id==5){
+//    $isvId=$tenantInfo->tenantId;
+//
+$isvId="";
+$role=$this->type;
+$tid=$this->tid;
+
+if($role=='tuser'){
+    $isvId=$tid;
+    echo '<input type="hidden" name="t_type" id="t_type" value="tuser">';
+}else if($role=='tadmin'){
+    echo '<input type="hidden" name="t_type" id="t_type" value="tadmin">';
+    $isvId=$tid;
+}else{
+  $isvId='auser'; 
+  echo '<input type="hidden" name="t_type" id="t_type" value="">';
+}
+    $today_day = date('j');
+    $month = sprintf("%02d", $this->month);
+    $year = $this->year;
+    $m = $month;
+    $y = $year;
+    $monthName = array('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
+    $mName = date("F");
+    $mp = $month - 1;
+    $yp = $year;
+    if ($mp < 1)
+    {
+        $mp = 12;
+        $yp = $year - 1;
+    }
+    $mn = $month + 1;
+    $yn = $year;
+    if ($mn > 12)
+    {
+        $mn = 1;
+        $yn = $year + 1;
+    }
+    $tdate = date('t', mktime(0, 0, 0, $month, 1, $year));			
+    $add_date= 6 - date("w",strtotime("$tdate-$month-$year"));
+    $add_date=sprintf("%02d", $add_date);
+
+    $from_date = $y . '-' . $m . '-' . '01';
+    if($add_date != 00){
+    $to_date = $yn . '-' . $mn . '-' . $add_date;
+    }else{
+    $to_date = $yn . '-' . $mn . '-' . '01';
+    }
+    $cscheduleMapper = new Model_ConferenceSchedule();
+    
+    $bookingDetails = $cscheduleMapper->getBookingEvent($from_date, $to_date, $this->select_build_id);
+   
+    if(!empty($bookingDetails))
+    {
+        foreach ($bookingDetails as $bookingDetailsVal)
+        {
+            //print_r($bookingDetailsVal); 
+            $index = date('Y-m-d', strtotime($bookingDetailsVal->requested_date));
+            $booking_arr[$index] = $bookingDetailsVal;
+        }
+    }
+        //print_r($booking_arr);
+?>
+    <div id="calender_change">
+        <div style='text-align:left;'>
+            <h2>
+                <a  id="pre" href="#" onclick="changeMonth('<?php echo $mp; ?>', '<?php echo $yp; ?>', '<?php echo $this->page; ?>')">< </a> 
+                    <?php echo $monthName[$m-1]." ".$year; ?>
+                <a  id="nxt" href="#" onclick="changeMonth('<?php echo $mn; ?>', '<?php echo $yn; ?>', '<?php echo $this->page; ?>')"> > </a>
+                <a  style="display:none" id="curr_mo" href="#" onclick="changeMonth('<?php echo $m; ?>', '<?php echo $y; ?>', '<?php echo $this->page; ?>')"> > </a>
+            </h2>
+        </div>
+        
+        <?php
+        /* draws a calendar */
+         $current = date("Y-m-d ",strtotime("now"));
+         $currentdate = strtotime($current."00:00:00");
+        /* draw table */
+        $calendar = '<table cellpadding="0" cellspacing="0" class="calendar">';
+
+        /* table headings */
+        $headings = array('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday');
+        $calendar.= '<tr class="calendar-row"><td class="calendar-day-head">' . implode('</td><td class="calendar-day-head">', $headings) . '</td></tr>';
+
+        /* days and weeks vars now ... */
+        $running_day = date('w', mktime(0, 0, 0, $month, 1, $year));
+        $days_in_month = date('t', mktime(0, 0, 0, $month, 1, $year));
+        $days = date('t', mktime(0, 0, 0, $month, 1, $year));
+        $days_in_month= $days_in_month + $add_date;
+        $days_in_this_week = 1;
+        $day_counter = 0;
+        $dates_array = array();
+
+        /* row for week one */
+        $calendar.= '<tr class="calendar-row" valign="top">';
+        $running_day1  = $running_day-1;
+        $running_day = 0;
+        
+        /* print "blank" days until the first of the current week */
+        for ($x = 0; $x < $running_day; $x++):
+            $calendar.= '<td class="calendar-day-np"> </td>';
+            $days_in_this_week++;
+        endfor;
+				
+        $days_in_month1 = date('t', mktime(0, 0, 0, $month-1, 1, $year));
+        for($k=$days_in_month1-$running_day1; $k<=$days_in_month1; $k++)
+        {
+                $calendar.= '<td class="calendar-day-pre">';
+                $calendar.= '<div class="day-number-pre">' . $k . '</div>';
+                $calendar.= '</td>';
+                $running_day++;
+        }
+        $nextmo=true;
+        $roomname=array();
+        /* keep going with days.... */
+        for ($list_day = 1; $list_day <= $days_in_month; $list_day++):
+				
+            if($list_day > $days )
+            {
+                    $calendar.= '<td class="calendar-day-next">';
+                    $nextmo=false;
+
+            }else if($running_day==0 || $running_day==6 ){
+                    $calendar.= '<td class="calendar-day weekday">';
+            }else{
+                    $today_class = ( $list_day==$today_day)?"today":'';
+                    $calendar.= '<td class="calendar-day '.$today_class.'">';
+            }
+            
+            if($list_day > $days ){
+                
+                if($list_day==($days+1))
+                {
+                        $month=($month+1);
+                       $month= sprintf("%02d", $month);
+                }
+                $l_days=$list_day - $days;
+
+                $calendar.= '<div class="day-number-next">' . $l_days . '</div>';
+                
+                if($this->page == 'auser') {
+                        $url = "'" . $this->baseUrl() . '/conference/createbooking/month/' . $month . '/year/' . $year . '/bid/' . $this->select_build_id . '/day/' . $l_days . "'";
+                } else {
+                        $url = "'" . $this->baseUrl() . '/tenant/createbooking/month/' . $month . '/year/' . $year . '/bid/' . $this->select_build_id . '/day/' . $l_days . "'";
+                }
+                $num_padded = sprintf("%02d", $l_days);
+                $index2 = $year . '-' . $month . '-' . $num_padded;
+            }else{
+                $calendar.= '<div class="day-number">' . $list_day . '</div>';
+                
+                if($this->page == 'auser') {
+                        $url = "'" . $this->baseUrl() . '/conference/createbooking/month/' . $month . '/year/' . $year . '/bid/' . $this->select_build_id . '/day/' . $list_day . "'";
+                } else {
+                        $url = "'" . $this->baseUrl() . '/tenant/createbooking/month/' . $month . '/year/' . $year . '/bid/' . $this->select_build_id . '/day/' . $list_day . "'";
+                }
+                $num_padded = sprintf("%02d", $list_day);
+                $index2 = $year . '-' . $month . '-' . $num_padded;
+            }	
+           
+            if(!empty($bookingDetails)){
+                $calendar.= '<div class="date-bg">';
+                $i=1;
+                foreach ($bookingDetails as $bookingDetailsVal) {
+                    $index = date('Y-m-d', strtotime($bookingDetailsVal->requested_date));
+                    $icon = "";
+                    $access=true;
+                    if($bookingDetailsVal->booking_type!=""){
+                        $icon = '<i class="glyphicon glyphicon-refresh"></i>';
+                        $access=false;
+                    }
+                    if ($index == $index2) {
+
+                            //$calendar.='<div>' . $bookingDetailsVal->room_name . ' - ' . $bookingDetailsVal->start_time . ' ' . $bookingDetailsVal->end_time . '</div>';
+                        $tnModel = new Model_Tenant();
+                        $tndetail = $tnModel->getTenantNameById($bookingDetailsVal->tenant);
+                        
+                        //$calendar.= '<div  class="tooltip-vcm  book_week book_det_container '.$bookingDetailsVal->room_name.' book_hot_schedule'.$i.'">';
+						$rname= md5($bookingDetailsVal->room_name);
+                        $calendar.= '<div  class="tooltip-vcm  book_week book_det_container '.$rname.' ">';
+                        $roomname[$rname]=$rname;
+                        $calendar.='<div>'. $bookingDetailsVal->start_time . ' - ' . $bookingDetailsVal->end_time ;
+                        $calendar.= "&nbsp;&nbsp;".$bookingDetailsVal->room_name.'&nbsp;&nbsp;'.$icon.'</div>';
+                        //echo $bookingDetailsVal->tenant;
+                        $bkdetails="";
+                        $page="";
+                        $getuseraccess= new Model_ConferenceSchedule();
+                        $acData=$getuseraccess->getcrDetailsuseraccess($bookingDetailsVal->croom_id);
+                        if($role=='tuser'){
+                            $bkdetails=$bookingDetailsVal->created_user;
+                            $permition=$acData[0]->tenant_user;
+                            $page="tenantuser";
+                        }else if($role=='tadmin'){
+                            $bkdetails=$bookingDetailsVal->tenant;
+                            $permition=$acData[0]->tenant_admin;
+                            $page="tenant";
+                        }
+                        if(($permition==1 && $tid==$bkdetails) || $isvId=="auser"){
+                            $calendar.= '<span><div class="t_name">'.$tndetail[0]->tenantName.'</div>';
+                            $calendar.= '<div class="r_name">'.$bookingDetailsVal->room_name.'</div>';
+                            $calendar.='<div>'. $bookingDetailsVal->start_time . ' - ' . $bookingDetailsVal->end_time . '</div>';
+                            $edit_url = "'" . $this->baseUrl() . '/conference/editbooking/month/' . $month . '/year/' . $year . '/bid/' . $this->select_build_id .'/day/'. $list_day . '/crid/'.$bookingDetailsVal->crid.'/page/'.$page.'/tid/'.$bkdetails."'";
+                            
+                            if($currentdate = strtotime($bookingDetailsVal->requested_date)){
+                                if($access===true){
+                                        $calendar.='<div class="edit_del_room"><div class="edit_broom">'
+                                                    . '<a href="#editbookroom" class="editCat" onclick="editbookroom('.$edit_url.')">'
+                                                    . '<img src="'.BASEURL . 'public/images/edit.png'.'"></a></div>';
+                                }
+                                
+                                $calendar.='<div class="delete_broom">'
+                                            . '<a href="javascript:void(0);" onclick="deleteCrRoom('.$bookingDetailsVal->crid.')" class="delCat" data-id="" title="Delete">'
+                                    . '<img src="'.BASEURL . 'public/images/delete.png'.'"></a></div></div><div class="clearfix"></div></span>'; 
+                            }
+                        }
+                        $calendar.= '</div>';
+                         $i++;
+                    }
+                }
+                    $calendar.= '</div>';
+            }else{
+                    $calendar.= '<div class="date-bg">';
+                    $calendar.= '</div>';
+            }
+            
+           if($_SESSION['Admin_User']['role_id']==7){
+                $uid=$_SESSION['Admin_User']["user_id"];
+                $moduleMapper = new Model_UserBuildingModule();
+                $getdetails=$moduleMapper->getBuildingByUserId($uid);
+                $build_ID = $getdetails[0]['building_id'];
+               //echo $build_ID=$bookingDetails[0]->building_id;
+                $da=$index2; 
+                $cscheduleMapper = new Model_ConferenceSchedule();
+                $getvalidday=$cscheduleMapper->getcrvaliddays($build_ID,$da);
+                //print_r($getvalidday);
+                if(in_array($running_day, $this->viewacess) && !empty($getvalidday)){
+                    $plus='<div class="conbooking"><a href="#createBooking" onclick="createBooking('.$url.')">+</a> </div>';
+                }else{
+                    $plus="";
+                }
+            
+           }else if($_SESSION['Admin_User']['role_id']==5){
+                $uid=$_SESSION['Admin_User']["user_id"];
+                $moduleMapper = new Model_UserBuildingModule();
+                $getdetails=$moduleMapper->getBuildingByUserId($uid);
+                $build_ID = $getdetails[0]['building_id'];
+               //echo $build_ID=$bookingDetails[0]->building_id;
+                $da=$index2; 
+                $cscheduleMapper = new Model_ConferenceSchedule();
+                $getvalidday=$cscheduleMapper->getcrvaliddays($build_ID,$da);
+                //print_r($getvalidday);
+                if(in_array($running_day, $this->viewacess) && !empty($getvalidday)){
+                    $plus='<div class="conbooking"><a href="#createBooking" onclick="createBooking('.$url.')">+</a> </div>';
+                }else{
+                    $plus="";
+                }
+            
+           }else{
+                $build_ID=$this->select_build_id;
+                $da=$index2;
+                $cscheduleMapper = new Model_ConferenceSchedule();
+                $getvalidday=$cscheduleMapper->getcrvaliddays($build_ID,$da);
+                //print_r($getvalidday);
+                // die;
+                if(in_array($running_day, $this->viewacess) && !empty($getvalidday)){
+                    $plus='<div class="conbooking"><a href="#createBooking" onclick="createBooking('.$url.')">+</a> </div>';
+                }else{
+                    $plus="";
+                } 
+           }
+
+            if(date("Y") < $year && ($nextmo)){
+                    $calendar.= $plus;
+            }else if(date("Y")==$year && ($nextmo)){
+                        if(date("m") < $m && ($nextmo)){
+                                    $calendar.=$plus;
+                            }else if(date("m") == $m && date("d") <= $list_day && ($nextmo)){
+                                    $calendar.= $plus;
+                            }
+
+            }
+
+            /** QUERY THE DATABASE FOR AN ENTRY FOR THIS DAY !!  IF MATCHES FOUND, PRINT THEM !! * */
+                $calendar.= str_repeat('<p> </p>', 2);
+                $calendar.= '</td>';
+                if ($running_day == 6):
+                    $calendar.= '</tr>';
+                    if (($day_counter + 1) != $days_in_month):
+                        $calendar.= '<tr class="calendar-row" valign="top">';
+                    endif;
+                    $running_day = -1;
+                    $days_in_this_week = 0;
+                endif;
+                $days_in_this_week++;
+                $running_day++;
+                $day_counter++;
+        endfor;
+
+        /* finish the rest of the days in the week */
+        if ($days_in_this_week < 8):
+            for ($x = 1; $x <= (8 - $days_in_this_week); $x++):
+               // $calendar.= '<td class="calendar-day-np"> </td>';
+            endfor;
+        endif;
+
+        /* final row */
+        $calendar.= '</tr>';
+
+        /* end the table */
+        $calendar.= '</table>';
+
+        /* all done, return result */
+        echo $calendar;
+
+
+        /* sample usages */
+    $j=1;    
+foreach($roomname as $val){
+    
+  echo '<script>$(".'.str_replace(" ","_",$val).'").addClass("book_hot_schedule'.$j.'"); </script>';
+  $j++;
+}
+?>
+</div>
+
+
+

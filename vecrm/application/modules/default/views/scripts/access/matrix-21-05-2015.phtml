@@ -1,0 +1,961 @@
+<div class="container-right" id="access-matrix">
+    <?php        
+        $roles = $this->companyListing['roles'];
+        $modules = $this->companyListing['modules'];
+        $buildings = $this->companyListing['buildings'];
+        // echo "<pre>";
+        // print_r($this->access);
+        
+    ?>
+
+<section style="z-index:9999" class="w-48 fr ch-home-form" id="first">
+    <section class="ch-form-header ">
+        <h3>Access User Matrix</h3>
+    </section>
+    <div class="gridContainer">
+        <div class="tableGrid">
+        <form name="access_form[]" method="POST" action="">    
+        <table id="access_tbl" width="100%" class="table table-striped table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>
+                        Location
+                    </th>
+
+                    
+                    
+                    <th>
+                        General Manager
+                    </th>
+                    
+                    <th>
+                        Portfolio Manager
+                    </th>
+                    
+                    <th>
+                        Property Manager
+                    </th>
+                    
+                    <th>
+                        Tenant Manager
+                    </th>
+                    
+                    <th>
+                        Engineer
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td colspan="6" class="company_head">
+                        Building Administrator Company Information Access  
+                    </td>
+</tr>
+
+
+                <tr>
+                    
+
+                    <td class="building_admin">
+                        Building Information
+                    </td>
+                    
+                    <td>    <?php $checkVal = 'role_'.$this->access[0]['role'].'_build_'.$this->access[0]['location_id']; 
+                   
+                        if($this->access[0]['is_access']) $is_access = 'checked'; else $is_access = ''; 
+                        if($this->access[0]['is_read']) $is_read = 'checked'; else $is_read = ''; 
+                        if($this->access[0]['is_write']) $is_write = 'checked'; else $is_write = ''; 
+
+                        ?>
+
+                            <input type="checkbox" <?php echo $is_read; ?> class="read" name="row1[build1][3]"value="<?php echo $checkVal; ?>">R
+                            <input type="checkbox" <?php echo $is_write ?> class="write" name="row1[build1][4]" value="<?php echo $checkVal; ?>">W
+                            <input type="checkbox" <?php echo $is_access ?> class="no_access" name="row1[build1][5]" value="<?php echo $checkVal; ?>role_2_build_4">No Access
+                          
+                    </td>
+                    
+                    <td> <?php $checkVal = 'role_'.$this->access[1]['role'].'_build_'.$this->access[1]['location_id']; 
+
+                        if($this->access[1]['is_access']) $is_access = 'checked'; else $is_access = ''; 
+                        if($this->access[1]['is_read']) $is_read = 'checked'; else $is_read = ''; 
+                        if($this->access[1]['is_write']) $is_write = 'checked'; else $is_write = ''; 
+                    ?>
+                        
+                        <input type="checkbox" <?php echo $is_read; ?> class="read" name="row1[build2][]" value="<?php echo $checkVal; ?>">R
+                        <input type="checkbox" <?php echo $is_write ?> class="write" name="row1[build2][]" value="<?php echo $checkVal; ?>">W
+                        <input type="checkbox" <?php echo $is_access ?> class="no_access" name="row1[build2][]" value="<?php echo $checkVal; ?>">No Access
+                    </td>
+                    
+                    <td> <?php $checkVal = 'role_'.$this->access[2]['role'].'_build_'.$this->access[2]['location_id']; 
+
+                    if($this->access[2]['is_access']) $is_access = 'checked'; else $is_access = ''; 
+                        if($this->access[2]['is_read']) $is_read = 'checked'; else $is_read = ''; 
+                        if($this->access[2]['is_write']) $is_write = 'checked'; else $is_write = ''; 
+                    ?>
+                        <input type="hidden" name="row1[build3][]" value="4">
+                        <input type="hidden" name="row1[build3][]" value="4">
+                        <input type="checkbox" <?php echo $is_read; ?> class="read" name="row1[build3][]" value="<?php echo $checkVal; ?>">R
+                        <input type="checkbox" <?php echo $is_write; ?> class="write" name="row1[build3][]" value="<?php echo $checkVal; ?>">W
+                        <input type="checkbox" <?php echo $is_access; ?> class="no_access" name="row1[build3][]" value="<?php echo $checkVal; ?>">No Access
+                    </td>
+                    
+                    <td> <?php $checkVal = 'role_'.$this->access[3]['role'].'_build_'.$this->access[3]['location_id']; 
+
+                        if($this->access[3]['is_access']) $is_access = 'checked'; else $is_access = ''; 
+                        if($this->access[3]['is_read']) $is_read = 'checked'; else $is_read = ''; 
+                        if($this->access[3]['is_write']) $is_write = 'checked'; else $is_write = ''; 
+                    ?>
+                        <input type="hidden" name="row1[build4][]" value="4">
+                        <input type="hidden" name="row1[build4][]" value="4">
+                        <input type="checkbox" <?php echo $is_read; ?> class="read" name="row1[build4][]" value="<?php echo $checkVal; ?>">R
+                        <input type="checkbox" <?php echo $is_write; ?> class="write" name="row1[build4][]" value="<?php echo $checkVal; ?>">W
+                        <input type="checkbox" <?php echo $is_access; ?> class="no_access" name="row1[build4][]" value="<?php echo $checkVal; ?>">No Access
+                    </td>
+                    
+                    <td> <?php $checkVal = 'role_'.$this->access[4]['role'].'_build_'.$this->access[4]['location_id']; 
+
+                    if($this->access[4]['is_access']) $is_access = 'checked'; else $is_access = ''; 
+                        if($this->access[4]['is_read']) $is_read = 'checked'; else $is_read = ''; 
+                        if($this->access[4]['is_write']) $is_write = 'checked'; else $is_write = ''; 
+                    ?>
+                       <input type="hidden" name="row1[build5][]" value="4">
+                        <input type="hidden" name="row1[build5][]" value="4">
+                        <input type="checkbox" <?php echo $is_read; ?> class="read" name="row1[build5][]" value="<?php echo $checkVal; ?>">R
+                        <input type="checkbox" <?php echo $is_write; ?> class="write" name="row1[build5][]" value="<?php echo $checkVal; ?>">W
+                        <input type="checkbox" <?php echo $is_access; ?> class="no_access" name="row1[build5][]" value="<?php echo $checkVal; ?>">No Access
+                    </td>
+                </tr>
+
+                <tr>
+                    
+
+                    <td>
+                        Billing Information
+                    </td>
+                    
+                    <td>  <?php $checkVal = 'role_'.$this->access[5]['role'].'_build_'.$this->access[5]['location_id']; 
+
+                    if($this->access[5]['is_access']) $is_access = 'checked'; else $is_access = ''; 
+                        if($this->access[5]['is_read']) $is_read = 'checked'; else $is_read = ''; 
+                        if($this->access[5]['is_write']) $is_write = 'checked'; else $is_write = ''; 
+                    ?>
+                        
+                        <input type="hidden" name="row2[role_id2][1]" value="2">
+                        <input type="hidden" name="row2[location_id2][1]" value="5">
+                        <input type="checkbox" <?php echo $is_read; ?> class="read" name="row2[read2][1]" value="<?php echo $checkVal; ?>">R
+                        <input type="checkbox" <?php echo $is_write; ?> class="write" name="row2[write2][1]" value="<?php echo $checkVal; ?>">W
+                        <input type="checkbox" <?php echo $is_access; ?> class="no_access" name="row2[no_access2][1]" value="<?php echo $checkVal; ?>">No Access
+                        
+                    </td>
+                    
+                    <td> <?php $checkVal = 'role_'.$this->access[6]['role'].'_build_'.$this->access[6]['location_id']; 
+                    if($this->access[6]['is_access']) $is_access = 'checked'; else $is_access = ''; 
+                        if($this->access[6]['is_read']) $is_read = 'checked'; else $is_read = ''; 
+                        if($this->access[6]['is_write']) $is_write = 'checked'; else $is_write = ''; 
+                    ?>
+                        <input type="hidden" name="row2[role_id2][2]" value="2">
+                        <input type="hidden" name="row2[location_id2][2]" value="5">
+                        <input type="checkbox" <?php echo $is_read; ?> class="read" name="row2[read2][2]" value="<?php echo $checkVal; ?>">R
+                        <input type="checkbox" <?php echo $is_write; ?> class="write" name="row2[write2][2]" value="<?php echo $checkVal; ?>">W
+                        <input type="checkbox" <?php echo $is_access; ?> class="no_access" name="row2[no_access2][2]" value="<?php echo $checkVal; ?>">No Access
+                        
+                    </td>
+                    
+                    <td> <?php $checkVal = 'role_'.$this->access[7]['role'].'_build_'.$this->access[7]['location_id']; 
+
+                    if($this->access[7]['is_access']) $is_access = 'checked'; else $is_access = ''; 
+                        if($this->access[7]['is_read']) $is_read = 'checked'; else $is_read = ''; 
+                        if($this->access[7]['is_write']) $is_write = 'checked'; else $is_write = ''; 
+                    ?>
+                        <input type="hidden" name="row2[role_id2][3]" value="2">
+                        <input type="hidden" name="row2[location_id2][3]" value="5">
+                        <input type="checkbox" <?php echo $is_read; ?> class="read" name="row2[read2][3]" value="<?php echo $checkVal; ?>">R
+                        <input type="checkbox" <?php echo $is_write; ?> class="write" name="row2[write2][3]" value="<?php echo $checkVal; ?>">W
+                        <input type="checkbox" <?php echo $is_access; ?> class="no_access" name="row2[no_access2][3]" value="<?php echo $checkVal; ?>">No Access
+                        
+                    </td>
+                    
+                    <td> <?php $checkVal = 'role_'.$this->access[8]['role'].'_build_'.$this->access[8]['location_id']; 
+                    if($this->access[8]['is_access']) $is_access = 'checked'; else $is_access = ''; 
+                        if($this->access[8]['is_read']) $is_read = 'checked'; else $is_read = ''; 
+                        if($this->access[8]['is_write']) $is_write = 'checked'; else $is_write = ''; 
+                    ?>
+                        <input type="hidden" name="row2[role_id2][4]" value="2">
+                        <input type="hidden" name="row2[location_id2][4]" value="5">
+                        <input type="checkbox" <?php echo $is_read; ?> class="read" name="row2[read2][4]" value="<?php echo $checkVal; ?>">R
+                        <input type="checkbox" <?php echo $is_write; ?> class="write" name="row2[write2][4]" value="<?php echo $checkVal; ?>">W
+                        <input type="checkbox" <?php echo $is_access; ?> class="no_access" name="row2[no_access2][4]" value="<?php echo $checkVal; ?>">No Access
+                    </td>
+                    
+                    <td> <?php $checkVal = 'role_'.$this->access[9]['role'].'_build_'.$this->access[9]['location_id']; 
+                    if($this->access[9]['is_access']) $is_access = 'checked'; else $is_access = ''; 
+                        if($this->access[9]['is_read']) $is_read = 'checked'; else $is_read = ''; 
+                        if($this->access[9]['is_write']) $is_write = 'checked'; else $is_write = ''; 
+                    ?>
+                        <input type="hidden" name="row2[role_id2][5]" value="2">
+                        <input type="hidden" name="row2[location_id2][5]" value="5">
+                        <input type="checkbox" <?php echo $is_read; ?> class="read" name="row2[read2][5]" value="<?php echo $checkVal; ?>">R
+                        <input type="checkbox" <?php echo $is_write; ?> class="write" name="row2[write2][5]" value="<?php echo $checkVal; ?>">W
+                        <input type="checkbox" <?php echo $is_access; ?> class="no_access" name="row2[no_access2][5]" value="<?php echo $checkVal; ?>">No Access
+                        
+                    </td>
+                </tr>
+
+                <tr>
+                    
+
+                    <td>
+                        Remit to Information
+                    </td>
+                    
+                    <td> <?php $checkVal = 'role_'.$this->access[10]['role'].'_build_'.$this->access[10]['location_id']; 
+                    if($this->access[10]['is_access']) $is_access = 'checked'; else $is_access = ''; 
+                        if($this->access[10]['is_read']) $is_read = 'checked'; else $is_read = ''; 
+                        if($this->access[10]['is_write']) $is_write = 'checked'; else $is_write = ''; 
+                    ?>
+                        <input type="hidden" name="row3[role_id3][1]" value="2">
+                        <input type="hidden" name="row3[location_id3][1]" value="5">
+                        <input type="checkbox" <?php echo $is_read; ?> class="read" name="row3[read3][1]" value="<?php echo $checkVal; ?>">R
+                        <input type="checkbox" <?php echo $is_write; ?> class="write" name="row3[write3][1]" value="<?php echo $checkVal; ?>">W
+                        <input type="checkbox" <?php echo $is_access; ?> class="no_access" name="row3[no_access3][1]" value="<?php echo $checkVal; ?>">No Access
+                    </td>
+                    
+                    <td> <?php $checkVal = 'role_'.$this->access[11]['role'].'_build_'.$this->access[11]['location_id']; 
+
+                    if($this->access[11]['is_access']) $is_access = 'checked'; else $is_access = ''; 
+                        if($this->access[11]['is_read']) $is_read = 'checked'; else $is_read = ''; 
+                        if($this->access[11]['is_write']) $is_write = 'checked'; else $is_write = ''; 
+                    ?>
+                        <input type="hidden" name="row3[role_id3][2]" value="2">
+                        <input type="hidden" name="row3[location_id3][2]" value="5">
+                        <input type="checkbox" <?php echo $is_read; ?> class="read" name="row3[read3][2]" value="<?php echo $checkVal; ?>">R
+                        <input type="checkbox" <?php echo $is_write; ?> class="write" name="row3[write3][2]" value="<?php echo $checkVal; ?>">W
+                        <input type="checkbox" <?php echo $is_access; ?> class="no_access" name="row3[no_access3][2]" value="<?php echo $checkVal; ?>">No Access
+                    </td>
+                    
+                    <td> <?php $checkVal = 'role_'.$this->access[12]['role'].'_build_'.$this->access[12]['location_id']; 
+
+                    if($this->access[12]['is_access']) $is_access = 'checked'; else $is_access = ''; 
+                        if($this->access[12]['is_read']) $is_read = 'checked'; else $is_read = ''; 
+                        if($this->access[12]['is_write']) $is_write = 'checked'; else $is_write = ''; 
+                    ?>
+                        <input type="hidden" name="row3[role_id3][3]" value="2">
+                        <input type="hidden" name="row3[location_id3][3]" value="5">
+                        <input type="checkbox" <?php echo $is_read; ?> class="read" name="row3[read3][3]" value="<?php echo $checkVal; ?>">R
+                        <input type="checkbox" <?php echo $is_write; ?> class="write" name="row3[write3][3]" value="<?php echo $checkVal; ?>">W
+                        <input type="checkbox" <?php echo $is_access; ?> class="no_access" name="row3[no_access3][3]" value="<?php echo $checkVal; ?>">No Access
+                    </td>
+                    
+                    <td> <?php $checkVal = 'role_'.$this->access[13]['role'].'_build_'.$this->access[13]['location_id']; 
+
+                    if($this->access[13]['is_access']) $is_access = 'checked'; else $is_access = ''; 
+                        if($this->access[13]['is_read']) $is_read = 'checked'; else $is_read = ''; 
+                        if($this->access[13]['is_write']) $is_write = 'checked'; else $is_write = ''; 
+                    ?>
+                        <input type="hidden" name="row3[role_id3][4]" value="2">
+                        <input type="hidden" name="row3[location_id3][4]" value="5">
+                        <input type="checkbox" <?php echo $is_read; ?> class="read" name="row3[read3][4]" value="<?php echo $checkVal; ?>">R
+                        <input type="checkbox" <?php echo $is_write; ?> class="write" name="row3[write3][4]" value="<?php echo $checkVal; ?>">W
+                        <input type="checkbox" <?php echo $is_access; ?> class="no_access" name="row3[no_access3][4]" value="<?php echo $checkVal; ?>">No Access
+                    </td>
+                    
+                    <td> <?php $checkVal = 'role_'.$this->access[14]['role'].'_build_'.$this->access[14]['location_id']; 
+                    if($this->access[14]['is_access']) $is_access = 'checked'; else $is_access = ''; 
+                        if($this->access[14]['is_read']) $is_read = 'checked'; else $is_read = ''; 
+                        if($this->access[14]['is_write']) $is_write = 'checked'; else $is_write = ''; 
+                    ?>
+                        <input type="hidden" name="row3[role_id3][5]" value="2">
+                        <input type="hidden" name="row3[location_id3][5]" value="5">
+                        <input type="checkbox" <?php echo $is_read; ?> class="read" name="row3[read3][5]" value="<?php echo $checkVal; ?>">R
+                        <input type="checkbox" <?php echo $is_write; ?> class="write" name="row3[write3][5]" value="<?php echo $checkVal; ?>">W
+                        <input type="checkbox" <?php echo $is_access; ?> class="no_access" name="row3[no_access3][5]" value="<?php echo $checkVal; ?>">No Access
+                    </td>
+                </tr>
+
+               
+
+                <tr>
+                   
+
+                    <td>
+                        User Information
+                    </td>
+                    
+                    <td> <?php $checkVal = 'role_'.$this->access[15]['role'].'_build_'.$this->access[15]['location_id']; 
+
+                    if($this->access[15]['is_access']) $is_access = 'checked'; else $is_access = ''; 
+                        if($this->access[15]['is_read']) $is_read = 'checked'; else $is_read = ''; 
+                        if($this->access[15]['is_write']) $is_write = 'checked'; else $is_write = ''; 
+                    ?>
+                        <input type="hidden" name="row4[role_id4][1]" value="2">
+                        <input type="hidden" name="row4[location_id4][1]" value="5">
+                        <input type="checkbox" <?php echo $is_read; ?> class="read" name="row4[read4][1]" value="<?php echo $checkVal; ?>">R
+                        <input type="checkbox" <?php echo $is_write; ?> class="write" name="row4[write4][1]" value="<?php echo $checkVal; ?>">W
+                        <input type="checkbox" <?php echo $is_access; ?> class="no_access" name="row4[no_access4][1]" value="<?php echo $checkVal; ?>">No Access
+                    </td>
+                    
+                    <td> <?php $checkVal = 'role_'.$this->access[16]['role'].'_build_'.$this->access[16]['location_id']; 
+
+                    if($this->access[16]['is_access']) $is_access = 'checked'; else $is_access = ''; 
+                        if($this->access[16]['is_read']) $is_read = 'checked'; else $is_read = ''; 
+                        if($this->access[16]['is_write']) $is_write = 'checked'; else $is_write = ''; 
+                    ?>
+                        <input type="hidden" name="row4[role_id4][2]" value="2">
+                        <input type="hidden" name="row4[location_id4][2]" value="5">
+                        <input type="checkbox" <?php echo $is_read; ?> class="read" name="row4[read4][2]" value="<?php echo $checkVal; ?>">R
+                        <input type="checkbox" <?php echo $is_write; ?> class="write" name="row4[write4][2]" value="<?php echo $checkVal; ?>">W
+                        <input type="checkbox" <?php echo $is_access; ?> class="no_access" name="row4[no_access4][2]" value="<?php echo $checkVal; ?>">No Access
+                    </td>
+                    
+                    <td> <?php $checkVal = 'role_'.$this->access[17]['role'].'_build_'.$this->access[17]['location_id']; 
+
+
+                    if($this->access[17]['is_access']) $is_access = 'checked'; else $is_access = ''; 
+                        if($this->access[17]['is_read']) $is_read = 'checked'; else $is_read = ''; 
+                        if($this->access[17]['is_write']) $is_write = 'checked'; else $is_write = ''; 
+                    ?>
+                        <input type="hidden" name="row4[role_id4][3]" value="2">
+                        <input type="hidden" name="row4[location_id4][3]" value="5">
+                        <input type="checkbox" <?php echo $is_read; ?> class="read" name="row4[read4][3]" value="<?php echo $checkVal; ?>">R
+                        <input type="checkbox" <?php echo $is_write; ?> class="write" name="row4[write4][3]" value="<?php echo $checkVal; ?>">W
+                        <input type="checkbox" <?php echo $is_access; ?> class="no_access" name="row4[no_access4][3]" value="<?php echo $checkVal; ?>">No Access
+                    </td>
+                    
+                    <td> <?php $checkVal = 'role_'.$this->access[18]['role'].'_build_'.$this->access[18]['location_id']; 
+
+                    if($this->access[18]['is_access']) $is_access = 'checked'; else $is_access = ''; 
+                        if($this->access[18]['is_read']) $is_read = 'checked'; else $is_read = ''; 
+                        if($this->access[18]['is_write']) $is_write = 'checked'; else $is_write = ''; 
+                    ?>
+                        <input type="hidden" name="row4[role_id4][4]" value="2">
+                        <input type="hidden" name="row4[location_id4][4]" value="5">
+                        <input type="checkbox" <?php echo $is_read; ?> class="read" name="row4[read4][4]" value="<?php echo $checkVal; ?>">R
+                        <input type="checkbox" <?php echo $is_write; ?> class="write" name="row4[write4][4]" value="<?php echo $checkVal; ?>">W
+                        <input type="checkbox" <?php echo $is_access; ?> class="no_access" name="row4[no_access4][4]" value="<?php echo $checkVal; ?>">No Access
+                    </td>
+                    
+                    <td> <?php $checkVal = 'role_'.$this->access[19]['role'].'_build_'.$this->access[19]['location_id']; 
+
+                    if($this->access[19]['is_access']) $is_access = 'checked'; else $is_access = ''; 
+                        if($this->access[19]['is_read']) $is_read = 'checked'; else $is_read = ''; 
+                        if($this->access[19]['is_write']) $is_write = 'checked'; else $is_write = ''; 
+                    ?>
+                        <input type="hidden" name="row4[role_id4][5]" value="2">
+                        <input type="hidden" name="row4[location_id4][5]" value="5">
+                        <input type="checkbox" <?php echo $is_read; ?> class="read" name="row4[read4][5]" value="<?php echo $checkVal; ?>">R
+                        <input type="checkbox" <?php echo $is_write; ?> class="write" name="row4[write4][5]" value="<?php echo $checkVal; ?>">W
+                        <input type="checkbox" <?php echo $is_access; ?> class="no_access" name="row4[no_access4][5]" value="<?php echo $checkVal; ?>">No Access
+                    </td>
+                </tr>
+
+                <tr>
+                   
+
+                    <td>
+                        Add New User Wizard
+                    </td>
+                    
+                    <td> <?php $checkVal = 'role_'.$this->access[20]['role'].'_build_'.$this->access[20]['location_id']; 
+
+                    if($this->access[20]['is_access']) $is_access = 'checked'; else $is_access = ''; 
+                        if($this->access[20]['is_read']) $is_read = 'checked'; else $is_read = ''; 
+                        if($this->access[20]['is_write']) $is_write = 'checked'; else $is_write = ''; 
+                    ?>
+                        <input type="hidden" name="row5[role_id5][1]" value="2">
+                        <input type="hidden" name="row5[location_id5][1]" value="5">
+                        <input type="checkbox" <?php echo $is_read; ?> class="read" name="row5[read5][1]" value="<?php echo $checkVal; ?>">R
+                        <input type="checkbox" <?php echo $is_write; ?> class="write" name="row5[write5][1]" value="<?php echo $checkVal; ?>">W
+                        <input type="checkbox" <?php echo $is_access; ?> class="no_access" name="row5[no_access5][1]" value="<?php echo $checkVal; ?>">No Access
+                    </td>
+                    
+                    <td> <?php $checkVal = 'role_'.$this->access[21]['role'].'_build_'.$this->access[21]['location_id']; 
+
+                    if($this->access[21]['is_access']) $is_access = 'checked'; else $is_access = ''; 
+                        if($this->access[21]['is_read']) $is_read = 'checked'; else $is_read = ''; 
+                        if($this->access[21]['is_write']) $is_write = 'checked'; else $is_write = ''; 
+                    ?>
+                        <input type="hidden" name="row5[role_id5][2]" value="2">
+                        <input type="hidden" name="row5[location_id5][2]" value="5">
+                        <input type="checkbox" <?php echo $is_read; ?> class="read" name="row5[read5][2]" value="<?php echo $checkVal; ?>">R
+                        <input type="checkbox" <?php echo $is_write; ?> class="write" name="row5[write5][2]" value="<?php echo $checkVal; ?>">W
+                        <input type="checkbox" <?php echo $is_access; ?> class="no_access" name="row5[no_access5][2]" value="<?php echo $checkVal; ?>">No Access
+                    </td>
+                    
+                    <td> <?php $checkVal = 'role_'.$this->access[22]['role'].'_build_'.$this->access[22]['location_id']; 
+
+                    if($this->access[22]['is_access']) $is_access = 'checked'; else $is_access = ''; 
+                        if($this->access[22]['is_read']) $is_read = 'checked'; else $is_read = ''; 
+                        if($this->access[22]['is_write']) $is_write = 'checked'; else $is_write = ''; 
+                    ?>
+                        <input type="hidden" name="row5[role_id5][3]" value="2">
+                        <input type="hidden" name="row5[location_id5][3]" value="5">
+                        <input type="checkbox" <?php echo $is_read; ?> class="read" name="row5[read5][3]" value="<?php echo $checkVal; ?>">R
+                        <input type="checkbox" <?php echo $is_write; ?> class="write" name="row5[write5][3]" value="<?php echo $checkVal; ?>">W
+                        <input type="checkbox" <?php echo $is_access; ?> class="no_access" name="row5[no_access5][3]" value="<?php echo $checkVal; ?>">No Access
+                    </td>
+                    
+                    <td> <?php $checkVal = 'role_'.$this->access[23]['role'].'_build_'.$this->access[23]['location_id']; 
+
+                    if($this->access[23]['is_access']) $is_access = 'checked'; else $is_access = ''; 
+                        if($this->access[23]['is_read']) $is_read = 'checked'; else $is_read = ''; 
+                        if($this->access[23]['is_write']) $is_write = 'checked'; else $is_write = ''; 
+                    ?>
+                       <input type="hidden" name="row5[role_id5][4]" value="2">
+                        <input type="hidden" name="row5[location_id5][4]" value="5">
+                        <input type="checkbox" <?php echo $is_read; ?> class="read" name="row5[read5][4]" value="<?php echo $checkVal; ?>">R
+                        <input type="checkbox" <?php echo $is_write; ?> class="write" name="row5[write5][4]" value="<?php echo $checkVal; ?>">W
+                        <input type="checkbox" <?php echo $is_access; ?> class="no_access" name="row5[no_access5][4]" value="<?php echo $checkVal; ?>">No Access
+                    </td>
+                    
+                    <td> <?php $checkVal = 'role_'.$this->access[24]['role'].'_build_'.$this->access[24]['location_id']; 
+
+                    if($this->access[24]['is_access']) $is_access = 'checked'; else $is_access = ''; 
+                        if($this->access[24]['is_read']) $is_read = 'checked'; else $is_read = ''; 
+                        if($this->access[24]['is_write']) $is_write = 'checked'; else $is_write = ''; 
+                    ?>
+                        <input type="hidden" name="row5[role_id5][5]" value="2">
+                        <input type="hidden" name="row5[location_id5][5]" value="5">
+                        <input type="checkbox" <?php echo $is_read; ?> class="read" name="row5[read5][5]" value="<?php echo $checkVal; ?>">R
+                        <input type="checkbox" <?php echo $is_write; ?> class="write" name="row5[write5][5]" value="<?php echo $checkVal; ?>">W
+                        <input type="checkbox" <?php echo $is_access; ?> class="no_access" name="row5[no_access5][5]" value="<?php echo $checkVal; ?>">No Access
+                    </td>
+                </tr>
+
+               
+
+                <tr>
+                    <td colspan="6" class="company_head">
+                        Category Console Access
+                    </td>
+                    </tr>
+                   
+
+                <tr>
+                   
+
+                    <td>
+                        Category Information
+                    </td>
+                    <td> <?php $checkVal = 'role_'.$this->access[25]['role'].'_build_'.$this->access[25]['location_id']; 
+
+                    if($this->access[25]['is_access']) $is_access = 'checked'; else $is_access = ''; 
+                        if($this->access[25]['is_read']) $is_read = 'checked'; else $is_read = ''; 
+                        if($this->access[25]['is_write']) $is_write = 'checked'; else $is_write = ''; 
+                    ?>
+                        <input type="hidden" name="row6[role_id6][1]" value="2">
+                        <input type="hidden" name="row6[location_id6][1]" value="5">
+                        <input type="checkbox" <?php echo $is_read; ?> class="read" name="row6[read6][1]" value="<?php echo $checkVal; ?>">R
+                        <input type="checkbox" <?php echo $is_write; ?> class="write" name="row6[write6][1]" value="<?php echo $checkVal; ?>">W
+                        <input type="checkbox" <?php echo $is_access; ?> class="no_access" name="row6[no_access6][1]" value="<?php echo $checkVal; ?>">No Access
+                    </td>
+                    
+                    <td> <?php $checkVal = 'role_'.$this->access[26]['role'].'_build_'.$this->access[26]['location_id']; 
+
+                    if($this->access[26]['is_access']) $is_access = 'checked'; else $is_access = ''; 
+                        if($this->access[26]['is_read']) $is_read = 'checked'; else $is_read = ''; 
+                        if($this->access[26]['is_write']) $is_write = 'checked'; else $is_write = ''; 
+                    ?>
+                        <input type="hidden" name="row6[role_id6][2]" value="2">
+                        <input type="hidden" name="row6[location_id6][2]" value="5">
+                        <input type="checkbox" <?php echo $is_read; ?> class="read" name="row6[read6][2]" value="<?php echo $checkVal; ?>">R
+                        <input type="checkbox" <?php echo $is_write; ?> class="write" name="row6[write6][2]" value="<?php echo $checkVal; ?>">W
+                        <input type="checkbox" <?php echo $is_access; ?> class="no_access" name="row6[no_access6][2]" value="<?php echo $checkVal; ?>">No Access
+                    </td>
+                    
+                    <td> <?php $checkVal = 'role_'.$this->access[27]['role'].'_build_'.$this->access[27]['location_id']; 
+
+                    if($this->access[27]['is_access']) $is_access = 'checked'; else $is_access = ''; 
+                        if($this->access[27]['is_read']) $is_read = 'checked'; else $is_read = ''; 
+                        if($this->access[27]['is_write']) $is_write = 'checked'; else $is_write = ''; 
+                    ?>
+                        <input type="hidden" name="row6[role_id6][3]" value="2">
+                        <input type="hidden" name="row6[location_id6][3]" value="5">
+                        <input type="checkbox" <?php echo $is_read; ?> class="read" name="row6[read6][3]" value="<?php echo $checkVal; ?>">R
+                        <input type="checkbox" <?php echo $is_write; ?> class="write" name="row6[write6][3]" value="<?php echo $checkVal; ?>">W
+                        <input type="checkbox" <?php echo $is_access; ?> class="no_access" name="row6[no_access6][3]" value="<?php echo $checkVal; ?>">No Access
+                    </td>
+                    
+                    <td>  <?php $checkVal = 'role_'.$this->access[28]['role'].'_build_'.$this->access[28]['location_id']; 
+
+                    if($this->access[28]['is_access']) $is_access = 'checked'; else $is_access = ''; 
+                        if($this->access[28]['is_read']) $is_read = 'checked'; else $is_read = ''; 
+                        if($this->access[28]['is_write']) $is_write = 'checked'; else $is_write = ''; 
+                    ?>
+                        <input type="hidden" name="row6[role_id6][4]" value="2">
+                        <input type="hidden" name="row6[location_id6][4]" value="5">
+                        <input type="checkbox" <?php echo $is_read; ?> class="read" name="row6[read6][4]" value="<?php echo $checkVal; ?>">R
+                        <input type="checkbox" <?php echo $is_write; ?> class="write" name="row6[write6][4]" value="<?php echo $checkVal; ?>">W
+                        <input type="checkbox" <?php echo $is_access; ?> class="no_access" name="row6[no_access6][4]" value="<?php echo $checkVal; ?>">No Access
+                    </td>
+                    
+                    <td> <?php $checkVal = 'role_'.$this->access[29]['role'].'_build_'.$this->access[29]['location_id']; 
+
+                        if($this->access[29]['is_access']) $is_access = 'checked'; else $is_access = ''; 
+                        if($this->access[29]['is_read']) $is_read = 'checked'; else $is_read = ''; 
+                        if($this->access[29]['is_write']) $is_write = 'checked'; else $is_write = ''; 
+                    ?>
+                        <input type="hidden" name="row6[role_id6][5]" value="2">
+                        <input type="hidden" name="row6[location_id6][5]" value="5">
+                        <input type="checkbox" <?php echo $is_read; ?> class="read" name="row6[read6][5]" value="<?php echo $checkVal; ?>">R
+                        <input type="checkbox" <?php echo $is_write; ?> class="write" name="row6[write6][5]" value="<?php echo $checkVal; ?>">W
+                        <input type="checkbox" <?php echo $is_access; ?> class="no_access" name="row6[no_access6][5]" value="<?php echo $checkVal; ?>">No Access
+                    </td>
+                </tr>
+
+                <tr>
+                    
+
+                    <td>
+                        Priority Information
+                    </td>
+                    
+                    <td> <?php $checkVal = 'role_'.$this->access[30]['role'].'_build_'.$this->access[30]['location_id']; 
+
+                    if($this->access[30]['is_access']) $is_access = 'checked'; else $is_access = ''; 
+                        if($this->access[30]['is_read']) $is_read = 'checked'; else $is_read = ''; 
+                        if($this->access[30]['is_write']) $is_write = 'checked'; else $is_write = ''; 
+                    ?>
+                        <input type="hidden" name="row7[role_id7][1]" value="2">
+                        <input type="hidden" name="row7[location_id7][1]" value="5">
+                        <input type="checkbox" <?php echo $is_read; ?> class="read" name="row7[read7][1]" value="<?php echo $checkVal; ?>">R
+                        <input type="checkbox" <?php echo $is_write; ?> class="write" name="row7[write7][1]" value="<?php echo $checkVal; ?>">W
+                        <input type="checkbox" <?php echo $is_access; ?> class="no_access" name="row7[no_access7][1]" value="<?php echo $checkVal; ?>">No Access
+                    </td>
+                    
+                    <td> <?php $checkVal = 'role_'.$this->access[31]['role'].'_build_'.$this->access[31]['location_id']; 
+
+                        if($this->access[31]['is_access']) $is_access = 'checked'; else $is_access = ''; 
+                        if($this->access[31]['is_read']) $is_read = 'checked'; else $is_read = ''; 
+                        if($this->access[31]['is_write']) $is_write = 'checked'; else $is_write = ''; 
+                    ?>
+                        <input type="hidden" name="row7[role_id7][2]" value="2">
+                        <input type="hidden" name="row7[location_id7][2]" value="5">
+                        <input type="checkbox" <?php echo $is_read; ?> class="read" name="row7[read7][2]" value="<?php echo $checkVal; ?>">R
+                        <input type="checkbox" <?php echo $is_write; ?> class="write" name="row7[write7][2]" value="<?php echo $checkVal; ?>">W
+                        <input type="checkbox" <?php echo $is_access; ?> class="no_access" name="row7[no_access7][2]" value="<?php echo $checkVal; ?>">No Access
+                    </td>
+                    
+                    <td> <?php $checkVal = 'role_'.$this->access[32]['role'].'_build_'.$this->access[32]['location_id']; 
+
+                    if($this->access[32]['is_access']) $is_access = 'checked'; else $is_access = ''; 
+                        if($this->access[32]['is_read']) $is_read = 'checked'; else $is_read = ''; 
+                        if($this->access[32]['is_write']) $is_write = 'checked'; else $is_write = ''; 
+                    ?>
+                       <input type="hidden" name="row7[role_id7][3]" value="2">
+                        <input type="hidden" name="row7[location_id7][3]" value="5">
+                        <input type="checkbox" <?php echo $is_read; ?> class="read" name="row7[read7][3]" value="<?php echo $checkVal; ?>">R
+                        <input type="checkbox" <?php echo $is_write; ?> class="write" name="row7[write7][3]" value="<?php echo $checkVal; ?>">W
+                        <input type="checkbox" <?php echo $is_access; ?> class="no_access" name="row7[no_access7][3]" value="<?php echo $checkVal; ?>">No Access
+                    </td>
+                    
+                    <td> <?php $checkVal = 'role_'.$this->access[33]['role'].'_build_'.$this->access[33]['location_id']; 
+
+                    if($this->access[33]['is_access']) $is_access = 'checked'; else $is_access = ''; 
+                        if($this->access[33]['is_read']) $is_read = 'checked'; else $is_read = ''; 
+                        if($this->access[33]['is_write']) $is_write = 'checked'; else $is_write = ''; 
+                    ?>
+                       <input type="hidden" name="row7[role_id7][4]" value="2">
+                        <input type="hidden" name="row7[location_id7][4]" value="5">
+                        <input type="checkbox" <?php echo $is_read; ?> class="read" name="row7[read7][4]" value="<?php echo $checkVal; ?>">R
+                        <input type="checkbox" <?php echo $is_write; ?> class="write" name="row7[write7][4]" value="<?php echo $checkVal; ?>">W
+                        <input type="checkbox" <?php echo $is_access; ?> class="no_access" name="row7[no_access7][4]" value="<?php echo $checkVal; ?>">No Access
+                    </td>
+                    
+                    <td> <?php $checkVal = 'role_'.$this->access[34]['role'].'_build_'.$this->access[34]['location_id']; 
+
+                    if($this->access[34]['is_access']) $is_access = 'checked'; else $is_access = ''; 
+                        if($this->access[34]['is_read']) $is_read = 'checked'; else $is_read = ''; 
+                        if($this->access[34]['is_write']) $is_write = 'checked'; else $is_write = ''; 
+                    ?>
+                       <input type="hidden" name="row7[role_id7][5]" value="2">
+                        <input type="hidden" name="row7[location_id7][5]" value="5">
+                        <input type="checkbox" <?php echo $is_read; ?> class="read" name="row7[read7][5]" value="<?php echo $checkVal; ?>">R
+                        <input type="checkbox" <?php echo $is_write; ?> class="write" name="row7[write7][5]" value="<?php echo $checkVal; ?>">W
+                        <input type="checkbox" <?php echo $is_access; ?> class="no_access" name="row7[no_access7][5]" value="<?php echo $checkVal; ?>">No Access
+                    </td>
+                </tr>
+
+                <tr>
+                    
+
+                    <td>
+                        Email Group
+                    </td>
+                    
+                    <td> <?php $checkVal = 'role_'.$this->access[35]['role'].'_build_'.$this->access[35]['location_id']; 
+
+
+                    if($this->access[35]['is_access']) $is_access = 'checked'; else $is_access = ''; 
+                        if($this->access[35]['is_read']) $is_read = 'checked'; else $is_read = ''; 
+                        if($this->access[35]['is_write']) $is_write = 'checked'; else $is_write = ''; 
+                    ?>
+                        <input type="hidden" name="row8[role_id8][1]" value="2">
+                        <input type="hidden" name="row8[location_id8][1]" value="5">
+                        <input type="checkbox" <?php echo $is_read; ?> class="read" name="row8[read8][1]" value="<?php echo $checkVal; ?>">R
+                        <input type="checkbox" <?php echo $is_write; ?> class="write" name="row8[write8][1]" value="<?php echo $checkVal; ?>">W
+                        <input type="checkbox" <?php echo $is_access; ?> class="no_access" name="row8[no_access8][1]" value="<?php echo $checkVal; ?>">No Access
+                    </td>
+                    
+                    <td> <?php $checkVal = 'role_'.$this->access[36]['role'].'_build_'.$this->access[36]['location_id']; 
+
+                    if($this->access[36]['is_access']) $is_access = 'checked'; else $is_access = ''; 
+                        if($this->access[36]['is_read']) $is_read = 'checked'; else $is_read = ''; 
+                        if($this->access[36]['is_write']) $is_write = 'checked'; else $is_write = ''; 
+                    ?>
+                        <input type="hidden" name="row8[role_id8][1]" value="2">
+                        <input type="hidden" name="row8[location_id8][1]" value="5">
+                        <input type="checkbox" <?php echo $is_read; ?> class="read" name="row8[read8][1]" value="<?php echo $checkVal; ?>">R
+                        <input type="checkbox" <?php echo $is_write; ?> class="write" name="row8[write8][1]" value="<?php echo $checkVal; ?>">W
+                        <input type="checkbox" <?php echo $is_access; ?> class="no_access" name="row8[no_access8][1]" value="<?php echo $checkVal; ?>">No Access
+                    </td>
+                    
+                    <td> <?php $checkVal = 'role_'.$this->access[37]['role'].'_build_'.$this->access[37]['location_id']; 
+
+                    if($this->access[37]['is_access']) $is_access = 'checked'; else $is_access = ''; 
+                        if($this->access[37]['is_read']) $is_read = 'checked'; else $is_read = ''; 
+                        if($this->access[37]['is_write']) $is_write = 'checked'; else $is_write = ''; 
+                    ?>
+                        <input type="hidden" name="row8[role_id8][1]" value="2">
+                        <input type="hidden" name="row8[location_id8][1]" value="5">
+                        <input type="checkbox" <?php echo $is_read; ?> class="read" name="row8[read8][1]" value="<?php echo $checkVal; ?>">R
+                        <input type="checkbox" <?php echo $is_write; ?> class="write" name="row8[write8][1]" value="<?php echo $checkVal; ?>">W
+                        <input type="checkbox" <?php echo $is_access; ?> class="no_access" name="row8[no_access8][1]" value="<?php echo $checkVal; ?>">No Access
+                    </td>
+                    
+                    <td> <?php $checkVal = 'role_'.$this->access[38]['role'].'_build_'.$this->access[38]['location_id']; 
+
+                    if($this->access[38]['is_access']) $is_access = 'checked'; else $is_access = ''; 
+                        if($this->access[38]['is_read']) $is_read = 'checked'; else $is_read = ''; 
+                        if($this->access[38]['is_write']) $is_write = 'checked'; else $is_write = ''; 
+                    ?>
+                        <input type="hidden" name="row8[role_id8][1]" value="2">
+                        <input type="hidden" name="row8[location_id8][1]" value="5">
+                        <input type="checkbox" <?php echo $is_read; ?> class="read" name="row8[read8][1]" value="<?php echo $checkVal; ?>">R
+                        <input type="checkbox" <?php echo $is_write; ?> class="write" name="row8[write8][1]" value="<?php echo $checkVal; ?>">W
+                        <input type="checkbox" <?php echo $is_access; ?> class="no_access" name="row8[no_access8][1]" value="<?php echo $checkVal; ?>">No Access
+                    </td>
+                    
+                    <td> <?php $checkVal = 'role_'.$this->access[39]['role'].'_build_'.$this->access[39]['location_id']; 
+
+                    if($this->access[39]['is_access']) $is_access = 'checked'; else $is_access = ''; 
+                        if($this->access[39]['is_read']) $is_read = 'checked'; else $is_read = ''; 
+                        if($this->access[39]['is_write']) $is_write = 'checked'; else $is_write = ''; 
+                    ?>
+                        <input type="hidden" name="row8[role_id8][1]" value="2">
+                        <input type="hidden" name="row8[location_id8][1]" value="5">
+                        <input type="checkbox" <?php echo $is_read; ?> class="read" name="row8[read8][1]" value="<?php echo $checkVal; ?>">R
+                        <input type="checkbox" <?php echo $is_write; ?> class="write" name="row8[write8][1]" value="<?php echo $checkVal; ?>">W
+                        <input type="checkbox" <?php echo $is_access; ?> class="no_access" name="row8[no_access8][1]" value="<?php echo $checkVal; ?>">No Access
+                    </td>
+                </tr>
+
+               
+            </tbody>
+        </table>
+          
+        </div>
+    </div>
+
+<div style="padding:10px 52px 25px 50px;">
+    <p>NOTES: <p>
+    <div style="padding:5px 0 0 60px;">
+        <p> Need ability to created User Access Titles(General Manager, Property Managet, etc.) </p>
+        <p style="padding-top:5px;"> Ability to assign wrights to each User Access Account (View, Read, Edit, Modify, Create). </p>
+    </div>
+</div>
+
+</section>
+
+
+       
+</div>
+
+<div class="loader" style="display:none;">
+    <img src="http://localhost/mark_vecrm/public/images/loader.gif">
+    <div> </div>
+</div>
+
+<script type="text/javascript">
+    $(function(){
+        
+        $(".no_access").click(function(){
+            if(this.checked){  //$(".read").removeAttr('checked');
+                $(this).prev(".write").prev(".read").removeAttr('checked');
+                $(this).prev(".write").removeAttr('checked');
+
+                $('input[type=checkbox]').attr('disabled',true);
+
+                var noAccess;
+                var dataSet = new Object;
+
+                noAccess = this.value.split('_');
+
+                dataSet.location_id = noAccess[3];
+                dataSet.role = noAccess[1];
+                dataSet.is_access = 1;
+                dataSet.is_read = 0;
+                dataSet.is_write = 0;
+                
+               
+                $.ajax({
+                    url: "setaccess",
+                    dataType: "json",
+                    method: "post",
+                    data: dataSet,
+                    beforeSend: function( xhr ) {
+                        $('.loader').show(0);
+                    },
+                    success: function( data ) {
+
+                       $('.loader').delay(1000).hide(0);
+
+                       setTimeout(function(){
+                          $('input[type=checkbox]').removeAttr('disabled');
+                        }, 1100);
+
+                    }
+                });
+            }
+            else{
+                $(this).prev(".write").prev(".read").prop('checked',true);
+                $('input[type=checkbox]').attr('disabled',true);
+
+                var noAccess;
+                var dataSet = new Object;
+
+                noAccess = this.value.split('_');
+
+                dataSet.location_id = noAccess[3];
+                dataSet.role = noAccess[1];
+                dataSet.is_access = 0;
+                dataSet.is_read = 1;
+                dataSet.is_write = 0;
+                
+               
+                $.ajax({
+                    url: "setaccess",
+                    dataType: "json",
+                    method: "post",
+                    data: dataSet,
+                    beforeSend: function( xhr ) {
+                        $('.loader').show(0);
+                    },
+                    success: function( data ) {
+
+                       $('.loader').delay(1000).hide(0);
+
+                       setTimeout(function(){
+                          $('input[type=checkbox]').removeAttr('disabled');
+                        }, 1100);
+
+                       
+                        //alert( data );
+                    }
+                });
+            }
+        });
+
+        $(".read").on('click',function(){
+            $('input[type=checkbox]').attr('disabled',true);
+
+            if(this.checked){  //$(".read").removeAttr('checked');
+                $(this).next(".write").next(".no_access").removeAttr('checked');
+
+                var noAccess;
+                var dataSet = new Object;
+
+                noAccess = this.value.split('_');
+                dataSet.location_id = noAccess[3];
+                dataSet.role = noAccess[1];
+                dataSet.is_access = 0;
+                dataSet.is_read = 1;
+
+                if($(this).next(".write").checked){
+                    dataSet.is_write = 1;
+                }
+                else{
+                    dataSet.is_write = 0;
+                }
+            }
+            else{
+                var noAccess;
+                var dataSet = new Object;
+
+                noAccess = this.value.split('_');
+                dataSet.location_id = noAccess[3];
+                dataSet.role = noAccess[1];
+                
+                dataSet.is_read = 0;
+
+                if($(this).next(".write").checked){
+                    dataSet.is_write = 1;
+                    dataSet.is_access = 0;
+                }
+                else{
+                    dataSet.is_write = 0;
+                    dataSet.is_access = 1;
+                    $(this).next(".write").next(".no_access").prop('checked',true);
+                }
+            }   
+
+                $.ajax({
+                    url: "setaccess",
+                    dataType: "json",
+                    method: "post",
+                    data: dataSet,
+                    beforeSend: function( xhr ) {
+                        $('.loader').show(0);
+                    },
+                    success: function( data ) {
+                       $('.loader').delay(1000).hide(0);
+                       setTimeout(function(){
+                          $('input[type=checkbox]').removeAttr('disabled');
+                        }, 1100);
+                        //alert( data );
+                    }
+                });
+            
+        });
+
+        $(".write").click(function(){
+
+            $('input[type=checkbox]').attr('disabled',true);
+            if(this.checked){  //$(".read").removeAttr('checked');
+                $(this).next(".no_access").removeAttr('checked');
+                $(this).prev(".read").prop('checked',true);
+
+                var noAccess;
+                var dataSet = new Object;
+
+                noAccess = this.value.split('_');
+                dataSet.location_id = noAccess[3];
+                dataSet.role = noAccess[1];
+                dataSet.is_access = 0;
+                dataSet.is_write = 1;
+                dataSet.is_read = 1;
+
+            }
+            else{
+                var noAccess;
+                var dataSet = new Object;
+
+                noAccess = this.value.split('_');
+                dataSet.location_id = noAccess[3];
+                dataSet.role = noAccess[1];
+                dataSet.is_access = 0;
+                dataSet.is_write = 0;
+                dataSet.is_read = 1;
+            }        
+                $.ajax({
+                    url: "setaccess",
+                    dataType: "json",
+                    method: "post",
+                    data: dataSet,
+                    beforeSend: function( xhr ) {
+                        $('.loader').show(0);
+                    },
+                    success: function( data ) {
+                       $('.loader').delay(1000).hide(0);
+                       setTimeout(function(){
+                          $('input[type=checkbox]').removeAttr('disabled');
+                        }, 1100);
+                    }
+                });
+           
+        });
+
+        $(".nextFirst").on("click", function(){
+            
+            var emailaddress = $("#email").val();
+            var firstname = $("#firstname").val();
+            var lastname = $("#lastname").val();
+            var office_phone = $("#office-phone").val();
+            
+            var isError = false;
+            if(emailaddress.length == 0) {
+                $("#email-error").html("Please enter E-mail address");
+                isError = true;
+            } else if( !isValidEmailAddress( emailaddress ) ) {
+                $("#email-error").html("Please enter valid E-mail address");
+                isError = true;
+            } else {
+                 $("#email-error").html("");
+            }
+            
+            
+            if(firstname.length == 0) {
+                $("#firstname-error").html("Please enter first name");
+                isError = true;
+            } else {
+                $("#firstname-error").html("");
+            }
+            
+            if(lastname.length == 0) {
+                $("#lastname-error").html("Please enter last name");
+                isError = true;
+            } else {
+                $("#lastname-error").html("");
+            }
+            
+            if(office_phone.length == 0) {
+                $("#office-phone-error").html("Please enter office phone number");
+                isError = true;
+            } else {
+                $("#office-phone-error").html("");
+            }
+            
+            if(!isError) {
+			
+				$("#first").css({"display" : "none"});
+                $("#second").css({"display" : "block"});
+            } 
+        });
+        
+             
+         $(".nextSecond").on("click", function(){
+
+            var modules = $('input[name="module\[\]"]:checked').map(function() {
+                return this.value;
+            }).get();
+            
+            var buildings = $('input[name="building[\]"]:checked').map(function() {
+                return this.value;
+            }).get();
+                       
+             var data = {
+                uid          :   $("#uid").val(),
+                userName     :   $("#email").val(),
+                email        :   $("#email").val(),
+                firstname    :   $("#firstname").val(),
+                lastname     :   $("#lastname").val(),
+                phoneNumber  :   $("#office-phone").val(),
+                title        :   $("#title").val(),
+                role_id      :   $("#status").val(),
+                module       :   modules,
+                building     :   buildings,
+             }
+         
+             $.ajax({
+                url         : "user/saveuserdetail",
+                type        : "post",
+                datatype    : 'json',
+                data        : data,
+                success     : function( data ) {					
+                    var detail = jQuery.parseJSON(data);
+                    console.log(detail)
+                    createUserComplete(detail);
+                },
+                error       : function(){
+                    alert('There was an error updating the settings');
+                },  
+                complete    : function( ) {
+                  
+                }
+             });
+             
+         });
+    });
+  
+  
+</script>

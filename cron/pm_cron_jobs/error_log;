@@ -1,0 +1,102 @@
+[06-Mar-2022 08:52:20 America/New_York] PHP Fatal error:  Uncaught Error: Cannot use object of type mysqli_result as array in /home/ve/public_html/cron/pm_cron_jobs/pm_email_generate.php:58
+Stack trace:
+#0 /home/ve/public_html/cron/pm_cron_jobs/pm_email.php(71): include()
+#1 {main}
+  thrown in /home/ve/public_html/cron/pm_cron_jobs/pm_email_generate.php on line 58
+[06-Mar-2022 09:07:52 America/New_York] PHP Warning:  require_once(Zend/Mail.php): failed to open stream: No such file or directory in /home/ve/public_html/cron/pm_cron_jobs/pm_email_generate.php on line 73
+[06-Mar-2022 09:07:52 America/New_York] PHP Fatal error:  require_once(): Failed opening required 'Zend/Mail.php' (include_path='/home/ve/public_html/cron/pm_cron_jobs/library/:.:/opt/php54/lib/php;') in /home/ve/public_html/cron/pm_cron_jobs/pm_email_generate.php on line 73
+[06-Mar-2022 09:09:08 America/New_York] PHP Warning:  require_once(Zend/Mail.php): failed to open stream: No such file or directory in /home/ve/public_html/cron/pm_cron_jobs/pm_email_generate.php on line 73
+[06-Mar-2022 09:09:08 America/New_York] PHP Fatal error:  require_once(): Failed opening required 'Zend/Mail.php' (include_path='home/ve/public_html/library/:.:/opt/php54/lib/php;') in /home/ve/public_html/cron/pm_cron_jobs/pm_email_generate.php on line 73
+[08-Mar-2022 05:25:34 America/New_York] PHP Fatal error:  Uncaught Error: Class 'PmController' not found in /home/ve/public_html/cron/pm_cron_jobs/pm_email_generate.php:140
+Stack trace:
+#0 /home/ve/public_html/cron/pm_cron_jobs/pm_email.php(71): include()
+#1 {main}
+  thrown in /home/ve/public_html/cron/pm_cron_jobs/pm_email_generate.php on line 140
+[08-Mar-2022 05:27:25 America/New_York] PHP Fatal error:  Uncaught Error: Class 'PmController' not found in /home/ve/public_html/cron/pm_cron_jobs/pm_email_generate.php:133
+Stack trace:
+#0 /home/ve/public_html/cron/pm_cron_jobs/pm_email.php(71): include()
+#1 {main}
+  thrown in /home/ve/public_html/cron/pm_cron_jobs/pm_email_generate.php on line 133
+[08-Mar-2022 05:32:06 America/New_York] PHP Fatal error:  Uncaught Error: Class 'PmController' not found in /home/ve/public_html/cron/pm_cron_jobs/pm_email_generate.php:133
+Stack trace:
+#0 /home/ve/public_html/cron/pm_cron_jobs/pm_email.php(71): include()
+#1 {main}
+  thrown in /home/ve/public_html/cron/pm_cron_jobs/pm_email_generate.php on line 133
+[08-Mar-2022 05:48:15 America/New_York] PHP Fatal error:  Uncaught Error: Class 'Model_Email' not found in /home/ve/public_html/cron/pm_cron_jobs/pm_email_generate.php:133
+Stack trace:
+#0 /home/ve/public_html/cron/pm_cron_jobs/pm_email.php(71): include()
+#1 {main}
+  thrown in /home/ve/public_html/cron/pm_cron_jobs/pm_email_generate.php on line 133
+[08-Mar-2022 05:51:58 America/New_York] PHP Fatal error:  Uncaught Error: Class 'PmController' not found in /home/ve/public_html/cron/pm_cron_jobs/pm_email_generate.php:140
+Stack trace:
+#0 /home/ve/public_html/cron/pm_cron_jobs/pm_email.php(71): include()
+#1 {main}
+  thrown in /home/ve/public_html/cron/pm_cron_jobs/pm_email_generate.php on line 140
+[10-Mar-2022 01:48:57 America/Chicago] PHP Fatal error:  Uncaught Error: Call to a member function query() on null in /home/ve/public_html/cron/pm_cron_jobs/pm_email_generate.php:51
+Stack trace:
+#0 {main}
+  thrown in /home/ve/public_html/cron/pm_cron_jobs/pm_email_generate.php on line 51
+[10-Mar-2022 01:49:41 America/Chicago] PHP Fatal error:  Uncaught Error: Call to a member function query() on null in /home/ve/public_html/cron/pm_cron_jobs/pm_email_generate.php:51
+Stack trace:
+#0 {main}
+  thrown in /home/ve/public_html/cron/pm_cron_jobs/pm_email_generate.php on line 51
+[10-Mar-2022 01:51:49 America/Chicago] PHP Fatal error:  Uncaught Error: Call to a member function query() on null in /home/ve/public_html/cron/pm_cron_jobs/pm_email_generate.php:51
+Stack trace:
+#0 {main}
+  thrown in /home/ve/public_html/cron/pm_cron_jobs/pm_email_generate.php on line 51
+[10-Mar-2022 01:51:52 America/Chicago] PHP Fatal error:  Uncaught Error: Call to a member function query() on null in /home/ve/public_html/cron/pm_cron_jobs/pm_email_generate.php:51
+Stack trace:
+#0 {main}
+  thrown in /home/ve/public_html/cron/pm_cron_jobs/pm_email_generate.php on line 51
+[10-Mar-2022 02:57:09 America/New_York] PHP Fatal error:  Uncaught Error: Class 'Model_Email' not found in /home/ve/public_html/cron/pm_cron_jobs/pm_email_generate.php:140
+Stack trace:
+#0 /home/ve/public_html/cron/pm_cron_jobs/pm_email.php(71): include()
+#1 {main}
+  thrown in /home/ve/public_html/cron/pm_cron_jobs/pm_email_generate.php on line 140
+[10-Mar-2022 02:58:52 America/New_York] PHP Fatal error:  Uncaught Error: Class 'PmController' not found in /home/ve/public_html/cron/pm_cron_jobs/pm_email_generate.php:140
+Stack trace:
+#0 /home/ve/public_html/cron/pm_cron_jobs/pm_email.php(71): include()
+#1 {main}
+  thrown in /home/ve/public_html/cron/pm_cron_jobs/pm_email_generate.php on line 140
+[10-Mar-2022 02:59:41 America/New_York] PHP Fatal error:  Uncaught Error: Class 'Ve_Controller_Base' not found in /home/ve/public_html/application/modules/default/controllers/PmController.php:5
+Stack trace:
+#0 /home/ve/public_html/cron/pm_cron_jobs/pm_email_generate.php(139): require_once()
+#1 /home/ve/public_html/cron/pm_cron_jobs/pm_email.php(71): include('/home/ve/public...')
+#2 {main}
+  thrown in /home/ve/public_html/application/modules/default/controllers/PmController.php on line 5
+[10-Mar-2022 03:19:00 America/New_York] PHP Fatal error:  Uncaught Error: Class 'Ve_Controller_Base' not found in /home/ve/public_html/application/modules/default/controllers/PmController.php:5
+Stack trace:
+#0 /home/ve/public_html/cron/pm_cron_jobs/pm_email_generate.php(139): require_once()
+#1 /home/ve/public_html/cron/pm_cron_jobs/pm_email.php(71): include('/home/ve/public...')
+#2 {main}
+  thrown in /home/ve/public_html/application/modules/default/controllers/PmController.php on line 5
+[10-Mar-2022 03:43:57 America/New_York] PHP Fatal error:  Uncaught Error: Class 'Ve_Controller_Base' not found in /home/ve/public_html/application/modules/default/controllers/PmController.php:5
+Stack trace:
+#0 /home/ve/public_html/cron/pm_cron_jobs/pm_email_generate.php(139): require_once()
+#1 /home/ve/public_html/cron/pm_cron_jobs/pm_email.php(71): include('/home/ve/public...')
+#2 {main}
+  thrown in /home/ve/public_html/application/modules/default/controllers/PmController.php on line 5
+[10-Mar-2022 03:45:47 America/New_York] PHP Fatal error:  Uncaught Error: Class 'Ve_Controller_Base' not found in /home/ve/public_html/application/modules/default/controllers/PmController.php:5
+Stack trace:
+#0 /home/ve/public_html/cron/pm_cron_jobs/pm_email_generate.php(139): require_once()
+#1 /home/ve/public_html/cron/pm_cron_jobs/pm_email.php(71): include('/home/ve/public...')
+#2 {main}
+  thrown in /home/ve/public_html/application/modules/default/controllers/PmController.php on line 5
+[10-Mar-2022 03:46:30 America/New_York] PHP Fatal error:  Uncaught Error: Class 'Zend_Controller_Action' not found in /home/ve/public_html/library/Ve/Controller/Base.php:7
+Stack trace:
+#0 /home/ve/public_html/application/modules/default/controllers/PmController.php(4): require_once()
+#1 /home/ve/public_html/cron/pm_cron_jobs/pm_email_generate.php(139): require_once('/home/ve/public...')
+#2 /home/ve/public_html/cron/pm_cron_jobs/pm_email.php(71): include('/home/ve/public...')
+#3 {main}
+  thrown in /home/ve/public_html/library/Ve/Controller/Base.php on line 7
+[10-Mar-2022 03:57:39 America/New_York] PHP Warning:  require_once(Zend/Controller/Action/HelperBroker.php): failed to open stream: No such file or directory in /home/ve/public_html/library/Zend/Controller/Action.php on line 25
+[10-Mar-2022 03:57:39 America/New_York] PHP Fatal error:  require_once(): Failed opening required 'Zend/Controller/Action/HelperBroker.php' (include_path='.:/opt/php54/lib/php;') in /home/ve/public_html/library/Zend/Controller/Action.php on line 25
+[10-Mar-2022 03:58:38 America/New_York] PHP Fatal error:  Uncaught Error: Class 'Ve_Controller_Base' not found in /home/ve/public_html/application/modules/default/controllers/PmController.php:5
+Stack trace:
+#0 /home/ve/public_html/cron/pm_cron_jobs/pm_email_generate.php(139): require_once()
+#1 /home/ve/public_html/cron/pm_cron_jobs/pm_email.php(71): include('/home/ve/public...')
+#2 {main}
+  thrown in /home/ve/public_html/application/modules/default/controllers/PmController.php on line 5
+[10-Mar-2022 05:06:19 America/New_York] PHP Parse error:  syntax error, unexpected 'else' (T_ELSE) in /home/ve/public_html/cron/pm_cron_jobs/pm_email_generate.php on line 200
+[10-Mar-2022 10:51:41 America/New_York] PHP Parse error:  syntax error, unexpected 'echo' (T_ECHO) in /home/ve/public_html/cron/pm_cron_jobs/pm_email_generate.php on line 133
+[10-Mar-2022 10:54:14 America/New_York] PHP Parse error:  syntax error, unexpected 'echo' (T_ECHO) in /home/ve/public_html/cron/pm_cron_jobs/pm_email_generate.php on line 124

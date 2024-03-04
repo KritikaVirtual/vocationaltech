@@ -1,0 +1,58 @@
+<?php echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/coilist.js'); ?>
+<style>
+.message {margin: 30px 6px 4px;}
+.service_row { margin: 0 0 15px;}
+.service_row > label {width: 35%;}
+.buttons {margin: 190px 0 40px !important;}
+</style>
+<div id="edit_build_serv_div" style='text-decoration:none'>
+	<h1>Add / Edit COI</h1>
+	<?php if($this->serviceData) { 
+		  $bservice = $this->serviceData[0];		  
+		?>
+	<div class="message" style='text-align:center;'>
+		<span id="success_msg" class="success_message" style="text-align:center;width:100%;font-weight:bold;color:red;"></span>
+		<span id="error_msg" class="success_message" style="text-align:center;width:100%;font-weight:bold;color:red;"></span>
+	</div>
+	<div class="service_row">
+	<input type="hidden" name="buliding_id" id="buliding_id" value="<?php echo $bservice->building_id;?>"/>
+	<input type="hidden" name="unique_cost" id="unique_cost"  value="<?php echo $bservice->uniquecostcenter;?>"/>
+	<input type="hidden" name="tenant_number"  id="tenant_number" value="<?php echo $bservice->tenant_number;?>"/>
+	<input type="hidden" name="tenant_id"  id="tenant_id" value="<?php echo $bservice->tenant_Id;?>"/>
+	<input type="hidden" name="coi_date_from"  id="coi_date_from" value="<?php echo $bservice->coi_au_date_from;?>"/>
+	<input type="hidden" name="coi_type"  id="coi_type" value="<?php echo $bservice->coi_au_Ten_or_Vendor;?>"/>
+		  <label>Company Name</label>
+		  <div class="serv_ibox_row">
+			   <span class="field_error" id="serror_name"></span>
+			   <input type="text" name="company_name" id="company_name" value="<?php echo stripslashes($bservice->tenantName);?>" readonly>
+		  </div>			
+	</div>
+	<div class="service_row">
+		  <label>Expiration Date</label>
+		  <div class="serv_ibox_row">
+			   <span class="field_error" id="cerror_expiration"></span>
+			   <input type="text" name="edit_expiration_date" id="edit_expiration_date" value="<?php echo date("m/d/Y", strtotime($bservice->coi_au_date_to));?>" class="cac_date"/>
+		  </div>			
+	</div>
+	<div class="service_row">
+		  <label>Upload / Replace COI</label>
+		  <div class="serv_ibox_row">
+		        <?php if(!empty($bservice->coi_au_pdf_upload)) {?>
+		        <p>Open a PDF file <a href="<?php echo $this->baseUrl() ?>/public/coi/<?php echo $bservice->coi_au_pdf_upload; ?>" target="_blank"><?php echo $bservice->coi_au_pdf_upload; ?></a>.</p>
+			 	<?php }?>
+				<input type="file" name="equipmentmenual" id="equipmentmenual">
+                <span class="ugroupErr" id="equipmentmenual_error"></span>
+		</div>
+       	  
+	</div>	
+	
+	<div class="buttons">
+				   <button type="button" name="save_rate" id="save_rate" value="Save" onclick="updateCoiList('<?php echo $bservice->coi_au_tenant_id ;?>')">Confirm</button>
+				   <button type="button" name="cancel" id="cancel" value="Cancel" onclick="cancelEditService()">Cancel</button>
+			  </div>
+	 <?php 
+   }else{
+	   echo 'Invalid URL';
+   }
+	 ?>				  
+</div>

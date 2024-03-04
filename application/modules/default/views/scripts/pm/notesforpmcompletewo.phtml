@@ -1,0 +1,58 @@
+<style>
+    body { background: #fff; }
+    .dynamicclass { padding-bottom: 20px; overflow: hidden; }
+    .heading-2 {padding: 0;margin-bottom: 15px;margin-top: 0;}   
+    .heading-2 span {font-size: 14px;padding: 5px; color:#fff}    
+    .form-c ul {list-style:none; padding:10px;margin:0}
+    .form-c ul li { margin-bottom:10px;}
+    .form-c label {float: left;}
+    .form-c .form-cont {float: left;margin-left: 10px;}
+    .form-c input {margin:0 10px}
+    .form-c .form-cont ul li input {margin-right:10px;}
+    .form-c .form-cont input {margin:0;}
+    .form-c .form-cont p {margin-bottom:5px;min-height: 20px;}
+    .form-c li {overflow: hidden;}
+    .form-c li p {margin:0;}
+    .form-c h3 { margin-top:0;}
+    .form-c>ul {padding: 20px;}
+    .form-c .flex-divi {display: flex;}
+    .form-c .flex-divi .daily-weekly {flex:1;}
+    .daily-weekly.fix-w {max-width: 115px;}
+    .flex-sp {padding:0 38px}
+</style>
+<?php
+//print_r($this->notes);
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/pm-workorder.js');
+?>
+
+<section class="ch-form-header">
+    <h3 class="text-center">Notes / Comments </h3>         
+  <div class="container">
+      <form class="form-inline pd" onsubmit="return false">
+          <h6 class="text-center text-danger" id="building_error"></h6>
+    <div class="form-group col-sm-12">
+         <textarea name="notes" id="notes" rows="7" cols="75" class="form-control notes-textarea"><?php echo $this->notes; ?></textarea>
+      
+    </div>
+    <div class="form-group col-sm-12">
+        <div class="flr" style="margin-top: 40px;">
+        <input type="hidden" name="pm_wo_no" id="pm_wo_no" value="<?php echo $this->params['pm_wo_no']; ?>"> 
+        <button class="confirm btn btn-success" onclick="closepopup();">Cancel</button>
+        <input type="submit" class="btn btn-success" value="Save" onclick="validate_noteswo('<?php echo $this->PM_WO_Notes_ID; ?>');">
+        
+        </div>
+    </div>   
+  </form>  
+</div>
+</section>
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,398 @@
+<?php
+$roleMapper = new Model_Role();
+$roleDetail = $roleMapper->getRole();
+$role_data = array();
+foreach ($roleDetail as $rd) {
+    $role_data[$rd['roleID']] = $rd['title'];
+}
+
+$sendMapper = new Model_SendAs();
+$sendDetail = $sendMapper->getSendAs();
+$send_data = array();
+foreach ($sendDetail as $sd) {
+    $send_data[$sd['sid']] = $sd['title'];
+}
+$uinfo = $this->tenantData[0];
+//var_dump($this->tenantData);
+$tenantAccess = $this->acesshelper->checkAccess($this->roleId, $this->tenant_location);
+/* override access by custom user access if exist */
+$customeAccessmodel = new Model_UserAccess();
+$customeAccessmodeld = $customeAccessmodel->getUserCustomAccess($this->userId, $this->tenant_location);
+if ($customeAccessmodeld[0]) {
+    $tenantAccess = $customeAccessmodeld[0];
+}
+/* end overriding access */
+
+?>
+
+
+<div>
+    <?php
+    if ($tenantAccess->is_access == 0) {
+        if ($tenantAccess->is_write == 1) {
+            ?>	
+            <div class="tenant-info-div">
+                <div id="left_section">                                  
+                    <div class="field_edit_popup">
+                        <li class="required">&nbsp;</li><label>Tenant Name</label> <span>:</span>
+                        <?php //echo (!empty($uinfo->tenantName))?$uinfo->tenantName:'';  ?>
+                        <a href="#" class="tenantName" id="tenantName-<?php echo $uinfo->id; ?>" ><?php echo (!empty($uinfo->tenantName)) ? stripslashes($uinfo->tenantName) : ''; ?></a>
+                        <input type="hidden" name="role_id" id="role_id" value="9"/>
+                    </div>
+                    <div class="field_edit_popup">
+                        <li class="required">&nbsp;</li><label>Tenant Contact</label> <span style="float:left;">:</span>
+                        <a style="display:table-cell; padding: 0 0 0 3px;" href="#" class="tenantContact" id="tenantContact-<?php echo $uinfo->id; ?>" data-type="text" data-pk="<?php echo $uinfo->id; ?>" data-url="<?php echo $this->baseUrl() . '/tenant/updatetenant'; ?>" data-title="Enter Tenant Contact" data-placeholder="Required" data-name="tenantContact"><?php echo (!empty($uinfo->tenantContact)) ? stripslashes($uinfo->tenantContact) : ''; ?></a>										
+                    </div>
+
+                    <div class="field_edit_popup">
+                        <li class="required">&nbsp;</li><label>Main Contact</label> <span style="float:left;">:</span>
+                        <a style="display:table-cell; padding: 0 0 0 3px;" href="#" class="mainContact" id="mainContact-<?php echo $uinfo->id; ?>" data-type="select" data-pk="<?php echo $uinfo->id; ?>" data-url="<?php echo $this->baseUrl() . '/tenant/updatemaincontact'; ?>" data-title="Select Main Contact" data-placeholder="Required" data-name="main_contact"><?php
+                            if ($this->tenantuser) {
+                                foreach ($this->tenantuser as $tuser) {
+                                    if ($tuser->main_contact == 1) {
+                                        echo $tuser->lastName . ', ' . $tuser->firstName;
+                                    }
+                                }
+                            }
+                            ?> </a>										
+                    </div>
+
+                    <div class="field_edit_popup">
+                        <li class="required">&nbsp;</li><label>Address </label> <span style="float:left;">:</span>
+                        <div class="tu-address-div">
+                            <span style="padding: 0 0 0 3px;"><?php echo $uinfo->address1; ?></span>
+                            <span style="padding: 0 0 0 3px;"><?php echo $uinfo->address2; ?></span>											 
+                        </div>
+                    </div>	  
+
+                    <div class="field_edit_popup">
+                        <li class="required">&nbsp;</li><label>Suite</label> <span style="float:left;">:</span>
+                        <a style="display:table-cell; padding: 0 0 0 3px;" href="#" class="suite" id="suite-<?php echo $uinfo->id; ?>" data-type="text" data-pk="<?php echo $uinfo->id; ?>" data-url="<?php echo $this->baseUrl() . '/tenant/updatetenant'; ?>" data-title="Enter suite" data-placeholder="Required" data-name="suite"><?php echo (!empty($uinfo->suite)) ? $uinfo->suite : ''; ?></a>										
+                    </div>
+                    <div class="field_edit_popup">
+                        <li class="required">&nbsp;</li><label>City,State,Postal Code</label> <span style="float:left;">:</span>
+                        <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo $uinfo->city . ',  ' . $uinfo->statename . ',  ' . $uinfo->postalCode; ?></span>										
+                    </div>
+                    <div class="field_edit_popup">
+                        <li class="required">&nbsp;</li><label>Phone Number</label> <span style="float:left;">:</span>
+                        <a style="display:table-cell; padding: 0 0 0 3px;" href="#" class="phoneNumber" id="phoneNumber-<?php echo $uinfo->id; ?>" data-type="text" data-pk="<?php echo $uinfo->id; ?>" data-url="<?php echo $this->baseUrl() . '/tenant/updatetenant'; ?>" data-title="Enter Phone number" data-placeholder="Required" data-name="phoneNumber"><?php echo (!empty($uinfo->phoneNumber)) ? $uinfo->phoneNumber : ''; ?></a>										
+                    </div>
+                </div> 
+                <div id="right_section">
+                    <div class="field_edit_popup">
+                        <li class="required">&nbsp;</li><label class="tnt_baddress">Bill to Address</label> <span style="float:left;">:</span>
+                        <a style="display:table-cell;" href="#" class="billtoAddress" id="billtoAddress-<?php echo $uinfo->id; ?>" data-type="textarea" data-pk="<?php echo $uinfo->id; ?>" data-url="<?php echo $this->baseUrl() . '/tenant/updatetenant'; ?>" data-title="Enter Bill to Address" data-placeholder="Required" data-name="billtoAddress"><?php echo nl2br((!empty($uinfo->billtoAddress)) ? $uinfo->billtoAddress : ''); ?></a>										
+
+                    </div>
+                    <div class="field_edit_popup">
+                        <li class="not_required">&nbsp;</li><label>Active </label> <span>:</span>
+
+                        <!-- Anchor tag added for popover edit -->	 								
+                        <a href="#" style="display:table-cell;" class="status" id="status-<?php echo $uinfo->id; ?>" data-type="select" data-pk="<?php echo $uinfo->id; ?>" data-url="<?php echo $this->baseUrl() . '/tenant/updatetenant'; ?>" data-title="Select Status" data-placeholder="Required" data-name="status" data-value="<?php echo $uinfo->status; ?>"><?php echo ($uinfo->status) ? 'Yes' : 'No' ?></a> 
+                    </div>
+                    <div class="field_edit_popup">
+                        <li class="not_required">&nbsp;</li><label>Remove Tenant </label> <span>:</span>
+                        <span><a href="javascript:void(0);"  title="Delete" onclick="deleteTenant('<?php echo $this->tenantId; ?>')"><img src="<?php echo BASEURL . 'public/images/delete.png' ?>" /></a></span>													 										 
+                    </div>
+                    <div class="field_edit_popup">
+                        <li class="not_required">&nbsp;</li><label>Send Welcome letter all Users </label> <span>:</span>
+                        <span><a title="Send" onClick="return sendtenantemail('<?php echo $this->tenantId; ?>');" href="javascript:void(0);"><img src="<?php echo BASEURL . 'public/images/send-email.png' ?>" /></a></span>													 										 
+                    </div>
+                </div> 	
+            </div>
+            <div class="tuser-list">
+                <table width="100%" class="building_table_grid">
+                    <tr>
+                        <th width="17%">Name</th>
+                        <?php /* <th>First Name</th>	 */ ?>		
+                        <th width="23%">E-mail Address</th>
+                        <th width="7%">Cc Enabled</th>
+                        <th width="7%">Send As</th>
+                        <th width="7%">Access</th>
+                        <th width="11%">Complete Notification</th>
+                        <th width="11%">Note Notification</th>
+                        <th width="7%">Active</th>
+                        <th width="10%" style="border:none;">Action</th>
+                    </tr>
+                    <?php
+                    
+                    //print_R($tenantuser);
+                    
+                    if ($this->tenantuser) {
+                       // print_r($this->tenantuser);
+                       // die;
+                        foreach ($this->tenantuser as $tuser) {
+                            //var_dump($tuser);
+                            ?>
+                            <tr>
+                                <td ><?php echo stripslashes($tuser->lastName) . ', ' . stripslashes($tuser->firstName); ?></td>
+                                <?php /* <td><?php echo $tuser->firstName;?></td> */ ?>				 
+                                <td ><?php echo stripslashes($tuser->email); ?></td>
+                                <td ><?php echo ($tuser->cc_enable) ? 'Yes' : 'No'; ?></td>
+                                <td ><?php echo $send_data[$tuser->send_as]; ?></td>
+                                <td ><?php echo $role_data[$tuser->role_id] ?></td>
+                                <td ><?php echo ($tuser->complete_notification) ? 'Yes' : 'No'; ?></td>
+                                <td ><?php echo ($tuser->note_notification) ? 'Yes' : 'No'; ?></td>
+                                <td ><?php echo ($tuser->status) ? 'Yes' : 'No'; ?></td>
+                                <td >
+                                    <a title="Edit" class="modalbox" onclick="javascript:editNewUser('<?php echo BASEURL . 'tenant/edittuser/tuId/' . $tuser->uid; ?>');" href="#editNewUser" ><img src="<?php echo BASEURL . 'public/images/edit.png' ?>" /></a>
+                                    <a href="javascript:void(0);"  title="Delete" onclick="deleteTenantUser('<?php echo $this->tenantId; ?>', '<?php echo $tuser->uid; ?>', '<?php echo count($this->tenantuser); ?>')"><img src="<?php echo BASEURL . 'public/images/delete.png' ?>" /></a>
+                                    <a title="Send" onClick="return sendemail('<?php echo $this->tenantId; ?>', '<?php echo $tuser->uid; ?>');" href="javascript:void(0);"><img src="<?php echo BASEURL . 'public/images/send-email.png' ?>" width="25" height="25"/></a>
+                                </td>
+                            </tr>
+
+                            <?php
+                        }
+                    } else {
+                        echo '<tr><td colspan="9"> No Tenant User </td></tr>';
+                    }
+                    ?>
+                    <tr>
+                        <td class="add_record" style="border-right:1px solid #848484;" colspan="9"> 
+                            <a class="modalbox" onclick="javascript:addNewUser('<?php echo BASEURL . 'tenant/addtuser/tId/' . $uinfo->id; ?>');" href="#addNewUser" >Add New User </a>
+                        </td>
+                    </tr>			
+                </table>
+            </div>
+        <?php } else { ?>
+            <div class="tenant-info-div">
+                <div id="left_section">                                  
+                    <div class="field_edit_popup">
+                        <li class="required">&nbsp;</li><label>Tenant Name</label> <span>:</span>
+                        <?php //echo (!empty($uinfo->tenantName))?$uinfo->tenantName:'';  ?>
+                        <span style="padding: 0 0 0 3px;"><?php echo (!empty($uinfo->tenantName)) ? $uinfo->tenantName : ''; ?></span>
+                        <input type="hidden" name="role_id" id="role_id" value="9"/>
+                    </div>
+                    <div class="field_edit_popup">
+                        <li class="required">&nbsp;</li><label>Tenant Contact</label> <span style="float:left;">:</span>
+                        <span style="padding: 0 0 0 3px;"><?php echo (!empty($uinfo->tenantContact)) ? $uinfo->tenantContact : ''; ?></span>										
+                    </div>
+                    <div class="field_edit_popup">
+                        <li class="required">&nbsp;</li><label>Main Contact</label> <span style="float:left;">:</span>
+                        <span style="padding: 0 0 0 3px;"><?php
+                            if ($this->tenantuser) {
+                                foreach ($this->tenantuser as $tuser) {
+                                    if ($tuser->main_contact == 1) {
+                                        echo stripslashes($tuser->lastName) . ', ' . stripslashes($tuser->firstName);
+                                    }
+                                }
+                            }
+                            ?></span>										
+                    </div>
+                    <div class="field_edit_popup">
+                        <li class="required">&nbsp;</li><label>Address </label> <span style="float:left;">:</span>
+                        <div class="tu-address-div">
+                            <span style="padding: 0 0 0 3px;"><?php echo $uinfo->address1; ?></span>
+                            <span style="padding: 0 0 0 3px;"><?php echo $uinfo->address2; ?></span>											 
+                        </div>
+                    </div>	  
+
+                    <div class="field_edit_popup">
+                        <li class="required">&nbsp;</li><label>Suite</label> <span style="float:left;">:</span>
+                        <span style="padding: 0 0 0 3px;"><?php echo (!empty($uinfo->suite)) ? $uinfo->suite : ''; ?></span>										
+                    </div>
+                    <div class="field_edit_popup">
+                        <li class="required">&nbsp;</li><label>City,State,Postal Code</label> <span style="float:left;">:</span>
+                        <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo $uinfo->city . ',  ' . $uinfo->statename . ',  ' . $uinfo->postalCode; ?></span>										
+                    </div>
+                    <div class="field_edit_popup">
+                        <li class="required">&nbsp;</li><label>Phone Number</label> <span style="float:left;">:</span>
+                        <span style="padding: 0 0 0 3px;"><?php echo (!empty($uinfo->phoneNumber)) ? $uinfo->phoneNumber : ''; ?></span>										
+                    </div>
+                </div> 
+                <div id="right_section">
+                    <div class="field_edit_popup">
+                        <li class="required">&nbsp;</li><label class="tnt_baddress">Bill to Address</label> <span style="float:left;">:</span>
+                        <span style="padding: 0 0 0 3px;"><?php echo nl2br((!empty($uinfo->billtoAddress)) ? $uinfo->billtoAddress : ''); ?></span>										
+
+                    </div>
+                    <div class="field_edit_popup">
+                        <li class="not_required">&nbsp;</li><label>Active </label> <span>:</span>
+                        <span><?php echo ($uinfo->status) ? 'Yes' : 'No'; ?></span>													 										 
+                    </div>			  
+                </div> 	
+            </div>
+            <div class="tuser-list">
+                <table width="100%" class="building_table_grid">
+                    <tr>
+                        <th width="19%">Name</th>
+                        <?php /* <th>First Name</th>	 */ ?>		
+                        <th width="25%">E-mail Address</th>
+                        <th width="8%">Cc Enabled</th>
+                        <th width="8%">Send As</th>
+                        <th width="8%">Access</th>
+                        <th width="12%">Complete Notification</th>
+                        <th width="12%">Note Notification</th>
+                        <th width="8%">Active</th>
+                        <?php /* <th style="border:none;">Action</th> */ ?>
+                    </tr>
+                    <?php
+                    if ($this->tenantuser) {
+                        foreach ($this->tenantuser as $tuser) {
+                            //var_dump($tuser);
+                            ?>
+                            <tr>
+                                <td><?php echo $tuser->lastName . ', ' . $tuser->firstName; ?></td>
+                                <?php /* <td><?php echo $tuser->firstName;?></td> */ ?>				 
+                                <td><?php echo stripslashes($tuser->email); ?></td>
+                                <td><?php echo ($tuser->cc_enable) ? 'Yes' : 'No'; ?></td>
+                                <td><?php echo $send_data[$tuser->send_as]; ?></td>
+                                <td><?php echo $role_data[$tuser->role_id] ?></td>
+                                <td><?php echo ($tuser->complete_notification) ? 'Yes' : 'No'; ?></td>
+                                <td><?php echo ($tuser->note_notification) ? 'Yes' : 'No'; ?></td>
+                                <td><?php echo ($tuser->status) ? 'Yes' : 'No'; ?></td>
+                                <?php /* <td>
+                                  <a title="Edit" href="<?php echo BASEURL.'tenant/edittuser/tuId/'.$tuser->uid;?>" ><img src="<?php echo BASEURL . 'public/images/edit.png'?>" /></a>
+                                  <a href="javascript:void(0);"  title="Delete" onclick="deleteTenantUser('<?php echo $this->tenantId;?>','<?php echo $tuser->uid;?>','<?php echo count($this->tenantuser); ?>')"><img src="<?php echo BASEURL . 'public/images/delete.png'?>" /></a>
+                                  <a title="Send" onClick="return sendemail('<?php echo $this->tenantId;?>','<?php echo $tuser->uid;?>');" href="javascript:void(0);"><img src="<?php echo BASEURL . 'public/images/send-email.png'?>" width="25" height="25"/></a>
+                                  </td>
+                                 */ ?>
+                            </tr>
+
+                            <?php
+                        }
+                    } else {
+                        echo '<tr><td colspan="8"> No Tenant User </td></tr>';
+                    }
+                    ?>						
+                </table>
+            </div>
+        <?php } ?>	 
+        <?php
+    } else {
+        echo 'You don\'t have access for this module.';
+    }
+    ?> 
+</div>
+<script type="text/javascript">
+    var checkTenaant = '';
+    $(document).ready(function () {
+
+        $.fn.editable.defaults.mode = 'popup';
+        /*$('.tenantName').editable({
+         validate: function(value) {
+         if($.trim(value) == '') return 'This field is required';
+         if(value!=''){
+         checkExistTenant(value);
+         alert(checkTenaant);
+         if(!checkExistTenant(value))return 'This tenant is already in use.';
+         }
+         }
+         });*/
+        $('.tenantName').editable({
+            validate: function (value) {
+                if ($.trim(value) == '')
+                    return 'This field is required';
+            },
+            type: 'text',
+            url: baseUrl + 'tenant/updatetenantname/building/' + '<?php echo $uinfo->buildingId; ?>',
+            pk: '<?php echo $uinfo->id; ?>',
+            name: 'tenantName',
+            title: 'Enter tenant name',
+            success: function (response, newValue) {
+                if (!response) {
+                    return "Unknown error!";
+                }
+
+                if (response === 'true') {
+                    return "This tenant is already in use.";
+                }
+            }
+        });
+
+
+        $('.tenantContact').editable({
+            validate: function (value) {
+                if ($.trim(value) == '')
+                    return 'This field is required';
+            }
+        });
+
+        $('.mainContact').editable({
+            source: [
+<?php
+if ($this->tenantuser) {
+    foreach ($this->tenantuser as $tuser) {
+        //var_dump($tuser);
+        ?>
+                        {value: '<?php echo $tuser->uid; ?>', text: '<?php echo $tuser->lastName . ', ' . $tuser->firstName; ?>'},
+    <?php
+    }
+}
+?>
+            ],
+            validate: function (value) {
+                if ($.trim(value) == '')
+                    return 'This field is required';
+            }
+        });
+
+        $('.phoneNumber').editable({
+            validate: function (value) {
+                if ($.trim(value) == '')
+                    return 'This field is required';
+                var isValid = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(value);
+                if (!isValid) {
+                    return 'The \'Phone Number\' in the xxx.xxx.xxxx format';
+                }
+
+            }
+        });
+
+
+        $('.suite').editable({
+            validate: function (value) {
+                if ($.trim(value) == '')
+                    return 'This field is required';
+            }
+        });
+
+        $('.city').editable({
+            validate: function (value) {
+                if ($.trim(value) == '')
+                    return 'This field is required';
+            }
+        });
+
+        $('.status').editable({
+            source: [
+                {value: 1, text: 'Yes'},
+                {value: 0, text: 'No'},
+            ],
+            validate: function (value) {
+                if ($.trim(value) == '')
+                    return 'This field is required';
+            }
+        });
+
+
+        $('.billtoAddress').editable({
+            validate: function (value) {
+                if ($.trim(value) == '')
+                    return 'This field is required';
+            }
+        });
+    });
+
+    function checkExistTenant(tName) {
+        //var tenantName = $('#tenantName').val();
+        var building = '<?php echo $uinfo->buildingId; ?>';
+        var tId = '<?php echo $uinfo->id; ?>';
+        if (tName != '') {
+            $.ajax({
+                url: baseUrl + "tenant/checkexisttenant",
+                type: "post",
+                //datatype    : 'json',
+                data: {tenantName: tName, building: building, tId: tId},
+                success: function (data) {
+                    if (data == 'false') {
+                        checkTenaant = 'new val';
+                    } else {
+                        checkTenaant = 'ntrue';
+                    }
+                }
+            });
+        }
+
+    }
+</script>

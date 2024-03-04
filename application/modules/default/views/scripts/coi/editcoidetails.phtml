@@ -1,0 +1,93 @@
+<?php
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/coidetails.js');
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/jquery/multiple-select1.js');
+echo $this->headLink()->appendStylesheet($this->baseUrl() . '/public/css/multiple-select.css');
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/ckeditor/ckeditor.js');
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/ckeditor/adapters/jquery.js');
+
+?>
+<div class="container-right" id="user-Complete" >
+
+    <div class="gridContainer" >       
+
+        <section style="z-index:9999;min-height:525px;" class="w-48 fr ch-home-form1 ch-home-form" id="first_step">
+            <section class="ch-form-header">
+                <h3>Edit Coi Details</h3>
+            </section>
+            <div class="tableGrid" style="padding:0px 0 20px 0">
+                <div id="first" class="step">
+                    <form method="post"  class="bbq">
+                        <div style="padding: 0px 0px 15px 20px; text-align:center;"><h4 style="font-weight:bold">Edit Coi Details</h4></div>
+                        <div id="report_nameDiv" class="row">
+						    <input type="hidden" id="cid" name="cid" value="<?php echo $this->coiDetails->coi_au_details_ID; ?>">
+							<input type="hidden" id="bid" name="bid" value="<?php echo $this->coiDetails->Building_ID; ?>">
+							<input type="hidden" id="uniquecc" name="uniquecc" value="<?php echo $this->coiDetails->uniqueCostCenter; ?>">
+                            <label for="report_name">Certificate Holder information: <span class="required">*</span></label>
+                            <span id="holder_name_error" class="uofficeErr"></span>
+                            <textarea class="input_field_12em" name="certificate_holder" id="certificate_holder"  style="width: 300px;
+    height:90px;"><?php echo $this->coiDetails->coi_au_details_holder; ?></textarea>
+                        </div>
+                        <div id="report_nameDiv" class="row">
+                            <label for="report_name">Description of Special Terms: <span class="required">*</span></label>
+                            <span id="description_name_error" class="uofficeErr"></span>
+                            <textarea class="input_field_12em et_editor" name="certificate_description" id="certificate_description" style="width: 300px;"><?php echo $this->coiDetails->coi_au_details_specialterms; ?></textarea>
+                           
+                        </div>
+
+                        <div id="report_nameDiv" class="row">
+                            <label for="report_name">Send Certificate To: <span class="required">*</span></label>
+                            <span id="send_to_error" class="uofficeErr"></span>
+                            <textarea class="input_field_12em " name="send_certificate_to" id="send_certificate_to" style="width: 300px;
+				height:90px;"><?php echo $this->coiDetails->coi_au_details_send_certificate_to; ?></textarea>
+                        </div>
+
+                        <div class="confirmBtn float_none">
+                            <input type="button" value="Save" id="updatenewcoidetails" name="add" class="confirm next" onclick="updateCoidetails()" />
+                            <input type="button" value="Cancel" name="cancel" class="cancel" onclick="cancelReport()" />
+                        </div>
+                    </form>                        
+                </div>
+            </div>
+        </section>  
+
+    </div></div>
+<div class="loader" style="display:none;"><img src="<?php echo BASEURL . 'public/images/loader.gif'; ?>"></div>
+<script>
+    $(function () {
+        $('#report_option').change(function () {
+            console.log($(this).val());
+        }).multipleSelect({
+            width: '100%'
+        });
+        $('.multicheckdd').click(function () {
+            $(".multicheckdd:eq(0)").prop("checked", false);
+            var selectedoption = $(".ms-choice span").text();
+            var res = selectedoption.replace(/Select Option,/g, "");
+            $(".ms-choice span").text(res);
+        });
+
+        $('.ms-choice').click(function () {
+            $(".ms-drop ul li:eq(1)").css("display", "none");
+        });
+        CKEDITOR.disableAutoInline = false;
+        CKEDITOR.replace('certificate_description', {
+            //removePlugins: 'toolbar,elementspath',
+            height: ['70px'],
+        });
+        CKEDITOR.replace('certificate_holder', {
+            //removePlugins: 'toolbar,elementspath',
+           // allowedContent: 'p h1 h2 strong em; a[!href]; img[!src,width,height];',
+            //width: ['250px'],
+            height: ['70px'],
+
+        });
+        CKEDITOR.replace('send_certificate_to', {
+            //removePlugins: 'toolbar,elementspath',
+            //allowedContent: 'p h1 h2 strong em; a[!href]; img[!src,width,height];',
+            //width: ['250px'],
+            height: ['70px'],
+
+        });  
+
+    });
+</script>

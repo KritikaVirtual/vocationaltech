@@ -1,0 +1,71 @@
+.main_log{width:100%; margin:0px; padding:60px 0 0 0; color:#fff; font-family:Arial, Helvetica, sans-serif; font-size:12px;
+
+}
+.login_form{width:100%; max-width:350px; margin:30px auto; padding:13px 30px; background-color: rgba(255, 255, 255, 0.14);}
+.main_log p{text-align:center;}
+.my_logo{text-align:center; height:50px;}
+
+.my_form{width:100%; height:auto; margin:0px; padding:ppx;}
+.my_form h1{font-weight:normal; font-size:16px;}
+.inp_box{width:95.5%; border:1px solid #CCC; color:#80888b; margin:0 0 10px; padding:7px 2%;}
+
+.log_btn input{width:90px; background-color:#2ecc71; padding:8px 8px; border:none; float:right; color:#fff; cursor:pointer; border: 1px solid #ffffff;}
+
+.all_p {clear: both; margin: 50px 0 0; border-bottom: 1px dotted #dddddd; padding: 0 0 10px;}
+.all_p h2{font-weight:normal; font-size:16px;}
+.all_p h2 a{color:#3b609c; text-decoration:none;}
+
+.my_logo img {height: auto; width: 300px;}
+.my_form > div {padding-top: 0 !important;}
+.error {margin: 0 !important; padding: 0; width: 103% !important;}
+.error > div {float: left; font-size: 14px;  margin: 0; padding: 0 !important; text-align: center; width: 93%; color:#f00;}
+.layout-backgorund{
+background:#3281BC;
+}
+
+
+a img{border:none; outline:none;}
+
+
+#username_field > label {
+    float: left;
+    font-size: 17px;
+    margin: 0 0 3px;
+}
+
+
+#password_field > label {
+    float: left;
+    font-size: 17px;
+    margin: 0 0 3px;
+}
+span.log_er{
+    color: #ff0000;
+    display: block;
+    margin: 0;
+    padding: 0;
+	font-size:17px;
+}
+
+.uemailErr{color:#f00; padding:0 0 3px;}
+
+#forgetpassword td {
+    width: 300px;
+}
+
+
+.my_agn_div select {
+    width: 365px !important;
+}
+
+.pagination div a {
+    color: #ffffff !important;
+    display: inline;
+    float: none !important;
+}
+
+.disabled {
+    color: #ff0000;
+}
+
+.cat-adiv select {width: 120px!important;}

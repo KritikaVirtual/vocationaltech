@@ -1,0 +1,26 @@
+<div id="work_description_div">
+	<h1>Upload Attachment File</h1>
+	<form name="upload_file" id="upload_file" enctype="multipart/form-data" action="<?php echo $this->baseUrl().'/complete/uploadfilecomplete';?>" method="post">
+			<div class="cw_row">
+				<label>File Title</label>
+				<div class="cw-ibox-row">
+					<span class="field_error" id="cwerr_title"></span>
+					<input type="text" name="file_title" id="file_title"/>
+					<input type="hidden" name="woId" id="woId" value="<?php echo $this->woId; ?>"/>
+					<input type="hidden" name="bId" id="bId" value="<?php echo $this->bId; ?>"/>
+					<input type="hidden" name="wnum" id="wnum" value="<?php echo $this->wnum; ?>"/>
+				 </div>	
+			</div>	
+			<div class="cw_row">
+				<label>Select File</label>
+				<div class="cw-ibox-row">
+					<span class="field_error" id="cwerr_file"></span>
+					<input type="file" name="wo_file" id="wo_file"/>
+				 </div>	
+			</div>	
+			<div class="buttons">
+				   <button type="button" name="upload" id="upload" value="Upload" onclick="uploadFile()">Upload</button>
+				   <button type="button" name="cancel" id="cancel" value="Cancel" onclick="cancelFile()">Cancel</button>
+			</div>
+	</form>
+</div>

@@ -1,0 +1,79 @@
+<?php	
+	 $vendorModel = new Model_Vendor();
+	 $vendorList = $vendorModel->getVendorListByBid($this->bId);
+	 
+	 $default_markup = 0;
+	 $default_tax = 0;
+	 $wpModel = new Model_WoParameter();
+	 $wpDetails = $wpModel->getWoParameterByBid($this->bId); 
+	 if($wpDetails){
+	 if($wpDetails[0]['override_markup']==1) {
+		 $default_markup = $wpDetails[0]['dft_markup'];
+		 }
+		 $default_tax = $wpDetails[0]['auto_charge'];
+	 }
+	 	
+?>
+<div id="ct_outside_fm_div">
+	<h1>Add New Outside Services Charge(s)</h1>	
+	<div class="message">
+		<span id="success_msg" class="success"></span>
+		<span id="error_msg" class="error"></span>
+	</div>
+	<div id="outside_form_ data">
+		 <div class="cw_row">
+			 <label>Vendor Name</label>
+			 <div class="cw-ibox-row">
+				 <span class="field_error" id="cwerr_vendor"></span>
+				 <select name="vendor" id="vendor">
+					 <option value="">-- Select --</option>
+					 <?php
+					 if($vendorList){ 
+					     foreach ($vendorList as  $vl) { ?>
+							<option value="<?php echo $vl['vid']; ?>">
+								<?php echo stripslashes($vl['company_name']); ?>
+							</option>
+					<?php }
+					} ?>
+				 </select>
+			 </div>
+		 </div>
+		 <div class="cw_row">
+			  <label>Job Cost</label>
+			  <div class="cw-ibox-row">
+				 <span class="field_error" id="cwerr_cost"></span>				 
+					   <input type="text" name="job_cost" id="job_cost" onkeypress="return isNumber(event)">			 
+			  </div>
+		 </div>
+		 <div class="cw_row">
+			  <label>Markup(%)</label>
+			  <div class="cw-ibox-row">
+				 <span class="field_error" id="cwerr_markup"></span>				 
+					   <input type="text" name="markup" id="markup" onkeypress="return isNumber(event)" value="<?php echo $default_markup;?>">			 
+			  </div>
+		 </div>		 	 
+		 <div class="cw_row">
+			 <label>Tax</label>
+			 <div class="cw-ibox-row">				 
+				   <select name="show_tax" id="show_tax" onchange="selectTax(this.value)">
+					   <option value="1" <?php echo ($default_tax=='1')?'selected="selected"':''?>>Yes</option>
+					   <option value="0" <?php echo ($default_tax=='0')?'selected="selected"':''?>>No</option>
+				   </select>
+				  <input type="hidden" name="tax" id="tax" value="<?php echo $default_tax;?>"/> 
+			 </div>
+		 </div>
+		 <div class="cw_row">
+			  <label class="job_desc_lbl">Job Description/Work Completed(Optional)</label>
+			  <div class="cw-ibox-row">
+				   <span class="field_error" id="cwerr_job_desc"></span>
+				   <textarea name="job_description" id="job_description" rows="5" cols="45"></textarea>
+					   			 
+			  </div>
+		 </div>	
+	</div>
+	<div class="buttons">
+	               <input type="hidden" id="addtempoutside" value="">
+				   <button type="button" name="save_outside" id="save_outside" value="Save" onclick="saveOutSideDataTemp('<?php echo $this->woId;?>')">Save</button>
+				   <button type="button" name="cancel" id="cancel" value="Cancel" onclick="cancelOutside()">Cancel</button>
+	  </div>
+</div>

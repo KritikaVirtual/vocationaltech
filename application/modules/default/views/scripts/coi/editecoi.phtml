@@ -1,0 +1,68 @@
+<?php
+
+$reportModel = new Model_Report();
+$reportDetailLinks = '';
+$dashboard_menu = array(50);
+$reportDetailLinks = $reportModel->getReport($this->custID, $dashboard_menu);
+
+$dashboard_menu2 = array(52);
+$vTTemplateNameLinks = $reportModel->getReport($this->custID, $dashboard_menu2);
+
+$dashboard_menu3 = array(53);
+$vTTypeDesignationNameLinks = $reportModel->getReport($this->custID, $dashboard_menu3);
+?>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<style>
+    .bs-example{
+        margin: 20px;
+    }
+</style>
+<div class="container-right " style="padding: 10px;
+    margin-left: 250px;" >
+
+<h1>Edite</h1>
+<?php
+
+//print_r($this->editeciodata);
+
+
+
+?>
+
+<div style="width: 100%; height: auto;">
+
+
+	<?php $id= $this->editeciodata['coi_vt_default_ID'];?>
+   <form name="emailtemplate" id="template_form" action="<?php echo BASEURL . 'coi/updatecio/id/'. $id;?>" method="post">
+<div style="float: left; width: 80%; padding:10px;">
+<label>Description :</label>
+
+	<input type="text" name="coi_vt_default_description" value="<?php echo  $this->editeciodata['coi_vt_default_description'];?>">
+
+
+<label>  Tenant :</label> <input type="text" name="coi_vt_defaults_Tenant" value="<?php echo number_format( $this->editeciodata['coi_vt_defaults_Tenant']);?>">
+
+
+ <label>   Vender :</label>
+ <input type="text" name="coi_vt_defaults_Vendor" value="<?php echo  number_format($this->editeciodata['coi_vt_defaults_Vendor']);?>">
+
+  
+
+	
+	</div>
+
+	<div style="float: right; width: 37%; padding: 20px; ">
+<input type="submit" name="submit" value="Update">
+
+	</div>
+
+
+
+	</div>
+
+ </form>
+</div>

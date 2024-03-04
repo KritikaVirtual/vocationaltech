@@ -1,0 +1,74 @@
+<?php 
+    echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/ckeditor/ckeditor.js');
+
+    echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/ckeditor/adapters/jquery.js');
+
+    echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/emails.js');
+
+
+    $roles = $this->companyListing['roles'];
+    
+?>
+<div class="container-right">
+    <section style="z-index:9999" class="w-48 fr ch-home-form">
+        <section class="ch-form-header ">
+            <h3>Edit Email Template </h3>
+        </section>
+        <div class="gridContainer">
+        <div class="tableGrid">
+            <div class="message">
+                <span id="success_msg"></span>
+                <span id="error_msg"></span>
+            </div>             
+             <div id="email_template_div">
+                 <form name="emailtemplate" id="template_form" action="<?php echo BASEURL.'emails/updateemail';?>" method="post">
+                        <input type="hidden" id="email_id" name="email_id" value="<?php echo $this->emailData['id'];?>"/>
+                         <div class="row">
+                        <label>Title<span class="required">*</span></label><span class="ufirstErr" id="title-error"></span> <div class="email_input"> <input type="text" id="title" class="" name="title" value="<?php echo $this->emailData['email_title'];?>"/>  
+                             </div> 
+                         </div>
+ <div class="row">
+
+                        <label>Subject<span class="required">*</span></label> <span class="ufirstErr" id="subject-error"></span>  <div class="email_input"><input type="text"  id="subject" class="" name="subject" value="<?php echo $this->emailData['email_subject'];?>">  
+                          
+  </div> 
+                         </div>
+ <div class="row">
+                        <label >Role<span class="required">*</span></label>
+                        <div class="email_input">
+                        <select  name="user_role" id="user_role">
+                        <?php foreach ($this->roleDetails as $key => $value) { if($value['roleID'] != 1){?>
+                            <option value="<?php echo $value['roleID']; ?>" <?php if($value['roleID']==$this->emailData['role']) echo 'selected';?>>
+                                <?php echo $value['title']; ?>
+                            </option>
+                        <?php }} ?>
+                        </select>
+  </div> 
+                         </div>
+ <div class="row_editor">
+
+                        <label style="clear:left;">Content<span class="required">*</span></label><span class="ufirstErr" id="content-error"></span>   
+                       <div class="et_editor"> <textarea id="email_content" name="email_content"><?php echo $this->emailData['email_content'];?></textarea>
+                        
+             </div> 
+                         </div>           
+                        <div class="confirmBtn float_none">
+                            <input type="button" value="Update" name="save" class="confirm" id="saveEmailData">
+                            <input type="button" value="Cancel" name="cancel" class="cancel" onclick="window.location.href='<?php echo BASEURL.'emails/list'?>'">
+                        </div>
+                   </form>  
+               </div>   
+         </div>
+      </div>
+  </section>
+</div>
+
+<script type="text/javascript">
+
+CKEDITOR.disableAutoInline = true;
+
+$( document ).ready( function() {
+    $( '#email_content' ).ckeditor(); // Use CKEDITOR.replace() if element is <textarea>.
+} );
+
+</script>

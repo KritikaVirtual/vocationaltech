@@ -1,0 +1,568 @@
+<?php $alltemplates = $this->alltemplates; ?>
+<div class="container-right task-popup task-section">
+    <div class="message">               
+        <span class="error-txt" style="color:red; text-align:center;"></span>
+    </div>
+    <section style="z-index:9999" class="w-48 fr ch-home-form form-inline" id="first">
+        <section class="ch-form-header ">
+            <h3>Create Multiple Equipment </h3>
+        </section>
+
+        <div class="col-md-6 col-sm-6 col-xs-6">
+            <div class="form-group">
+                <label class="control-label col-sm-6 col-md-6 col-xs-6">Equipment Name<span class="required">*</span></label>
+<span class="ugroupErr" id="equipmentname_error"></span>
+            </div>
+            
+        </div>
+        <div class="col-md-6 col-sm-6 col-xs-6">
+            <div class="form-group">
+                <label class="control-label col-sm-6 col-md-6 col-xs-6">Attach Template<span class="required">*</span></label>
+
+            </div>
+            <span class="ugroupErr" id="attachtemplate_error"></span>
+        </div>
+        <div class="col-md-6 col-sm-6 col-xs-6">
+            <div class="form-group">
+                <input class="input-box-cstm" list="browsers" id="equipmentname" name="equipmentname" maxlength="50" placeholder="Create New Equipement" onchange="getTemplate();">
+                <datalist id="browsers">
+
+                    <?php foreach ($this->EquipmentName as $equip): ?>
+                        <option  id="<?php echo $equip->AU_Equipment_Name_ID; ?>" value="<?php echo $equip->AU_Equipment_Name; ?>">
+                        <?php endforeach; ?>
+                </datalist>
+            </div>
+        </div>
+        <div class="col-md-6 col-sm-6 col-xs-6">
+            <div class="form-group">
+                <select name="level" class="form-control select-custom" id="attach_template" name="attach_template" onchange="attach_template()"> 
+                    <option value="-1">Please Select</option>
+                    <?php foreach ($alltemplates as $data): ?>
+                        <option value="<?php echo $data['desig_id']; ?>"><?php echo $data['TemplateName'] . '&nbsp;|&nbsp;' . $data['TypeDesignation'] . '&nbsp;&nbsp;' . substr($data['TypeDescritpion'], 0, 20); ?> </option>
+                    <?php endforeach; ?>
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-6 col-sm-6 col-xs-6">
+            <div class="form-group">
+                <label class="control-label col-sm-6 col-md-6 col-xs-6">Number of Unit(s) per floor<span class="required">*</span></label>
+                <input type="text" name="unit" id="unit" maxlength="3">
+
+            </div>
+            <span class="ugroupErr" id="unit_error" ></span>
+            <div class="form-group">
+                <label class="control-label col-sm-6 col-md-6 col-xs-6">Number of Floor(s)<span class="required">*</span></label>
+                <input type="text" name="floor" id="floor" maxlength="3">
+                <span class="ugroupErr" id="floor_error" ></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-6 col-md-6 col-xs-6">Location<span class="required">*</span></label>
+                <input type="text" name="location" id="location" maxlength="50">
+                <span class="ugroupErr" id="location_error" ></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-6 col-md-6 col-xs-6">Serial number</label>
+                <input type="text" name="serialnumber" id="serialnumber" maxlength="50">
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-6 col-md-6 col-xs-6">Make / Model</label>
+                <input type="text" name="makemodel" id="makemodel" maxlength="50">
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-6 col-md-6 col-xs-6">In Service Date</label>
+                <input type="text" class="date-picker-with-old" name="inservicedate" id="inservicedate">
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-6 col-md-6 col-xs-6">Note:</label>
+                <!--<input type="text" name="note" id="note">-->
+                <textarea name="note" id="note" rows="4"></textarea>
+            </div>
+            
+        </div>
+        <div class="col-md-6 col-sm-6 col-xs-6">
+            <div class="form-group">
+                <label class="control-label col-sm-6 col-md-6 col-xs-6">Status</label>
+                <select name="status" id="status">
+                    <option value="1">Active</option>
+                    <!--<option value="1">Deactive</option>-->
+                </select>
+            </div>
+
+            <div class="form-group">
+                <div class="viewimage">
+                    <!--<img style="width: 178px;height: 247px;margin-bottom: 6px;" src="<?php //echo $this->baseUrl(); ?>/public/pm/blank.jpg">-->
+                    <img style="width: 175px;height: 175px;margin-bottom: 6px;" src="<?php echo $this->baseUrl(); ?>/public/pm/blank.jpg">
+                </div>
+                <form id="image1"  action="" method="post"  enctype="multipart/form-data">
+                    <input type="file" name="file" id="file">
+                    <span class="ugroupErr" id="file_error" ></span>
+                    <input type="submit" value="Upload" class="submit" style="display:none;"  />
+                </form>
+                <input type="hidden" name="imagename" id="imagename">
+            </div>
+            
+            <div class="form-group">
+                <label class="control-label col-sm-6 col-md-6 col-xs-6">Equipment Manual</label>
+                <input type="file" name="equipmentmenual" id="equipmentmenual">
+                <span class="ugroupErr" id="equipmentmenual_error" ></span>
+            </div>
+        </div>
+
+        <div class="col-md-12 col-sm-12 col-xs-12">
+        <button class='confirm active' id='task-btn' onclick='view_task_section();'> Task </button><button class='confirm' id='reading-btn' onclick='view_reading_section();'> Reading </button>
+        </div>
+        <div class="scroll-y">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="task-reading-butttn" id="data-available" style='display:none;'></div>
+            <div class="tempalte-detail-view" id="tempalte-detail-view"> Template Task and Reading View  </div>
+        </div>
+        </div>
+
+        <div class="col-md-12 col-sm-12 col-xs-12 height_20" style="text-align: center;">
+            <input type="hidden" name="action" id="action" value="add">
+            <button class="confirm" onclick="closepopup();">Cancel</button>
+            <!--<button class="confirm" onclick="addequipmentcan();">Cancel</button>-->
+            <button class="confirm" onclick="validatemultipleequipment('add');">Next</button>
+
+        </div> 
+    </section>
+
+
+    <!-- Next Step section start -->
+
+    <section style="z-index:9999" class="w-48 fr ch-home-form form-inline" id="second">
+        <section class="ch-form-header ">
+            <h3>Create Multiple Equipment </h3>
+        </section>
+
+        <div class="col-md-6 col-sm-6 col-xs-6">
+            <div class="form-group">
+                <label class="control-label col-sm-6 col-md-6 col-xs-6">Equipment Name </label>
+                <div id="viewEquipment"></div>
+            </div>
+        </div>
+        <div class="col-md-6 col-sm-6 col-xs-6">
+            <div class="form-group">
+                <label class="control-label col-sm-6 col-md-6 col-xs-6">Attach Template</label>
+                <div id="viewAttach"></div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-sm-6 col-xs-6">
+            <div class="form-group">
+                <label class="control-label col-sm-6 col-md-6 col-xs-6">Number of Unit(s) per floor:</label>
+                <div id="viewUnit"></div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-6 col-md-6 col-xs-6">Number of Floor(s):</label>
+                <div id="viewFlor"></div>
+            </div>
+
+            Default all Start Dates to:
+            <input type="text" class="date-picker" name="startdate" id="startdate">
+            
+            <button class="confirm" onclick="getDateUpdate();">Update</button>
+            <span class="ugroupErr" id="startdate_error"></span>
+        </div>
+        
+        <div class="col-md-6 col-sm-6 col-xs-6">
+            <div class="form-group">
+                <label class="control-label col-sm-6 col-md-6 col-xs-6">Status:</label>
+                <div id="viewStatus"></div>
+            </div>
+            <input type="radio" name="assignto" id="assignto1" checked="checked" onclick="disableEnableAssign()">
+            Assign all Task(s) and Reading(s) To:
+            <select name="group_id" id="assignto" onchange="changeGroupEmailId();">
+                <?php foreach ($this->EmailGroup as $Emails): ?>
+                    <option value="<?php echo $Emails['id']; ?>"><?php echo $Emails['group_name']; ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        <div class="col-md-6 col-sm-6 col-xs-6"></div>
+
+        <div class="side_form col-md-6 col-sm-6"> 
+            <div class="form-group">
+                <input type="radio" name="assignto" id="assignto2" value="" onclick="disableEnableVendor()">
+                Maintained by outside vendor: 
+            </div> 
+        </div>
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="row form-wrap" >
+                <div class="col-md-6 col-sm-6 col-xs-12 outside-detail">
+
+                    Outside vender name:
+                    <select name="venderid" id="venderid" class="input-wrap" onchange="getvenderdetails();">
+                        <option value="">Please Select</option>
+                        <?php foreach ($this->VendorList as $vender): ?>
+                            <option value="<?php echo $vender['vid']; ?>"><?php echo $vender['company_name']; ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <br> 
+                    Email Distribution Group:
+                    <select name="groupid" id="groupid" class="input-wrap" onchange="outsiderchangeGroupEmailId();">
+                        <!--                    <option value="">Please Select</option>-->
+                        <?php foreach ($this->EmailGroup as $Emails): ?>
+                            <option value="<?php echo $Emails['id']; ?>"><?php echo $Emails['group_name']; ?></option>
+                        <?php endforeach; ?>
+                    </select>             
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-6"> 
+                    <div class="main-form-box">
+                        <div class="form-group form-grup-csttm">
+                            <div class="col-md-8 col-sm-4 col-xs-12">
+                                <label>Name : </label>
+                            </div>
+                            <div class="col-md-6 col-sm-8 col-xs-12">
+                                <div id="vname" class="vdata"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-8 col-sm-4 col-xs-12">
+                                <label>Email : </label>
+                            </div>
+                            <div class="col-md-6 col-sm-8 col-xs-12">
+                                <div id="vemail" class="vdata"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-8 col-sm-4 col-xs-12">
+                                <label>Cell Number : </label>
+                            </div>
+                            <div class="col-md-6 col-sm-8 col-xs-12">
+                                <div id="vcell" class="vdata"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-8 col-sm-4 col-xs-12">
+                                <label>Address : </label>
+                            </div>
+                            <div class="col-md-6 col-sm-8 col-xs-12">
+                                <div id="vaddress" class="vdata"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-8 col-sm-4 col-xs-12">
+                                <label>Contract : </label>
+                            </div>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <input type="file" name="Contract" id="Contract" class="input-wrap" >
+                            </div>
+                        </div>
+
+                        <span class="ugroupErr" id="Contract_error"></span>
+
+                    </div>
+                </div>
+            </div> 
+        </div>
+
+        <div class="col-md-12 col-sm-12 col-xs-12">
+
+            <div class="tempalte-detail-view-change" id="tempalte-detail-view-change" >
+
+            </div>
+        </div>
+
+        <div class="col-md-12 col-sm-12 col-xs-12 " style="text-align: center;"> 
+            <input type="hidden" name="action" id="action" value="add">
+            <input type="hidden" name="build_id" id="build_id" value="<?php echo $this->build_id; ?>">
+            <button class="confirm" onclick="backequipment();">Back</button>
+            <button class="confirm" onclick="closepopup();">Cancel</button>
+            <!--<button class="confirm" onclick="addequipmentcan();">Cancel</button>-->
+            <button class="confirm" onclick="validatemultipleequipment_second('new');">Submit and New</button>
+            <button class="confirm" onclick="validatemultipleequipment_second('save');">Submit</button>            
+        </div>
+
+
+    </section>
+    <!-- End Second Section -->
+
+</div>
+<!-- Loader section -->
+<div class="loader" style="display:none;" > 
+    <img src="<?php echo BASEURL . 'public/images/loader.gif'; ?>">
+</div>
+
+<style>
+    .vdata{
+        float: left;
+        position: inherit;
+        margin-right: 35px;
+    }
+    label.control-label.col-sm-6.col-md-6.col-xs-6 {
+        padding-left: 1px;
+    }
+    span.left {    width: 39%;
+    }
+    input#begDate {
+        width: 100% !important;
+    }
+    .ch-home-form .form-group{
+        width:100%;
+        margin: 8px 0;
+    }
+    .ch-home-form .form-group #startDate{
+        width: 130px !important;
+    }
+    .ch-home-form .form-group #endDate{
+        width: 130px !important;
+    }
+    .ch-home-form .form-group .form-control{
+        width: 100%!important;
+        display: inline-block;
+    }
+    .ch-home-form .left{
+        float: left;
+        margin: 0;
+    }
+    .ch-home-form .right{
+        float: right;
+        margin: 0;
+    }
+    .ch-home-form .left label, .ch-home-form .right label{
+        width: 100%
+    }
+
+    /* table.ui-datepicker-calendar {
+         display: none;
+    }*/
+    button.confirm.active {
+        background-color: #45e4a8;
+    }
+
+    #startDate[readonly]{
+        cursor: auto !important; 
+        background-color: white !important; 
+        opacity: 1 !important; 
+    }
+
+    #endDate[readonly]{
+        cursor: auto !important; 
+        background-color: white !important; 
+        opacity: 1 !important; 
+    }
+    #begDate[readonly]{
+        cursor: auto !important; 
+        background-color: white !important; 
+        opacity: 1 !important; 
+    }
+
+    #stopDate[readonly]{
+        cursor: auto !important; 
+        background-color: white !important; 
+        opacity: 1 !important; 
+    }
+    #custome_hours[readonly]{
+        cursor: auto !important; 
+        background-color: white !important; 
+        opacity: 1 !important; 
+    }
+
+    #freq_num[readonly]{
+        cursor: auto !important; 
+        background-color: white !important; 
+        opacity: 1 !important; 
+    }
+    .resetenddate{
+        margin-left: 273px;
+        border: 1px solid green;
+        background: green;
+        color: white;
+        padding: 1px 7px 2px 6px;
+    }
+    .viewimage{
+        border: 1px solid gray;
+        padding: 1px 1px 0px 6px;
+        margin: 2px 153px 7px 1px;
+        clear: both; 
+    }
+
+    .left_box{
+        padding-left: 0%;
+        padding-top: 10%;
+        padding-bottom: 10%;
+    }
+
+    .left_box table{
+        width: 100%;
+        overflow-y: scroll;
+    }
+
+    .left_box table tbody{
+        height: 200px;
+        display: inline-block;
+        width: 80%;
+        overflow-x: hidden;
+        border: 1px solid #c1c1c1;
+        overflow-y: scroll;
+    }
+
+    .left_box table tbody td{
+        width: 100%;
+    }
+
+
+    .right_box
+    {
+        padding-top: 10%;
+        padding-bottom: 10%;  
+    }
+
+
+    .task-reading-butttn
+    {
+        margin-top: 2%;
+    }
+
+    .details-view
+    {
+
+    }
+
+    .details-view table td
+    {
+        padding:5px;
+        text-align: center;
+    }
+
+    .details-view table th
+    {
+
+        text-align: center;
+    }
+
+    .td-left-text
+    {
+        text-align: left !important;
+    }
+
+    .details-view
+    {
+        margin-top:0px;
+        margin-bottom:40px;
+    }
+
+    .heading-text {
+        background-color: #ccc;
+        color: #000;
+        font-weight: 500;
+    }
+
+    .sub-task-text {
+        background-color: lightblue;
+    }
+
+    .color-text-blue {
+        background-color:#F0F8FF;
+    }
+
+    .subset-table-td{
+        padding-top: 0px !important; 
+        padding-bottom: 0px !important;
+    }
+
+
+    .border-bottom-cusstm
+    {
+        border-bottom: 1px solid #ccc;
+    }
+
+    .border-left-cusstm
+    {
+        border-left: 1px solid #ccc;
+    }
+
+    .fa-minus-circle-custm
+    {
+        float: right;
+        padding-top: 4px;
+    }
+
+    .fa-pluse-circle-custm
+    {
+        float: right;
+        padding-top: 4px;
+    }
+    .tempalte-detail-view{
+        overflow-x: hidden;   
+    }
+    #second{
+        display:none;
+    }
+    .form-wrap { border: 1px solid #ccc; }
+    .input-wrap { width: 100% !important; }
+    .outside-detail { padding-top: 20px; }
+    #first .select-custom{
+        border-radius: 0px !important;
+        box-shadow:none !important;
+        width:100% !important;
+        height:29px;
+        padding-top: 3px !important;
+        color:#757575 !important;
+
+    }
+    .input-box-cstm
+    {
+        width:100% !important;
+    }
+
+    .height_20
+    {
+        margin-bottom: 20px;
+        margin-top: 20px;
+    }
+
+    .main-form-box
+    {
+        margin:8px 0px;
+    }
+
+    .form-grup-csttm
+    {
+        margin:4px 0px;
+    }
+    .scroll-y{
+            border: 1px solid #ccc;
+            margin-right:13px;
+            float: right;
+            width: 740px;
+            height:199px;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+</style>
+
+<!-- Start section to create a new task -->
+<?php echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/pm_task.js'); ?> 
+<?php echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/pm-equipment.js'); ?> 
+<script>
+    if ($("#assignto1:checked").length > 0)
+    {
+        $('#venderid').attr('disabled', 'disabled');
+        $('#groupid').attr('disabled', 'disabled');
+        $('#Contract').attr('disabled', 'disabled');        
+    }
+    function disableEnableAssign() {
+        $('#venderid').attr('disabled', 'disabled');
+        $('#groupid').attr('disabled', 'disabled');
+        $('#Contract').attr('disabled', 'disabled');
+        $("#assignto").removeAttr("disabled");
+    }
+
+    function disableEnableVendor() {
+        $("#venderid").removeAttr("disabled");
+        $("#groupid").removeAttr("disabled");
+        $("#Contract").removeAttr("disabled");
+        $('#assignto').attr('disabled', 'disabled');
+    }
+
+</script>

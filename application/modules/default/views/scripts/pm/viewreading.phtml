@@ -1,0 +1,361 @@
+<?php 
+    $readingjobtime = $this->jobtime; 
+    $unitofmeasure = $this->unitofmeasure;  
+    $ListView = $this->listview;
+    $DesignationId = $this->desig_id;    
+    $startdateadj =  $this->startdateadjustment; 
+    $FreqData = $this->frequency;
+    $CustomFreq = $this->CustmeFreq;
+
+?>
+<div id="readingclass"></div>
+<div class="dd" id="nestable">
+                <ol class="dd-list">
+                    <li class="dd-item dd3-item" data-id-root="">
+                        <div class="dd3-content tabelHeader">                           
+                                    <div class="id">Task Order</div>
+                                    <?php if(in_array(1,$ListView)): ?>
+                                            <div class="id">Reading Instruction</div>
+                                    <?php endif; ?>
+                                    <?php if(in_array(2,$ListView)): ?>
+                                            <div class="id">Frequency <a onclick="javascript:openpopup('<?php echo $this->baseUrl() . '/pm/readingfrequency/desig_id/'.$DesignationId; ?>');" href="#CreateNewMultiCon"><span class="glyphicon glyphicon-chevron-down"></span></a></div>
+                                    <?php endif; ?>
+                                     <?php if(in_array(3,$ListView)): ?>
+                                        <div class="id">Reading Value <a onclick="javascript:openpopup('<?php echo $this->baseUrl() . '/pm/readingvalue/desig_id/'.$DesignationId.'/parent_id/'.$reading['id']; ?>');" href="#CreateNewMultiCon"><span class="glyphicon glyphicon-chevron-down"></span></a></div>
+                                    <?php endif; ?>
+                                    <?php if(in_array(4,$ListView)): ?>
+                                            <div class="id">Unit of Measure <a onclick="javascript:openpopup('<?php echo $this->baseUrl() . '/pm/readingunitofmeasure/desig_id/'.$DesignationId.'/parent_id/'.$reading['id']; ?>');" href="#CreateNewMultiCon"><span class="glyphicon glyphicon-chevron-down"></span></a></div>
+                                     <?php endif; ?>
+                                    <?php if(in_array(5,$ListView)): ?>
+                                            <div class="id">Tolerance <a onclick="javascript:openpopup('<?php echo $this->baseUrl() . '/pm/readingtolerance/desig_id/'.$DesignationId.'/parent_id/'.$reading['id']; ?>');" href="#CreateNewMultiCon"><span class="glyphicon glyphicon-chevron-down"></span></a></div>
+                                    <?php endif; ?>
+                                    <?php if(in_array(6,$ListView)): ?>
+                                            <div class="id">Start date <a onclick="javascript:openpopup('<?php echo $this->baseUrl() . '/pm/readingstartdate/desig_id/'.$DesignationId; ?>');" href="#CreateNewMultiCon"><span class="glyphicon glyphicon-chevron-down"></span></a></div>
+                                     <?php endif; ?>
+                                     <?php if(in_array(7,$ListView)): ?>
+                                            <div class="id">End date</div>
+                                     <?php endif; ?>
+                                      <?php if(in_array(8,$ListView)): ?>
+                                            <div class="id">Seasonal</div>
+                                     <?php endif; ?>
+                                      <?php if(in_array(9,$ListView)): ?>
+                                            <div class="id">Seasonal Start Month</div>
+                                     <?php endif; ?>
+                                      <?php if(in_array(10,$ListView)): ?>
+                                            <div class="id">Seasonal End Month</div>
+                                     <?php endif; ?>
+                                     <?php if(in_array(11,$ListView)): ?>
+                                            <div class="id"><a onclick="javascript:openpopup('<?php echo $this->baseUrl() . '/pm/readingstartdateofmonth/desig_id/'.$DesignationId; ?>');" href="#CreateNewMultiCon"><span class="glyphicon glyphicon-chevron-down"></span></a>Start Date Of Month </div>
+                                     <?php endif; ?>
+                                    <?php if(in_array(12,$ListView)): ?>
+                                             <div class="id"><a onclick="javascript:openpopup('<?php echo $this->baseUrl() . '/pm/readingstartdateadjustment/desig_id/'.$DesignationId; ?>');" href="#CreateNewMultiCon"><span class="glyphicon glyphicon-chevron-down"></span></a>Start date Adjustment</div>
+                                    <?php endif; ?>
+                                    <?php if(in_array(13,$ListView)): ?>
+                                             <div class="id">Task job Time(Hour)</div>
+                                    <?php endif; ?>
+                                    <?php if(in_array(14,$ListView)): ?>
+                                             <div class="id">Over Time/Off Hour</div>
+                                    <?php endif; ?>
+                                    <?php if(in_array(15,$ListView)): ?>
+                                             <div class="id">Assign To</div>
+                                    <?php endif; ?>
+                                    <div class="id"></div>        
+                        </div>
+                    </li>
+                    <?php 
+                    $count = 1;
+                    //print_r($this->allreading);
+                    foreach($this->allreading as $reading):  ?>
+                    
+                        <?php 
+                        //print_r($reading);
+                        //echo $reading['reading'][0]->id;
+                        if(empty($reading['task']) && $reading[0]->AU_Frequency_ID!=""){ 
+                            foreach($reading as $fullreading):
+                               // print_r($ListView);
+                                ?>
+                                <li class="dd-item dd3-item" data-id-root="<?php echo $fullreading->VT_Template_Reading_ID; ?>">
+                                    <div class="dd-handle dd3-handle">Drag</div>
+                                    <div class="dd3-content" >
+                                    <!-- <div class="id"></div> -->
+                                        <div class="id"><?php echo $count; ?></div> 
+                                        <?php
+                                        //print_r($fullreading);
+                                        if($fullreading->Interval_Value==1 || $fullreading->Interval_Value==0){
+                                            $frequency = $FreqData[$fullreading->AU_Frequency_ID];
+                                        }else{
+                                            $frequency = $fullreading->Interval_Value.'   '.$CustomFreq[$fullreading->AU_Frequency_ID];
+                                        }
+                                        
+                                        $readingj = explode(".",$fullreading->Task_jobtime);
+                                        $readingjobt = "";
+                                        if(!empty($readingj[0]) && $readingj[0]!=0)
+                                            $readingjobt .= $readingj[0]."  hours ";
+                                        if(!empty($readingj[1]))
+                                            $readingjobt .= $readingjobtime['0.'.$readingj[1]];
+                                      
+                                        if(in_array(1,$ListView))
+                                                echo '<div class="id" style="overflow: hidden;">'.$fullreading->Reading_Instruction.'</div>';
+                                        if(in_array(2,$ListView))
+                                                echo '<div class="id">'.$frequency.'</div>';
+                                        if(in_array(3,$ListView))
+                                                echo '<div class="id">'.$fullreading->Reading_Value.'</div>';
+                                        if(in_array(4,$ListView))
+                                                echo '<div class="id">'.$unitofmeasure[$fullreading->AU_uom_ID].'</div>';
+                                        if(in_array(5,$ListView))
+                                                echo '<div class="id">'.$fullreading->Tolerance.'</div>';
+                                        if(in_array(6,$ListView))
+                                                echo '<div class="id">'.$fullreading->Start_date.'</div>';
+                                        if(in_array(7,$ListView))
+                                                echo '<div class="id">'.$fullreading->End_date.'</div>';
+                                        if(in_array(8,$ListView))
+                                                echo '<div class="id">'.$fullreading->Seasonal_Task.'</div>';
+                                        if(in_array(9,$ListView))
+                                                echo '<div class="id">'.$fullreading->Seasonal_Start_Date.'</div>';
+                                        if(in_array(10,$ListView))
+                                                echo '<div class="id">'.$fullreading->Seasonal_End_Date.'</div>';
+                                        if(in_array(11,$ListView))
+                                                echo '<div class="id">'.$fullreading->Startdate_month.'</div>';
+                                        if(in_array(12,$ListView))
+                                                echo '<div class="id">'.$startdateadj[$fullreading->AU_sda_ID].'</div>';
+                                        if(in_array(13,$ListView))                                      
+                                                echo '<div class="id">'.$readingjobt.'</div>';                                        
+                                        if(in_array(14,$ListView))
+                                                echo '<div class="id">'.($fullreading->Overtime==0?"No":"Yes").'</div>';
+                                        if(in_array(15,$ListView))
+                                                echo '<div class="id">'.($fullreading->Assigned_to==1?"Default":"").'</div>';
+                                        
+                                        ?>
+                                        <div class="id">
+                                            <a onclick="javascript:openpopup('<?php echo $this->baseUrl() . '/pm/editreading/desig_id/'.$DesignationId.'/reading_id/'.$fullreading->VT_Template_Reading_ID;?>');" href="#CreateNewMultiCon"><img src="<?php echo $this->baseUrl();?>/public/images/edit.png"></a>
+                                            <a  onclick="deletereading(<?php echo $fullreading->VT_Template_Reading_ID; ?>,<?php echo $DesignationId; ?>);" ><img src="<?php echo $this->baseUrl();?>/public/images/delete.png"></a>
+                                        </div>  
+                                    </div>
+                                </li>
+                        <?php  
+                            $count++;
+                            endforeach; 
+                            }else if($reading['name']!=""){ 
+                                //print_r($reading);
+                                ?>
+                        <li class="dd-item dd3-item collapse-table" data-id-subset="<?php echo $reading['id']; ?>">
+                            <div class="dd-handle dd3-handle">Drag</div>
+                            <div class="dd3-content" style="font-weight: bold; ">
+                                <div class="id"><?php echo $count; ?></div>
+                                 <?php if(in_array(1,$ListView)): ?>
+                                    <div class="id">Subset Reading - <?php echo $reading['name']; ?></div>
+                                <?php endif; ?>
+                                <?php if(in_array(2,$ListView)): ?>
+                                        <div class="id">Frequency <a onclick="javascript:openpopup('<?php echo $this->baseUrl() . '/pm/readingfrequencysubset/desig_id/'.$DesignationId.'/parent_id/'.$reading['id']; ?>');" href="#CreateNewMultiCon"><span class="glyphicon glyphicon-chevron-down"></span></a></div>
+                                <?php endif; ?>
+                                <?php if(in_array(3,$ListView)): ?>
+                                        <div class="id">Reading Value <a onclick="javascript:openpopup('<?php echo $this->baseUrl() . '/pm/readingvaluesubset/desig_id/'.$DesignationId.'/parent_id/'.$reading['id']; ?>');" href="#CreateNewMultiCon"><span class="glyphicon glyphicon-chevron-down"></span></a></div>
+                                 <?php endif; ?>
+                                <?php if(in_array(4,$ListView)): ?>
+                                        <div class="id">Unit of Measure<a onclick="javascript:openpopup('<?php echo $this->baseUrl() . '/pm/readingunitofmeasuresubset/desig_id/'.$DesignationId.'/parent_id/'.$reading['id']; ?>');" href="#CreateNewMultiCon"><span class="glyphicon glyphicon-chevron-down"></span></a></div>
+                                 <?php endif; ?>
+                                <?php if(in_array(5,$ListView)): ?>
+                                        <div class="id">Tolerance<a onclick="javascript:openpopup('<?php echo $this->baseUrl() . '/pm/readingtolerancesubset/desig_id/'.$DesignationId.'/parent_id/'.$reading['id']; ?>');" href="#CreateNewMultiCon"><span class="glyphicon glyphicon-chevron-down"></span></a></div>
+                                 <?php endif; ?>
+                                <?php if(in_array(6,$ListView)): ?>
+                                        <div class="id">Start date <a onclick="javascript:openpopup('<?php echo $this->baseUrl() . '/pm/readingstartdatesubset/desig_id/'.$DesignationId.'/parent_id/'.$reading['id']; ?>');" href="#CreateNewMultiCon"><span class="glyphicon glyphicon-chevron-down"></span></a></div>
+                                 <?php endif; ?>
+                                 <?php if(in_array(7,$ListView)): ?>
+                                        <div class="id">End date</div>
+                                 <?php endif; ?>
+                                  <?php if(in_array(8,$ListView)): ?>
+                                        <div class="id">Seasonal</div>
+                                 <?php endif; ?>
+                                  <?php if(in_array(9,$ListView)): ?>
+                                        <div class="id">Seasonal Start Month</div>
+                                 <?php endif; ?>
+                                  <?php if(in_array(10,$ListView)): ?>
+                                        <div class="id">Seasonal End Month</div>
+                                 <?php endif; ?>
+                                 <?php if(in_array(11,$ListView)): ?>
+                                        <div class="id"><a onclick="javascript:openpopup('<?php echo $this->baseUrl() . '/pm/readingstartdateofmonthsubset/desig_id/'.$DesignationId.'/parent_id/'.$reading['id']; ?>');" href="#CreateNewMultiCon"><span class="glyphicon glyphicon-chevron-down"></span></a>Start Date Of Month </div>
+                                 <?php endif; ?>
+                                <?php if(in_array(12,$ListView)): ?>
+                                         <div class="id"><a onclick="javascript:openpopup('<?php echo $this->baseUrl() . '/pm/readingstartdateadjustmentsubset/desig_id/'.$DesignationId.'/parent_id/'.$reading['id']; ?>');" href="#CreateNewMultiCon"><span class="glyphicon glyphicon-chevron-down"></span></a>Start date Adjustment</div>
+                                <?php endif; ?>
+                                <?php if(in_array(13,$ListView)): ?>
+                                         <div class="id">Task job Time(Hour)</div>
+                                <?php endif; ?>
+                                <?php if(in_array(14,$ListView)): ?>
+                                         <div class="id">Over Time/Off Hour</div>
+                                <?php endif; ?>
+                                <?php if(in_array(15,$ListView)): ?>
+                                         <div class="id">Assign To</div>
+                                <?php endif; ?>
+                                <div class="id">
+                                    <a onclick="javascript:openpopup('<?php echo $this->baseUrl() . '/pm/editsubsetreading/subset_id/'.$reading['id']."/desig_id/".$DesignationId; ?>');" href="#CreateNewMultiCon"><img src="<?php echo $this->baseUrl();?>/public/images/edit.png"></a>
+                                    <a onclick="deletereading(<?php echo $reading['id']; ?>,<?php echo $DesignationId; ?>);"><img src="<?php echo $this->baseUrl();?>/public/images/delete.png"></a>
+                                </div>  
+                            </div>
+                            <ol class="dd-list">                                    
+                                <?php 
+                                $countsub = 1;
+                                foreach ($reading['task'] as $fullreading): ?>                                                
+                                    <li class="dd-item dd3-item" data-id="<?php echo $fullreading->VT_Template_Reading_ID;?>">
+                                        <div class="dd-handle dd3-handle">Drag</div>
+                                        <div class="dd3-content">
+                                        <div class="id" style="text-align:right;"><?php echo $countsub; ?></div>     
+                                            <?php
+                                        //print_r($fullreading);
+                                        
+                                        if($fullreading->Interval_Value==1 || $fullreading->Interval_Value==0){
+                                            $frequency = $FreqData[$fullreading->AU_Frequency_ID];
+                                        }else{
+                                             $frequency = $fullreading->Interval_Value.'   '.$CustomFreq[$fullreading->AU_Frequency_ID];
+                                        }
+                                        
+                                        $readingj = explode(".",$fullreading->Task_jobtime);
+                                        $readingjobt = "";
+                                        if(!empty($readingj[0]) && $readingj[0]!=0)
+                                            $readingjobt .= $readingj[0]."  hours ";
+                                        if(!empty($readingj[1]))
+                                            $readingjobt .= $readingjobtime['0.'.$readingj[1]];
+                                                                                
+                                        if(in_array(1,$ListView))
+                                                echo '<div class="id" style="overflow: hidden;">'.$fullreading->Reading_Instruction.'</div>';
+                                        if(in_array(2,$ListView))
+                                                echo '<div class="id">'.$frequency.'</div>';
+                                        if(in_array(3,$ListView))
+                                                echo '<div class="id">'.$fullreading->Reading_Value.'</div>';
+                                        if(in_array(4,$ListView))
+                                                echo '<div class="id">'.$unitofmeasure[$fullreading->AU_uom_ID].'</div>';
+                                        if(in_array(5,$ListView))
+                                                echo '<div class="id">'.$fullreading->Tolerance.'</div>';
+                                        if(in_array(6,$ListView))
+                                                echo '<div class="id">'.$fullreading->Start_date.'</div>';
+                                        if(in_array(7,$ListView))
+                                                echo '<div class="id">'.$fullreading->End_date.'</div>';
+                                        if(in_array(8,$ListView))
+                                                echo '<div class="id">'.$fullreading->Seasonal_Task.'</div>';
+                                        if(in_array(9,$ListView))
+                                                echo '<div class="id">'.$fullreading->Seasonal_Start_Date.'</div>';
+                                        if(in_array(10,$ListView))
+                                                echo '<div class="id">'.$fullreading->Seasonal_End_Date.'</div>';
+                                        if(in_array(11,$ListView))
+                                                echo '<div class="id">'.$fullreading->Startdate_month.'</div>';
+                                        if(in_array(12,$ListView))
+                                                echo '<div class="id">'.$startdateadj[$fullreading->AU_sda_ID].'</div>';
+                                        if(in_array(13,$ListView))                                      
+                                                echo '<div class="id">'.$readingjobt.'</div>';                                        
+                                        if(in_array(14,$ListView))
+                                                echo '<div class="id">'.($fullreading->Overtime==0?"No":"Yes").'</div>';
+                                        if(in_array(15,$ListView))
+                                                echo '<div class="id">'.($fullreading->Assigned_to==1?"Default":"").'</div>';
+                                        
+                                        ?>
+                                        <div class="id">
+                                            <a onclick="javascript:openpopup('<?php echo $this->baseUrl() . '/pm/editreading/desig_id/'.$DesignationId.'/reading_id/'.$fullreading->VT_Template_Reading_ID;?>');" href="#CreateNewMultiCon"><img src="<?php echo $this->baseUrl();?>/public/images/edit.png"></a>
+                                            <a onclick="deletereading(<?php echo $fullreading->VT_Template_Reading_ID; ?>,<?php echo $DesignationId; ?>);"><img src="<?php echo $this->baseUrl();?>/public/images/delete.png"></a>
+                                        </div>                                         
+                                        </div>
+                                    </li>                                                
+                                <?php 
+                                $countsub++;
+                                endforeach; ?>
+                            </ol>
+                        </li>
+                        <?php 
+                        $count++;
+                        } ?>
+                    <!--    Child section start-->                       
+                    <!--    Child section End-->
+                    
+                    <?php endforeach; ?>
+                </ol>
+            </div>      
+
+<script>
+/* Drag and drop js */
+$(function() {
+        $('#nestable').nestable({
+            group: 1,
+            maxDepth:2
+        })
+        .on('change', function(e) {
+            var list = e.length ? e : $(e.target);
+            console.log(list.nestable('serialize'));
+            $('#nestable-output').val(window.JSON.stringify(list.nestable('serialize')));
+            //// send data to update ordering 
+            
+                
+            var temp_id = <?php echo $DesignationId; ?>;
+                $.ajax({    
+                type: "POST",
+                url: baseUrl + 'pm/updatereadingorder',
+                data: {reading: window.JSON.stringify(list.nestable('serialize'))},
+                success: function (data) {
+                    console.log(data);
+                    $('.loader').hide();
+                    var content = $.parseJSON(data);
+                    if (content.status == 'success') {
+                            //$('.success_message').html(content.msg);             	
+                            //parent.location.reload();
+                            //view_Add_Reading(temp_id);
+                            view_all_Reading(temp_id);
+                    } else if (content.status == 'error') {
+                        $('.success_message').html(content.msg);
+                            //alert("asdasd");
+                        if(!alert(content.msg)){
+                            console.log("if");
+                            parent.location.reload();
+                        }
+                    }
+                }
+            });
+        });
+    });
+   /// common function  view all reading and add new reading
+
+function view_Add_Reading(temp_id){
+    $.ajax({    
+            type: "POST",
+             url: baseUrl + 'pm/viewaddreading/desig_id/'+$DesignationId,
+            data: {reading: "empty"},
+            success: function (response) {
+                //alert(response);
+                $(".add-reading").html(response);
+                //$('.success_message').slideUp(500);
+            }
+     });
+}
+
+
+//function view_all_Reading(temp_id){
+//    //////////////////////
+//                var list  = "";
+//                $("input[type='checkbox']:checked").each(function(){
+//                    console.log($(this).val());  
+//                    list += parseInt($(this).val())+","; 
+//                });
+//                list =list.substring(0,list.length - 1);
+//                var all = list.split(',');
+//                var ctotal = all.length;
+//                console.log("total "+ctotal);
+//                cssdata = 93 / (ctotal + 1) ;
+//                csscolapsdata = 91.25 / (ctotal + 1) ;
+//                var html = ".dd3-content .id{";
+//                    html += "width : " + cssdata+ "%";
+//                    html +="}";
+//                    html += ".collapse-table .dd3-content .id{";
+//                    html += "width : " + csscolapsdata+ "%";
+//                    html +="}";
+//                //////////////////////////////
+//    $.ajax({    
+//            type: "POST",
+//            url: baseUrl + 'pm/viewreading/temp_id/'+temp_id,
+//            data: {viewlist: list},
+//            success: function (response) {
+//                //alert(response);
+//                $('.loader').hide();                
+//                $("#readingview").html(response);
+//                $("#readingclass").html('<style>'+html+'</style>');
+//                //$('.success_message').slideUp(500);
+//            }
+//     });
+//}
+</script>

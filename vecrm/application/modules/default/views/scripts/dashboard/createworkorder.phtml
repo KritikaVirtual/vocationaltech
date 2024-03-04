@@ -1,0 +1,292 @@
+   <?php
+   echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/dashboard_workorder.js');
+   $color_code = array('00FFFF','FF0000','FF00FF','800000','008000','800080','808000','0000FF','00FF00','000080','FFFF00','808000','008080','FFA500');						
+		         $building_color = array();
+   ?>
+    
+    <div class="create-work-order">
+		<div id="fdw">
+		<div class="tabmenu my_tabmenu">
+        <ul>
+			<li style="background-color:#<?php echo $color_code[0]?>"><a href="<?php echo $this->baseUrl().'/dashboard/createworkorder/bid/all'; ?>" <?php if($this->select_build_id=='') echo 'class="resp-tab-active my_resp-tab-active"';?>>Work Order of All Buildings</a></li>
+		<?php  
+					$j = 1;
+					foreach($this->companyListing as $cb){ 
+						$building_color[$cb['build_id']] = $color_code[$j];
+						?>
+					<li style="background-color:#<?php echo $color_code[$j]?>"><a href="<?php echo $this->baseUrl().'/dashboard/createworkorder/bid/'.$cb['build_id']; ?>" <?php if($cb['build_id']==$this->select_build_id) echo 'class="resp-tab-active my_resp-tab-active"';?>><?php echo $cb['buildingName']; ?></a></li>
+		
+				<?php $j++; } ?>         
+        
+        </ul>
+        </div>		
+	  </div>
+	  <div id="work-order-form">
+	    <form name="cwo_form" id="cwo_form" enctype="multipart/form-data" action="<?php echo BASEURL.'/dashboard/saveworkorder'?>" method="post" onsubmit="return checkFormValidation()">	 
+           <div class="newworkorder">
+				  <h1>Add New Work Order :</h1>
+				  <?php $msg = new Zend_Session_Namespace('message');?>
+				  <div class="workorder_error" id="message">
+					  <?php 
+						  echo $msg->error_message;
+						  $msg->error_message = '';
+					  ?>
+				  </div>
+				  <div class="workorder_success" id="message">
+				       <?php 
+						  echo $msg->success_message;
+						  $msg->success_message = '';
+					  ?>
+				  </div>
+				  <div class="col-lg-12 cw-bcr-div">
+				     
+					<div class="col-lg-4">
+					<div class="form_group">
+					  <label>Building</label>
+					  <div class="building_div">
+						<ul>
+							<?php if($this->companyListing!=''){?>
+								 <?php foreach($this->companyListing as $cb){
+									    if($this->select_build_id==''){
+									 ?>
+								   <li><a href="javascript:void(0)" onclick="changeBuilding('<?php echo $cb['build_id'];?>')"><span><?php echo $cb['buildingName']; ?></span></a></li>
+								  <?php
+								}else{
+									   if($this->select_build_id==$cb['build_id']){
+										   ?>
+										   <li><a href="javascript:void(0)"><span><?php echo $cb['buildingName']; ?></span></a></li>
+										 <?php  
+									   }
+							         }
+								   }?>
+							<?php }?>
+						</ul>
+						<input type="hidden" name="building" id="building" value="<?php echo ($this->select_build_id!='')?$this->select_build_id : '';?>"/>
+						<input type="hidden" name="form_key" id="form_key" value="<?php echo $this->form_key;?>"/>
+					  </div>
+					  </div>
+					</div>
+					
+					
+					<div class="col-lg-4">
+					  <div class="form_group">
+						 
+							<label>Company</label>
+						 
+							<!-- Split button -->
+							<div class="btn-group work_update_select" id="show_tenant">
+								  <select name="tenant" id="tenant" onchange="showTenantUser(this.value)" class="all_select">
+									 <option value="">Select...</option>
+									 <?php 
+									    if($this->select_build_id!=''){
+											$tnModel = new Model_Tenant();
+			                                $tndetail = $tnModel->getTenantByBuildingId($this->select_build_id);
+										 if($tndetail!=''){
+											   foreach($tndetail as $tn){?>
+												   <option value="<?php echo $tn->id?>"><?php echo $tn->tenantName?></option>
+												<?php }?>   
+										<?php }
+									   }
+									  ?>
+								  </select>							  
+							</div>
+						</div>
+					</div>
+					
+					<div class="col-lg-4">
+					  <div class="form_group">
+						 
+							<label>Request By</label>
+						 
+							<!-- Split button -->
+							<div class="btn-group work_update_select" id="show_tenant_user">
+							  <select name="create_user" id="create_user" class="all_select">
+									 <option value="">Select...</option>									 
+								  </select>	
+							</div>
+						</div>
+					</div>
+					</div>
+				  <div class="col-lg-12">
+				 
+					<div class="col-lg-4">
+				   <div class="form_group">
+						 
+							<label>Category</label>
+						 
+							<!-- Split button -->
+							<div class="btn-group work_update_select" id="show_category">
+							  <select name="category" id="category" class="all_select">
+									 <option value="">Select...</option>
+									  <?php 
+									    if($this->select_build_id!=''){
+											$catModel = new Model_Category();
+			                                $catdetail = $catModel->getBuildingCategoryList($this->select_build_id);
+										 if($catdetail!=''){
+											   foreach($catdetail as $cd){?>
+												 <option value="<?php echo $cd['cat_id']?>"><?php echo $cd['categoryName']?></option>
+												<?php }?>   
+										<?php }
+									   }
+									  ?>
+								  </select>	
+							</div>
+						</div>
+					</div>
+					
+					
+					<div class="col-lg-4">
+					  <div class="form_group">
+						 
+							<label>Date</label>
+						 
+							<!-- Split button -->
+							<div class="btn-group work_update_select">
+							  <input type="text" name="date_requested" id="date_requested" readonly="true" placeholder="mm/dd/yyyy" value="<?php echo date("m/d/Y");?>"/>
+							</div>
+						</div>
+					</div>
+					
+					<div class="col-lg-4">
+					  <div class="form_group">
+						 
+							<label>Time</label>
+						 
+							<!-- Split button -->
+							<div class="btn-group work_update_select" id="time_request_div">
+								<?php
+									  if($this->select_build_id!=''){
+										 $buildModel = new Model_Building();
+										 $build_data = $buildModel->getbuildingbyid($this->select_build_id);
+										 $current_time= date('h:i A');
+										 if($build_data){
+											 $btimezone = $build_data[0]['timezone'];
+											 if($btimezone!=0){
+												 $tModel = new Model_TimeZone();
+												 $tzonelist = $tModel->getTimeZoneById($btimezone);
+												 $time_zone = $tzonelist[0]['time_value'];
+												 $date = new DateTime(null, new DateTimeZone($time_zone));
+												$current_time =	 $date->format('h:i A');
+											 }
+										  }
+									?>
+									<input type="text" name="time_requested" id="time_requested" value="<?php echo $current_time; ?>" readonly="readonly"/>
+									<?php }?>
+							  <?php /* <select name="hour" id="hour" >
+								   <option value="">Hour</option>
+								   <?php 
+									  for($i=1; $i<=12; $i++){
+										  if($i<10)
+										   $i= '0'.$i;
+										 echo '<option value="'.$i.'">'.$i.'</option>';  
+									  }
+								   ?>
+							   </select> :
+							   <select name="minute" id="minute">
+								   <option value="">Minute</option>
+								   <?php 
+									  for($i=0; $i<60; $i+=5){
+										  if($i<10)
+										   $i= '0'.$i;
+										 echo '<option value="'.$i.'">'.$i.'</option>';  
+									  }
+								   ?>
+							   </select>
+							   <select name="am_pm" id="am_pm">
+								   <option value="am">am</option>
+								   <option value="pm">pm</option>
+							   </select>*/ ?>
+							</div>
+						</div>
+					</div>
+					</div>
+					
+					
+				  <div class="col-lg-12">
+				  <div class="work_request_div">
+					<div class="form_group">
+						 
+							<label>Work Order Request</label>
+							<textarea type="text" rows="5" cols="5" name="work_order_request" id="work_order_request" class="testarea"></textarea>
+					</div>
+					 <div class="form_group">
+						 
+							<label>Internal Notes</label>
+							<textarea type="text" rows="5" cols="5" name="internal_note" id="internal_note" class="testarea"></textarea>
+					</div>
+					<div class="col-lg-4">
+						 <div class="form_group">
+							 <label>Attachment</label>
+								<input type="file" name="wo_file" id="wo_file">
+						</div>
+					</div>
+					
+					<div class="form_group" style="text-align:center">
+					<button type="submit" value="Save" class="form_btn" name="save">Save</button>
+					<button type="submit" value="Save &amp; New Work" class="form_btn" name="save_new">Save &amp; New Work</button>
+					<input type="button" value="Cancel" class="form_btn" onclick="cancelUser()">
+					</div>
+					
+					
+					</div>
+				  </div>
+				  
+				  
+				  
+				 </div>
+        </form>
+       </div> 
+    </div>
+     <div id="add_new_div" style="display:none">
+          <div class="add_new_">
+			   <span>Add New User</span>
+			   <div class="form_fields">
+				   <form name="new_user_form" id="new_user_form">
+					    <div class="message">
+							 <span id="error_msg"></span>
+							  <span id="success_msg"></span>
+					    </div>
+						<div>
+							<label>First Name <span class="required">*</span></label>
+                            <div class="cw-input">
+							<span class="error" id="firstName-error"></span>
+							<input type="text" name="firstName" id="firstName"/>
+                            </div>
+						</div>
+						<div>
+							<label>Last Name <span class="required">*</span></label>
+                            <div class="cw-input">
+							<span class="error" id="lastName-error"></span>
+							<input type="text" name="lastName" id="lastName"/>
+                            </div>
+						</div>
+						<div>
+							<label>Email <span class="required">*</span></label>
+                            <div class="cw-input">
+							<span class="error" id="email-error"></span>
+							<input type="text" name="email" id="email"/>
+                            </div>
+						</div>
+						<div>
+							<label>Suite/Location <span class="required">*</span></label>
+                            <div class="cw-input">
+							<span class="error" id="suite_location-error"></span>
+							<input type="text" name="suite_locat" id="suite_locat"/>
+                            </div>
+						</div>
+						<div>
+							<label>Phone Number <span class="required">*</span></label>
+                            <div class="cw-input">
+							<span class="error" id="phone-error"></span>
+							<input type="text" name="phoneNumber" id="phoneNumber"/>
+                            </div>
+						</div>
+						<div class="form-button">
+							<input type="button" name="save" value="Save" onclick="createUser()"/>
+							<input type="button" name="cancel" value="Cancel" onclick="cancelForm();"/>
+						</div>
+				    </form>
+			   </div>
+          </div>
+     </div>
+

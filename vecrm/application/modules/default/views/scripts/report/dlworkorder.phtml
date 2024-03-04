@@ -1,0 +1,71 @@
+		  <table style="border:1px solid #999;" cellspacing="0" cellpadding="0">
+						  <thead>
+							  <tr style="background-color:#66cdaa;">
+								  <th width="10%" style="border-bottom:0.5px solid #999;">Date Received</th>
+								  <th width="10%" style="border-bottom:0.5px solid #999;">Time Received</th>
+								  <th width="10%" style="border-bottom:0.5px solid #999;">Work Order#</th>
+								  <th width="10%" style="border-bottom:0.5px solid #999;">Status</th>
+								  <th width="15%" style="border-bottom:0.5px solid #999;">Category</th>
+								  <?php /* <th>Company</th> */?>
+								  <th width="15%"style="border-bottom:0.5px solid #999;">Building</th>
+								  <th width="30%"style="border-bottom:0.5px solid #999;">Contact Information</th>
+							  </tr>
+						  </thead>
+						  <?php 
+							 if($this->wolist){
+								  $ssModel = new Model_ScheduleStatus();
+								$status_list = $ssModel->getScheduleStatus();
+								$status_array= array();
+								foreach($status_list as $sl){
+									if($sl['ssID']!=8)
+									$status_array[$sl['ssID']] = $sl['title'];
+								}
+								
+								$woModel = new Model_WorkOrder();
+								$j=0;
+								foreach($this->wolist as $wl){									
+									$wodetail = $woModel->getWorkOrderInfo($wl->woId);
+									$woData = $wodetail[0];
+									$row_class = ($j%2==0)?'even-row':'odd-row';
+									$color_code = ($j%2==0)?'#f0ffff':'#fff';
+								 ?>
+								 <tr style="background-color:<?php echo $color_code; ?>;">
+									 <td width="10%"><?php echo date("m/d/Y",strtotime($wl->created_at))?></td>
+									 <td width="10%"><?php echo $wl->time_requested?></td>
+									  <td width="10%"><?php echo $wl->woId?></td>
+									  <td width="10%"><?php echo $status_array[$wl->wo_status];?></td>
+									  <td width="15%"><?php echo $wl->categoryName?></td>
+									  <?php /*<td><?php echo $wl->tenantName?></td>*/?>
+								      <td width="15%" style="border-right:0.5px solid #999;"><?php echo $wl->buildingName?></td>
+								      <td rowspan="2" width="30%"style="border-left:0.5px solid #999;border-bottom:0.5px solid #999;">								          
+											  <table width="100%" >
+											       <tr>
+													   <th>Request By:</th>
+													   <td><?php echo $woData->firstName.' '.$woData->lastName;?></td>
+											       </tr>
+											       <tr>
+													   <th>Email:</th>
+													   <td><?php echo $woData->email;?></td>
+											       </tr>
+											       <tr>
+													   <th>Location:</th>
+													   <td><?php echo $woData->tenant_suite;?></td>
+											       </tr>
+											       <tr>
+													   <th>Phone:</th>
+													   <td><?php echo $woData->phoneNumber;?></td>
+											       </tr>
+											  </table>								          								      
+								      </td>
+								 </tr>
+								 <tr style="background-color:<?php echo $color_code; ?>;">
+									 <th style="border-bottom:0.5px solid #999;">Work Request:</th>
+									 <td colspan="5" style="border-bottom:0.5px solid #999;"><p><?php echo $wl->work_order_request;?></p></td>
+								 </tr>
+								<?php 
+								$j++;
+								} 
+						      }
+						  ?>
+					  </table>
+					

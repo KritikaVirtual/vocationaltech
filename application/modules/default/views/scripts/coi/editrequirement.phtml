@@ -1,0 +1,87 @@
+<?php
+
+$reportModel = new Model_Report();
+$reportDetailLinks = '';
+$dashboard_menu = array(50);
+$reportDetailLinks = $reportModel->getReport($this->custID, $dashboard_menu);
+
+$dashboard_menu2 = array(52);
+$vTTemplateNameLinks = $reportModel->getReport($this->custID, $dashboard_menu2);
+
+$dashboard_menu3 = array(53);
+$vTTypeDesignationNameLinks = $reportModel->getReport($this->custID, $dashboard_menu3);
+?>
+
+
+
+<style>
+    .bs-example{
+        margin: 20px;
+    }
+</style>
+<div class="container-right " style="padding: 10px;">
+
+<h1>Edite</h1>
+<?php //print_r($this->editequirementdata);?>
+
+<div style="width: 100%; height: auto;">
+
+<?php $id= $this->editequirementdata['coi_au_requir_ID'];?>
+<form name="emailtemplate" id="template_form" action="<?php echo BASEURL . 'coi/updaterequirement/id/'. $id;?>" method="post">
+<div style="float: left; width: 90%; padding:10px;">
+<label>Description :</label>
+
+	<input type="text" name="coi_vt_default_description" value="<?php echo  $this->editequirementdata['coi_vt_default_description'];?>" readonly>
+
+
+<label>  Tenant :</label> <input type="text" name="coi_au_defaults_Tenant" value="<?php echo  preg_replace(" /(\d+?)(?=(\d\d)+(\d)(?!\d))(\.\d+)?/i", "$1,", $this->editequirementdata['coi_au_defaults_Tenant']);?>" style="text-align: right;" class="tenant">
+
+
+ <label>   Vender :</label>
+ <input type="text" name="coi_au_defaults_Vendor" value="<?php echo preg_replace("/(\d+?)(?=(\d\d)+(\d)(?!\d))(\.\d+)?/i", "$1,", $this->editequirementdata['coi_au_defaults_Vendor']);?>" style="text-align: right;" class="vendor">
+
+  
+
+	
+	</div>
+
+	<div style="float: right; width: 37%; padding: 20px; ">
+<input type="submit" name="submit" value="Update">
+
+	</div>
+
+
+
+	</div>
+
+ </form>
+ <script>
+
+$('input.tenant').keyup(function(event) {
+
+  // skip for arrow keys
+  if(event.which >= 37 && event.which <= 40) return;
+
+  // format number
+  $(this).val(function(index, value) {
+    return value
+    .replace(/\D/g, "")
+    .replace(/(\d)(?=(\d\d)+\d$)/g, "$1,")
+    ;
+  });
+});
+$('input.vendor').keyup(function(event) {
+
+  // skip for arrow keys
+  if(event.which >= 37 && event.which <= 40) return;
+
+  // format number
+  $(this).val(function(index, value) {
+    return value
+    .replace(/\D/g, "")
+    .replace(/(\d)(?=(\d\d)+\d$)/g, "$1,")
+    ;
+  });
+});
+</script>
+</div>

@@ -1,0 +1,21 @@
+body {margin:0; padding: 0;}
+#main-bg { margin: 0;padding: 0;background: -webkit-linear-gradient(to left, #bdc3c7, #2c3e50);	background: linear-gradient(to left, #bdc3c7 , #2c3e50);box-sizing:border-box; }
+.main-wrap {margin:0 ; padding:0;}
+.wrap-inner { background: #fff;padding: 20px;margin: 60px 0;clear: both;float: left; width: 100%;height: 100%;}
+.wrap-inner .logo {max-width250px;}
+/*****Form Section*********/
+.form-wrap {padding:0; margin:0px;}
+.btn-new { background:#ccc; border:2px solid #446B11; text-decoration:center; color:#333; border-radius:0;}
+.btn-new:hover { background:#446B11; border:2px solid #446B11; text-decoration:center; color:#fff;}
+a.back_btn {padding: 10px; background: #333; color: #fff; margin-bottom: 20px; text-decoration: none;  }
+.form-control {border-radius:0;}
+/******Footer Start********/
+.footer-crm { background:#eee; width:100%; overflow:hidden; position:absolute; bottom:0; left:0;margin-top:40px;}
+.logo-footer {float:left; display:inline-block; margin-right:20px; padding:4px 12px; max-width:200px;}
+.footer-crm ul.footer-link {list-style:none; margin:20px 0 0 0;  padding:0; float:right;}
+.footer-crm ul.footer-link li { display:inline; padding:12px 15px;}
+.footer-crm p { display:inline-block; margin:20px 0 0  0;}
+/******Media Query***********/
+@media (max-width: 1919px) {
+	.footer-crm {position:relative;}
+}

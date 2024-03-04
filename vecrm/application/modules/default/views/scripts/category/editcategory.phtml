@@ -1,0 +1,243 @@
+<?php error_reporting(E_ALL & ~E_NOTICE);
+  $data = $this->categoryDetail['categoryDetail'];
+  $prioritySchedules = $this->categoryDetail['priorityDetail'];
+  $id = $this->categoryDetail['id'];
+  $building_id = $this->categoryDetail['building_id'];
+  $groupList = $this->categoryDetail['groupList'];
+  $userList = $this->categoryDetail['userList'];
+  $tenantList = $this->categoryDetail['tenantList'];
+  //var_dump($data);
+  if(!empty($data)) {
+      $data = $data[0];
+  }
+  
+  if(isset($data['cat_id'])) {
+      $id = $data['cat_id'];
+  }
+  
+  $dgroup_array = explode(',',$data['send_email']);
+  $tenant_array = explode(',',$data['include_exclude']);
+  $user_array = explode(',',$data['account_user']);
+  $priorityData = array();
+  if($prioritySchedules){
+	  foreach($prioritySchedules as $key => $preoritySchedule) {
+			$priorityData[$preoritySchedule['pid']]	= $preoritySchedule['priorityName'];					
+	   }
+	}
+	
+  $buildModel = new Model_Building();
+  $buildData = $buildModel->getbuildingbyid($building_id);
+  $buildingName = $buildData[0]['buildingName'];
+  
+  $category_access = $this->acessHelper->checkAccess($this->roleId,$this->category_location);
+?>
+
+<style>
+    
+</style>
+<!--div class="container-right" id="priority-form"-->
+<div class="category_block_main">
+<div class="schedule-form category_block">    
+    <section class="w-48 fr ch-home-form cate_edit_section">
+        <div class="tableGrid catgry caregory_width ">
+            <form id="editCategory" class="" action="<?php echo BASEURL.'category/addcategory'; ?>" method="post">                
+                <input type="hidden" id="building_id" name="data[building_id]" value='<?php echo $building_id;?>'>
+                <div><?php echo $buildingName;?>: Edit Category Code </div>
+                <hr/>
+                <div id="category-active-div">
+					<div id="category-div">
+						<label>Category Name:</label> 
+						<?php echo $data['categoryName'];?> 
+					</div>
+					<div id="active-div">
+						<label>Active:</label> 
+						 <?php //echo ($data['status'])?'Yes':'No';?>
+						 <a href="#" class="status" id="status-<?php echo $data['cat_id']; ?>" data-type="select" data-pk="<?php echo $data['cat_id']; ?>" data-url="<?php echo $this->baseUrl().'/category/updatecatfield';?>" data-title="Select Status" data-placeholder="Required" data-name="status" data-value="<?php echo $data['status'];?>"><?php echo ($data['status'])?'Yes':'No' ?></a> 
+					</div>
+               </div>
+               <div id="priority-div">
+					<label>Priority Schedule:</label> 
+					<a href="#" class="pschedule" id="pschedule-<?php echo $data['cat_id']; ?>" data-type="select" data-pk="<?php echo $data['cat_id']; ?>" data-url="<?php echo $this->baseUrl().'/category/updatecatfield';?>" data-title="Select Priority Schedule" data-placeholder="Required" data-name="prioritySchedule" data-value="<?php echo $data['prioritySchedule'];?>"><?php echo $priorityData[$data['prioritySchedule']] ?></a> 
+                </div>
+                
+                
+                <div id="send-email-user-div">
+					  <label>Send E-mail(Account Users ) To:</label>
+					  <span class="ugroupErr" id="list-error"></span>
+					  <table cellpadding="5" cellspacing="5" class="cate_table">
+                            <tbody>
+                                <tr>
+									<td>
+										<span class="span">List of Account Users</span>
+                                        <select id="usre_from_list" multiple="multiple" name="usre_from_list" width="240"> 
+                                            <?php foreach ($userList as $key => $value) { 
+												   if(!in_array($value->uid,$user_array)){
+												?>
+                                                <option value="<?php echo $value->uid; ?>">
+                                                    <?php echo $value->lastName.','.$value->firstName; ?>
+                                                </option>
+                                            <?php } } ?>
+                                        </select>
+                                    </td>
+                                    <td style="border:none;">
+										 <div id="arrow-switcher">
+											 <a href="javascript:void(0)" onClick="move_list_items('usre_from_list','user_to_list')">
+											    <img src="<?php echo BASEURL.'public/images/right-arrow.png';?>" width="50"/>
+											 </a>
+											 <a href="javascript:void(0)" onClick="move_list_items('user_to_list','usre_from_list')">
+											    <img src="<?php echo BASEURL.'public/images/left-arrow.png';?>" width="50"/>
+											 </a>
+										 </div>
+                                    </td>
+                                    <td>
+										<span class="span">Account User</span>
+                                        <select id="user_to_list" name="user_to_list[]" multiple="multiple" width="240"> 
+                                            <?php foreach ($userList as $key => $value) { 
+												   if(in_array($value->uid,$user_array)){
+												?>
+                                                <option value="<?php echo $value->uid; ?>">
+                                                    <?php echo $value->lastName.','.$value->firstName; ?>
+                                                </option>
+                                            <?php } } ?>
+                                        </select>
+                                    </td>
+                               </tr>                                                              
+                            </tbody>
+                        </table>
+                  </div>
+                <div id="send-email-div">
+					  <label>Send E-mail To:</label>
+					  <span class="ugroupErr" id="list-error"></span>
+					  <table cellpadding="5" cellspacing="5" class="cate_table">
+                            <tbody>
+                                <tr>
+									<td>
+										<span class="span">List of Distribution Group</span>
+                                        <select id="send_from_list" multiple="multiple" name="send_from_list"> 
+                                            <?php foreach ($groupList as $key => $value) {
+												if($value['active']=='1'){ 
+												  if(!in_array($value['id'],$dgroup_array)){
+												?>
+                                               <option value="<?php echo $value['id']; ?>">
+                                                    <?php echo $value['group_name']; ?>
+                                                </option>
+                                            <?php  } } } ?>
+                                        </select>
+                                    </td>
+                                    <td>
+										 <div id="arrow-switcher">
+											 <a href="javascript:void(0)" onClick="move_list_items('send_from_list','send_to_list')">
+											    <img src="<?php echo BASEURL.'public/images/right-arrow.png';?>" width="50"/>
+											 </a>
+											 <a href="javascript:void(0)" onClick="move_list_items('send_to_list','send_from_list')">
+											     <img src="<?php echo BASEURL.'public/images/left-arrow.png';?>" width="50"/>
+											 </a>
+										 </div>
+                                    </td>
+                                    <td>
+										<span class="span">Distribution Group</span>
+                                        <select id="send_to_list" name="send_to_list[]" multiple="multiple"> 
+                                            <?php foreach ($groupList as $key => $value) { 
+												   if(in_array($value['id'],$dgroup_array)){
+												?>
+                                                <option value="<?php echo $value['id']; ?>">
+                                                    <?php echo $value['group_name']; ?>
+                                                </option>
+                                            <?php } } ?>
+                                        </select>
+                                    </td>
+                               </tr>                                                              
+                            </tbody>
+                        </table>
+                  </div>
+                <div id="tenant-group-div">
+					   <label class="form-cat-label">Category:</label>
+					   <div id="select-visible-div">
+						    <div id="visible-div"><input type="radio" name="visible_status" value="1" <?php echo ($data['visible_status'])?'checked':''?>/> <span>Visible to Selected Tenants</span></div>
+						    <div id="non-visible-div"><input type="radio" name="visible_status" value="0" <?php echo (!$data['visible_status'])?'checked':''?>/> <span>Not Visible to Selected Tenants</span></div>
+					   </div>
+					   <span class="ugroupErr" id="tenant-list-error"></span>
+					   <table cellpadding="5" cellspacing="5" class="cate_table">
+                            <tbody>
+                                <tr>
+									<td>
+										<span class="span">List of Tenants</span>
+                                        <select id="tenant_from_list" multiple="multiple" name="tenant_from_list"> 
+                                            <?php foreach ($tenantList as $key => $value) { 
+												  if(!in_array($value->id,$tenant_array)){
+												?>
+                                                <option value="<?php echo $value->id; ?>">
+                                                    <?php echo $value->tenantName; ?>
+                                                </option>
+                                            <?php } } ?>
+                                        </select>
+                                    </td>
+                                    <td>
+										 <div id="arrow-switcher">
+											 <a href="javascript:void(0)" onClick="move_list_items('tenant_from_list','tenant_to_list')">
+											     <img src="<?php echo BASEURL.'public/images/right-arrow.png';?>" width="50"/>
+											 </a>
+											 <a href="javascript:void(0)" onClick="move_list_items('tenant_to_list','tenant_from_list')">
+											     <img src="<?php echo BASEURL.'public/images/left-arrow.png';?>" width="50"/>
+											 </a>
+										 </div>
+                                    </td>
+                                    <td>
+										<span class="span">Tenant</span>
+                                        <select id="tenant_to_list" name="tenant_to_list[]" multiple="multiple"> 
+                                            <?php foreach ($tenantList as $key => $value) { 
+												  if(in_array($value->id,$tenant_array)){
+												?>
+                                                <option value="<?php echo $value->id; ?>">
+                                                    <?php echo $value->tenantName; ?>
+                                                </option>
+                                            <?php } } ?>
+                                        </select>
+                                    </td>
+
+                               </tr>                      
+                               
+                            </tbody>
+                        </table>
+                  </div>
+                                 
+				<div class="confirmBtn">
+						<!--<input type="reset" value="Reset" name="reset" class="cancel"/>-->
+						<?php if($category_access->is_write==1){?>
+						  <input type="button" value="Confirm" name="next"  id="saveCat" class="confirm" onclick="return editCategory('<?php echo $data['cat_id']; ?>')"/>
+						<?php }?> 
+						<input type="button" value="Cancel" name="cancel" class="reset" onclick="cancelCategroyFrom()"/>
+				  </div>
+
+            </form>
+       
+        </div>
+    </section><!--/div-->
+    </div>  
+</div>
+<script type="text/javascript">
+$( document ).ready(function() {
+	
+	$.fn.editable.defaults.mode = 'popup';	
+	$('.status').editable({
+		source: [
+		{value: 1, text: 'Yes'},
+		{value: 0, text: 'No'},
+       ],
+		validate: function(value) {
+           if($.trim(value) == '') return 'This field is required';
+        }
+	});	
+	
+	$('.pschedule').editable({
+		source: [
+		<?php foreach($priorityData as $key => $preorityName){?>
+		{value: '<?php echo $key?>', text: '<?php echo $preorityName?>'},
+		<?php }?>
+       ],
+		validate: function(value) {
+           if($.trim(value) == '') return 'This field is required';
+        }
+	});
+});
+</script>	

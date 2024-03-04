@@ -1,0 +1,86 @@
+<?php
+	$companyModel = new Model_Company();
+	$nottenant = 1; // this for not listing the tenant user here.
+	$users = $companyModel->getUserByBuildingId($this->bId,$nottenant);
+	$blModel = new Model_BillLabor();
+	$blList = $blModel->getActiveBillLaborByBId($this->bId);
+	
+	 $brModel = new Model_BillRate();
+	 $brList = $brModel->getActiveBillRateByBId($this->bId);
+	 
+	 $job_time = '00:00'; 
+	 
+	$wpModel = new Model_WoParameter();
+	$wpDetails = $wpModel->getWoParameterByBid($this->bId);
+	
+	if($wpDetails){
+		$time_charge = $wpDetails[0]['time_min_charge'];
+		$time_fact = explode(" ",$time_charge);
+		$job_time = '00:'.$time_fact[0];
+	}
+	
+?>
+
+
+<h1>Labor Charges</h1>
+			   <div id="lab_tab" class="tab_content cwo_content">
+			   <div class="grid_content" style="height:180px;">
+											  <table name="labor_grid" class="cw_table_grid" width="100%">
+												  <tr>
+													  <th>Employee Name</th>
+													  <th>Charge/Hour</th>
+													  <th></th>
+													  <th>Rate Charge</th>
+													  <th>Job Time (HH:MM)</th>
+												  </tr> 
+												   <tr><?php if($this->current_value!='null') { ?><td><?php 
+										        if($users){ 
+												foreach ($users as $key => $value) { if($this->current_value['emp_id']==$value->uid) {echo stripslashes($value->lastName).','.stripslashes($value->firstName); }} } ?></td>
+												
+												<td><?php echo $this->current_value['charge_hour'];?></td>
+												<td><?php if($blList){ foreach ($blList as $bl) { ?>
+									            <?php if(isset($this->current_value['bl_id'])) { if($this->current_value['bl_id']==$bl['blid']) echo  $bl['description']; } ?>
+										        <?php }} ?></td>
+												<td><?php if($brList){ foreach ($brList as $br) { ?>
+									           <?php if($this->current_value['rate_charge']==$br['brid']) { echo $br['description']; } ?>
+									         <?php }} ?></td>
+													
+											<td><?php echo $this->current_value['job_time'];?></td>
+											<?php } else { ?>
+											<td colspan="5" style="text-align:center"><?php echo HiSTORY_NONE; ?></td>
+											<?php } ?>
+											</tr>
+											<tr style="background:none"> <td colspan="5" > 
+											<div style="text-align:center">	<span style="font-size:20px; font-weight:bold;"><i class="fa fa-arrow-circle-down big-arrow"></i>
+</span>  </div>
+											</td>
+											</tr>
+												 
+												  
+												  
+												 <?php  if($this->change_value!='') { ?>
+											
+												  <tr>
+													<tr><td><?php 
+										        if($users){ 
+												foreach ($users as $key => $value) { if($this->change_value['emp_id']==$value->uid) {echo stripslashes($value->lastName).','.stripslashes($value->firstName); }} } ?></td>
+												
+												<td><?php echo $this->change_value['charge_hour'];?></td>
+												<td><?php if($blList){ foreach ($blList as $bl) { ?>
+									            <?php if(isset($this->change_value['bl_id'])) { if($this->change_value['bl_id']==$bl['blid']) echo  $bl['description']; } ?>
+										        <?php }} ?></td>
+												<td><?php if($brList){ foreach ($brList as $br) { ?>
+									           <?php if($this->change_value['rate_charge']==$br['brid']) { echo $br['description']; } ?>
+									         <?php }} ?></td>
+													
+											<td><?php echo $this->change_value['job_time'];?></td>
+											
+												  <?php } else { ?>
+											<td colspan="5" style="text-align:center"><?php echo HiSTORY_NONE; ?></td>
+											<?php } ?>
+											</tr>
+												  </table> 
+												  </div> </div>
+												  <div class="buttons">
+		<button type="button" name="cancel" id="cancel" value="Cancel" onclick="cancelWoDesc()">Cancel</button>
+	    </div> 

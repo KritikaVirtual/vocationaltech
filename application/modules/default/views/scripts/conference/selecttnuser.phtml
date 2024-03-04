@@ -1,0 +1,28 @@
+<?php
+if($this->action=='edit'){ ?>
+<select name="created_user" id="created_user" class="all_select" onchange="addEmailPhone(this.value)">
+	<option value="">-------Select------</option>	
+	<?php if($this->tnuserData!=''){
+                $sId=$this->sId;
+
+		   foreach($this->tnuserData as $tud){?>
+			   <option value="<?php echo $tud->uid;?>" <?php echo ($tud->uid==$sId?"SELECTED":"");?>  ><?php echo stripslashes($tud->lastName).', '.stripslashes($tud->firstName);?></option>
+			<?php $i++; }?>   
+	<?php }?>	
+</select>
+
+<?php }else{ ?>
+
+<select name="created_user" id="created_user" class="all_select" onchange="addEmailPhone(this.value)">
+	<option value="">-------Select------</option>	
+	<?php if($this->tnuserData!=''){
+		 $i=1;
+		   foreach($this->tnuserData as $tud){?>
+			   <option value="<?php echo $tud->uid?>" <?php echo ($i==1?"SELECTED":"");?>  ><?php echo stripslashes($tud->lastName).', '.stripslashes($tud->firstName);?></option>
+			<?php $i++; }?>   
+	<?php }?>	
+</select>
+
+<?php } ?>
+
+						

@@ -1,0 +1,17 @@
+<?php
+ $bid= $this->bid;
+ $buildModel = new Model_Building();
+ $build_data = $buildModel->getbuildingbyid($bid);
+ $current_time= date('h:i A');
+ if($build_data){
+	 $btimezone = $build_data[0]['timezone'];
+	 if($btimezone!=0){
+		 $tModel = new Model_TimeZone();
+		 $tzonelist = $tModel->getTimeZoneById($btimezone);
+		 $time_zone = $tzonelist[0]['time_value'];
+		 $date = new DateTime(null, new DateTimeZone($time_zone));
+		$current_time =	 $date->format('h:i A');
+	 }
+  }
+?>
+<input type="text" name="time_requested" id="time_requested" value="<?php echo $current_time; ?>" readonly="readonly"/>

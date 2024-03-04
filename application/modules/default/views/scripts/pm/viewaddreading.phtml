@@ -1,0 +1,155 @@
+<?php 
+    $startdateadj = $this->startdateadjustment; 
+    $taskjobtime = $this->jobtime; 
+    $unitofmeasure = $this->unitofmeasure;  
+    $frequency = $this->frequency; 
+?>
+<div id="level" class="section">
+            <div class="level">Level-Sub Set</div>
+            <select name="level" id="subset_level">
+                <option value="0">Root</option>
+                <?php foreach($this->subset as $subset): ?>
+                    <option value="<?php echo $subset->id; ?>"><?php echo $subset->reading_instruction; ?></option>
+                <?php endforeach; ?>
+                   
+            </select>
+            <a class="modalbox create_conf " onclick="javascript:openpopup('<?php echo $this->baseUrl() . '/pm/createreadingsubset/temp_id/'.$this->temp_id; ?>');" href="#CreateNewMultiCon"> 
+                <button class="confirm" >Create New Level-Subset</button>
+            </a>
+
+        </div>
+        <div id="level" class="section">
+            <div class="level">Task Instruction</div>
+            <textarea name="task_instruction" id="reading_instruction"></textarea>
+            <span class="task_inst_error error"></span>
+        </div>
+        <div id="level" class="section">
+            <div class="level">Frequency</div>
+            <select name="level" id="frequency">
+                <?php foreach($frequency as $key=>$val){ ?>
+                    <option value="<?php echo $key; ?>"><?php echo $val; ?></option>
+                <?php } ?>
+            </select>
+            <a class="modalbox create_conf " onclick="javascript:openpopup('<?php echo $this->baseUrl() . '/pm/customefrequency'; ?>');" href="#CreateNewMultiCon"> 
+                <button class="confirm" >Custom</button>
+            </a>
+            <div class="custome_freq_section">
+                <input type="hidden" id="custome_freq" name="custome_freq" value="">
+                <input type="hidden" id="custome_numberofday" name="custome_numberofday" value="">
+            </div>
+        </div>
+        <div id="level" class="section">
+            <div class="level">Reading Value</div>
+            <input type="number" name="reading_val" onKeyDown="return setthreeNumberDecimal(event);" id="reading_val" min="1">
+             <span class="task_reading_val_error error"></span>
+        </div>
+        <div id="level" class="section">
+            <div class="level">Unit of Measure</div>
+            <select name="level" id="unitofmeasure">
+                <?php foreach($unitofmeasure as $key=>$val){ ?>
+                    <option value="<?php echo $key; ?>"><?php echo $val; ?></option>
+                <?php } ?>             
+            </select>            
+        </div>
+
+        <div id="level" class="section">
+            <div class="level">Tolerance %</div>
+            <input type="number" name="tolerance" id="tolerance" min="1" onKeyDown="return setTwoNumberDecimal(event);" value="15.00">            
+        </div>
+
+        <div id="level" class="section">
+            <div class="level">Start Date</div>
+            <input name="startDate" readonly="readonly" id="startDate" class="date-picker" />
+            <span class="startDate_error error"></span>
+        </div>
+
+        <div id="level" class="section">
+            <div class="level">Start Day Of Month</div>
+            <select name="level" id="sdom">
+                <option >Please Select Start date</option>
+            </select>            
+        </div>
+        
+        <div id="level" class="section">
+            <div class="level">Start Date Adjustment</div>
+            <select name="level" id="startdateadjustment">
+                <?php foreach($startdateadj as $key=>$val){ ?>
+                    <option value="<?php echo $key; ?>"><?php echo $val; ?></option>
+                <?php } ?>
+            </select>           
+        </div>
+        
+        <div id="level" class="section">
+            <div class="level">Task Job-Time(In Hours)</div>
+            <select name="level" id="taskjobtime">
+                <?php foreach($taskjobtime as $key=>$val){ ?>
+                    <option value="<?php echo $key; ?>"><?php echo $val; ?></option>
+                <?php } ?>
+            </select>            
+        </div>
+        <div id="level" class="section">
+            <div class="level">Over Time/Off Hours</div>
+            <select name="level" id="overtime">
+                <option value="0">No</option>
+                <option value="1">YES</option>                
+            </select>            
+        </div>
+        <div id="level" class="section">
+            <div class="level">Assigned To</div>
+            <select name="level" id="assignedto">
+                <option value="1">Default</option>
+            </select>
+            <input type="hidden" name="action" id="action" value="add">
+            <input type="hidden" name="task_id" id="task_id" value="">
+            <input type="hidden" name="temp_id" id="temp_id" value="<?php echo $this->temp_id; ?>">            
+            <button class="confirm" onclick="ValidationReading();">Add Reading</button>
+        </div>
+
+<script>
+    $(function() {
+        $('.date-picker').datepicker( {
+            changeMonth: true,
+            changeYear: true,
+            showButtonPanel: true,
+            dateFormat: 'MM yy',
+            minDate: 0,
+            onClose: function(dateText, inst) { 
+            
+            
+            function isDonePressed(){
+                            return ($('#ui-datepicker-div').html().indexOf('ui-datepicker-close ui-state-default ui-priority-primary ui-corner-all ui-state-hover') > -1);
+                        }
+
+                        if (isDonePressed()){
+                            var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+                            
+                            var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+                                $(this).datepicker('setDate', new Date(year, month, 1));
+                                console.log('Done is pressed'+month);
+                                month = parseInt(month) + 1;
+                                var alldays = new Date(year, month, 0).getDate();
+                                console.log("Number of days in selected Days"+alldays);
+                                html = "";
+                                html+='<option value="lastday">Lastday</option>';
+                                for(i=1;i<=alldays;i++){
+                                    html+='<option value="'+i+getformatedays(i)+'">'+i+getformatedays(i)+'</option>';
+                                }
+                                $("#sdom").html(html);
+                                
+                        }
+                        function getformatedays(n){
+                            if (n >= 11 && n <= 13) {
+                                return "th";
+                            }
+                            switch (n % 10) {
+                                case 1:  return "st";
+                                case 2:  return "nd";
+                                case 3:  return "rd";
+                                default: return "th";
+                            }
+                        }
+            
+            }
+        });
+    });
+</script>

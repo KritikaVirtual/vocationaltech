@@ -1,0 +1,48 @@
+ <div class="adminsec">
+ 
+ 		 
+ 
+	  <div class="adminleft">
+		   <img src="<?php echo $this->baseUrl() ?>/public/images/admin.png" border="0" /><br /><br />
+		   <?php /*<p><a href="#">Return to site home page</a></p>*/?>
+	  </div>
+	  <div class="adminright">
+		   <h2>ADMINISTRATION LOGIN</h2>
+	<?php if(!empty($this->message)){ ?>
+				<div class="success"  style="margin-bottom: 21px;width:150px;font-weight:bold" ><?php echo $this->message; ?></div>
+	<?php }
+	
+		 if($this->error){
+			$err=$this->error; 
+			 
+			echo '<div style="text-align: left; padding-top: 30px;"><div class="error" style="margin: 10px; text-align: left; width: 404px;color:red">';
+			echo '<b>Error:</b><br><div style="padding-left:30px;color:#3c3c3c;">';
+			if(isset($err['email'])) echo '* Please enter username.<br>';
+			if(isset($err['password'])) echo '* Please enter password.<br>';
+			if(isset($err['save'])) echo '* Invalid username/password combination <br>';
+			if(isset($err['active'])) echo '* Your account has been deactivated <br>';
+			if(isset($err['remove'])) echo '* Your account has been temporarily disabled <br>';	
+			if(isset($err['company'])) echo '* Your company has been temporarily disabled <br>';			
+			echo '</div></div></div>';
+		  }  
+		 
+	?>		   
+		   <form method="post" />
+		   <div class="loginfrm">
+				<div class="leftcol">
+					 <label>Username</label>
+					 <label>Password</label>
+				</div>
+				<div class="rightcol">
+					 
+					 <?php echo $this->form->email ?>
+					 <?php echo $this->form->password ?>
+					 <div class="loginbtn">
+						<input type="image"src="<?php echo $this->baseUrl() ?>/public/images/admbtn.png" border="0" />
+					 </div>
+					 <div class="loginbtn"><a href="index/forgetpassword">Forgot your password</a></div>
+				</div>
+		   </div>
+		   </form>
+	  </div>
+ </div>

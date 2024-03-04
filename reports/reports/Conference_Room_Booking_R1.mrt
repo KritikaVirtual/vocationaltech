@@ -1,0 +1,794 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<StiSerializer type="Flex" application="StiReport" version="1.02">
+  <Dictionary isKey="true" type="Dictionary" Ref="1">
+    <Databases isList="true" count="1">
+      <Con_workorders isKey="true" type="Stimulsoft.Report.Dictionary.StiMySqlDatabase" Ref="2">
+        <Alias>Con_workorders</Alias>
+        <ConnectionStringEncrypted>w9rZ680Ko53wFaWQZghlc9V00WDlTqPBYkax7GpwJV7VdNkCSExjgeJAuezoRHc/0wzNyWJdk0lF
+W6XM4Wxiethc1evFV6Pd4k3dgOpMYkbDaGWJzQ==</ConnectionStringEncrypted>
+        <Name>Con_workorders</Name>
+      </Con_workorders>
+    </Databases>
+    <DataSources isList="true" count="1">
+      <rsMainInfo isKey="true" type="Stimulsoft.Report.Dictionary.StiMySqlSource" Ref="3">
+        <Alias>rsMainInfo</Alias>
+        <Columns isList="true" count="26">
+          <value>room_name,System.String</value>
+          <value>Management_Company_Name,System.String</value>
+          <value>Building_Name,System.String</value>
+          <value>Building_Address,System.String</value>
+          <value>Building_Address_2,System.String</value>
+          <value>City_State_Zip,System.String</value>
+          <value>Management_Logo,System.String</value>
+          <value>Key_Building_Number,System.String</value>
+          <value>Building_Cost_Center,System.String</value>
+          <value>Tennt_User_ID,System.String</value>
+          <value>tenantName,System.String</value>
+          <value>userName,System.String</value>
+          <value>Booking_Filter_Search_Date,System.String</value>
+          <value>Booking_Date,System.String</value>
+          <value>Booking_Month,System.String</value>
+          <value>Booking_Year,System.String</value>
+          <value>start_time,System.String</value>
+          <value>end_time,System.String</value>
+          <value>Booking_Contact,System.String</value>
+          <value>cost,System.Int32</value>
+          <value>Booking_Contact_Email,System.String</value>
+          <value>Booking_Contact_Phone,System.String</value>
+          <value>Booking_Meeting_Title,System.String</value>
+          <value>Booking_Time_Schedule,System.String</value>
+          <value>Booking_Room_Configuration,System.String</value>
+          <value>requested_date,System.DateTime</value>
+        </Columns>
+        <CommandTimeout>30</CommandTimeout>
+        <Dictionary isRef="1"/>
+        <Name>rsMainInfo</Name>
+        <NameInSource>Con_workorders</NameInSource>
+        <Parameters isList="true" count="0"/>
+        <SqlCommand>Select
+  conference_room.room_name,
+  company.companyName As Management_Company_Name,
+  buildings.buildingName As Building_Name,
+  buildings.address As Building_Address,
+  buildings.address2 As Building_Address_2,
+  Concat(buildings.city, ', ', buildings.state, ' ', buildings.postalCode) As
+  City_State_Zip,
+  company.company_logo As Management_Logo,
+  buildings.build_id As Key_Building_Number,
+  buildings.uniqueCostCenter As Building_Cost_Center,
+  users.uid As Tennt_User_ID,
+  tenant.tenantName,
+  users.userName,
+  Date_Format(croom_request.requested_date, '%d/%m/%Y') As
+  Booking_Filter_Search_Date,
+  Date_Format(croom_request.requested_date, '%m/%d/%Y') As Booking_Date,
+  Date_Format(croom_request.requested_date, '%M') As Booking_Month,
+  Date_Format(croom_request.requested_date, '%Y') As Booking_Year,
+  croom_request.start_time,
+  croom_request.end_time,
+  Concat(TenantUser.firstName, ' ', TenantUser.lastName) As Booking_Contact,
+  croom_rate_schedule.cost,
+  TenantUser.email As Booking_Contact_Email,
+  TenantUser.phoneNumber As Booking_Contact_Phone,
+  croom_request.meeting_title As Booking_Meeting_Title,
+  croom_plan.plan_name As Booking_Time_Schedule,
+  croom_design.design_name As Booking_Room_Configuration,
+  croom_request.requested_date
+From
+  buildings Left Join
+  company
+    On buildings.cust_id = company.cust_id Left Join
+  croom_request
+    On croom_request.building_id = buildings.build_id Left Join
+  tenant
+    On croom_request.tenant = tenant.id Left Join
+  conference_room
+    On croom_request.croom_id = conference_room.cid Inner Join
+  croom_rate_schedule
+    On croom_request.croom_id = croom_rate_schedule.room_id And
+    croom_request.schedule_id = croom_rate_schedule.plan Right Join
+  user_building_module_access
+    On user_building_module_access.building_id = buildings.build_id Left Join
+  users
+    On users.uid = user_building_module_access.user_id Left Join
+  croom_plan
+    On croom_rate_schedule.plan = croom_plan.id Left Join
+  croom_design
+    On croom_request.design_id = croom_design.d_id Left Join
+  tenantusers
+    On croom_request.created_user = tenantusers.userId Left Join
+  users TenantUser
+    On tenantusers.userId = TenantUser.uid
+Where
+  users.uid = ({User}) And
+  buildings.build_id In  ({buildkey}) And
+  buildings.uniqueCostCenter In ({Cost_Center_Number}) and
+Date_Format(croom_request.requested_date, '%M') Is Not Null</SqlCommand>
+      </rsMainInfo>
+    </DataSources>
+    <Relations isList="true" count="0"/>
+    <Report isRef="0"/>
+    <Variables isList="true" count="7">
+      <value>Search_x0020_By,DateStart,Search_x0020__x002D__x0020_Date_x0020_From_x0020__x003A_,,System.DateTime,,False,False,True</value>
+      <value>Search_x0020_By,AllTenants,List_x0020_All_x0020_Tenants_x0020__x003A_,,System.Boolean,true,False,False,True</value>
+      <value>Search_x0020_By,AllRooms,List_x0020_All_x0020_Rooms_x0020__x003A_,,System.Boolean,true,False,False,True</value>
+      <value>Search_x0020_By,DateEnd,Date_x0020_To_x0020__x003A_,,System.DateTime,,False,False,True</value>
+      <value>Search_x0020_By,ListTenants,or_x0020_by_x0020_Tenant_x0020_Name_x0020__x003A_,,System.String,,False,False,True,False,_x003C__x003F_xml_x0020_version_x003D__x0022_1_x002E_0_x0022__x0020_encoding_x003D__x0022_utf_x002D_8_x0022__x0020_standalone_x003D__x0022_yes_x0022__x003F__x003E__x003C_StiSerializer_x0020_type_x003D__x0022_Flex_x0022__x0020_application_x003D__x0022_State_x0022__x0020_version_x003D__x0022_1_x002E_02_x0022__x003E__x003C_AllowUserValues_x003E_False_x003C__x002F_AllowUserValues_x003E__x003C_ItemsInitializationType_x003E_Columns_x003C__x002F_ItemsInitializationType_x003E__x003C_Keys_x0020_isList_x003D__x0022_true_x0022__x0020_count_x003D__x0022_0_x0022__x002F__x003E__x003C_KeysColumn_x003E_rsMainInfo_x002E_tenantName_x003C__x002F_KeysColumn_x003E__x003C_Values_x0020_isList_x003D__x0022_true_x0022__x0020_count_x003D__x0022_0_x0022__x002F__x003E__x003C__x002F_StiSerializer_x003E_</value>
+      <value>Search_x0020_By,ListRooms,or_x0020_by_x0020_Room_x0020_Name_x0020__x003A_,Filter_x0020_by_x0020_Conference_x0020_room_x0020_Name,System.String,,False,False,True,False,_x003C__x003F_xml_x0020_version_x003D__x0022_1_x002E_0_x0022__x0020_encoding_x003D__x0022_utf_x002D_8_x0022__x0020_standalone_x003D__x0022_yes_x0022__x003F__x003E__x003C_StiSerializer_x0020_type_x003D__x0022_Flex_x0022__x0020_application_x003D__x0022_State_x0022__x0020_version_x003D__x0022_1_x002E_02_x0022__x003E__x003C_AllowUserValues_x003E_False_x003C__x002F_AllowUserValues_x003E__x003C_ItemsInitializationType_x003E_Columns_x003C__x002F_ItemsInitializationType_x003E__x003C_Keys_x0020_isList_x003D__x0022_true_x0022__x0020_count_x003D__x0022_0_x0022__x002F__x003E__x003C_KeysColumn_x003E_rsMainInfo_x002E_room_name_x003C__x002F_KeysColumn_x003E__x003C_Values_x0020_isList_x003D__x0022_true_x0022__x0020_count_x003D__x0022_0_x0022__x002F__x003E__x003C__x002F_StiSerializer_x003E_</value>
+      <value>,ShowNotes,ShowNotes,System.Int32,_x0030_,False,False</value>
+    </Variables>
+  </Dictionary>
+  <EngineVersion>EngineV2</EngineVersion>
+  <GlobalizationStrings isList="true" count="0"/>
+  <MetaTags isList="true" count="0"/>
+  <Pages isList="true" count="1">
+    <Page1 isKey="true" type="Page" Ref="4">
+      <Border>None;Black;2;Solid;False;4;Black</Border>
+      <Brush>Transparent</Brush>
+      <Components isList="true" count="10">
+        <PageHeaderBand1 isKey="true" type="PageHeaderBand" Ref="5">
+          <Brush>Transparent</Brush>
+          <CanShrink>True</CanShrink>
+          <ClientRectangle>0,4,271.78,42</ClientRectangle>
+          <Components isList="true" count="6">
+            <Text2 isKey="true" type="Text" Ref="6">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,0,270,10.16</ClientRectangle>
+              <Conditions isList="true" count="0"/>
+              <Font>Arial,22,Bold</Font>
+              <Guid>f8f3e205ecf01cb084dccaa214617ec7</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text2</Name>
+              <Page isRef="4"/>
+              <Parent isRef="5"/>
+              <Text>Conference Room Scheduler Report</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text2>
+            <Image1 isKey="true" type="Image" Ref="7">
+              <AspectRatio>True</AspectRatio>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,0,50.8,20.32</ClientRectangle>
+              <Conditions isList="true" count="0"/>
+              <DataColumn isNull="true"/>
+              <Guid>9ff966de8425e3eaf79bcaa789d6f611</Guid>
+              <HorAlignment>Right</HorAlignment>
+              <Image/>
+              <ImageURL>https://www.visionworkorders.com/public/images/clogo/{rsMainInfo.Management_Logo}</ImageURL>
+              <Name>Image1</Name>
+              <Page isRef="4"/>
+              <Parent isRef="5"/>
+              <ProcessingDuplicates>Merge</ProcessingDuplicates>
+              <Stretch>True</Stretch>
+            </Image1>
+            <Text11 isKey="true" type="Text" Ref="8">
+              <Brush>Transparent</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>174,0,96.52,17.02</ClientRectangle>
+              <Conditions isList="true" count="0"/>
+              <Font>Arial,10</Font>
+              <Guid>577fee0d093b1e36428dcaaa4717c04a</Guid>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text11</Name>
+              <Page isRef="4"/>
+              <Parent isRef="5"/>
+              <Text>{rsMainInfo.Management_Company_Name}
+{IIF(rsMainInfo.Building_Name != "", rsMainInfo.Building_Name,"" )}
+{IIF(rsMaininfo.Building_Name!=rsMaininfo.Building_Address,rsMaininfo.Building_Address, rsMainInfo.City_State_Zip)}
+{IIF(rsMaininfo.Building_Name!=rsMaininfo.Building_Address, rsMainInfo.City_State_Zip,NULL)}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text11>
+            <Text12 isKey="true" type="Text" Ref="9">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,12,271.12,5.08</ClientRectangle>
+              <Conditions isList="true" count="0"/>
+              <Font>Arial,10</Font>
+              <Guid>b9ed849364f3acb26517caaaa1e2a3cd</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text12</Name>
+              <Page isRef="4"/>
+              <Parent isRef="5"/>
+              <Text>{Today.ToString("MMMM dd YYYY")}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text12>
+            <Text16 isKey="true" type="Text" Ref="10">
+              <Brush>Transparent</Brush>
+              <CanGrow>True</CanGrow>
+              <CanShrink>True</CanShrink>
+              <ClientRectangle>22,22,248,20</ClientRectangle>
+              <Conditions isList="true" count="0"/>
+              <Font>Arial,24</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text16</Name>
+              <Page isRef="4"/>
+              <Parent isRef="5"/>
+              <Text>{IIF(ShowNotes==1, ""  ,"
+                 To Run Report Please do the following:
+
+1 - Enter a 'Search - Date From :' and 'Date To :'  
+     from the Search Date Selector above. 
+     NOTE: This is required to run the report
+
+2 - To Filter by Tenant Name, uncheck 'List All Tenants :'  
+      then Select Tenant from drop down list box. 
+      NOTE: Optional, not required to run report
+
+3 - To Filter by Conference Room, uncheck 'List All Room :'
+      Then Select Conference Room from the drop down list box.
+      NOTE: Optional, not required to run report
+
+     Click SUBMIT to run report, click RESET to clean your settings.
+__________________________________________________________________"  )}</Text>
+              <TextBrush>[255:0:0]</TextBrush>
+              <TextOptions>HotkeyPrefix=None, LineLimit=False, RightToLeft=False, Trimming=None, WordWrap=True, Angle=0, FirstTabOffset=40, DistanceBetweenTabs=20,</TextOptions>
+              <Type>Expression</Type>
+            </Text16>
+            <Text21 isKey="true" type="Text" Ref="11">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>246,28,24,6</ClientRectangle>
+              <Conditions isList="true" count="0"/>
+              <Font>Arial,10</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text21</Name>
+              <Page isRef="4"/>
+              <Parent isRef="5"/>
+              <Printable>False</Printable>
+              <ShiftMode>None</ShiftMode>
+              <Text>{ShowNotes=1}</Text>
+              <TextBrush>White</TextBrush>
+              <Type>Expression</Type>
+            </Text21>
+          </Components>
+          <Conditions isList="true" count="0"/>
+          <Name>PageHeaderBand1</Name>
+          <Page isRef="4"/>
+          <Parent isRef="4"/>
+        </PageHeaderBand1>
+        <PageFooterBand1 isKey="true" type="PageFooterBand" Ref="12">
+          <Brush>Transparent</Brush>
+          <ClientRectangle>0,194.66,271.78,6</ClientRectangle>
+          <Components isList="true" count="1">
+            <Text77 isKey="true" type="Text" Ref="13">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>94,1.58,176,4</ClientRectangle>
+              <Conditions isList="true" count="0"/>
+              <Font>Arial,6</Font>
+              <Guid>ef563554a7d9ec3d04b0e04644b13f91</Guid>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text77</Name>
+              <Page isRef="4"/>
+              <Parent isRef="12"/>
+              <Text>Vocational Technologies, LLC 2000 - {Today.ToString("YYYY")}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Bottom</VertAlignment>
+            </Text77>
+          </Components>
+          <Conditions isList="true" count="0"/>
+          <Name>PageFooterBand1</Name>
+          <Page isRef="4"/>
+          <Parent isRef="4"/>
+        </PageFooterBand1>
+        <GroupHeaderBand1 isKey="true" type="GroupHeaderBand" Ref="14">
+          <Brush>Transparent</Brush>
+          <CanShrink>True</CanShrink>
+          <ClientRectangle>0,54,271.78,0</ClientRectangle>
+          <Components isList="true" count="0"/>
+          <Condition>{rsMainInfo.Booking_Year}</Condition>
+          <Conditions isList="true" count="0"/>
+          <Name>GroupHeaderBand1</Name>
+          <Page isRef="4"/>
+          <Parent isRef="4"/>
+        </GroupHeaderBand1>
+        <GroupHeaderBand2 isKey="true" type="GroupHeaderBand" Ref="15">
+          <Brush>Transparent</Brush>
+          <ClientRectangle>0,62,271.78,18</ClientRectangle>
+          <Components isList="true" count="10">
+            <Text17 isKey="true" type="Text" Ref="16">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,2,126,6.1</ClientRectangle>
+              <Conditions isList="true" count="0"/>
+              <Font>Arial,10,Bold</Font>
+              <Guid>7a1e60af96200dcc4444cae1ddf888d2</Guid>
+              <Interaction isKey="true" type="Stimulsoft.Report.Components.StiInteraction" Ref="17">
+                <SortingColumn>dbMaster.categoryName</SortingColumn>
+              </Interaction>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text17</Name>
+              <Page isRef="4"/>
+              <Parent isRef="15"/>
+              <Text>{rsMainInfo.Booking_Month}   {rsMainInfo.Booking_Year} {BookingMonth.ToString("m/d/y")}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextQuality>Typographic</TextQuality>
+              <ToolTip>Sort by Category Name</ToolTip>
+              <Type>Expression</Type>
+            </Text17>
+            <Text10 isKey="true" type="Text" Ref="18">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,8,74,6.1</ClientRectangle>
+              <Conditions isList="true" count="0"/>
+              <Font>Arial,10,Bold</Font>
+              <Guid>058fe28ac562019246d2cab013da79fa</Guid>
+              <Interaction isKey="true" type="Stimulsoft.Report.Components.StiInteraction" Ref="19">
+                <SortingColumn>dbMaster.categoryName</SortingColumn>
+              </Interaction>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text10</Name>
+              <Page isRef="4"/>
+              <Parent isRef="15"/>
+              <Text>Tenant Name</Text>
+              <TextBrush>Black</TextBrush>
+              <TextQuality>Typographic</TextQuality>
+              <ToolTip>Sort by Category Name</ToolTip>
+              <Type>Expression</Type>
+            </Text10>
+            <Text14 isKey="true" type="Text" Ref="20">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>76,8,74,6.1</ClientRectangle>
+              <Conditions isList="true" count="0"/>
+              <Font>Arial,10,Bold</Font>
+              <Guid>0b5e37a0fb7e1ad41302cab0bde3cf69</Guid>
+              <Interaction isKey="true" type="Stimulsoft.Report.Components.StiInteraction" Ref="21">
+                <SortingColumn>dbMaster.categoryName</SortingColumn>
+              </Interaction>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text14</Name>
+              <Page isRef="4"/>
+              <Parent isRef="15"/>
+              <Text>Conference Room Name / Title</Text>
+              <TextBrush>Black</TextBrush>
+              <TextQuality>Typographic</TextQuality>
+              <ToolTip>Sort by Category Name</ToolTip>
+              <Type>Expression</Type>
+            </Text14>
+            <Text13 isKey="true" type="Text" Ref="22">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>152,8,37.69,6.1</ClientRectangle>
+              <Conditions isList="true" count="0"/>
+              <Font>Arial,10,Bold</Font>
+              <Guid>1d07648d74f3f16e0f43cab12a4315a7</Guid>
+              <Interaction isKey="true" type="Stimulsoft.Report.Components.StiInteraction" Ref="23">
+                <SortingColumn>dbMaster.categoryName</SortingColumn>
+              </Interaction>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text13</Name>
+              <Page isRef="4"/>
+              <Parent isRef="15"/>
+              <Text>Booking Date / Time</Text>
+              <TextBrush>Black</TextBrush>
+              <TextQuality>Typographic</TextQuality>
+              <ToolTip>Sort by Category Name</ToolTip>
+              <Type>Expression</Type>
+            </Text13>
+            <Text7 isKey="true" type="Text" Ref="24">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>192,8,19.69,6.1</ClientRectangle>
+              <Conditions isList="true" count="0"/>
+              <Font>Arial,10,Bold</Font>
+              <Guid>d03abe5afffc0843f829cab1897eac6c</Guid>
+              <Interaction isKey="true" type="Stimulsoft.Report.Components.StiInteraction" Ref="25">
+                <SortingColumn>dbMaster.categoryName</SortingColumn>
+              </Interaction>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text7</Name>
+              <Page isRef="4"/>
+              <Parent isRef="15"/>
+              <Text>Time Start</Text>
+              <TextBrush>Black</TextBrush>
+              <TextQuality>Typographic</TextQuality>
+              <ToolTip>Sort by Category Name</ToolTip>
+              <Type>Expression</Type>
+            </Text7>
+            <Text15 isKey="true" type="Text" Ref="26">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>214,8,31.69,6.1</ClientRectangle>
+              <Conditions isList="true" count="0"/>
+              <Font>Arial,10,Bold</Font>
+              <Guid>af192ddd15c87cee7050cab1e1ce040d</Guid>
+              <Interaction isKey="true" type="Stimulsoft.Report.Components.StiInteraction" Ref="27">
+                <SortingColumn>dbMaster.categoryName</SortingColumn>
+              </Interaction>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text15</Name>
+              <Page isRef="4"/>
+              <Parent isRef="15"/>
+              <Text>Time End / Setup</Text>
+              <TextBrush>Black</TextBrush>
+              <TextQuality>Typographic</TextQuality>
+              <ToolTip>Sort by Category Name</ToolTip>
+              <Type>Expression</Type>
+            </Text15>
+            <Text9 isKey="true" type="Text" Ref="28">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>248,8,21.69,6.1</ClientRectangle>
+              <Conditions isList="true" count="0"/>
+              <Font>Arial,10,Bold</Font>
+              <Guid>a6764ea6e238b4543352cab22e52cbc7</Guid>
+              <HorAlignment>Right</HorAlignment>
+              <Interaction isKey="true" type="Stimulsoft.Report.Components.StiInteraction" Ref="29">
+                <SortingColumn>dbMaster.categoryName</SortingColumn>
+              </Interaction>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text9</Name>
+              <Page isRef="4"/>
+              <Parent isRef="15"/>
+              <Text>Charge</Text>
+              <TextBrush>Black</TextBrush>
+              <TextQuality>Typographic</TextQuality>
+              <ToolTip>Sort by Category Name</ToolTip>
+              <Type>Expression</Type>
+            </Text9>
+            <StartPointPrimitive1 isKey="true" type="Stimulsoft.Report.Components.StiStartPointPrimitive" Ref="30">
+              <ClientRectangle>0,0,0,0</ClientRectangle>
+              <Conditions isList="true" count="0"/>
+              <Name>StartPointPrimitive1</Name>
+              <Page isRef="4"/>
+              <Parent isRef="15"/>
+              <ReferenceToGuid>3132371b4bb421d2aacbcae55bfcb963</ReferenceToGuid>
+            </StartPointPrimitive1>
+            <StartPointPrimitive2 isKey="true" type="Stimulsoft.Report.Components.StiStartPointPrimitive" Ref="31">
+              <ClientRectangle>0,0,0,0</ClientRectangle>
+              <Conditions isList="true" count="0"/>
+              <Name>StartPointPrimitive2</Name>
+              <Page isRef="4"/>
+              <Parent isRef="15"/>
+              <ReferenceToGuid>fa64b034beafdd02ea02ce6ccbe50a36</ReferenceToGuid>
+            </StartPointPrimitive2>
+            <EndPointPrimitive2 isKey="true" type="Stimulsoft.Report.Components.StiEndPointPrimitive" Ref="32">
+              <ClientRectangle>272,14,0,0</ClientRectangle>
+              <Conditions isList="true" count="0"/>
+              <Name>EndPointPrimitive2</Name>
+              <Page isRef="4"/>
+              <Parent isRef="15"/>
+              <ReferenceToGuid>fa64b034beafdd02ea02ce6ccbe50a36</ReferenceToGuid>
+            </EndPointPrimitive2>
+          </Components>
+          <Condition>{rsMainInfo.Booking_Month}</Condition>
+          <Conditions isList="true" count="0"/>
+          <Name>GroupHeaderBand2</Name>
+          <Page isRef="4"/>
+          <Parent isRef="4"/>
+          <PrintOnAllPages>True</PrintOnAllPages>
+          <SortDirection>Descending</SortDirection>
+        </GroupHeaderBand2>
+        <HeaderBand1 isKey="true" type="HeaderBand" Ref="33">
+          <Brush>Transparent</Brush>
+          <CanShrink>True</CanShrink>
+          <ClientRectangle>0,88,271.78,2</ClientRectangle>
+          <Components isList="true" count="0"/>
+          <Conditions isList="true" count="0"/>
+          <Name>HeaderBand1</Name>
+          <Page isRef="4"/>
+          <Parent isRef="4"/>
+        </HeaderBand1>
+        <DataBand1 isKey="true" type="DataBand" Ref="34">
+          <Brush>Transparent</Brush>
+          <CanBreak>True</CanBreak>
+          <CanShrink>True</CanShrink>
+          <ClientRectangle>0,98,271.78,28</ClientRectangle>
+          <Components isList="true" count="12">
+            <Text1 isKey="true" type="Text" Ref="35">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,1,74,6.1</ClientRectangle>
+              <Conditions isList="true" count="0"/>
+              <Font>Arial,10</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text1</Name>
+              <Page isRef="4"/>
+              <Parent isRef="34"/>
+              <Text>{rsMainInfo.tenantName}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>DataColumn</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text1>
+            <Text4 isKey="true" type="Text" Ref="36">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>152,1,37.69,6.1</ClientRectangle>
+              <Conditions isList="true" count="0"/>
+              <Font>Arial,10</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text4</Name>
+              <Page isRef="4"/>
+              <Parent isRef="34"/>
+              <Text>{rsMainInfo.Booking_Date}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>DataColumn</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text4>
+            <Text6 isKey="true" type="Text" Ref="37">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>192,1,19.69,6.1</ClientRectangle>
+              <Conditions isList="true" count="0"/>
+              <Font>Arial,10</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text6</Name>
+              <Page isRef="4"/>
+              <Parent isRef="34"/>
+              <Text>{rsMainInfo.start_time}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>DataColumn</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text6>
+            <Text8 isKey="true" type="Text" Ref="38">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>214,1,27.69,6.1</ClientRectangle>
+              <Conditions isList="true" count="0"/>
+              <Font>Arial,10</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text8</Name>
+              <Page isRef="4"/>
+              <Parent isRef="34"/>
+              <Text>{rsMainInfo.end_time}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>DataColumn</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text8>
+            <Text3 isKey="true" type="Text" Ref="39">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>76,1,74,6.1</ClientRectangle>
+              <Conditions isList="true" count="0"/>
+              <Font>Arial,10</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text3</Name>
+              <Page isRef="4"/>
+              <Parent isRef="34"/>
+              <Text>{rsMainInfo.room_name}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>DataColumn</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text3>
+            <Text5 isKey="true" type="Text" Ref="40">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>244,1,26,6</ClientRectangle>
+              <Conditions isList="true" count="0"/>
+              <Font>Arial,10</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text5</Name>
+              <Page isRef="4"/>
+              <Parent isRef="34"/>
+              <Text>{rsMainInfo.cost}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat isKey="true" type="CurrencyFormat" Ref="41">
+                <GroupSeparator>,</GroupSeparator>
+                <NegativePattern>5</NegativePattern>
+                <PositivePattern>2</PositivePattern>
+                <UseLocalSetting>False</UseLocalSetting>
+              </TextFormat>
+              <Type>DataColumn</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text5>
+            <Text18 isKey="true" type="Text" Ref="42">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>2,8,72,6</ClientRectangle>
+              <Conditions isList="true" count="0"/>
+              <Font>Arial,10</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text18</Name>
+              <Page isRef="4"/>
+              <Parent isRef="34"/>
+              <Text>{rsMainInfo.Booking_Contact}</Text>
+              <TextBrush>Black</TextBrush>
+            </Text18>
+            <Text19 isKey="true" type="Text" Ref="43">
+              <Brush>Transparent</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>76,8,74,18</ClientRectangle>
+              <Conditions isList="true" count="0"/>
+              <Font>Arial,10</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text19</Name>
+              <Page isRef="4"/>
+              <Parent isRef="34"/>
+              <Text>{rsMainInfo.Booking_Meeting_Title}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>HotkeyPrefix=None, LineLimit=False, RightToLeft=False, Trimming=None, WordWrap=True, Angle=0, FirstTabOffset=40, DistanceBetweenTabs=20,</TextOptions>
+            </Text19>
+            <Text20 isKey="true" type="Text" Ref="44">
+              <Brush>Transparent</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>152,8,60,18</ClientRectangle>
+              <Conditions isList="true" count="0"/>
+              <Font>Arial,10</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text20</Name>
+              <Page isRef="4"/>
+              <Parent isRef="34"/>
+              <Text>{rsMainInfo.Booking_Time_Schedule}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>HotkeyPrefix=None, LineLimit=False, RightToLeft=False, Trimming=None, WordWrap=True, Angle=0, FirstTabOffset=40, DistanceBetweenTabs=20,</TextOptions>
+            </Text20>
+            <Text22 isKey="true" type="Text" Ref="45">
+              <Brush>Transparent</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>214,8,54,18</ClientRectangle>
+              <Conditions isList="true" count="0"/>
+              <Font>Arial,10</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text22</Name>
+              <Page isRef="4"/>
+              <Parent isRef="34"/>
+              <Text>{rsMainInfo.Booking_Room_Configuration}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>HotkeyPrefix=None, LineLimit=False, RightToLeft=False, Trimming=None, WordWrap=True, Angle=0, FirstTabOffset=40, DistanceBetweenTabs=20,</TextOptions>
+            </Text22>
+            <Text23 isKey="true" type="Text" Ref="46">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>2,14,72,6</ClientRectangle>
+              <Conditions isList="true" count="0"/>
+              <Font>Arial,10</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text23</Name>
+              <Page isRef="4"/>
+              <Parent isRef="34"/>
+              <Text>{rsMainInfo.Booking_Contact_Phone}</Text>
+              <TextBrush>Black</TextBrush>
+            </Text23>
+            <Text24 isKey="true" type="Text" Ref="47">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>2,20,72,6</ClientRectangle>
+              <Conditions isList="true" count="0"/>
+              <Font>Arial,10</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text24</Name>
+              <Page isRef="4"/>
+              <Parent isRef="34"/>
+              <Text>{rsMainInfo.Booking_Contact_Email}</Text>
+              <TextBrush>Black</TextBrush>
+            </Text24>
+          </Components>
+          <Conditions isList="true" count="0"/>
+          <DataSourceName>rsMainInfo</DataSourceName>
+          <EvenStyle>Sback_DarkerGreen</EvenStyle>
+          <Filters isList="true" count="3">
+            <value>requested_date,Between,DateStart,DateEnd,Expression</value>
+            <value>_x007B_rsMainInfo_x002E_tenantName_x0020__x003D__x003D_ListTenants_x0020__x007C__x007C__x0020_AllTenants_x007D_</value>
+            <value>_x007B_rsMainInfo_x002E_room_name_x003D__x003D_ListRooms_x0020__x007C__x007C__x0020_AllRooms_x007D_</value>
+          </Filters>
+          <Name>DataBand1</Name>
+          <Page isRef="4"/>
+          <Parent isRef="4"/>
+          <Sort isList="true" count="2">
+            <value>ASC</value>
+            <value>Booking_Date</value>
+          </Sort>
+        </DataBand1>
+        <GroupFooterBand1 isKey="true" type="GroupFooterBand" Ref="48">
+          <Brush>Transparent</Brush>
+          <CanShrink>True</CanShrink>
+          <ClientRectangle>0,134,271.78,8</ClientRectangle>
+          <Components isList="true" count="0"/>
+          <Conditions isList="true" count="0"/>
+          <Enabled>False</Enabled>
+          <Name>GroupFooterBand1</Name>
+          <Page isRef="4"/>
+          <Parent isRef="4"/>
+        </GroupFooterBand1>
+        <GroupFooterBand2 isKey="true" type="GroupFooterBand" Ref="49">
+          <Brush>Transparent</Brush>
+          <ClientRectangle>0,150,271.78,8</ClientRectangle>
+          <Components isList="true" count="1">
+            <EndPointPrimitive1 isKey="true" type="Stimulsoft.Report.Components.StiEndPointPrimitive" Ref="50">
+              <ClientRectangle>272,0,0,0</ClientRectangle>
+              <Conditions isList="true" count="0"/>
+              <Name>EndPointPrimitive1</Name>
+              <Page isRef="4"/>
+              <Parent isRef="49"/>
+              <ReferenceToGuid>3132371b4bb421d2aacbcae55bfcb963</ReferenceToGuid>
+            </EndPointPrimitive1>
+          </Components>
+          <Conditions isList="true" count="0"/>
+          <Name>GroupFooterBand2</Name>
+          <Page isRef="4"/>
+          <Parent isRef="4"/>
+        </GroupFooterBand2>
+        <RectanglePrimitive1 isKey="true" type="RectanglePrimitive" Ref="51">
+          <ClientRectangle>0,62,272,88</ClientRectangle>
+          <Color>Black</Color>
+          <Conditions isList="true" count="0"/>
+          <Guid>3132371b4bb421d2aacbcae55bfcb963</Guid>
+          <Name>RectanglePrimitive1</Name>
+          <Page isRef="4"/>
+          <Parent isRef="4"/>
+        </RectanglePrimitive1>
+        <RectanglePrimitive2 isKey="true" type="RectanglePrimitive" Ref="52">
+          <ClientRectangle>0,62,272,14</ClientRectangle>
+          <Color>Black</Color>
+          <Conditions isList="true" count="0"/>
+          <Guid>fa64b034beafdd02ea02ce6ccbe50a36</Guid>
+          <Name>RectanglePrimitive2</Name>
+          <Page isRef="4"/>
+          <Parent isRef="4"/>
+        </RectanglePrimitive2>
+      </Components>
+      <Conditions isList="true" count="0"/>
+      <Guid>bc3ba8f95a23316df9de9fc0defa05fc</Guid>
+      <Margins>5.08,2.54,6.35,8.89</Margins>
+      <Name>Page1</Name>
+      <Orientation>Landscape</Orientation>
+      <PageHeight>215.9</PageHeight>
+      <PageWidth>279.4</PageWidth>
+      <PaperSize>Letter</PaperSize>
+      <Report isRef="0"/>
+      <ReportUnit isKey="true" type="mm" Ref="53"/>
+      <ResetPageNumber>True</ResetPageNumber>
+      <Watermark isKey="true" type="Stimulsoft.Report.Components.StiWatermark" Ref="54">
+        <Font>Arial,100</Font>
+        <TextBrush>[50:0:0:0]</TextBrush>
+      </Watermark>
+    </Page1>
+  </Pages>
+  <PrinterSettings isKey="true" type="Stimulsoft.Report.Print.StiPrinterSettings" Ref="55"/>
+  <ReportAlias>Work Order Service Request</ReportAlias>
+  <ReportChanged>10/16/2016 01:01:04 PM</ReportChanged>
+  <ReportCreated>04/09/2015 03:55:59 PM</ReportCreated>
+  <ReportFile>C:\Users\robpalermo\Documents\Deramweaver\visionworkorders\www\visionworkorders.com\reports\reports\Tenant_List_R1.mrt</ReportFile>
+  <ReportGuid>1e15e0a8a8307efca86cce6fed070c41</ReportGuid>
+  <ReportName>Work Order Service Request</ReportName>
+  <ReportUnit>Millimeters</ReportUnit>
+  <ReportVersion>2016.1</ReportVersion>
+  <Script>Imports System
+Imports System.Drawing
+Imports System.Windows.Forms
+Imports System.Data
+Imports Stimulsoft.Controls
+Imports Stimulsoft.Base.Drawing
+Imports Stimulsoft.Report
+Imports Stimulsoft.Report.Dialogs
+Imports Stimulsoft.Report.Components
+
+Namespace Reports
+    
+    Public Class Report
+        Inherits Stimulsoft.Report.StiReport
+        
+        Public Sub New()
+            MyBase.New
+            Me.InitializeComponent
+        End Sub
+        #Region "StiReport Designer generated code - do not modify"#End Region 'StiReport Designer generated code - do not modify
+    End Class
+End Namespace</Script>
+  <ScriptLanguage>VB</ScriptLanguage>
+  <Styles isList="true" count="4">
+    <Style1 isKey="true" type="Stimulsoft.Report.StiStyle" Ref="56">
+      <Border>Left, Right;Black;1;Solid;False;4;Black</Border>
+      <Brush>Azure</Brush>
+      <Conditions isList="true" count="0"/>
+      <Font>Arial,8</Font>
+      <Name>Style1</Name>
+      <TextBrush>Black</TextBrush>
+    </Style1>
+    <sBackColor isKey="true" type="Stimulsoft.Report.StiStyle" Ref="57">
+      <Brush>Azure</Brush>
+      <Conditions isList="true" count="0"/>
+      <Font>Arial,8</Font>
+      <Name>sBackColor</Name>
+      <TextBrush>Black</TextBrush>
+    </sBackColor>
+    <OutLine isKey="true" type="Stimulsoft.Report.StiStyle" Ref="58">
+      <Border>All;Black;1;Solid;False;4;Black</Border>
+      <Brush>Transparent</Brush>
+      <Conditions isList="true" count="0"/>
+      <Font>Arial,8</Font>
+      <Name>OutLine</Name>
+      <TextBrush>Black</TextBrush>
+    </OutLine>
+    <Sback_DarkerGreen isKey="true" type="Stimulsoft.Report.StiStyle" Ref="59">
+      <AllowUseBorderFormatting>False</AllowUseBorderFormatting>
+      <AllowUseBorderSides>False</AllowUseBorderSides>
+      <Brush>[213:240:230]</Brush>
+      <Conditions isList="true" count="0"/>
+      <Font>Arial,8</Font>
+      <Name>Sback_DarkerGreen</Name>
+      <TextBrush>Black</TextBrush>
+    </Sback_DarkerGreen>
+  </Styles>
+</StiSerializer>

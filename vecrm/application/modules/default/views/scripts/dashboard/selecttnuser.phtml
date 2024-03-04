@@ -1,0 +1,12 @@
+<a href="javascript:void(0)" onclick="showAddNew()">-------Add New------</a>
+<select name="create_user" id="create_user" class="all_select">
+	<option value="">-------Select------</option>	
+	<?php if($this->tnuserData!=''){
+		 
+		   foreach($this->tnuserData as $tud){?>
+			   <option value="<?php echo $tud->uid?>"><?php echo $tud->lastName.', '.$tud->firstName;?></option>
+			<?php }?>   
+	<?php }?>	
+</select>
+<input type="hidden" name="suite_location" id="suite_location" value="<?php echo $this->tnData->suite?>"/>
+

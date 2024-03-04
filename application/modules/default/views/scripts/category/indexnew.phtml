@@ -1,0 +1,294 @@
+<?php 
+/*
+ * add corresponding js and css 
+ * file in the header.
+ */
+$this->headLink()->appendStylesheet($this->baseUrl() . '/public/tabs.css');
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/category.js');
+ ?>	
+
+<div class="container-right" id="companyListData">
+    <?php 
+       /***
+        * building tabs
+        */  
+       if($this->roleId!=1){   
+    if($this->custID!=null && $this->custID && $this->companyListing!='' && $this->companyListing!=false){ 
+			?>	
+		<div id="contents">
+			<ol id="toc">
+				<?php 
+					$j = 1;
+					foreach($this->companyListing as $cb){ ?>
+					<li <?php if($cb['build_id']==$this->select_build_id) echo 'selected';?>><a href="<?php echo $this->baseUrl().'/category/indexnew/bid/'.$cb['build_id']; ?>"><span><?php echo $cb['buildingName']; ?></span></a></li>
+		
+				<?php } ?>
+			</ol>
+			<?php
+			/***
+			 * page content
+			 * 
+			 */
+			?>
+			<div class="content" id="page-content">
+				<div class="message"></div>
+				<input type="hidden" name="building_id" id="building_id" value="<?php echo $this->select_build_id;?>"/>
+				<div id="accordion_category" class="accordion_category" >
+				     <h3>Category Information</h3>
+				     <div class="category-information">
+				     	 
+				         <form id="content-page" id="addNewCategory" class="addNewCategory" action="<?php echo BASEURL.'category/addcategory'; ?>" method="post">
+				         </form>
+				         <div class="category-infromation" id="category_info">
+				         <section class="w-48 fr ch-home-form">
+							 <input type="hidden" name="category_page" id="category_page" value="<?php echo $this->page;?>"/>
+							 <table class="category-list" width="100%">
+								 <tr>
+									 <th>Categry Name</th>
+									 <th>Priority Schedule</th>
+									 <th>Active</th>
+									 <th>Action</th>
+								 </tr>
+								 <?php 
+								      if(!empty($this->categoryDetail)){
+								        foreach($this->categoryDetail as $cat_detail){ 
+								        $priority_name = '';
+								        $status = '';
+								            foreach($this->priorityDetail as $key => $preoritySchedule) {
+								            	if($cat_detail['prioritySchedule'] == $preoritySchedule['pid'])
+								            		$priority_name = $preoritySchedule['priorityName'];
+								            	else if($cat_detail['prioritySchedule'] == -1)
+								            		$priority_name = 'Not Assigned';
+								            	else
+								            		$priority_name = 'default';
+								            }
+
+
+								            if($cat_detail['status'] == 1)
+								            	$status = 'Yes';
+								            else
+								            	$status = 'No';
+								        ?>
+											<tr class="show-category" id="show_category_id_<?php echo $cat_detail['cat_id']; ?>">
+												<td><?php echo $cat_detail['categoryName']?></td>
+												<td><?php echo $priority_name?>
+													
+
+												</td>
+												<td><?php echo $status;?></td>
+												<td class="yesnotooltips"><a class="editCat" href="javascript:void(0);" onclick="showEditcategory('<?php echo $cat_detail['cat_id'];?>')" title="Edit"><img src="http://127.0.0.1/mark_vecrm/public/images/edit.png"></a>
+
+											    <a href="javascript:void(0);" onclick="deleteCategory(<?php echo $cat_detail['cat_id'];?>)" class="delCat" data-id="<?php echo $cat_detail['cat_id'];?>" title="Delete"><img src="http://127.0.0.1/mark_vecrm/public/images/delete.png"></a>
+
+												</td>
+											</tr>
+
+											<tr style="display:none;" class="edit-category" id="edit_category_id_<?php echo $cat_detail['cat_id']; ?>">
+											
+												<td>
+                                                <span class="uemailErr" id="name-error"></span>
+                                                <input id="cat_name_<?php echo $cat_detail['cat_id']; ?>" name="catName" type="text" value="<?php echo $cat_detail['categoryName']?>" />
+													
+												</td>
+												<td><select id="cat_priority_<?php echo $cat_detail['cat_id']; ?>" name="priority" class="status">
+								                    <option value="-1" 
+								                        <?php echo (($cat_detail['prioritySchedule'] == -1) ? "Selected" :"")?>>
+								                        Not Assigned</option>
+								                    <option value="0" 
+								                        <?php echo (($cat_detail['prioritySchedule'] == 0) ? "Selected" :"")?>
+								                            >Default</option>
+								                    <?php 
+								                        foreach($this->priorityDetail as $key => $preoritySchedule) {
+								                            echo "<option value='".$preoritySchedule['pid']."'
+								                                    ".(($preoritySchedule['pid'] == $cat_detail['prioritySchedule']) 
+								                                    ? "Selected" :"").">"
+								                                    .$preoritySchedule['priorityName']."</option>";
+								                        }
+								                    ?>
+								                </select>
+												<td>
+												<select id="cat_status_<?php echo $cat_detail['cat_id']; ?>" name="status" class="status">
+													<option value="1" <?php echo (($cat_detail['status'] == 1) ? "Selected" :"")?>>Yes</option>
+													<option value="0" <?php echo (($cat_detail['status'] == 0) ? "Selected" :"")?>>No</option>
+												</select>
+												</td>
+												<td class="yesnotooltips">
+												<a class="saveCat" href="javascript:void(0);" onclick="editCategory(<?php echo $cat_detail['cat_id'];?>)" title="Save"> <img src="http://127.0.0.1/mark_vecrm/public/images/yes_icon.png"></a>
+
+												<a class="cancelCat" onclick="hideEditcategory('<?php echo $cat_detail['cat_id'];?>')"  href="javascript:void(0);" title="Cancel"><img src="http://127.0.0.1/mark_vecrm/public/images/no_icon.png"></a>
+			
+												</td>
+
+											</tr>
+
+								  <?php }}else{ ?>
+
+								  			<tr>
+												<td>No</td>
+												<td>No</td>
+												<td>No</td>
+												<td>No</td>
+											</tr>
+
+									  <?php }?>
+									  <tr id="show_cat_tr" style="display:none;">
+										  <td id="add_cat_form" colspan="4"></td>
+									  </tr>
+									  <tr>
+										  <td colspan="4" class="add_record"><a href="javascript:void(0)" onclick="showCategroyFrom()"><span>Add New Record</span></a></td>
+									  </tr>	 
+							 </table>
+						 </section>
+						 <?php if(count($this->categoryDetail)>0 && !empty($this->categoryDetail)){
+											echo '<tr><td colspan="5">';
+										 echo $this->paginationControl($this->categoryDetail, 'Sliding', 'category_pagination.phtml'); 
+										 echo '</td></tr>';
+										 }?>
+						 </div>						 
+					 </div>
+
+		<!-- ******************************************** -->
+		<!-- 			Priority by Rajesh				  -->
+		<!-- ******************************************** -->
+
+					 <h3>Priority Information</h3>
+					 <div>
+					 <div class="priority-infromation" id="priority_info">
+						  <section class="w-48 fr ch-home-form">
+							 <table class="priority-list" width="100%">
+								 <tr>
+									 <th>&nbsp;</th>
+									 <th>Priority Name</th>
+									 <th>Priority Description</th>
+									 <th>Active</th>
+									 <th>Action</th>
+								 </tr>
+								 <?php 
+								      if(!empty($this->priorityDetail)){
+								        foreach($this->priorityDetail as $pri_detail){?>
+											<tr id="show_priority_id_<?php echo $pri_detail['pid']?>" class="show-priority">
+											    <td><div class="open_plus" id="open_div_<?php echo $pri_detail['pid'];?>"><a href="javascript:void(0);" id="<?php echo $pri_detail['pid'];?>" onClick="return showPriorityScheduleList(<?php echo $pri_detail['pid'];?>,'')";><?php echo '&nbsp;&nbsp;';?></a></div></div></td>
+												<td><?php echo $pri_detail['priorityName']?></td>
+												<td><?php echo $pri_detail['priorityDescription']?></td>
+												<td><?php echo ($pri_detail['status'])?'Yes':'No'?></td>
+												<td><div class="col02 coladdlastcol lastcol edit_delete_icon"><a href="javascript:void(0);" onclick="showEditPriority('<?php echo $pri_detail['pid']?>')"  data-id="<?php echo $pri_detail['pid']?>" title="Edit"><img src="<?php echo BASEURL . 'public/images/edit.png'?>" /></a> <a href="javascript:void(0);" onclick="deletePriority('<?php echo $pri_detail['pid']?>')" data-id="<?php echo $pri_detail['pid']?>" title="Delete"><img src="<?php echo BASEURL . 'public/images/delete.png'?>" /></a></div></td>
+											</tr>
+											<tr id="edit_priority_id_<?php echo $pri_detail['pid']?>" style="display:none" class="edit-priority">
+											    <td><div class="open_plus" id="open_div_<?php echo $pri_detail['pid'];?>"><a href="javascript:void(0);" id="<?php echo $pri_detail['pid'];?>" onClick="return showPriorityScheduleList(<?php echo $pri_detail['pid'];?>,'')";><?php echo '&nbsp;&nbsp;';?></a></div></div> </td>
+											    <td><input type="text" value="<?php echo $pri_detail['priorityName']?>" name="priority_name" id="priority_name_<?php echo $pri_detail['pid']?>"/></td>
+												<td><input type="text" value="<?php echo $pri_detail['priorityDescription']?>" name="priority_description" id="priority_description_<?php echo $pri_detail['pid']?>"/></td>
+												<td>
+													<select name="status" id="status_<?php echo $pri_detail['pid']?>">
+												      <option value="1" <?php if($pri_detail['status']==1) echo 'selected';?>>Yes</option>
+												      <option value="0" <?php if($pri_detail['status']==0) echo 'selected';?> >No</option>
+												   </select>
+												</td>
+												<td><div class="col02 coladdlastcol lastcol yesnotooltips"><a href="javascript:void(0);" onclick="editPriority('<?php echo $pri_detail['pid']?>')" data-id="<?php echo $pri_detail['pid']?>" class="editcmpny" title="Save"><img src="<?php echo BASEURL . 'public/images/yes_icon.png'?>" /></a><a href="javascript:void(0);" onclick="hideEditPriority('<?php echo $pri_detail['pid']?>')" data-id="<?php echo $pri_detail['pid']?>" class="hideeditcmpny" title="Cancel"><img src="<?php echo BASEURL . 'public/images/no_icon.png'?>" /></a></div></td>
+											</tr>
+											<tr id="tr_schecdule_<?php echo $pri_detail['pid']?>" style="display:none">
+												<td>&nbsp;</td>
+												<td colspan="4" class="margin_padding_none" id="show_priority_schedule_<?php echo $pri_detail['pid']?>"></td>
+											</tr>
+								  <?php }?>
+                                    <?php 
+										/*
+										 pagination code. 
+										*/
+										?>  
+										<input type="hidden" name="priority_page" id="priority_page" value="<?php echo $this->page;?>"/>
+										 								  
+								  <?php }else{ ?>
+									     <tr>
+											 <td colspan="5">
+												 No priority created. Pease create new priority!!!
+											 </td>
+									     </tr>
+									  <?php }?>
+									  <tr id="add-priority-td" style="display:none">
+										  <td colspan="5">									  
+									      <div id="priority-form" style="z-index:9999">
+											  <section class="consol_form_head">
+													<h3>Add New Priority</h3>
+											   </section>
+											   <section class="w-48 fr ch-home-form">
+											      <form name="addNewPriority">
+													  <input type="hidden" name="actionType" value="insert">														
+														<?php /*<div class="row">
+															<label>Id* :</label>
+															<span class="prioNumErr" id="priority-number-error"></span> 
+															<input type="text" value="<?php echo $this->priorityDetail['id']?>" id="pid" 
+																   name="data[pid]" readonly="readonly">														  
+														</div>*/?>
+														<div class="row">
+															<label>Priority Name <span class="required">*</span> :</label>
+															<span class="priNameErr" id="priority-name-error"></span> 
+															<input type="text" id="priority_name" name="priorityName" value=""/>
+														</div>
+														<div class="row">
+														   <label>Priority Description<span class="required">*</span> :</label> 
+														   <span class="priDescErr" id="priority-description-error"></span>
+														   <input type="text" id="priority_description" name="priorityDescription"  value=""/>
+														</div>
+														<div class="row">
+														<label>Active<span class="required">*</span> :</label> 
+                                                        <span></span>
+														<select name="status" id="status" class="status">
+															<option value="1">Yes</option>
+															<option value="0">No</option>
+														</select>
+														</div>
+														
+														
+														 <div class="confirmBtn">
+															<input type="reset" value="Reset" name="reset" class="cancel"/>
+															<input type="button" value="Save" name="next" id="save_priority" class="confirm savePriority" onclick="return addPriority()"/>
+															<input type="button" value="Cancel" name="cancel" class="cancel" onclick="hidePriorityForm()"/>
+														</div>
+											      </form>
+											   </section>    
+									      </div>
+                                          
+                                          
+                                         
+                                          
+									      </td>
+									  </tr>
+									  <tr>
+										  <td colspan="5" class="add_record"><a href="javascript:void(0)" onclick="showPriorityForm()"><span>Add New Record</span></a></td>
+									  </tr>	
+								 </table>
+							</section>
+                            <div id="popup" style="background-color: white; width: 776px; height: 544px; opacity:0.50; position:absolute; display:none;">Hi</div>
+							 <?php if(count($this->priorityDetail)>0 && !empty($this->priorityDetail)){
+											echo '<tr><td colspan="5">';
+										 echo $this->paginationControl($this->priorityDetail, 'Sliding', 'priority_pagination.phtml'); 
+										 echo '</td></tr>';
+										 }?>	 
+					 </div>
+					
+							</div>			 	 	 
+			  </div>
+		 </div>		
+<?php }
+	   else{
+		   echo 'No Building has assign to you.';
+	   }  
+	  }else{?>
+	    You don't have access for this module.
+	  <?php }?>
+	  </div>
+      <div class="messageBox"></div>
+<div class="loader" style="display:none;" ><img src="<?php echo BASEURL.'public/images/loader.gif';?>"><div>
+
+<script type="text/javascript">
+	/*activatables('page', [<?php echo $pageStr; ?>]);*/
+	$(function() {			
+			$( "#accordion_category" ).accordion({
+				heightStyle: "content",
+				animate: 1000,
+				collapsible: true
+			});
+
+
+	});	
+</script>

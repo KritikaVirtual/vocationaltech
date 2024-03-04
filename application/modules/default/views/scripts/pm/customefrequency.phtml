@@ -1,0 +1,56 @@
+<?php
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/pm_task.js');
+$customedata = $this->GetData;
+//print_r($customedata);
+?>
+<div class="container-right">
+    <div class="message">               
+            <span class="error-txt" style="color:red; text-align:center;"></span>
+    </div>
+    <section style="z-index:9999" class="w-48 fr ch-home-form">
+        <section class="ch-form-header ">
+            <h3>Custom Frequency </h3>
+        </section>
+        <div class="room-setup">
+            <div class="tableGrid list_tableGrid my_table_grid">
+                <div class="message">
+                    <div class="success_message" style="text-align:center;width:100%;font-weight:bold;color:red;"></div>				  			
+                    <span id="success_msg"></span>
+                    <span id="error_msg"></span>
+                </div>
+                <div class="container" style="height: 150px">
+                    <div id="step1">
+                        <div class="row">
+                            <label> Perform Task Instruction Every</label>
+                            <input type="number" min="1" name="numberofday" value="<?php echo $customedata->value; ?>" id="numberofday" style="width: 12%;margin-left: -9%;height: 33px;"><span class="required">*</span>
+                            <select name="noofday" id="nameofday" style="width: 28%; margin-left: 15px;">
+                                <option value="Daily" <?php echo ($customedata->Name=='Daily'?"SELECTED":""); ?>>Daily</option>
+                                <option value="days" <?php echo ($customedata->Name=='days'?"SELECTED":""); ?>>Day(s)</option>
+                                <option value="weeks" <?php echo ($customedata->Name=='weeks'?"SELECTED":""); ?>>Week(s)</option>
+                                <option value="months" <?php echo ($customedata->Name=='months'?"SELECTED":""); ?>>Month(s)</option>
+                                <option value="quarterly" <?php echo ($customedata->Name=='quarterly'?"SELECTED":""); ?>>Quarterly</option>
+                                <option value="years" <?php echo ($customedata->Name=='years'?"SELECTED":""); ?>>Year(s)</option>
+                            </select> 
+                            <span class="ugroupErr" id="tempate_name_error" style="float: left;margin-left: 276px;"></span>
+                        </div>
+                        <span class="ugroupErr" id="error_noofday"></span>
+                        <div class="row">
+                            <span class="required">*</span><b>Enter whole number only,Negative number and decimals are NOT allowed</b>
+                        </div>
+                       
+                        <div class="confirmBtn float_none">
+                            <input type="hidden" name="typedesination" id="typedesination_id" value="" >                            
+                            <input type="button" value="Save" name="save" class="confirm" id='emailsave' onclick="clonecustomefrq();">
+                            <input type="button" value="Cancel" name="cancel" class="cancel" onclick="canceltemplate();">                            
+                        </div>
+                    </div>   
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<div class="loader" style="display:none;" > <img src="<?php echo BASEURL.'public/images/loader.gif';?>"><div>
+<div class="fade_default_opt" id="fd_dft_div" style="display:none">
+    <a href="#file_form" id="file_form_href" class="modalbox">&nbsp;</a>	
+    <div id="file_form" class="bd-dft-cls" style="display:none"></div>
+</div>

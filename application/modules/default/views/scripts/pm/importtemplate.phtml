@@ -1,0 +1,344 @@
+<!-- Start section to create a new task -->
+<?php echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/pm.js'); ?> 
+    
+    <?php 
+
+
+ ?>
+
+<div class="container-right task-popup task-section">
+    <div class="message">               
+        <span class="error-txt" style="color:red; text-align:center;"></span>
+    </div>
+    <section style="z-index:9999" class="w-48 fr ch-home-form form-inline">
+        <section class="ch-form-header ">
+            <h3>Import Template </h3>
+        </section>
+        
+        
+        <div class="section-menu col-md-12 col-sm-12 col-xs-12" >
+            <label> Template Name:<span class="required">*</span></label><span class="ugroupErr" id="location-error"></span>
+            <input type="radio" value="1"  onclick="AllEquipmentTemplate('all');" id="temptype" checked="checked" name="temptype"> All Templates
+            <input type="radio" value="2" onclick="AllEquipmentTemplate('vtonly');" id="temptype" name="temptype"> Build - In Templates
+            <input type="radio" value="3" onclick="AllEquipmentTemplate('useronly');" id="temptype" name="temptype"> User Created Templates (in Red)
+        </div>
+        
+        
+            <div class="col-md-4 col-sm-6">
+                <div class="left_box">
+                    <table class="table table-hover" id="template" border="1">        
+                            <tbody id="view-all-temp"> 
+                            <?php foreach($this->alltemplates as $data):
+                                $type = "VT";
+                                if($data['admin_template']==""){
+                                    $type = "AU";
+                                }
+                                ?>                           
+                                <tr id="<?php echo $data['TemplateName'].'='.$data['desig_id'].'='.$type.'='.$data['TypeDesignation'];?>" class="'temp-'.$data['desig_id']">
+                                    <td><?php echo $data['TemplateName']; ?> &nbsp;| <?php echo substr($data['TypeDesignation'],0,26); ?> &nbsp;&nbsp;<?php echo substr($data['TypeDescritpion'],0,26); ?></td>
+                                </tr>
+                           <?php  endforeach; ?>
+                            </tbody>
+                   </table>
+                </div>
+                <span class="ugroupErr error-msg view-all-temp-error"></span>
+            </div>
+            <div class="col-md-8 col-sm-6">
+                <div class="right_box">
+                    <ul class="import-form">
+                        <li><input type="radio" value="1" checked="checked" id="temptypedata" name="temptypedata"> <span>Use Default Template Name: </span>
+                    <input readonly="readonly" type="text" name="tempname" id="tempname" class="form-control">
+                    <input readonly="readonly" type="hidden" name="designname" id="designname" ></li>
+                        <li><?php if(!empty($this->usertemplate)): ?>
+                            <input type="radio" value="2" id="temptypedata" name="temptypedata"> <span>Assign to an Existing Template:</span>
+                    <select name="level" id="assignedto" class="form-control">
+                        <!--    <option >Default</option>-->
+                        <?php 
+                            foreach($this->usertemplate as $tempdata):
+                                echo ' <option value="'.$tempdata->AU_Template_Name_ID.'">'.$tempdata->AU_Template_Name.'</option>'; 
+                            endforeach; ?>
+                    </select><br>
+                   <?php endif; ?></li>
+                        <li><input type="radio" value="3" id="temptypedata" name="temptypedata"> 
+                            <span>Assign a New Template Name: </span>
+                <input type="text" name="temptypedatanew" id="temptypedatanew" class="form-control">
+                <span class="ugroupErr error-msg view-temptypedatanew-error"></span></li>
+                    </ul>
+                                   
+                
+                </div>
+                </div>
+        
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="task-reading-butttn">
+                        <?php //if(!empty($task)): ?>
+                        <button class="confirm active" id="task-btn" onclick="view_task_section();"> Task </button>
+                        <?php //endif; if(!empty($reading)): ?>
+                        <button class="confirm" id="reading-btn" onclick="view_reading_section();"> Reading </button>
+                        <?php //endif; ?>
+                    </div>
+                    <div class="tempalte-detail-view" id="tempalte-detail-view" >
+                        <div class="temp-view"> Template Task and Reading View </div>
+                            
+                    </div>
+                </div>
+        
+        
+        
+
+       
+        
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="form-group">
+                
+            </div>
+        </div>
+        
+        <div class="col-md-12 col-sm-12 col-xs-12" style="text-align: center;margin-bottom: 20px;">
+            <button class="confirm" onclick="closepopup();">Cancel</button>
+            <button class="confirm" onclick="import_equpment_template();">Import</button>
+            <input type="hidden" id="design_id">
+            <input type="hidden" id="temp_type">
+
+        </div>
+        </div>
+
+    </section>
+</div>
+
+<div id="add_subsetpopup" class="bd-dft-cls" style="display: none;"></div>
+<div class="loader" style="display:none;" > <img src="<?php echo BASEURL.'public/images/loader.gif';?>">
+    </div>
+<div class="fade_default_opt" id="fd_dft_div" style="display:none">
+    <a href="#file_form" id="file_form_href" class="modalbox">&nbsp;</a>	
+    <div id="file_form" class="bd-dft-cls" style="display:none"></div>
+</div>
+
+
+ <script>
+
+        
+       
+        function AllEquipmentTemplate(type){            
+                
+                $.ajax({
+                    type: "POST",
+                    url: baseUrl + 'pm/importtemplatebytype',
+                    data: {type:type},
+                    success: function (data) {
+                        //console.log(data);
+                        var content = $.parseJSON(data);
+                         //console.log(content);
+                           html = "";
+                           html += '<tr><td><strong>Template Name</srong></td><td><strong>Type Designation</strong></td></tr>'; 
+                            for (i in content) {
+                                console.log(content[i].admin_template);
+                                var type = "VT";
+                                if(content[i].admin_template==""){ 
+                                   type = "AU";
+                                }
+                                if(content[i].admin_template=="No"){
+                                    html += '<tr style="color:red;" onclick="selecttemp(this);" id="'+content[i].TemplateName+'='+content[i].desig_id+'='+type+'='+content[i].TypeDesignation+'" class="temp-'+content[i].desig_id+'"><td>'+content[i].TemplateName+'</td><td> <p title="'+content[i].TypeDescritpion+'">'+content[i].TypeDesignation+'</p></td></tr>';
+                                    
+                                }
+                                    //html += '<tr onclick="selecttemp(this);" id="'+content[i].TemplateName+'='+content[i].desig_id+'='+type+'='+content[i].TypeDesignation+'" class="temp-'+content[i].desig_id+'"><td style="background-color: red !important;">'+content[i].TemplateName+' &nbsp;| '+content[i].TypeDesignation+'&nbsp;&nbsp;'+content[i].TypeDescritpion+'</td> </tr>';
+                                else{
+                                   //html += '<tr onclick="selecttemp(this);" id="'+content[i].TemplateName+'='+content[i].desig_id+'='+type+'='+content[i].TypeDesignation+'" class="temp-'+content[i].desig_id+'"><td>'+content[i].TemplateName+'</td><td> | '+content[i].TypeDesignation+'</td><td> '+content[i].TypeDescritpion+'</td> </tr>'; 
+                                   html += '<tr onclick="selecttemp(this);" id="'+content[i].TemplateName+'='+content[i].desig_id+'='+type+'='+content[i].TypeDesignation+'" class="temp-'+content[i].desig_id+'"><td>'+content[i].TemplateName+'</td><td> <p title="'+content[i].TypeDescritpion+'">'+content[i].TypeDesignation+'</p></td></tr>';
+       
+                                }
+                                }
+                            
+                            //console.log(html); 
+                            $("#view-all-temp").html(html);
+
+                    }
+                });
+     
+        }
+        
+        function selecttemp(object){
+                //console.log(object.id);
+                var dataid = object.id.split("=");
+                var design_id = dataid[1];
+                var TemplateName = dataid[0];
+                var type = dataid[2];
+                var designation  = dataid[3]; 
+                $("#tempname").val(TemplateName);
+                $("#designname").val(designation);
+                $('.temp-'+design_id).addClass("active").siblings().removeClass('active');
+                $("#design_id").val(design_id);
+                $("#temp_type").val(type);
+                $('.loader').show();
+                $.ajax({
+                    type: "POST",
+                    url: baseUrl + 'pm/importdesiganitiontemplate',
+                    data: {design_id: design_id,type:type},
+                    success: function (data) {                             
+                            $("#tempalte-detail-view").html(data);
+                            $('.loader').hide();
+                    }
+                });
+        }
+        
+        $(document).ready(function(){ 
+            $("#view-all-temp tr").click(function(){
+                $(this).addClass("active").siblings().removeClass('active');
+
+                var dataid = $(this).attr("id").split("=");
+                var design_id = dataid[1];
+                var TemplateName = dataid[0];
+                var type = dataid[2];
+                var designation  = dataid[3];
+                $("#tempname").val(TemplateName);
+                $("#designname").val(designation);
+                $("#design_id").val(design_id);
+                $("#temp_type").val(type);
+                $('.loader').show();
+                $.ajax({
+                    type: "POST",
+                    url: baseUrl + 'pm/importdesiganitiontemplate',
+                    data: {design_id: design_id,type:type},
+                    success: function (data) {
+                        $('.loader').hide();
+                        $("#tempalte-detail-view").html(data);
+                    }
+                });
+            });
+        });
+        
+        // default load function 
+        AllEquipmentTemplate('all');
+        </script>
+        
+        
+        <style>
+.left_box{
+    padding-left: 0%;
+    padding-top: 10%;
+    padding-bottom: 6%;
+}
+
+.left_box table{
+    width: 100%;
+    overflow-y: scroll;
+}
+
+.left_box table tbody{
+    height: 200px;
+    display: inline-block;
+    width: 100%;
+    overflow-x: hidden;
+    border: 1px solid #c1c1c1;
+    overflow-y: scroll;
+}
+
+.left_box table tbody td{
+  width: 30% !important;
+}
+
+
+.right_box
+{
+  padding-top: 10%;
+  padding-bottom: 10%;  
+}
+
+
+.task-reading-butttn
+{
+    margin-top: 2%;
+}
+
+.details-view
+{
+    
+}
+
+.details-view table td
+{
+  padding:5px;
+  text-align: center;
+}
+
+.details-view table th
+{
+
+  text-align: center;
+}
+
+.td-left-text
+{
+    text-align: left !important;
+}
+
+.details-view
+{
+  margin-top:0px;
+  margin-bottom:40px;
+}
+
+.heading-text {
+    background-color: #ccc;
+    color: #000;
+    font-weight: 500;
+}
+
+.sub-task-text {
+    background-color: lightblue;
+}
+
+.color-text-blue {
+    background-color:#F0F8FF;
+}
+
+.subset-table-td{
+ padding-top: 0px !important; 
+ padding-bottom: 0px !important;
+}
+
+
+.border-bottom-cusstm
+{
+    border-bottom: 1px solid #ccc;
+}
+
+.border-left-cusstm
+{
+    border-left: 1px solid #ccc;
+}
+
+.fa-minus-circle-custm
+{
+   float: right;
+   padding-top: 4px;
+}
+
+.fa-pluse-circle-custm
+{
+    float: right;
+    padding-top: 4px;
+}
+.tempalte-detail-view{
+    height: 260px;
+    overflow-x: hidden;
+    border: 1px solid gray;
+}
+
+.temp-view{
+    text-align: center;
+    padding-top: 10px;
+    font-size: 18px;
+    font-weight: bold;
+}
+/*.right_box input[type="text"], .right_box select {
+    display: block!important;
+}
+ .right_box select {box-sizing: content-box;}
+.right_box input[type="radio"] {margin-top:3px;}*/
+
+    button.confirm.active {
+        background-color: #45e4a8;
+    }
+
+</style>

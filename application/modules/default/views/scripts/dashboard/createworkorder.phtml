@@ -1,0 +1,486 @@
+<?php
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/dashboard_workorder.js');
+$color_code = array('00FFFF', 'FF0000', 'FF00FF', '800000', '008000', '800080', '808000', '0000FF', '00FF00', '00008075', 'FFFF00', '808000', '008080', 'FFA500');
+$building_color = array();
+$createnew_access = $this->acessHelper->checkAccess($this->roleId, $this->createnew_location);
+/* override access by custom user access if exist */
+$customeAccessmodel = new Model_UserAccess();
+$customeAccessmodeld = $customeAccessmodel->getUserCustomAccess($this->userId, $this->createnew_location);
+if ($customeAccessmodeld[0]) {
+    $createnew_access = $customeAccessmodeld[0];
+}
+/* end overriding access */
+$reportModel = new Model_Report();
+$reportDetailLinks = '';
+$dashBoardViewsdetails = '';
+$dashBoardViews = '';
+$woNumberAll = '';
+$invoiceAll = '';
+$uniqueCostCenterAll = '';
+$buildIdReportAll = '';
+$batch_number_report = '';
+$uniqueCostCenter = '';
+$reportDetailLinks = $reportModel->getReport($this->custID, 4);
+
+
+
+if ($createnew_access->is_access == 0 && $createnew_access->is_write == 1) {
+    ?>
+
+    <div class="create-work-order">
+        <div id="fdw">
+            <div class="tabmenu my_tabmenu">
+                <ul>
+                    <!-- All Report link -->
+                    <?php
+                    if ($reportDetailLinks != '') {
+                        $woReport = new Model_Report();
+                        $woBatch = new Model_WoBatch();
+                        foreach ($this->companyListing as $cb) {
+                            $uniqueCostCenterAll = $uniqueCostCenterAll . $cb['uniqueCostCenter'] . ',';
+                            $buildIdReportAll = $buildIdReportAll . $cb['build_id'] . ',';
+                            $batchDetails = $woBatch->showBatch($cb['build_id']);
+                            if ($batchDetails != '') {
+                                foreach ($batchDetails as $bd) {
+                                    $batch_number_report = $batch_number_report . $bd['batch_number'] . ',';
+                                }
+                            }
+
+                            if ($this->select_build_id == '') {
+                                $order = 'woId';
+                                $dir = 'DESC';
+                                $wolist = $woReport->getWorkOrderByBuilding($cb['build_id'], $order, $dir);
+                                $invoicelist = $woReport->invoiceByBatch($cb['build_id'], $order, $dir);
+                                if ($wolist != '') {
+                                    foreach ($wolist as $woNumber) {
+                                        $woNumberAll = $woNumberAll . $woNumber->wo_number . ',';
+                                    }
+                                }
+                                if ($invoicelist != '') {
+                                    foreach ($invoicelist as $invoiceNumber) {
+                                        $invoiceAll = $invoiceAll . $invoiceNumber->wo_number . ',';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    ?>
+
+                    <!-- End all report Link -->
+
+                    <li style="background-color:#<?php echo $color_code[0] ?>"><a href="<?php echo $this->baseUrl() . '/dashboard/createworkorder/bid/all'; ?>" <?php if ($this->select_build_id == '') echo 'class="resp-tab-active my_resp-tab-active"'; ?>>Work Orders for All Buildings</a></li>
+    <?php
+    $j = 1;
+
+    foreach ($this->companyListing as $cb) {
+        if (isset($color_code[$j]))
+            $building_color[$cb['build_id']] = $color_code[$j];
+        else {
+            $j = 0;
+            $building_color[$cb['build_id']] = $color_code[$j];
+        }
+        ?>
+                        <li style="background-color:#<?php echo $color_code[$j] ?>"><a class="<?php if ($cb['build_id'] == $this->select_build_id) echo 'resp-tab-active my_resp-tab-active'; ?>"  href="<?php echo $this->baseUrl() . '/dashboard/createworkorder/bid/' . $cb['build_id']; ?>" ><?php echo $cb['buildingName']; ?></a>
+
+                            <!-- selected report Link -->
+                            <?php
+                            if ($reportDetailLinks != '') {
+                                if ($cb['build_id'] == $this->select_build_id) {
+                                    $uniqueCostCenter = $cb['uniqueCostCenter'];
+                                    $batchDetails = $woBatch->showBatch($cb['build_id']);
+                                    $batch_number_report = '';
+                                    if ($batchDetails != '') {
+                                        foreach ($batchDetails as $bd) {
+                                            $batch_number_report = $batch_number_report . $bd['batch_number'] . ',';
+                                        }
+                                    }
+                                    $order = 'woId';
+                                    $dir = 'DESC';
+                                    $wolist = $woReport->getWorkOrderByBuilding($cb['build_id'], $order, $dir);
+                                    $invoicelist = $woReport->invoiceByBatch($cb['build_id'], $order, $dir);
+                                    if ($wolist != '') {
+                                        foreach ($wolist as $woNumber) {
+                                            $woNumberAll = $woNumberAll . $woNumber->wo_number . ',';
+                                        }
+                                    }
+                                    if ($invoicelist != '') {
+                                        foreach ($invoicelist as $invoiceNumber) {
+                                            $invoiceAll = $invoiceAll . $invoiceNumber->wo_number . ',';
+                                        }
+                                    }
+                                }
+                            }
+                            ?> 
+                        </li>
+
+                        <?php $j++;
+                    } ?>         
+
+                </ul>
+            </div>
+            <!-- Report Link -->
+    <?php if ($reportDetailLinks != '') { ?> <div class="tabmenu" ><ul style="padding:0px;"><?php foreach ($reportDetailLinks as $reportvalue) {
+            $reportOption = explode(',', $reportvalue->report_option); ?> <li class="report_text" ><a   <?php if ($reportvalue->report_target == 1) { ?> target='_blank' <?php } ?> href="<?php echo BASEURL; ?>reports/VisionReportEngine/index.php?stimulsoft_client_key=ViewerFx&stimulsoft_report_key=<?php echo $reportvalue->report_mrt; ?><?php if (in_array('[[++user_id]]', $reportOption)) {
+                echo '&User=' . $this->userId;
+            } ?><?php if ((in_array('[[++CostCenterNumber]]', $reportOption)) && $uniqueCostCenter != '') {
+                        echo '&Cost_Center_Number=' . $uniqueCostCenter;
+                    } ?><?php if ((in_array('[[++CostCenterAllBuildings]]', $reportOption)) && $uniqueCostCenterAll != '' && $this->select_build_id == '') {
+                        echo '&Cost_Center_Number=' . rtrim($uniqueCostCenterAll, ',');
+                    } ?><?php if ((in_array('[[++KeyBuildingNumber]]', $reportOption)) && $this->select_build_id != '') {
+                        echo '&buildkey=' . $this->select_build_id;
+                    } ?><?php if ((in_array('[[++KeyBuildingAllBuildings]]', $reportOption)) && $buildIdReportAll != '' && $this->select_build_id == '') {
+                        echo '&buildkey=' . rtrim($buildIdReportAll, ',');
+                    } ?><?php if (in_array('[[++BatchNumber]]', $reportOption) && $batch_number_report != '') {
+                        echo '&Batch_Number=' . rtrim($batch_number_report, ',');
+                    } ?><?php if ((in_array('[[++WONumber]]', $reportOption)) && $woNumberAll != '') {
+                        echo "&WO_Number=" . rtrim($woNumberAll, ',');
+                    } ?><?php if ((in_array('[[++InvoiceNumber]]', $reportOption)) && $invoiceAll != '') {
+                                        echo '&Invoice_Number=' . rtrim($invoiceAll, ',');
+                                    } ?>" ><?php echo $reportvalue->report_name; ?> </a> </li> <?php } ?> </ul></div>	<?php } ?>
+
+        </div>
+        <div id="work-order-form">
+            <form name="cwo_form" id="cwo_form" enctype="multipart/form-data" action="<?php echo BASEURL . 'dashboard/saveworkorder' ?>" method="post" onsubmit="return checkFormValidation()">	 
+                <div class="newworkorder">
+                    <h1>Add New Work Order :</h1>
+                                        <?php $msg = new Zend_Session_Namespace('message'); ?>
+                    <div class="workorder_error" id="message">
+                                        <?php
+                                        echo $msg->error_message;
+                                        $msg->error_message = '';
+                                        ?>
+                    </div>
+                    <div class="workorder_success" id="message">
+    <?php
+    echo $msg->success_message;
+    $msg->success_message = '';
+    ?>
+                    </div>
+                    <div class="cw-bcr-div">
+
+                        <div class="col-md-4 vercm-building">
+                            <div class="form_group">
+                                <div class="workorder_error" id="building_error"></div>
+                                <label >Building</label>
+                                <div class="building_div" tabindex="1">
+                                    <ul>
+    <?php if ($this->companyListing != '') { ?>
+        <?php
+        foreach ($this->companyListing as $cb) {
+            if ($this->select_build_id == '') {
+                ?>
+                                                    <li><a href="javascript:void(0)"  onclick="changeBuilding('<?php echo $cb['build_id']; ?>')" ><span><?php echo $cb['buildingName']; ?></span></a></li>
+                                                            <?php
+                                                        } else {
+                                                            if ($this->select_build_id == $cb['build_id']) {
+                                                                ?>
+                                                        <li ><a href="javascript:void(0)" ><span><?php echo $cb['buildingName']; ?></span></a></li>
+                                                                <?php
+                                                            }
+                                                        }
+                                                    }
+                                                    ?>
+    <?php } ?>
+                                    </ul>
+                                    <input type="hidden" name="building" id="building" value="<?php echo ($this->select_build_id != '') ? $this->select_build_id : ''; ?>"/>
+                                    <input type="hidden" name="form_key" id="form_key" value="<?php echo $this->form_key; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-5">
+                            <div >
+                                <div class="col-md-11 gutter">
+                                    <div class="form_group">
+                                        <div class="workorder_error" id="company_error"></div>
+                                        <label>Tenant</label>
+
+                                        <!-- Split button -->
+                                        <div class="btn-group work_update_select" id="show_tenant" tabindex="2" >
+                                            <select name="tenant" id="tenant" onchange="showTenantUser(this.value)" class="all_select" >
+                                                <option value="">Select...</option>
+    <?php
+    if ($this->select_build_id != '') {
+        $tnModel = new Model_Tenant();
+        $tndetail = $tnModel->getTenantByBuildingId($this->select_build_id);
+        if ($tndetail != '') {
+            foreach ($tndetail as $tn) {
+                ?>
+                                                            <option value="<?php echo $tn->id ?>"><?php echo stripslashes($tn->tenantName); ?></option>
+            <?php } ?>   
+        <?php
+        }
+    }
+    ?>
+                                            </select>							  
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-1"></div>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div id="show_tenant_user">
+                                <div class="col-md-11 gutter">
+                                    <div class="form_group">
+                                        <div class="workorder_error" id="requested_error"></div>
+                                        <label>Request By</label>
+
+                                        <!-- Split button -->
+                                        <div class="btn-group work_update_select" id="show_tenant_user" tabindex="3">
+                                            <select name="create_user" id="create_user" class="all_select">
+                                                <option value="">Select...</option>									 
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-1 requestadimg "></div>
+                                <div class="vend_tooltip_content">Add New Service</div>
+                                <div class="clearfix"></div>
+                            </div>
+
+                            <div >
+                                <div class="col-md-11 gutter">
+                                    <div class="form_group">
+                                        <div class="workorder_error" id="category_error"></div>
+                                        <label>Category</label>
+
+                                        <!-- Split button -->
+                                        <div class="btn-group work_update_select" id="show_category" tabindex="4">
+                                            <select name="category" id="category" class="all_select">
+                                                <option value="">Select...</option>
+                                        <?php
+                                        if ($this->select_build_id != '') {
+                                            $catModel = new Model_Category();
+                                            $catdetail = $catModel->getBuildingCategoryList($this->select_build_id);
+                                            if ($catdetail != '') {
+                                                foreach ($catdetail as $cd) {
+                                                    ?>
+                                                            <option value="<?php echo $cd['cat_id'] ?>"><?php echo $cd['categoryName'] ?></option>
+            <?php } ?>   
+        <?php
+        }
+    }
+    ?>
+                                            </select>	
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-1"></div>
+                                <div class="clearfix"></div>
+                            </div>
+
+
+
+
+
+                        </div>
+
+
+                        <div class="col-md-3 " id='datetimezone'>
+                            <div >
+                                <div class="form_group">
+                                    <div class="workorder_error" id="date_error"></div>
+                                    <label>Date</label>
+
+                                    <!-- Split button -->
+                                    <div class="btn-group work_update_select">
+                                        <?php
+                                        if ($this->select_build_id != '') {
+                                            $tModel = new Model_TimeZone();
+                                            $tModel->setTimezone($this->select_build_id);
+                                        }
+                                        ?>
+                                        <input type="text" name="date_requested" id="date_requested" readonly="true" placeholder="mm/dd/yyyy" value="<?php echo date("m/d/Y"); ?>"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div >
+                                <div class="form_group">
+                                    <div class="workorder_error" id="time_error"></div>
+                                    <label>Time</label>
+
+                                    <!-- Split button -->
+                                    <div class="btn-group work_update_select" id="time_request_div">
+                                        <?php
+                                        if ($this->select_build_id != '') {
+                                            $tModel = new Model_TimeZone();
+                                            $tModel->setTimezone($this->select_build_id);
+                                            $buildModel = new Model_Building();
+                                            $build_data = $buildModel->getbuildingbyid($this->select_build_id);
+                                            $current_time = date('h:i:s A');
+                                            if ($build_data) {
+                                                $btimezone = $build_data[0]['timezone'];
+                                                if ($btimezone != 0) {
+                                                    $tModel = new Model_TimeZone();
+                                                    $tzonelist = $tModel->getTimeZoneById($btimezone);
+                                                    $time_zone = $tzonelist[0]['time_value'];
+                                                    if ($time_zone) {
+                                                        $date = new DateTime(null, new DateTimeZone($time_zone));
+                                                        $current_time = $date->format('h:i:s A');
+                                                    }
+                                                }
+                                            }
+                                            ?>
+                                            <input type="text" name="time_requested" id="time_requested" value="<?php echo $current_time; ?>" readonly="readonly"/>
+    <?php } ?>
+    <?php /* <select name="hour" id="hour" >
+      <option value="">Hour</option>
+      <?php
+      for($i=1; $i<=12; $i++){
+      if($i<10)
+      $i= '0'.$i;
+      echo '<option value="'.$i.'">'.$i.'</option>';
+      }
+      ?>
+      </select> :
+      <select name="minute" id="minute">
+      <option value="">Minute</option>
+      <?php
+      for($i=0; $i<60; $i+=5){
+      if($i<10)
+      $i= '0'.$i;
+      echo '<option value="'.$i.'">'.$i.'</option>';
+      }
+      ?>
+      </select>
+      <select name="am_pm" id="am_pm">
+      <option value="am">am</option>
+      <option value="pm">pm</option>
+      </select> */ ?>
+                                    </div>
+                                </div>
+                            </div>
+                            <div><input type="checkbox" name="m_inter_workorder" value="1"/> Internal work order only</div>
+                        </div>
+
+                        <div class="clearfix"></div>
+
+                    </div>
+
+
+
+
+                    <div class="col-lg-12">
+                        <div class="work_request_div">
+                            <div class="form_group">
+                                <div class="workorder_error" id="work_order_request_error"></div>
+                                <label>Work Order Request</label>
+                                <textarea type="text" rows="5" cols="5" name="work_order_request" id="work_order_request" class="testarea"tabindex="5"></textarea>
+                            </div>
+                            <div class="form_group">
+
+                                <label>Internal Notes</label>  <div class='col-lg-6' style='padding-left:0px;'>
+                                    <select class='all_select' style='margin-bottom:3px;' onchange='FillPredefinedNotes(this)'> 
+                                        <option value=''> Select From Predefined Notes </option>
+    <?php
+    $noteModel = new Model_Notes();
+    $noteList = $noteModel->getNotesByCustId($this->custID);
+
+    foreach ($noteList as $noteValue) {
+        ?>
+                                            <option value='<?php echo $noteValue['nid']; ?>'> <?php echo $noteValue['notes']; ?>  </option>   
+    <?php } ?>
+                                    </select> </div> <div class='col-lg-6'> </div>
+                                <textarea type="text" rows="5" cols="5" name="internal_note" id="internal_note" class="testarea"></textarea>
+                            </div>
+                            <!-- <div class='clearfix'> &nbsp; </div>
+                            <div class='col-lg-3' ><b>Mark Work Order as Internal</b></div>
+                            <div class='col-lg-2'> 
+                            <select class='all_select' name='internal_notes_status'> 
+                            <option value='0'>No </option> 
+                            <option value='1'>Yes </option> 
+                            </select> </div> 
+                            <div class='clearfix'> &nbsp; </div> --> 
+                            <div class="col-lg-4">
+                                <div class="form_group">
+                                    <div class="workorder_error" id="file_error"></div>
+                                    <label>Attachment</label>
+                                    <input type="file" name="wo_file" id="wo_file">
+                                </div>
+                            </div>
+                            <div class="col-lg-4" style='padding-left:0px;'>
+                                <p class='reset_file' onclick='reset_file()'> Clear</p>
+                            </div>
+                            <div class="form_group" style="text-align:center">
+                                <button type="submit" value="Save" class="form_btn" name="save" ><span tabindex="6">Save </span></button>
+                                <button type="submit" value="Save &amp; New Work" class="form_btn" name="save_new"><span tabindex="7">Save &amp; New Work</span></button>
+                                <input type="button" value="Cancel" class="form_btn" onclick="cancelUser()">
+                            </div>
+
+
+                        </div>
+                    </div>
+
+
+
+                </div>
+            </form>
+        </div> 
+    </div>
+    <div class="fade_default_opt" id="fd_dft_div" style="display:none">	
+        <a href="#add_new_user" id="add_new_div_href" class="modalbox">&nbsp;</a>	
+        <div id="add_new_user" class="bd-dft-cls" style="display:none">
+            <div class="formBuild">
+                <h1>Add New User</h1>
+                <div class="addbuild build-form">
+                    <form name="new_user_form" id="new_user_form">
+                        <div class="message">
+                            <span id="error_msg"></span>
+                            <span id="success_msg"></span>
+                        </div>
+                        <div>
+                            <label>First Name <span class="required">*</span></label>
+                            <div class="cw-input">
+                                <span class="error" id="firstName-error"></span>
+                                <input type="text" name="firstName" id="firstName"/>
+                            </div>
+                        </div>
+                        <div>
+                            <label>Last Name <span class="required">*</span></label>
+                            <div class="cw-input">
+                                <span class="error" id="lastName-error"></span>
+                                <input type="text" name="lastName" id="lastName"/>
+                            </div>
+                        </div>
+                        <div>
+                            <label>Email <span class="required">*</span></label>
+                            <div class="cw-input">
+                                <span class="error" id="email-error"></span>
+                                <input type="text" name="email" id="email"/>
+                            </div>
+                        </div>
+                        <div>
+                            <label>Suite/Location <span class="required">*</span></label>
+                            <div class="cw-input">
+                                <span class="error" id="suite_location-error"></span>
+                                <input type="text" name="suite_locat" id="suite_locat"/>
+                            </div>
+                        </div>
+                        <div>
+                            <label>Phone Number <span class="required">*</span></label>
+                            <div class="cw-input">
+                                <span class="error" id="phone-error"></span>
+                                <input type="text" name="phoneNumber" id="phoneNumber"/>
+                            </div>
+                        </div>
+                        <div class="form-button">
+                            <input type="button" name="save" value="Save" onclick="createUser()"/>
+                            <input type="button" name="cancel" value="Cancel" onclick="cancelForm();"/>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <script>
+        function reset_file() {
+            var input = $("#wo_file");
+            input.replaceWith(input.val('').clone(true));
+        }
+        ;
+    </script>
+<?php } else { ?>
+    You don't have access for this module.
+<?php } ?>
+

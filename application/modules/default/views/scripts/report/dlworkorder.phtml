@@ -1,0 +1,105 @@
+<?php  
+
+
+
+		  $objPHPExcel = new PHPExcel();
+		  $style = array(
+        'alignment' => array(
+            'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+			'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+        )
+    );
+	$objPHPExcel->getDefaultStyle()->applyFromArray($style);
+		  $objPHPExcel->setActiveSheetIndex(0)
+          ->setCellValue('A1', 'Date Received')
+          ->setCellValue('B1', 'Time Received')
+          ->setCellValue('C1', 'Work Order#')
+          ->setCellValue('D1', 'Current Status')
+		  ->setCellValue('E1', 'Category')
+		  ->setCellValue('F1', 'Building')
+		  ->setCellValue('G1', 'Contact Information');
+			$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth("18");
+			$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth("18");
+			$objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth("18");
+			$objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth("18");
+			$objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth("18");
+			$objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth("18");
+			$objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth("12");
+			$objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth("20");
+			//$objPHPExcel->getActiveSheet()->getRowDimension('1')->setRowHeight(40);
+			
+			$objPHPExcel->getActiveSheet()->getStyle("A1")->getFont()->setBold(true);
+			$objPHPExcel->getActiveSheet()->getStyle("B1")->getFont()->setBold(true);
+			$objPHPExcel->getActiveSheet()->getStyle("C1")->getFont()->setBold(true);
+			$objPHPExcel->getActiveSheet()->getStyle("D1")->getFont()->setBold(true);
+			$objPHPExcel->getActiveSheet()->getStyle("E1")->getFont()->setBold(true);
+			$objPHPExcel->getActiveSheet()->getStyle("F1")->getFont()->setBold(true);
+			$objPHPExcel->getActiveSheet()->getStyle("G1")->getFont()->setBold(true);
+			
+
+  
+			
+			
+			if($this->wolist){
+								  $ssModel = new Model_ScheduleStatus();
+								$status_list = $ssModel->getScheduleStatus();
+								$status_array= array();
+								foreach($status_list as $sl){
+									if($sl['ssID']!=8)
+									$status_array[$sl['ssID']] = $sl['title'];
+								}
+								
+								$woModel = new Model_WorkOrder();
+								$j=0; $i=2;	$k=3;
+											foreach($this->wolist as $wl){		 					
+									$wodetail = $woModel->getWorkOrderInfo($wl->woId);
+									$woData = $wodetail[0];
+								$objPHPExcel->getActiveSheet()->getStyle("G".$i)->getFont()->setBold(true);
+									
+									$category_name=str_replace('&nbsp;'," ",$wl->categoryName);
+									$work_order_request=str_replace('&nbsp;'," ",$wl->work_order_request);
+									$work_order_request=strip_tags($work_order_request);
+									  $objPHPExcel->getActiveSheet()
+										->setCellValue('A'.$i, date("m/d/Y",strtotime($wl->created_at)))
+										->setCellValue('B'.$i, $wl->time_requested)
+										->setCellValue('C'.$i, $wl->wo_number)
+										->setCellValue('D'.$i, $status_array[$wl->wo_status])
+										
+										->setCellValue('E'.$i, $category_name)
+										->setCellValue('F'.$i, $wl->buildingName)
+										->setCellValue('G'.$i, "Request By:\nEmail:\nLocation:\nPhone:")
+										->setCellValue('H'.$i, "$woData->firstName $woData->lastName\n$woData->email\n$woData->tenant_suite\n$woData->phoneNumber");
+									$objPHPExcel->getActiveSheet()->getRowDimension($i)->setRowHeight(40);
+									$objPHPExcel->getActiveSheet()->getStyle("A".$k)->getFont()->setBold(true);
+										$objPHPExcel->getActiveSheet()
+										->setCellValue('A'.$k, 'Work Request:')
+										->setCellValue('B'.$k,  $work_order_request);
+										$objPHPExcel->getActiveSheet()->mergeCells("B$k:C$k:D$k:E$k:F$k");
+										$objPHPExcel->getActiveSheet()->mergeCells("G$i:G$k");
+										$objPHPExcel->getActiveSheet()->mergeCells("H$i:H$k");
+									
+									$i=$i+2; 
+									$k=$k+2; 
+								}
+							}
+							$objPHPExcel->getActiveSheet()->mergeCells('G1:H1');
+
+$objPHPExcel->getActiveSheet()->setTitle('WOReport');
+$file_name = 'WOReport-'.date("Y-m-d_H:i:s"); 
+// Redirect output to a client’s web browser (Excel5)
+header('Content-Type: application/vnd.ms-excel');
+header('Content-Disposition: attachment;filename="'.$file_name.'.xls"');
+header('Cache-Control: max-age=0');
+// If you're serving to IE 9, then the following may be needed
+header('Cache-Control: max-age=1');
+
+// If you're serving to IE over SSL, then the following may be needed
+header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+header ('Pragma: public'); // HTTP/1.0
+
+$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+$objWriter->save('php://output');
+exit;
+			?>

@@ -1,0 +1,181 @@
+<?php
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/build_service.js');
+$bservice_access = $this->acessHelper->checkAccess($this->roleId,$this->bservice_location);
+/*override access by custom user access if exist */
+$customeAccessmodel = new Model_UserAccess();
+$customeAccessmodeld = $customeAccessmodel->getUserCustomAccess($this->userId,$this->bservice_location);
+if($customeAccessmodeld[0]) {
+	$bservice_access = $customeAccessmodeld[0];
+}
+/* end overriding access */
+
+$reportModel = new Model_Report();
+$reportDetailLinks = ''; $dashBoardViewsdetails=''; $dashBoardViews=''; $woNumberAll=''; $invoiceAll=''; $uniqueCostCenterAll=''; $buildIdReportAll=''; $batch_number_report=''; $uniqueCostCenter=''; $batch_number_reportallbuilding=''; $buildIdReport=$this->select_build_id; $woNumberAllbuilding=''; $invoiceAllbuilding =''; $batch_number_reportall='';
+$reportDetailLinks = $reportModel->getReport($this->custID, 20);
+
+/* Searching section request data*/
+$search_by = '';
+    $service_value = '';
+    if(!empty($this->search) && isset($this->search['search_by'])){
+                    $search_by = $this->search['search_by'];
+                    $service_value=$this->search['search_value']; 
+    }
+?>
+<div class="container-right" id="service-data">
+	 <?php 
+       if($this->roleId!=1 && $bservice_access->is_access == 0 ){ 
+           if($this->custID!=null && $this->custID && $this->companyListing!='' && $this->companyListing!=false){
+			      $order = $this->order;
+				   $dir = $this->dir;
+				   $grid = $this->grid;
+				   $sdir= 'ASC';
+				   $udir = 'ASC';
+				   $cdir = 'ASC';
+				   $mdir = 'ASC';				   			   
+				  if($order=='service_name')
+					  $sdir = ($dir=='ASC')?'DESC':'ASC';
+			      else if($order=='unit_measure')
+					  $udir = ($dir=='ASC')?'DESC':'ASC';
+				  else if($order=='cost')
+					  $cdir = ($dir=='ASC')?'DESC':'ASC';
+				  else if($order=='minimum')
+					  $mdir = ($dir=='ASC')?'DESC':'ASC';
+					  	  				   
+			   	$url = BASEURL.'buildservice/index/bid/'.$this->select_build_id;	  
+			   ?>
+			   
+			 <!-- All Report link -->
+		<?php if($reportDetailLinks!='') { 
+					$woReport = new Model_Report();
+					$woBatch = new Model_WoBatch();
+					foreach($this->companyListing as $cb){ 
+						$uniqueCostCenterAll=$uniqueCostCenterAll.$cb['uniqueCostCenter'].',';
+						$buildIdReportAll=$buildIdReportAll.$cb['build_id'].',';
+						$batchDetails=$woBatch->showBatch($cb['build_id']);
+					    if($batchDetails!='') {
+						    foreach($batchDetails as $bd ) {
+							   $batch_number_reportallbuilding= $batch_number_reportallbuilding.$bd['batch_number'].',';
+						    }
+					    }  
+				
+						
+					        $order='woId';
+							$dir='DESC';
+							$wolist = $woReport->getWorkOrderByBuilding($cb['build_id'],$order,$dir);
+						    $invoicelist = $woReport->invoiceByBatch($cb['build_id'],$order,$dir);
+							if($wolist!='') {
+								foreach($wolist as $woNumber) {
+								   $woNumberAllbuilding=$woNumberAllbuilding.$woNumber->wo_number .',' ;
+								}
+							}
+								if($invoicelist!='') {
+									foreach($invoicelist as $invoiceNumber) {
+									   $invoiceAllbuilding=$invoiceAllbuilding.$invoiceNumber->wo_number .',' ;
+									}
+								}
+								
+						    $batchDetails=$woBatch->showBatch($cb['build_id']);
+						    
+						    if($batchDetails!='') {
+							   foreach($batchDetails as $bd ) {
+								   $batch_number_reportall=$batch_number_reportall.$bd['batch_number'].',';
+							    }
+						    }
+						
+					}  
+				} ?>
+				
+				<!-- End all report Link -->
+			   
+			   
+			  <div id="contents">
+					<ol id="toc">
+						<?php
+						    $sarray = array();
+						    $servModel = new Model_Services();
+						    $serviceList = $servModel->getServices();
+						    foreach($serviceList as $sl){
+								$sarray[$sl['sid']]=$sl['service'];
+							}
+							$j = 1;
+							
+							foreach($this->companyListing as $cb){ ?>					
+							<li><a class="<?php if($cb['build_id']==$this->select_build_id) echo 'active';?>"  href="<?php echo $this->baseUrl().'/coilist/index/bid/'.$cb['build_id']; ?>" ><span><?php echo $cb['buildingName']; ?></span></a>
+						<!-- selected report Link -->
+					<?php   
+					if($reportDetailLinks!='') {  
+						if($cb['build_id']==$this->select_build_id) {
+						    $uniqueCostCenter=$cb['uniqueCostCenter'];
+						    $batchDetails=$woBatch->showBatch($cb['build_id']);
+						    $batch_number_report='';
+						    if($batchDetails!='') {
+							   foreach($batchDetails as $bd ) {
+								   $batch_number_report=$batch_number_report.$bd['batch_number'].',';
+							    }
+						    }	
+							$order='woId';
+							$dir='DESC';
+							$wolist = $woReport->getWorkOrderByBuilding($cb['build_id'],$order,$dir);
+							$invoicelist = $woReport->invoiceByBatch($cb['build_id'],$order,$dir);
+							if($wolist!='') {
+								foreach($wolist as $woNumber) {
+								   $woNumberAll=$woNumberAll.$woNumber->wo_number .',' ;
+								}
+							}
+							if($invoicelist!='') {
+								foreach($invoicelist as $invoiceNumber) {
+								   $invoiceAll=$invoiceAll.$invoiceNumber->wo_number .',' ;
+								}
+							}
+						} 
+					}  ?> 
+							
+							</li>
+						<?php $j++; } ?>
+					</ol>
+					
+					
+<!-- Report Link -->
+		<?php  if($reportDetailLinks!='') { ?> <div class="clearfix"></div><div class="tabmenu report_tab_menus" ><ul><?php foreach($reportDetailLinks as $reportvalue){ $reportOption=explode(',',$reportvalue->report_option); ?> <li class="report_text" ><a   <?php if($reportvalue->report_target==1) { ?> target='_blank' <?php } ?> href="<?php echo BASEURL; ?>reports/VisionReportEngine/index.php?stimulsoft_client_key=ViewerFx&stimulsoft_report_key=<?php echo $reportvalue->report_mrt; ?><?php if(in_array('[[++user_id]]',$reportOption)) { echo '&User='.$this->userId; } ?><?php if((in_array('[[++CostCenterAllBuildings]]',$reportOption)) && $uniqueCostCenterAll!='' ) { echo '&Cost_Center_Number='.rtrim($uniqueCostCenterAll,','); } else if((in_array('[[++CostCenterNumber]]',$reportOption)) && $uniqueCostCenter!=''){ echo '&Cost_Center_Number='.$uniqueCostCenter;} ?><?php if((in_array('[[++KeyBuildingAllBuildings]]',$reportOption)) && $buildIdReportAll!='' ) { echo '&buildkey='.rtrim($buildIdReportAll,','); } else if((in_array('[[++KeyBuildingNumber]]',$reportOption)) && $buildIdReport!='') { echo '&buildkey='.$this->select_build_id; } ?><?php if(in_array('[[++BatchNumber]]',$reportOption)) { if((in_array('[[++CostCenterAllBuildings]]',$reportOption)) && (in_array('[[++CostCenterAllBuildings]]',$reportOption)) ) { echo '&Batch_Number='.rtrim($batch_number_reportall,','); } else { echo '&Batch_Number='.rtrim($batch_number_report,','); } } ?><?php if((in_array('[[++WONumber]]',$reportOption)) ) { if((in_array('[[++CostCenterAllBuildings]]',$reportOption)) && (in_array('[[++CostCenterAllBuildings]]',$reportOption))) { echo "&WO_Number=".rtrim($woNumberAllbuilding,','); } else {  echo "&WO_Number=".rtrim($woNumberAll,','); } } ?><?php if((in_array('[[++InvoiceNumber]]',$reportOption)) ) { if((in_array('[[++CostCenterAllBuildings]]',$reportOption)) && (in_array('[[++CostCenterAllBuildings]]',$reportOption))) { echo '&Invoice_Number='.rtrim($invoiceAllbuilding,','); }  else { echo '&Invoice_Number='.rtrim($invoiceAll,','); }} ?>" ><?php echo $reportvalue->report_name; ?> </a> </li> <?php } ?> </ul></div>	<?php } ?>		
+					
+					
+					
+                                    
+<style>
+.coi-footer-button{
+margin: 34px -14px -14px -13.5px;
+    text-align: left;
+}
+.coi-footer-button > input {
+    background-color: #2ecc71;
+    padding: 10px 23px;
+    border: none;
+}
+</style>					 
+				</div>	   
+				<div id="popup_form" style="display:none" class="service_popup_form">
+					 <a href="#add_service_form" id="add_service_form_href" class="modalbox">&nbsp;</a>					
+					 <div id="add_service_form" class="bd-dft-cls"  style="display:none"></div>
+					 <a href="#edit_service_form" id="edit_service_form_href" class="modalbox">&nbsp;</a>					
+					 <div id="edit_service_form" class="bd-dft-cls"  style="display:none"></div>
+					 <a href="#service_template_form" id="service_template_form_href" class="modalbox">&nbsp;</a>					
+					 <div id="service_template_form" class="bd-dft-cls" style="display:none"></div>					
+				</div>
+			<?php }
+		   else{
+			   echo 'No Building has assign to you.';
+		   }  
+                  
+                   
+                
+		  }else{?>
+			You don't have access for this module.
+		  <?php }?>
+</div>       			
+<div class="loader" style="display:none;" > <img src="<?php echo BASEURL.'public/images/loader.gif';?>"><div>
+        <script>
+            function showlimit(){
+                var data = $("#show_limit").val();
+                window.location =baseUrl+"buildservice/index/show/"+data;
+            }
+            </script>

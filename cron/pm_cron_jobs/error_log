@@ -1,0 +1,9 @@
+[22-Apr-2020 07:54:28 UTC] PHP Catchable fatal error:  Object of class DateTime could not be converted to string in /home/ve/public_html/cron/pm_cron_jobs/manual_pm_jobs.php on line 36
+[31-Mar-2021 06:02:01 America/Chicago] PHP Fatal error:  Uncaught Error: Class 'mysqli' not found in /home/ve/public_html/cron/pm_cron_jobs/daily_pm_job.php:52
+Stack trace:
+#0 {main}
+  thrown in /home/ve/public_html/cron/pm_cron_jobs/daily_pm_job.php on line 52
+[31-Mar-2021 06:03:01 America/Chicago] PHP Fatal error:  Uncaught Error: Class 'mysqli' not found in /home/ve/public_html/cron/pm_cron_jobs/daily_pm_job.php:52
+Stack trace:
+#0 {main}
+  thrown in /home/ve/public_html/cron/pm_cron_jobs/daily_pm_job.php on line 52

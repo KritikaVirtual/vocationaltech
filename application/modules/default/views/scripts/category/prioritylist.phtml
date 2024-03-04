@@ -1,0 +1,84 @@
+<?php
+//$dir='ASC';
+ $order=$this->order;
+ $dir = ($order!='default' && $order =='ASC')?'DESC':'ASC';
+?>
+<div id="priority_popup" style="display:none;"></div>
+<section class="w-48 fr ch-home-form">
+							 <table class="priority-list" width="100%">
+							 
+							 <tr>
+									  <td colspan="6" class="service_head" style='border:1px solid #dddddd; color:#333; padding:5px 3px;'>Priorities</td>
+									  <td colspan="2" class="gt_heading" style='border:1px solid #dddddd; color:#333; padding:5px 3px;'><a onclick="javascript:showPriorityTemplate('<?php echo $this->baseUrl().'/category/createprioritytemplate/bid/'.$this->select_build_id; ?>');" href="#showPriorityTemplate" class="modalbox">Import Global Template</a> &nbsp;
+									  </td>
+									  
+								  </tr>
+								 <tr>
+									 <th>&nbsp;</th>
+									 <th><a href="javascript:void(0)" onclick="showPriorityList('<?php echo $this->select_build_id;?>','<?php echo $dir;?>')" class="<?php echo $order?>">Priority Name</a></th>
+									 <th>Priority Description</th>
+									 <th>Active</th>
+									 <th>E-Mail Alerts Active</th>
+									 <th>Imported</th>
+									 <th>Action</th>
+								 </tr>
+								 <?php 
+								      if(!empty($this->priorityDetail)){
+								        foreach($this->priorityDetail as $pri_detail){?>
+											<tr id="show_priority_id_<?php echo $pri_detail['pid']?>" class="show-priority">
+											    <td><div class="open_plus" id="open_div_<?php echo $pri_detail['pid'];?>"><a href="javascript:void(0);" id="<?php echo $pri_detail['pid'];?>" onClick="return showPriorityScheduleList(<?php echo $pri_detail['pid'];?>,'')";><?php echo '&nbsp;&nbsp;';?></a></div></div></td>
+												<td><?php echo $pri_detail['priorityName']?></td>
+												<td><?php echo $pri_detail['priorityDescription']?></td>
+												<td><?php echo ($pri_detail['status'])?'Yes':'No'?></td>
+												<td><?php echo ($pri_detail['email_status'])?'Yes':'No'?></td>
+												<td><?php echo ($pri_detail['import_template'])?'Yes':'No'?></td>
+												<td><div class="col02 coladdlastcol lastcol edit_delete_icon"><a href="javascript:void(0);" onclick="showEditPriority('<?php echo $pri_detail['pid']?>')"  data-id="<?php echo $pri_detail['pid']?>" title="Edit"><img src="<?php echo BASEURL . 'public/images/edit.png'?>" /></a> <a href="javascript:void(0);" onclick="deletePriority('<?php echo $pri_detail['pid']?>')" data-id="<?php echo $pri_detail['pid']?>" title="Delete"><img src="<?php echo BASEURL . 'public/images/delete.png'?>" /></a></div></td>
+											</tr>
+											<tr id="edit_priority_id_<?php echo $pri_detail['pid']?>" style="display:none" class="edit-priority">
+											    <td><div class="open_plus" id="open_div_<?php echo $pri_detail['pid'];?>"><a href="javascript:void(0);" id="<?php echo $pri_detail['pid'];?>" onClick="return showPriorityScheduleList(<?php echo $pri_detail['pid'];?>,'')";><?php echo '&nbsp;&nbsp;';?></a></div></div></td>
+											    <td><input type="text" value="<?php echo $pri_detail['priorityName']?>" name="priority_name" id="priority_name_<?php echo $pri_detail['pid']?>"/></td>
+												<td><input type="text" value="<?php echo $pri_detail['priorityDescription']?>" name="priority_description" id="priority_description_<?php echo $pri_detail['pid']?>"/></td>
+												<td>
+													<select name="status" id="status_<?php echo $pri_detail['pid']?>">
+												      <option value="1" <?php if($pri_detail['status']==1) echo 'selected';?>>Yes</option>
+												      <option value="0" <?php if($pri_detail['status']==0) echo 'selected';?> >No</option>
+												   </select>
+												</td>
+												<td>
+													<select name="email_status" id="email_status_<?php echo $pri_detail['pid']?>">
+												      <option value="1" <?php if($pri_detail['email_status']==1) echo 'selected';?>>Yes</option>
+												      <option value="0" <?php if($pri_detail['email_status']==0) echo 'selected';?> >No</option>
+												   </select>
+												</td>
+												<td><div class="col02 coladdlastcol lastcol yesnotooltips"><a href="javascript:void(0);" onclick="editPriority('<?php echo $pri_detail['pid']?>')" data-id="<?php echo $pri_detail['pid']?>" class="editcmpny" title="Save"><img src="<?php echo BASEURL . 'public/images/yes_icon.png'?>" /></a><a href="javascript:void(0);" onclick="hideEditPriority('<?php echo $pri_detail['pid']?>')" data-id="<?php echo $pri_detail['pid']?>" class="hideeditcmpny" title="Cancel"><img src="<?php echo BASEURL . 'public/images/no_icon.png'?>" /></a></div></td>
+											</tr>
+											<tr id="tr_schecdule-<?php echo $pri_detail['pid']?>" class="show-tr-schlist" style="display:none">
+												<td>&nbsp;</td>
+												<td colspan="6" class="margin_padding_none" id="show_priority_schedule_<?php echo $pri_detail['pid']?>"></td>
+											</tr>
+								  <?php }?>
+                                    <?php 
+										/*
+										 pagination code. 
+										*/
+										?>  										
+										 <input type="hidden" name="priority_page" id="priority_page" value="<?php echo $this->page;?>"/>
+										 								  
+								  <?php }else{ ?>
+									     <tr>
+											 <td colspan="6">
+												 No priority created. Pease create new priority!!!
+											 </td>
+									     </tr>
+									  <?php }?>									  
+									  <tr>
+										  <td colspan="7" class="add_record"><a href="javascript:void(0)" onclick="showPriorityForm()"><span>Add New Record</span></a></td>
+									  </tr>	
+								 </table>
+								 <!--<div class="fade_default_opt" id="fd_dft_div" style="display:none">
+								  <div id="add-priority-td" class="bd-dft-cls" style="display:none">
+									      
+								   </div>
+								   </div> -->
+							</section>                          
+</div>

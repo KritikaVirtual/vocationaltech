@@ -1,0 +1,113 @@
+<?php
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/build_service.js');
+$bservice_access = $this->acessHelper->checkAccess($this->roleId,$this->bservice_location);
+?>
+<div class="container-right" id="service-data">
+	 <?php 
+       if($this->roleId!=1 && $bservice_access->is_access == 0 ){ 
+           if($this->custID!=null && $this->custID && $this->companyListing!='' && $this->companyListing!=false){
+			      $order = $this->order;
+				   $dir = $this->dir;
+				   $grid = $this->grid;
+				   $sdir= 'ASC';
+				   $udir = 'ASC';
+				   $cdir = 'ASC';
+				   $mdir = 'ASC';				   			   
+				  if($order=='service_name')
+					  $sdir = ($dir=='ASC')?'DESC':'ASC';
+			      else if($order=='unit_measure')
+					  $udir = ($dir=='ASC')?'DESC':'ASC';
+				  else if($order=='cost')
+					  $cdir = ($dir=='ASC')?'DESC':'ASC';
+				  else if($order=='minimum')
+					  $mdir = ($dir=='ASC')?'DESC':'ASC';
+					  	  				   
+			   	$url = BASEURL.'buildservice/index/bid/'.$this->select_build_id;	  
+			   ?>
+			  <div id="contents">
+					<ol id="toc">
+						<?php
+						    $sarray = array();
+						    $servModel = new Model_Services();
+						    $serviceList = $servModel->getServices();
+						    foreach($serviceList as $sl){
+								$sarray[$sl['sid']]=$sl['service'];
+							}
+							$j = 1;
+							foreach($this->companyListing as $cb){ ?>					
+							<li><a href="<?php echo $this->baseUrl().'/buildservice/index/bid/'.$cb['build_id']; ?>" <?php if($cb['build_id']==$this->select_build_id) echo 'class="active"';?>><span><?php echo $cb['buildingName']; ?></span></a></li>
+						<?php $j++; } ?>
+					</ol>
+					<div id="page" class="content">
+					     <span class="service-heading"><h1>Building Services Console</h1></span>
+					     <div class="service_message" id="service_message">
+							<span id="service_success" class="success"></span>
+							<span id="service_error" class="error"></span>
+						</div>
+					     <div id="service_grid_div">
+							  <table id="service_data_table" class="building_table_grid" width="100%">
+								  <tr>
+									  <td class="service_head" colspan="4">Building Services</td>
+									  <td class="gt_heading" colspan="2"><?php if($bservice_access->is_write==1){?><a href="javascript:void(0)" onclick="importServiceTemplate('<?php echo $this->select_build_id;?>')">Import Global Template</a><?php }?> &nbsp;</td>
+								  </tr>
+								  <tr>
+									<th><a href="<?php echo $url.'/order/service_name/dir/'.$sdir?>" 
+                          class="<?php if($order=='service_name') echo $sdir; else echo 'sorting';?>">Service Name</a></th>
+									  <th><a href="<?php echo $url.'/order/unit_measure/dir/'.$udir?>" 
+                          class="<?php if($order=='unit_measure') echo $udir; else echo 'sorting';?>">Unit of Measure</a></th>
+									  <th><a href="<?php echo $url.'/order/cost/dir/'.$cdir?>" 
+                          class="<?php if($order=='cost') echo $cdir; else echo 'sorting';?>">Cost</a></th>
+									  <th><a href="<?php echo $url.'/order/minimum/dir/'.$mdir?>" 
+                          class="<?php if($order=='minimum') echo $mdir; else echo 'sorting';?>">Minimum Required</a></th>
+                                       <th>Imported</th>
+									  <?php if($bservice_access->is_write==1){?><th>Action</th><?php }?>
+								  </tr>
+								  <?php
+								      if($this->bsList){
+										  foreach($this->bsList as $bs){
+											 ?>
+										<tr>
+											<td><?php echo $bs['service_name'];?></td>
+											<td><?php echo $bs['unit_measure'];?></td>
+											<td><?php echo $bs['cost'];?></td>
+											<td><?php echo $bs['minimum'];?></td>
+											<td><?php echo ($bs['import_template']=='1')?'Yes':'No';?></td>
+											<?php if($bservice_access->is_write==1){?><td>
+												<a title="Edit" href="javascript:void(0);" onclick="showEditService('<?php echo $bs['bsid'];?>','<?php echo $bs['building'];?>')"><img src="<?php echo BASEURL . 'public/images/edit.png'?>" /></a>
+						                        <a href="javascript:void(0);"  title="Delete" onclick="deleteService('<?php echo $bs['bsid'];?>')"><img src="<?php echo BASEURL . 'public/images/delete.png'?>" /></a>
+						                     </td>
+						                     <?php }?>
+											
+										</tr>	 
+									 <?php		  
+										  }
+										  
+								     }else{
+								  ?>
+								  <tr>
+									  <td colspan="6">No Record Exist.</td>
+								  </tr>
+								  <?php }?>
+								  <?php if($bservice_access->is_write==1){?>
+								  <tr>
+									  <th colspan="6"><a href="javascript:void(0)" onclick="showAddService('<?php echo $this->select_build_id;?>')">Add New</a></th>
+								  </tr>
+								  <?php }?>
+							  </table>
+					     </div>
+					 </div>
+				</div>	   
+				<div id="popup_form" style="display:none" class="service_popup_form">
+					 <div id="add_service_form" style="display:none"></div>
+					 <div id="edit_service_form" style="display:none"></div>
+					 <div id="service_template_form" style="display:none"></div>					
+				</div>
+			<?php }
+		   else{
+			   echo 'No Building has assign to you.';
+		   }  
+		  }else{?>
+			You don't have access for this module.
+		  <?php }?>
+</div>       			
+<div class="loader" style="display:none;" > <img src="<?php echo BASEURL.'public/images/loader.gif';?>"><div>

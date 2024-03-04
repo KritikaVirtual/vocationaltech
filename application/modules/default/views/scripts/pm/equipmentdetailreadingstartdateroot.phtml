@@ -1,0 +1,85 @@
+<?php
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/pm-equipment.js');
+?>
+<div class="container-right">
+    <div class="message">               
+            <span class="error-txt" style="color:red; text-align:center;"></span>
+    </div>
+    <section style="z-index:9999" class="w-48 fr ch-home-form">
+        <section class="ch-form-header ">
+            <h3>Start Date - Group Modification </h3>
+        </section>
+        <div class="room-setup">
+            <div class="tableGrid list_tableGrid my_table_grid">
+                <div class="message">
+                    <div class="success_message" style="text-align:center;width:100%;font-weight:bold;color:red;"></div>				  			
+                    <span id="success_msg"></span>
+                    <span id="error_msg"></span>
+                </div>
+                <div class="container" style="height: 200px">
+                    <div>                        
+                        <div>
+                            <label>Select Date</label> 
+                            <span class="ugroupErr" id="location-error"></span>                            
+                            <input type="text" readonly="readonly" id="startdate" class="date-picker" name="startdate" min="1">
+                          
+                        </div>
+                        <span class="ugroupErr" id="error_startdate"></span>
+                        <div class="row">
+                            <input type="checkbox" name="includesubset"  id="includesubset" value="1"> Check to include all subset
+                        </div>
+                        <div class="confirmBtn float_none">
+                            <input type="hidden" name="typedesination" id="typedesination_id" value="" >
+                            <input type="button" value="Apply" name="save" class="confirm" id='emailsave' onclick="update_equipmentdetail_readingroot_startdate('<?php echo $this->eqp_detail_id; ?>');">
+                            <input type="button" value="Cancel" name="cancel" class="cancel" onclick="closepopup();">                            
+                            <input type="hidden" value="" id="total">
+                        </div>
+                    </div>   
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<div class="loader" style="display:none;" > <img src="<?php echo BASEURL.'public/images/loader.gif';?>"><div>
+<div class="fade_default_opt" id="fd_dft_div" style="display:none">
+    <a href="#file_form" id="file_form_href" class="modalbox">&nbsp;</a>	
+    <div id="file_form" class="bd-dft-cls" style="display:none"></div>
+</div>
+        <style>
+            
+            .ui-datepicker table {
+                display: none !important;
+            }
+            .hasDatepicker{
+                width:25% !important;
+            }
+        </style>
+    <script>
+    $(function() {
+    $('.date-picker').datepicker( {
+        changeMonth: true,
+        changeYear: true,
+        showButtonPanel: true,
+        dateFormat: 'MM yy',
+        minDate: 0,
+        onClose: function(dateText, inst) { 
+            
+            
+            function isDonePressed(){
+                            return ($('#ui-datepicker-div').html().indexOf('ui-datepicker-close ui-state-default ui-priority-primary ui-corner-all ui-state-hover') > -1);
+                        }
+
+                        if (isDonePressed()){
+                            var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+                            
+                            var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+                                $(this).datepicker('setDate', new Date(year, month, 1));                                
+                                
+                        }
+            
+        }
+    });
+    
+    
+});
+</script>

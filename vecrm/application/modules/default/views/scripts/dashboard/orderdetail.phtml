@@ -1,0 +1,300 @@
+<?php 
+ //print_r($this->woData);
+ $woData = $this->woData;
+	$ssModel = new Model_ScheduleStatus();
+	$status_list = $ssModel->getScheduleStatus();
+	$status_array= array();
+	foreach($status_list as $sl){
+	   $status_array[$sl['ssID']] = $sl['title'];
+	}
+	$gplist = array();
+	$gp_names = '';
+	if($woData->send_email!=''){
+		$egModel = new Model_EmailGroup();
+		$gplist = $egModel->getGroupIds($woData->send_email);
+		foreach($gplist as $gp){
+			$gp_names .= ($gp_names!='')?',':'';
+			$gp_names .= $gp['group_name'];
+		}
+    }
+    
+   $wpModel = new Model_WorkOrderUpdate();
+   $cwpData = $wpModel->getCurrentWoUpdate($woData->woId);
+   $work_status = ($cwpData)?$cwpData[0]['wo_status']:0;
+   $internalNote = ($cwpData)?$cwpData[0]['internal_note']:'';	
+   $pscheduleModel = new Model_Schedule();
+											   
+   $schedule_list = $pscheduleModel->getSchedule($woData->pid);
+   $schedule_array = array();
+   if($schedule_list){
+	   foreach($schedule_list as $sl){
+		   $schedule_array[] = $sl['start_status'];
+	   }
+   }
+   //var_dump($schedule_list);
+   
+   $lenModel = new Model_Length();
+   $lenlist = $lenModel->getLength();
+   $catModel = new Model_Category();
+   $catlist = $catModel->getBuildingCategoryList($woData->building);
+   $cat_array= array();
+   foreach($catlist as $cat)
+     $cat_array[$cat['cat_id']]=$cat['categoryName'];
+     
+  /**********Get notes list ***********/ 
+  $noteModel = new Model_Notes();
+  $noteList = $noteModel->getNotes();
+?>
+<div class="editworkorder">
+<div class="order-details">     
+      <h1>Work Order Details :</h1>
+        <div class="col-lg-8">
+			<?php if($work_status =='1'){?>
+				<form name="wcassign-form" id="wcassign-form-<?php echo $woData->woId;?>">
+					<span id="assign_error_<?php echo $woData->woId;?>" class="error"></span>
+					<div id="assign_category" class="my_agn_div">
+						 <label>Assign new category</label>
+						 <input type="hidden" name="curr_cat_<?php echo $woData->woId;?>" id="curr_cat_<?php echo $woData->woId;?>" value="<?php echo $woData->category; ?>"/>
+						 <select name="assign_category_<?php echo $woData->woId;?>" id="assign_category_<?php echo $woData->woId;?>" class="my_assign_div">
+							 <option value="">Select Category</option>
+							 <?php 
+								if($catlist){
+									foreach($catlist as $cat){
+										echo '<option value="'.$cat['cat_id'].'"';
+										echo  ($cat['cat_id']==$woData->category)?'selected':'';
+										echo '>'.$cat['categoryName'].'</option>';
+								   }	 	
+							   }
+							 ?>
+						 </select>
+						 <input type="button" name="assign_button" class="form_btn" value="Assign Category" onClick="reassignCategory('<?php echo $woData->woId;?>');"/>
+					</div>
+				</form>	
+			<?php }?>	
+          <form name="worequestform" id="worequestform" action="<?php echo BASEURL.'/dashboard/updateorder/'?>" method="post">
+            <div class="form_group">
+              <div class="lbl_div">
+                <label>Work Request</label>
+              </div>
+              <div class="form_field_div">                
+                <?php
+                      echo $woData->work_order_request;
+                ?>
+                
+                <input type="hidden" name="work_order_id" value="<?php echo $woData->woId;?>"/>
+                <input type="hidden" name="priority" id="priority" value="<?php echo $woData->pid;?>"/>
+				<input type="hidden" name="exist_schedule" id="exist_schedule" value="<?php echo implode(',',$schedule_array);?>"/>
+				<input type="hidden" name="insert_schedule" id="insert_schedule" value="0"/>
+				<input type="hidden" name="current_wstatus" id="current_wstatus" value="<?php echo $work_status;?>"/>
+              </div>
+            </div>
+            <div class="form_group">
+              <div class="lbl_div">
+                <label>Update Status To</label>
+              </div>
+              <!-- Split button -->
+              <div class="form_field_div">
+                <div class="btn-group work_update_select">
+					<div id="wstatus_error" class="wst_error"></div>
+					<select name="order_status" id="order_status" class="all_select">
+						   <?php foreach($status_array as $key=>$value){ ?>
+							   <option value="<?php echo $key;?>" <?php echo ($work_status==$key)?'selected':'';?>><?php echo $value;?></option>
+							 <?php }?>  
+					</select>                  
+                </div>
+                <div id="time_length_div" class="time_len_my_div" style="display:none">
+						 <div id="schedule_error" class="sch_error"></div>
+						 <div id="time_div">
+							 <label>Time <span class="required">*</span></label>
+							 <input type="text" name="Time" id="Time" maxlength="2" onkeypress="return isNumberKey(event)"/>
+						 </div>
+						 <div id="length_div" class="len_div">
+							 <label>Length <span class="required">*</span></label>
+							  <select name="length" id="length">
+								  <?php foreach($lenlist as $ll){?>
+									  <option value="<?php echo $ll['lID']?>"><?php echo $ll['title']?></option>
+								  <?php }?>
+							  </select>
+						 </div>
+					</div>
+              </div>
+            </div>
+             <div class="form_group">
+              <div class="lbl_div">
+                <label>Note</label>
+              </div>
+              <!-- Split button -->
+              <div class="form_field_div">
+                  <?php /*<textarea type="text" rows="5" cols="5" name="internal_note" id="internal_note" class="testarea"></textarea> */?>
+                  <select name="internal_note" id="internal_note">
+					  <option value="">Select Note</option>
+					  <?php 
+					       if($noteList){
+							   foreach($noteList as $nl){
+								   if($nl['status']=='1'){
+									   echo '<option value="'.$nl['nid'].'"';
+									   if($internalNote==$nl['nid'])
+										echo 'selected="selected"';
+									   echo '>'.$nl['notes'].'</option>';
+								   }
+							   }
+						   }
+					  ?>
+                  </select>
+              </div>
+            </div>
+          
+            <div class="form_group"><input type="button" class="form_btn float_right" value="Update" onclick="ValidateForm()"></div>
+          </form>
+            <div id="progressbar">
+					<?php $wsModel = new Model_WoScheduleStatus();
+						  $wsList = $wsModel->getWoAllStatus($woData->woId);														          
+						  $currTime = time();													          
+						  if($wsList){
+							  $i=0;
+							  $tot_width=0;
+							  $ws_status = '';
+							  $pro_prcentage=0;
+							  $pro_width = 0;
+							  $pro_msg = '';
+							  $colorCode='';
+							  $status_title_val='';
+							  foreach($wsList as $ws){
+								  if($ws->current_status == '1'){
+										 $lastTime ='';
+										if($ws->updated_at!='0000-00-00 00:00:00'){
+											$lastTime =$ws->updated_at;
+										}else
+											$lastTime =$ws->created_at;
+																
+										 $timeDiff = abs($currTime - strtotime($lastTime));																							
+										 $calTime = $wsModel->getCalculateTime($ws->Time,$ws->length);
+										 $devide_num = number_format((float)($timeDiff/$calTime), 2, '.', '');
+										 $pro_prcentage = $devide_num*100;
+						               if($pro_prcentage>100)
+										 {
+											 $pro_width = 100;
+											 $colorCode='#f0ad4e';
+											 $pro_msg = ' Time Out';
+										 }else{
+											 $pro_width = $pro_prcentage;
+											 $colorCode='#5cb85c';
+											 //$pro_msg = $pro_prcentage.' % Time has been passed.';
+											 $pro_msg = $pro_prcentage.'%';
+										 }
+										$status_title_val= $status_array[$ws->start_status] .' - '.$ws->Time. ' '.$ws->length_title; 
+									 }																	 																		
+								  $ws_status .= ($ws_status!='')?'->':'';
+								  $ws_status .= $status_array[$ws->start_status];
+					   }
+							 echo '<span class="ch-status"><strong>Status:</strong> '.$ws_status.'</span>';
+							 ?>
+							 
+							 <div class="progress">
+							  <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="40"
+							  aria-valuemin="0" aria-valuemax="100" style="width:<?php echo $pro_width;?>%;background-color:<?php echo $colorCode; ?>;">
+								<?php echo $pro_msg;?>
+							  </div>
+							</div>
+							<label class="status-sval"><?php echo $status_title_val;?></label>
+							<ul class="indecate">
+							   <li><p>Time is available.</p></li>
+							   <li><p>Time is over.</p></li>
+							</ul>
+					 <?php   
+					  }
+					?>													        
+			  </div>
+        </div>
+        
+        <div class="col-lg-4">
+        <div class="panel panel-default contact_info_tab">
+                        
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <!-- Nav tabs -->
+                            <ul class="nav nav-tabs">
+                                <li class="active"><a data-toggle="tab" href="#contact">Contact Information</a>
+                                </li>
+                                <li class=""><a data-toggle="tab" href="#detail">Details</a>
+                                </li>
+                                
+                            </ul>
+
+                            <!-- Tab panes -->
+                            <div class="tab-content">
+                                <div id="contact" class="tab-pane fade active in">
+                                    <p><span class="request_span">Requested By :</span>    <span><?php echo $woData->firstName.' '.$woData->lastName;?></span></p>
+                                    <p><span class="request_span">Suite/Location :</span>    <span><?php echo $woData->tenant_suite;?></span></p>
+                                    <p><span class="request_span">Email :</span>    <span><?php echo $woData->email;?></span></p>
+                                    <p><span class="request_span">Phone Number :</span>    <span><?php echo $woData->phoneNumber;?></span></p>
+                                </div>
+                                
+                                
+                                <div id="detail" class="tab-pane fade">
+                                   <p><span class="request_span">Email To :</span>    <span>
+									   <?php echo $gp_names;?>
+									</span></p>
+                                    <p><span class="request_span">Priority :</span> <span><?php echo $woData->priorityName;?></span></p>
+                                    <?php $fileModel = new Model_WoFiles();
+										  $fileList = $fileModel->getWoFilesByWoId($woData->woId);
+										  if($fileList){?>
+										<p><span class="request_span">Attachment :</span>
+										<ul>
+										  <?php foreach($fileList as $fl){?>
+											  <li>
+													<span><a href="<?php echo BASEURL.'public/work_order/'.$fl['file_name'];?>"><?php echo $fl['file_title'];?></a></span>
+											   </li>		
+										   <?php } ?>
+										  </ul> 
+									   </p>
+									<?php }?>
+                                   <?php 
+										$whlModel = new Model_WoHistoryLog();
+										$whlList = $whlModel->getWoHistoryLog($woData->woId);
+										if($whlList){
+									?>
+										 <p>
+											<span class="request_history_title" id="show_hist_<?php echo $woData->woId;?>"><a href="javascript:void(0)" onclick="showCatLog('<?php echo $woData->woId;?>')"> Show Work Order History Log </a></span>
+											<span class="request_history_title" style="display:none" id="hide_hist_<?php echo $woData->woId;?>"><a href="javascript:void(0)" onclick="hideCatLog('<?php echo $woData->woId;?>')"> Hide Work Order History Log </a></span>
+										</p>
+										 <div id="catlog_<?php echo $woData->woId;?>" style="display:none">
+											<div class="cat_log_history">
+													 <table class="history_log_table">
+														   <tr>
+															   <th>Log Type</th>
+															   <th>User</th>
+															   <th>Date</th>
+															   <th>Time</th>
+															   <th>Changes</th>
+														   </tr>
+															<?php foreach($whlList as $whl){?>
+																<tr>
+																	<td><?php echo ucfirst($whl->log_type);?></td>
+																	<td><?php echo $whl->firstName.' '.$whl->lastName;?></td>
+																	<td><?php echo substr($whl->created_at,0,10);?></td>
+																	<td><?php  echo date_format(date_create($whl->created_at), 'g:i A');?></td>
+																	<td>
+																		<?php 
+																		 if($whl->log_type=='category')
+																		   echo $cat_array[$whl->current_value].' -> '.$cat_array[$whl->change_value];
+																		else
+																		  echo $status_array[$whl->current_value].' -> '.$status_array[$whl->change_value];
+																	  ?>
+																	</td>
+																</tr>																										
+															<?php }?>
+													  </table>	
+												 </div>
+										 </div> 
+									<?php }?>
+                                </div>
+                               
+                              
+                            </div>
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+        </div>
+</div> 
+</div>

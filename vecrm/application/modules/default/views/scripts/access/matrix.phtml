@@ -1,0 +1,131 @@
+<?php
+  echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/access.js');
+?>
+<div class="container-right" id="access-matrix">
+    <?php  
+         $accArr = array();      
+         //$access = $this->access;
+         if($this->access){
+			 foreach($this->access as $acc){
+				 $accArr[$acc['location_id']][$acc['role']] = array(
+				                                                  'is_access'=>$acc['is_access'],
+				                                                  'is_read'=>$acc['is_read'],
+				                                                  'is_write'=>$acc['is_write']
+				                                                 );
+			 }
+		 }
+		 //print_r($accArr);
+        
+    ?>
+
+<section style="z-index:9999" class="w-48 fr ch-home-form" id="first">
+    <section class="ch-form-header ">
+        <h3>Access User Matrix</h3>
+    </section>
+    <div class="gridContainer">
+        <div class="tableGrid">
+        <form name="access_form[]" method="POST" action="">    
+        <table id="access_tbl" width="100%" class="table table-striped table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>
+                        Location
+                    </th>                    
+                   <?php 
+                      $counter = 0;
+                      $roleArray = array();
+                      $allow_role = array('2','3','4','6');
+                      $size = count($allow_role);
+                      if($this->roleData){
+						  foreach($this->roleData as $rd){			  
+							  if(in_array($rd['roleID'],$allow_role)){
+							  $roleArray[] = $rd['roleID'];						
+					   ?>
+						<th>
+							<?php echo $rd['title'];?>
+						</th>
+						
+						<?php $counter++;
+							 }
+						 }
+                    }?>
+                </tr>
+            </thead>
+
+            <tbody>
+			<?php if($this->plocation){
+				      $lModel = new Model_Location();				      
+					  foreach($this->plocation as $pl){
+					?>	
+					<tr>
+						<td colspan="<?php echo ($size+1);?>" class="company_head">
+							<strong><?php echo $pl['p_location']?></strong>
+						</td>
+				   </tr>
+				    <?php
+				       $locData =  $lModel->getLocationByParent($pl['pl_id']);
+				       if($locData){
+						   foreach($locData as $ld){
+					?>
+							<tr> 
+								<td class="building_admin">
+									<?php echo $ld['name'];?>
+								</td>
+								<?php
+								    foreach($roleArray as $ra){
+								 ?>
+								  <td>
+									  <?php 
+									    $lrc = array();
+									     $checkVal = 'role_'.$ra.'_build_'.$ld['id'];
+									     $is_read = '';
+									     $is_access='';
+									     $is_write='';
+									     
+									     if(isset($accArr[$ld['id']][$ra])){
+											 $lrc = $accArr[$ld['id']][$ra]; 
+					   
+											if($lrc['is_access']) $is_access = 'checked'; else $is_access = ''; 
+											if($lrc['is_read']) $is_read = 'checked'; else $is_read = ''; 
+											if($lrc['is_write']) $is_write = 'checked'; else $is_write = ''; 
+										}
+
+									   ?>
+										<input type="checkbox"  <?php echo $is_read; ?> class="read" name="row1[build1][3]"value="<?php echo $checkVal;?>">R
+										<input type="checkbox"  <?php echo $is_write; ?> class="write" name="row1[build1][4]" value="<?php echo $checkVal;?>">W
+										<input type="checkbox"  <?php echo $is_access; ?> class="no_access" name="row1[build1][5]" value="<?php echo $checkVal;?>">No Access
+								  </td>
+								 <?php 
+								     }
+								  ?>
+							</tr>
+
+				   <?php        
+						     }   
+				          } 
+					  }//loop
+			  } // plocation
+             ?>         
+
+               
+            </tbody>
+        </table>
+          
+        </div>
+    </div>
+
+<div style="padding:10px 52px 25px 50px;">
+    <p>NOTES: <p>
+    <div style="padding:5px 0 0 60px;">
+        <p> Need ability to created User Access Titles(General Manager, Property Managet, etc.) </p>
+        <p style="padding-top:5px;"> Ability to assign wrights to each User Access Account (View, Read, Edit, Modify, Create). </p>
+    </div>
+</div>
+
+</section>
+
+
+       
+</div>
+
+<div class="loader" style="display:none;" > <img src="<?php echo BASEURL.'public/images/loader.gif';?>"></div>

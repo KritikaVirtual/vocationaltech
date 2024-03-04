@@ -1,0 +1,173 @@
+<?php 
+$accessDetails = $this->accessDetails;
+//print_r($accessDetails);
+$access_conf=$this->access;
+$accessCustomDetails = $this->accessCustomDetails;
+
+?>
+<div class="container-right" id="access-matrix">
+    
+
+<section style="z-index:9999" class="w-48 fr ch-home-form" id="first1">
+    <section class="ch-form-header ">
+        <h3>Access User Matrix</h3>
+    </section>
+	<div style="text-align:center;width:100%;font-weight:bold;color:red;" class="success_message"></div>
+    <div class="gridContainer">
+        <div class="tableGrid">
+        <form name="access_form[]" method="POST" action="">    
+        <table id="access_tbl" width="100%" class="table table-striped table-bordered table-hover">
+           <input type='hidden' id='uid' value='<?php echo $this->uid;?>'
+
+            <tbody>
+			<?php if($this->plocation){
+				      $lModel = new Model_Location();
+                                      //print_r($lModel);
+					  foreach($this->plocation as $pl){
+                                              
+                                              if($pl['p_location']=='Conference Rooms' && $access_conf==1)
+                                                                    continue;
+					?>	
+					<tr>
+						<td colspan="<?php echo ($size+1);?>" class="company_head">
+							<strong><?php                                                         
+                                                        echo $pl['p_location'];
+                                                        ?>
+                                                        </strong>
+						</td>
+				   </tr>
+				    <?php
+				       $locData =  $lModel->getLocationByParent($pl['pl_id']);
+				       if($locData){
+						   foreach($locData as $ld){
+					?>
+							<tr> 
+								<td class="building_admin">
+									<?php echo $ld['name'];?>
+								</td>
+								<td> 
+								<?php $is_read_checked='';$is_write_checked='';$is_access_checked='';
+								
+								if($accessCustomDetails) { 
+									foreach($accessCustomDetails as $accessCustomDetailsValue) {
+										if($accessCustomDetailsValue['location_id'] == $ld['id']) {
+											if($accessCustomDetailsValue['is_read'] == 1 ) {
+													$is_read_checked = 'checked';
+													$is_access_checked = '';
+											} else {
+											
+											}
+											if($accessCustomDetailsValue['is_write'] == 1 ) {
+													$is_write_checked = 'checked'; 
+													$is_access_checked = '';
+											}
+											if($accessCustomDetailsValue['is_access'] == 1 ) {
+													$is_write_checked = '';
+													$is_read_checked = '';
+													$is_access_checked = 'checked';
+											}
+										}
+									}
+								} else {
+									foreach($accessDetails as $accessDetailsValue) { 
+										if($accessDetailsValue->location_id == $ld['id']) {
+											if($accessDetailsValue->is_access == 1) { 
+												$is_read_checked = '';
+												$is_write_checked = '';
+												$is_access_checked = 'checked';
+											} else if($accessDetailsValue->is_read == 1) {
+												$is_write_disable = '';
+												$is_read_disable = 'checked';
+												$is_access_disable = '';
+											} else if($accessDetailsValue->is_write == 1) {
+												$is_write_disable = 'checked';
+												$is_read_disable = 'checked';
+												$is_access_disable = '';
+											}
+											
+											if($accessDetailsValue->is_read == 1) {
+												$is_read_checked = 'checked'; 
+											}
+											if($accessDetailsValue->is_write == 1) {
+												$is_write_checked = 'checked'; 
+											}
+										}
+									}
+								
+								}
+								?>
+									<input type="checkbox"   <?php echo $is_read_checked; ?> class="read_user" name="read_user"  value="<?php echo $ld['id']; ?>" id="read_<?php echo $ld['id']; ?>" > Read
+								</td>
+								<td> 
+									<input type="checkbox"  <?php echo $is_write_checked; ?> class="write_user" name="write_user" value="<?php echo $ld['id']; ?>" id="write_<?php echo $ld['id']; ?>"> Write
+								</td>
+								<td> 
+									<input type="checkbox"   <?php echo $is_access_checked; ?> class="no_access_user" name="no_access_user" value="<?php echo $ld['id']; ?>" id="noaccess_<?php echo $ld['id']; ?>"> No Access
+								</td>
+							</tr>
+
+				   <?php        
+						     }   
+				          } 
+					  }//loop
+			  } // plocation
+             ?>         
+
+               
+            </tbody>
+        </table>
+          <div class="confirmBtn float_none">
+								<input type="button" id='user_access_save'  class="cancel" name="cancel" value="Save" onclick="saveAccess()" >
+                                <input type="button" onclick="cancelAccessFrom()" class="cancel" name="cancel" value="Cancel">                                
+                            </div>
+        </div>
+    </div>
+</section>
+
+
+       
+</div>
+
+
+
+
+<script>
+$(".read_user").on("click", function(){
+	if(this.checked){ 
+		var read_id = this.id.split('_');
+		$("#noaccess_"+read_id[1]).removeAttr('checked');
+	} else {
+		var read_id = this.id.split('_');
+		$("#noaccess_"+read_id[1]).prop('checked', true);
+		$("#write_"+read_id[1]).removeAttr('checked');
+	}	
+});
+
+$(".write_user").on("click", function(){
+	if(this.checked){ 
+		var write_id = this.id.split('_');
+		$("#noaccess_"+write_id[1]).removeAttr('checked');
+		$("#read_"+write_id[1]).prop('checked', true);
+	} else {
+		var write_id = this.id.split('_');
+		$("#write_"+write_id[1]).removeAttr('checked');
+		if($('#read_'+write_id[1]).is(':checked')) {
+		//
+		} else {
+			$("#noaccess_"+write_id[1]).removeAttr('checked');
+		}
+	}	
+});
+
+$(".no_access_user").on("click", function(){
+	if(this.checked){ 
+		var noaccess_id = this.id.split('_');
+		$("#write_"+noaccess_id[1]).removeAttr('checked');
+		$("#read_"+noaccess_id[1]).removeAttr('checked');
+	} else {
+		var noaccess_id = this.id.split('_'); 
+		$("#read_"+noaccess_id[1]).prop('checked', true);	
+	}	
+});
+
+</script>

@@ -1,0 +1,143 @@
+<?php
+   echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/complete_workorder.js');
+?>
+<?php
+$workOrder = $this->woData;
+$buildId=$workOrder->building;
+$tenantList = '';
+$categoryList = '';
+$tuserList = '';
+$tenantModel = new Model_Tenant();
+$categoryModel = new Model_Category();
+$tuserModel = new Model_TenantUser();
+if($buildId!=''){
+	$tenantList = $tenantModel->getTenantByBuildingId($buildId);
+	$categoryList = $categoryModel->getBuildingCategoryList($buildId);
+	$tuserList =     $tuserModel->getTenantUsers($workOrder->tenant);
+}
+
+ $wpModel = new Model_WorkOrderUpdate();
+ $cwpData = $wpModel->getCurrentWoUpdate($workOrder->woId);
+ $work_status = ($cwpData)?$cwpData[0]['wo_status']:0;
+?>
+<div class="edit-work-order-section">
+	 <span>Modify Work Order Details</span>
+	 <div id="edit_form_div">
+		 <form name="edit_work_order" id="edit_work_order" post="">
+			  <div class="wo_row">
+				  <label>WO Number:</label>
+				  <input type="text" name="wo_number" id="wo_number" readonly="readonly" value="<?php echo $workOrder->wo_number?>"/>
+				  <input type="hidden" name="wo_status" id="wo_status" value="<?php echo $work_status;?>"/>
+			  </div>
+			   <div class="wo_row">
+				  <label>Company:</label>
+				  <div class="wo_row_ibox">
+					  <span class="field_error" id="tenant_error"></span>
+					  <select name="tenant" id="tenant" onchange="showTenantUser(this.value)">
+						  <option value="">Select Company</option>
+						  <?php
+							 if($tenantList!=''){
+								 foreach($tenantList as $tl){
+									?>
+									<option value="<?php echo $tl->id?>" <?php echo ($tl->id==$workOrder->tenant)?'selected="selected"':''?>><?php echo $tl->tenantName;?></option>
+									<?php
+								 }
+							 }
+						  ?>
+					  </select>
+				  </div>
+			  </div>
+			   <div class="wo_row">
+				  <label>Date Received:</label>
+				  <div class="wo_row_ibox">
+					  <span class="field_error" id="date_error"></span>
+				      <input type="text" name="date_received" id="date_received"  value="<?php echo date("m/d/Y",strtotime($workOrder->date_requested))?>"/>
+				   </div>   
+			  </div>
+			   <div class="wo_row">
+				  <label>Time Received:</label>
+				  <div class="wo_row_ibox">
+					  <span class="field_error" id="time_error"></span>
+				      <input type="text" name="time_received" id="time_received" value="<?php echo $workOrder->time_requested?>"/>
+				   </div>   
+			  </div>
+			  <div class="wo_row">
+				  <label>Requested By:</label>
+				  <div class="wo_row_ibox">
+					  <span class="field_error" id="create_user_error"></span>
+					  <div id="create_user_dropdown">
+						  <select name="create_user" id="create_user" onchange="showUserInfo(this.value)">
+							  <option value="">Select Request By</option>
+							  <?php
+								 if($tuserList!=''){
+									 foreach($tuserList as $tul){
+										?>
+										<option value="<?php echo $tul->uid?>" <?php echo ($tul->uid==$workOrder->create_user)?'selected="selected"':''?>><?php echo $tul->firstName.' '.$tul->lastName;?></option>
+										<?php
+									 }
+								 }
+							  ?>
+						  </select>
+					  </div>
+				  </div>
+			  </div>
+			  <div class="wo_row">
+				  <label>Suite/Location:</label>
+				  <input type="text" name="suite" id="suite" value="<?php echo $workOrder->tenant_suite?>" readonly="readonly"/>
+			  </div>
+			   <div class="wo_row">
+				  <label>Email:</label>
+				  <input type="text" name="email" id="email" readonly="readonly" value="<?php echo $workOrder->email?>"/>
+			  </div>
+			   <div class="wo_row">
+				  <label>Phone Number:</label>
+				  <input type="text" name="phone_number" id="phone_number" readonly="readonly" value="<?php echo $workOrder->phoneNumber?>"/>
+			  </div>
+			  <div class="wo_row">
+				  <label>Category:</label>
+				  <div class="wo_row_ibox">
+					  <span class="field_error" id="category_error"></span>
+					   <?php if($work_status=='1'){ ?>
+						 <select name="category" id="category">
+						  <option value="">Select Category</option>
+						  <?php
+							 if($categoryList!=''){
+								 foreach($categoryList as $cl){
+									?>
+									<option value="<?php echo $cl['cat_id']?>" <?php echo ($cl['cat_id']==$workOrder->category)?'selected="selected"':''?>><?php echo $cl['categoryName'];?></option>
+									<?php
+								 }
+							 }
+						  ?>
+					  </select>					  
+					  <?php }else{?>
+						  <input type="text" name="category" id="category" readonly="readonly" value="<?php echo $workOrder->categoryName?>"/>
+					  <?php }?>
+					  <input type="hidden" name="curr_cat" id="curr_cat" value="<?php echo $workOrder->category?>"/>  
+				  </div>
+			  </div>
+			  <div class="wo_row">
+				  <label>Work Order Request:</label>
+				  <div class="wo_row_ibox">
+					  <span class="field_error" id="worequest_error"></span>
+					  <div class="wo-request-tarea">
+						   <textarea name="work_order_request" id="work_order_request" cols="60" rows="8"><?php echo $workOrder->work_order_request;?></textarea>
+					  </div>
+				  </div>	  
+			  </div>
+			  <div class="buttons">
+				   <button type="button" name="save" id="save" value="Save" onclick="updateWO('<?php echo $workOrder->woId?>')">Save</button>
+				   <button type="button" name="cancel" id="cancel" value="Cancel" onclick="cancelWo()">Cancel</button>
+			  </div>
+		 </form>
+	 </div>
+</div>
+<script type="text/javascript">
+	$(function() {
+		$( "#date_received" ).datepicker({
+			 dateFormat:'mm/dd/yy',
+			 changeMonth: true,
+			 changeYear: true
+			 });
+		});	 
+</script>

@@ -1,0 +1,55 @@
+<?php     if(count($this->pagesInRange)>1){  ?>
+<div class="pagination cat_page_div">
+    <div> 
+        <!-- First page link -->
+        
+         <?php $params =array(); 
+							$params['page'] ='' ;
+							if(isset($this->tenant_name)) { $params['tenant_name']=$this->tenant_name; } 
+							if(isset($this->category_name)) { $params['category_name']=$this->category_name; } 
+							if(isset($this->from_date)) { $params['from_date']=$this->from_date; } 
+							if(isset($this->to_date)) { $params['to_date']=$this->to_date; } 
+				 if (isset($this->previous)): ?>
+				 <?php 		$params['page'] =$this->first ; 
+							
+							?>
+              <a href="<?php echo $this->url($params); ?>" >First</a> |
+        <?php else: ?>
+                <span class="disabled">First</span> |
+        <?php endif; ?>
+      
+        <!-- Previous page link -->
+    
+        <?php if (isset($this->previous)): ?> <?php $params['page'] =$this->previous ; ?>
+             <a href="<?php echo $this->url($params); ?>" >&lt; Previous</a> |
+        <?php else: ?>
+            <span class="disabled">&lt; Previous</span> |
+        <?php endif; ?>
+        <!-- Numbered page links -->
+        <?php foreach ($this->pagesInRange as $page): ?>
+            <?php if ($page != $this->current): ?>
+				<?php $params['page'] =$page ; ?>
+                <a href="<?php echo $this->url($params); ?>" ><?php echo $page; ?></a>
+            <?php else: ?>
+                <?php echo $page; ?>
+            <?php endif; ?>
+        <?php endforeach; ?>
+        <!-- Next page link -->
+        <?php if (isset($this->next)): ?>
+		<?php $params['page'] =$this->next ; ?>
+              |<a href="<?php echo $this->url($params); ?>" > 
+             Next &gt;</a> |
+        <?php else: ?>
+            | <span class="disabled">Next &gt;</span> |
+        <?php endif; ?>
+        <!-- Last page link -->
+        <?php if (isset($this->next)): ?>
+		<?php $params['page'] =$this->last ; ?>
+              <a href="<?php echo $this->url($params); ?>" >Last</a>
+        <?php else: ?>
+            <span class="disabled">Last</span>
+        <?php endif; ?>
+        &nbsp; Page <?php echo $this->current; ?> of <?php echo $this->last; ?>
+        
+    </div>
+ </div><?php }?>

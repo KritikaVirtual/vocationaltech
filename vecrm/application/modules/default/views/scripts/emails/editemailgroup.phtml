@@ -1,0 +1,197 @@
+<?php 
+    echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/tinymce/js/tinymce/tinymce.min.js');
+    echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/emails.js');  
+
+   
+    $roles = $this->companyListing['roles'];
+    
+?>
+<div class="container-right">
+    <section style="z-index:9999" class="w-48 fr ch-home-form">
+        <section class="ch-form-header ">
+            <h3>New Distribution Wizard </h3>
+        </section>
+        <div class="gridContainer">
+             <div class="title_row">
+                        <?php echo $this->emailGroups['group_name'] ?>: Edit Distribution Group<hr>                            
+                        </div>
+        <div class="tableGrid list_tableGrid my_table_grid">
+            <div class="message">
+                <span id="success_msg"></span>
+                <span id="error_msg"></span>
+            </div>             
+             <div id="step1">	 
+				 
+                 <form name="edit_group" id="edit_group" action="<?php echo BASEURL.'emails/editemailgroup';?>" method="post">
+
+                        <input type="hidden" value="<?php echo $this->bid; ?>" name="bid" id="bid"/>
+                        <input type="hidden" value="<?php echo $this->emailGroups['id']; ?>" name="gid" id="gid"/>
+                        <input type="hidden" value="<?php echo $this->emailGroups['is_default']; ?>" name="is_default" />
+                        <input type="hidden" value="<?php echo $this->group_active; ?>" name="group_active" id="group_active"/>
+
+                       <div class="row">
+                            <label>Group Name<span class="required">*</span></label>
+                            <div class="email-egu">
+                            <span class="ugroupErr" id="group-error"></span>    
+                            <input type="text" value="<?php echo $this->emailGroups['group_name'] ?>" id="group" class="ee_group_cls" name="group" <?php echo  ('1'==$this->emailGroups['is_default'])?'readonly':''; ?>>  
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <label> Active </label>
+                            <div class="email-egu">
+                                <select name="active" id="active" <?php echo  ('1'==$this->emailGroups['is_default'])?'disabled':''; ?> >
+                                    <option value="1" <?php echo  ('1'==$this->emailGroups['active'])?'selected':'';?>>Yes</option>
+                                    <option value="0" <?php echo  ('0'==$this->emailGroups['active'])?'selected':'';?>>No</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+
+							<label>Days of the week :</label>
+                            <div class="email-egu">
+							<select name="days_of_week" id="days_of_week" <?php echo  ('1'==$this->emailGroups['is_default'])?'disabled':''; ?>>
+								<?php foreach($this->days_of_the_week as $key => $wd){ ?>
+									<option value="<?php echo $wd['wdID'];?>" <?php echo  ($wd['wdID']==$this->emailGroups['days_of_week'])?'selected':'';?>><?php echo $wd['title'];?></option>
+								<?php } ?>
+									
+							</select>
+                            </div>
+						</div>
+
+						<div class="row">
+							<label>Send As :</label>
+                            <div class="email-egu">
+							<select name="send_as" id="send_as">
+								<?php foreach($this->send_as as $key => $sd){ ?>
+									<option value="<?php echo $sd['sid'];?>" <?php echo  ($sd['sid']==$this->emailGroups['send_as'])?'selected':'';?>><?php echo $sd['title'];?></option>
+								<?php } ?>	
+									
+							</select>
+                            </div>
+						</div>
+						<div class="row">
+							<label>Complete Notification :</label>
+                            <div class="email-egu">
+							<select name="complete_notification" id="complete_notification">
+								<option value="0" <?php echo  ('0'==$this->emailGroups['complete_notification'])?'selected':'';?>>No</option>
+								<option value="1" <?php echo  ('1'==$this->emailGroups['complete_notification'])?'selected':'';?>>Yes</option>
+							</select>
+                            </div>
+						</div>
+								
+						</div>
+
+						<div style="display:block;">
+							<?php /*<select id="old_user" name="old_user[]"  multiple="multiple">
+								<?php $i=0; foreach ($this->selectedUsers as $key => $value) { 
+									$old_user[$i] = $value->uid;
+								?>
+
+	                                <option value="<?php echo $value->uid; ?>">
+	                                    <?php echo $value->firstname.' '.$value->lastname; ?>
+	                                </option>
+	                            <?php $i++;} ?>
+							</select>
+							*/ ?>
+							 <?php 
+							  $old_user = array();
+							 foreach($this->selectedUsers as $key => $value) {
+								 $old_user[] = $value->uid;
+								 ?>
+							    <input type="hidden" name="old_user[]" value="<?php echo $value->uid;?>"/>
+							  <?php }?>  
+						</div>
+
+                        <div class="eg-user-div">
+
+                            <table cellpadding="5" cellspacing="5" class="list_user">
+
+                            <tbody>
+
+                                <tr>
+
+                                    <td colspan="2">
+                                        <span class="span">List of Users</span>
+                                        <select id="from_select_list" multiple="multiple" name="from_select_list"> 
+                                            <?php foreach ($this->userList as $key => $value) { 
+                                                if(!in_array($value->uid,$old_user)){
+                                            ?>
+                                                <option value="<?php echo $value->uid; ?>">
+                                                    <?php echo $value->firstName.' '.$value->lastName; ?>
+                                                </option>
+                                            <?php }} ?>
+                                        </select>
+                                    </td>
+
+                                     <td style="border:none;">
+										 <div id="arrow-switcher">
+											 <a href="javascript:void(0)" onClick="move_list_items('from_select_list','to_select_list')">
+											    <img src="<?php echo BASEURL.'public/images/right-arrow.png';?>" width="50"/>
+											 </a>
+											 <a href="javascript:void(0)" onClick="move_list_items('to_select_list','from_select_list')">
+											    <img src="<?php echo BASEURL.'public/images/left-arrow.png';?>" width="50"/>
+											 </a>
+										 </div>
+                                    </td>
+                                    
+                                    <td colspan="2">
+                                        <span class="span">List of Selected Users</span>
+                                        <select id="to_select_list" name="to_select_list[]" multiple="multiple"> 
+                                            <?php foreach ($this->selectedUsers as $key => $value) { ?>
+                                                <option value="<?php echo $value->uid; ?>">
+                                                    <?php echo $value->firstname.' '.$value->lastname; ?>
+                                                </option>
+                                            <?php } ?>
+                                        </select>
+                                    </td>
+
+                                </tr>
+
+                                <tr>
+                                    <td colspan="4"> <span class="ugroupErr" id="list-error"></span> </td>
+                                </tr>
+<!-- 
+                                <tr>
+
+                                    <td><input id="moveright" type="button" value="Move Right" onclick="move_list_items('from_select_list','to_select_list');" /></td>
+                                    
+                                    <td><input id="moverightall" type="button" value="Move Right All" onclick="move_list_items_all('from_select_list','to_select_list');" /></td>
+                                    
+                                    <td><input id="moveleft" type="button" value="Move Left" onclick="move_list_items('to_select_list','from_select_list');" /></td>
+                                    
+                                    <td><input id="moveleftall" type="button" value="Move Left All" onclick="move_list_items_all('to_select_list','from_select_list');" /></td>
+
+                                </tr> -->
+
+                            </tbody>
+
+                        </table>
+                            
+                        </div>
+
+                        
+                        
+                        
+                        <div class="confirmBtn float_none">
+                            <input type="button" value="Save" name="edit" class="confirm" onclick="checkEditEmailGroup()" id="edit">
+                            <input type="button" value="Cancel" name="cancel" class="cancel" onclick="window.location.href='<?php echo BASEURL.'emails/console/gid/'.$this->emailGroups['id'].'/bid/'.$this->bid; ?>'">
+                        </div>
+                   </form>  
+               </div>   
+         </div>
+      </div>
+  </section>
+</div>
+
+<script type="text/javascript">
+tinymce.init({
+    selector: "textarea",
+    width: "300",
+    height: "500"
+});
+
+
+
+</script>

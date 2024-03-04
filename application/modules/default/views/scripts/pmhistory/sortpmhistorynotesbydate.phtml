@@ -1,0 +1,64 @@
+<style>
+    body { background: #fff; }
+    .dynamicclass { padding-bottom: 20px; overflow: hidden; }
+    .heading-2 {padding: 0;margin-bottom: 15px;margin-top: 0;}   
+    .heading-2 span {font-size: 14px;padding: 5px; color:#fff}    
+    .form-c ul {list-style:none; padding:10px;margin:0}
+    .form-c ul li { margin-bottom:10px;}
+    .form-c label {float: left;}
+    .form-c .form-cont {float: left;margin-left: 10px;}
+    .form-c input {margin:0 10px}
+    .form-c .form-cont ul li input {margin-right:10px;}
+    .form-c .form-cont input {margin:0;}
+    .form-c .form-cont p {margin-bottom:5px;min-height: 20px;}
+    .form-c li {overflow: hidden;}
+    .form-c li p {margin:0;}
+    .form-c h3 { margin-top:0;}
+    .form-c>ul {padding: 20px;}
+    .form-c .flex-divi {display: flex;}
+    .form-c .flex-divi .daily-weekly {flex:1;}
+    .daily-weekly.fix-w {max-width: 115px;}
+    .flex-sp {padding:0 38px}
+</style>
+<?php
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/pm-history.js');
+
+?>
+<div id="printableArea">   
+  <table class="table table-bordered mgt">
+    <thead class="thead-bg">
+      <tr>
+        <th>Date<span><a href="#" id="sortingid" onclick="sortingNotesByDate();"><span class="shorting-icon-white glyphicon glyphicon-sort-by-attributes arrow-shrting"></span><input type="hidden" value="0" name="sortingvalue" id="sortingvalue"></a></span></th>
+        <th>Work Order Number</th>
+        <th>Notes / Comments</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+        <?php
+        if(!empty($this->pmHistoryNotes)){
+            foreach($this->pmHistoryNotes as $note){
+            ?>        
+                <tr>
+                <td align="center"><?php echo date('m-d-Y', strtotime($note['PM_WO_DateStamp'])); ?></td>
+                <td align="center"><?php echo $note['PM_WO_Number']; ?></td>
+                <td><?php echo $note['PM_WO_Notes']; ?></td>
+                </tr>
+            <?php
+            }
+        }
+        ?>
+        </tr>   
+    </tbody>
+  </table>
+      </div>
+
+
+
+
+
+
+
+
+
+

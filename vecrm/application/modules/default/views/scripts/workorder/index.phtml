@@ -1,0 +1,89 @@
+<div class="container-right" id="woListData">
+<?php if($this->roleId=='5' || $this->roleId=='7'){ ?>
+<?php
+  //var_dump($this->wolist);
+   $order = $this->order;
+   $dir = $this->dir;
+   $wdir = 'ASC';
+   $bdir = 'ASC';
+   $tdir = 'ASC';
+   $sdir = 'ASC';
+   $cdir = 'ASC';
+   $pdir = 'ASC';
+   $stdir = 'ASC';
+   $ddir = 'ASC';
+   $tudir ='ASC';
+   if($order=='wo_number')
+      $wdir = ($dir=='ASC')?'DESC':'ASC';
+   else if($order=='buildingName')
+      $bdir = ($dir=='ASC')?'DESC':'ASC';
+   else if($order=='tenantName')
+      $tdir = ($dir=='ASC')?'DESC':'ASC';
+   else if($order=='suite_location')
+      $sdir = ($dir=='ASC')?'DESC':'ASC';
+   else if($order=='categoryName')
+      $cdir = ($dir=='ASC')?'DESC':'ASC';
+   else if($order=='priorityName')
+      $pdir = ($dir=='ASC')?'DESC':'ASC';
+   else if($order=='wo_status')
+      $stdir = ($dir=='ASC')?'DESC':'ASC';
+   else if($order=='firstName')
+      $tudir = ($dir=='ASC')?'DESC':'ASC';   
+   else
+      $ddir = ($dir=='ASC')?'DESC':'ASC';          
+    
+    $ssModel = new Model_ScheduleStatus();
+			$status_list = $ssModel->getScheduleStatus();
+			$status_array= array();
+			foreach($status_list as $sl){
+				$status_array[$sl['ssID']] = $sl['title'];
+			}
+?>
+
+	<table class="building_table_grid" width="100%">
+		<tr>
+			<th><a href="<?php echo BASEURL.'workorder/index/order/wo_number/dir/'.$wdir?>">WO No.</a></th>
+			<?php /*<th><a href="<?php echo BASEURL.'workorder/index/order/buildingName/dir/'.$bdir?>">Building</a></th>*/?>
+			<th><a href="<?php echo BASEURL.'workorder/index/order/firstName/dir/'.$tudir?>">Tenant User</a></th>
+			<?php /*<th><a href="<?php echo BASEURL.'workorder/index/order/suite_location/dir/'.$sdir?>">Suite</a></th>*/?>
+			<th><a href="<?php echo BASEURL.'workorder/index/order/categoryName/dir/'.$cdir?>">Category</a></th>			
+			<th><a href="<?php echo BASEURL.'workorder/index/order/wo_status/dir/'.$stdir?>">Status</a></th>			
+			<th><a href="<?php echo BASEURL.'workorder/index/order/created_at/dir/'.$ddir?>">Date Created</a></th>
+			<th>Time Received</th>
+			<th>Action</th>
+		</tr>
+		<?php if($this->wolist){
+			foreach($this->wolist as $listData){
+				$wlistData = (array)$listData;//->toArray();
+				?>
+			   <tr>
+				   <td><?php echo $wlistData['wo_number']?></td>				   
+				   <td><?php echo $wlistData['firstName'].','.$wlistData['lastName'];?></td>
+				   <?php /*<td><?php echo $wlistData['suite_location']?></td>*/?>
+				   <td><?php echo $wlistData['categoryName']?></td>				   			  
+				   <td><?php echo $status_array[$wlistData['wo_status']]?></td>
+				   <td><?php echo date('d-M-Y',strtotime($wlistData['created_at']));?></td>
+				   <td><?php echo $wlistData['time_requested']?></td>
+				   <td>
+					   <a href="<?php echo BASEURL.'workorder/view/woId/'.$wlistData['woId'];?>"><img src="<?php echo BASEURL.'public/images/view-icon.png';?>" width="30"/></a>
+					  <?php 
+					  /*
+					   <a title="Edit" href="<?php echo BASEURL.'workorder/editorder/woId/'.$wlistData['woId'];?>" ><img src="<?php echo BASEURL . 'public/images/edit.png'?>" /></a>
+				       <a href="javascript:void(0);"  title="Delete" onclick="if (confirm('Are you sure to delete this work order?'))location.href='<?php echo BASEURL.'workorder/deleteorder/woId/'.$wlistData['woId'];?>'"><img src="<?php echo BASEURL . 'public/images/delete.png'?>" /></a>
+				       */?> 
+				   </td>				  
+			   </tr>
+		<?php }
+	     }else{
+			 echo '<tr><td colspan="8">No Work Order Exist</td></tr>';
+		 }
+		?>
+	</table>
+	<?php if(count($this->wolist)>0 && !empty($this->wolist)){
+	 echo $this->paginationControl($this->wolist, 'Sliding', 'pagination.phtml'); 
+	 }?>
+
+<?php }else
+          echo 'You cann\'t accssess this module.';
+    ?>
+</div>

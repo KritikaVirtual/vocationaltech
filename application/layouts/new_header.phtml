@@ -1,0 +1,75 @@
+<?php
+$userRoleID=Zend_Auth::getInstance()->getStorage()->read()->role_id;
+$firstName =Zend_Auth::getInstance()->getStorage()->read()->firstName;
+$lastName =Zend_Auth::getInstance()->getStorage()->read()->lastName;
+$roleModel = new Model_Role();
+    $roleData =  $roleModel->getRole($userRoleID);
+	$rData = $roleData[0];
+?>
+
+<title><?php echo $rData['title']; ?></title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+<!-- SB Admin CSS - Include with every page -->
+<link href="<?php echo BASEURL.'/public'?>/css/custum.css" rel="stylesheet">
+<link href="<?php echo BASEURL.'/public'?>/css/mediaqueries.css" rel="stylesheet">
+<?php  //echo $this->headLink()->appendStylesheet($this->baseUrl().'/111public/css/confirm/msc-style.css') ?>
+<link href="<?php echo BASEURL.'/public'?>/css/confirm/msc-style.css" rel="stylesheet">
+<link href="<?php echo BASEURL.'/public'?>/css/bootstrap.min.css" rel="stylesheet">
+<!--<link href="<?php //echo BASEURL.'/public'?>/font-awesome/css/font-awesome.css" rel="stylesheet">-->
+<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+<!--<link rel="stylesheet" href="<?php echo BASEURL?>public/css/plugins/dataTables/dataTables.bootstrap.css">-->
+<link rel="stylesheet" type="text/css" href="<?php echo BASEURL.'/public'?>/css/easy-responsive-tabs.css " />
+<script src="<?php echo BASEURL.'/public'?>/js/jquery-1.9.1.min.js"></script>
+<script src="<?php echo BASEURL.'/public'?>/js/easyResponsiveTabs.js"></script>
+
+<script src="<?php echo BASEURL.'/public'?>/fancybox/jquery.min.js"></script>
+<script src="<?php echo BASEURL.'/public'?>/fancybox/jquery.fancybox.js"></script>
+
+<!-- SB Admin CSS - Include with every page -->
+<link href="<?php echo BASEURL.'/public'?>/css/sb-admin.css" rel="stylesheet">
+<!--<link href="<?php echo BASEURL.'/public'?>/fancybox/style.css" rel="stylesheet">-->
+<link href="<?php echo BASEURL.'/public'?>/fancybox/jquery.fancybox.css" rel="stylesheet">
+
+<!-- Core Scripts - Include with every page --> 
+
+<script src="<?php echo BASEURL.'/public'?>/js/bootstrap.min.js"></script> 
+<script src="<?php echo BASEURL.'/public'?>/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+<!-- SB Admin Scripts - Include with every page --> 
+<script src="<?php echo BASEURL.'/public'?>/js/sb-admin.js"></script>
+<script src="<?php echo BASEURL.'/public'?>/js/jquery-ui.js"></script>
+<script id="maskedinput" type="text/javascript" src="<?php echo $this->baseUrl() ?>/public/js/jquery.maskedinput.js"></script>
+<link rel="stylesheet" href="<?php echo $this->baseUrl() ?>/public/css/jquery-ui.css"/>
+<script src="<?php echo BASEURL.'/public'?>/js/jquery.alerts.js"></script>
+<link rel="stylesheet" href="<?php echo $this->baseUrl() ?>/public/css/jquery.alerts.css"/>
+
+<!--<script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>-->
+
+<script type="text/javascript">
+	var baseUrl='<?php echo BASEURL ?>';
+        function hideshow(which){
+        if (!document.getElementById)
+        return
+        if (which.style.display=="block")
+        which.style.display="none"
+        else
+        which.style.display="block"
+        }
+
+        /*
+        $(document).ready(function() {
+          $(window).keydown(function(event){
+            if(event.keyCode == 13) {
+              event.preventDefault();
+              return false;
+            }
+          });
+        });
+        */
+       
+        $(document).ready(function() {
+            $('#tablepriority').DataTable();
+        } );
+
+</script>
+<?php  //echo $this->headLink()->appendStylesheet(BASEURL . 'public/homestyle.css') ?>	

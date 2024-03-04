@@ -1,0 +1,1105 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<StiSerializer version="1.02" type="Net" application="StiReport">
+  <CalculationMode>Interpretation</CalculationMode>
+  <Dictionary Ref="1" type="Dictionary" isKey="true">
+    <BusinessObjects isList="true" count="0" />
+    <Databases isList="true" count="1">
+      <Con_workorders Ref="2" type="Stimulsoft.Report.Dictionary.StiMySqlDatabase" isKey="true">
+        <Alias>Con_workorders</Alias>
+        <ConnectionStringEncrypted>w9rP680MS91vFTHc6kwhD9V00YjmDKmZYmixhE1c8RfZeP8Cx0+rhWl37ZDqXOJj71LPwmJdo5l0S83MZQTjZ8JW2cJIBWPF7FrR3GEcpUbGes3LRldDgeE=</ConnectionStringEncrypted>
+        <Name>Con_workorders</Name>
+      </Con_workorders>
+    </Databases>
+    <DataSources isList="true" count="3">
+      <rsMainInfo Ref="3" type="Stimulsoft.Report.Dictionary.StiMySqlSource" isKey="true">
+        <Alias>rsMainInfo</Alias>
+        <Columns isList="true" count="25">
+          <value>Building_Address,System.String</value>
+          <value>Building_Cost_Center,System.UInt32</value>
+          <value>Building_Name,System.String</value>
+          <value>Category,System.String</value>
+          <value>Curent_Status,System.String</value>
+          <value>Days_Open,System.String</value>
+          <value>Internal_Notes,System.String</value>
+          <value>Key_Building_Number,System.UInt32</value>
+          <value>Management_Company,System.String</value>
+          <value>Management_Logo,System.String</value>
+          <value>Status_ID,System.Int32</value>
+          <value>Tenant_Contact,System.String</value>
+          <value>Tenant_E-Mail,System.String</value>
+          <value>Tenant_Name,System.String</value>
+          <value>Tenant_Phone_Number,System.String</value>
+          <value>Tenant_Request,System.String</value>
+          <value>Tenant_Suite,System.String</value>
+          <value>Tennt_User_ID,System.UInt32</value>
+          <value>WO_Date_Completed,System.String</value>
+          <value>WO_Date_Requested,System.String</value>
+          <value>WO_ID_Link,System.Int32</value>
+          <value>Work_Order_Completed_Description,System.String</value>
+          <value>Work_Order_Number,System.Int64</value>
+          <value>current_update,System.Int32</value>
+          <value>internal_work_order,System.Int32</value>
+        </Columns>
+        <CommandTimeout>30</CommandTimeout>
+        <Dictionary isRef="1" />
+        <Key>e967a1ed627b4ceeadbd69b82b7e7737</Key>
+        <Name>rsMainInfo</Name>
+        <NameInSource>Con_workorders</NameInSource>
+        <Parameters isList="true" count="0" />
+        <SqlCommand>Select
+  company.companyName As Management_Company,
+  bu.buildingName As Building_Name,
+  wo.wo_number As Work_Order_Number,
+  schedule_status.title As Curent_Status,
+  schedule_status.ssID As Status_ID,
+  cat.categoryName As Category,
+  t.tenantName As Tenant_Name,
+  tenantusers.suite_location As Tenant_Suite,
+  Concat(u.lastName, ', ', u.firstName) As Tenant_Contact,
+  u.email As `Tenant_E-Mail`,
+  u.phoneNumber As Tenant_Phone_Number,
+  wo.work_order_request As Tenant_Request,
+  work_order_update.internal_note As Internal_Notes,
+  work_description.description As Work_Order_Completed_Description,
+  company.company_logo As Management_Logo,
+  Date_Format(wo.date_requested, '%m/%d/%Y') As WO_Date_Requested,
+  Date_Format(wo_complete.date_cp_in, '%m/%d/%Y') As WO_Date_Completed,
+  bu.build_id As Key_Building_Number,
+  bu.uniqueCostCenter As Building_Cost_Center,
+  wo.woId As WO_ID_Link,
+  wo.internal_work_order,
+  users.uid As Tennt_User_ID,
+  work_order_update.current_update,
+  
+concat(company.companyName, '\n' , 
+      IF (bu.buildingName &lt;&gt; "", bu.buildingName,""), 
+      IF (bu.buildingName &lt;&gt; "", '\n', null), 
+       IF (bu.buildingName &lt;&gt; bu.address, bu.address, NULL) ,
+      IF (bu.buildingName &lt;&gt; bu.address, '\n', NULL) ,
+      bu.city, ', ', bu.state, ' ', bu.postalCode
+     ) as Building_Address ,
+     
+     CASE schedule_status.ssID
+       WHEN 6 then "-"
+       WHEN 7 then "-"
+       ELSE DateDiff(CurDate(), wo.date_requested)
+     End as Days_Open
+  
+    
+From
+  work_order As wo Left Join
+  tenant As t On t.id = wo.tenant Right Join
+  buildings As bu On bu.build_id = wo.building Left Join
+  category As cat On cat.cat_id = wo.category Left Join
+  users As u On wo.create_user = u.uid Left Join
+  company On bu.cust_id = company.cust_id Right Join
+  user_building_module_access On user_building_module_access.building_id =
+    bu.build_id Right Join
+  users On users.uid = user_building_module_access.user_id Left Join
+  work_order_update On wo.woId = work_order_update.wo_id Left Join
+  schedule_status On work_order_update.wo_status = schedule_status.ssID
+  Left Join
+  tenantusers On u.uid = tenantusers.userId Left Join
+  work_description On work_order_update.wo_id = work_description.woId Left Join
+  wo_complete On work_order_update.wo_id = wo_complete.woId
+Where
+  users.uid = {User} and
+  bu.build_id In ({buildkey}) And
+  bu.uniqueCostCenter In ({Cost_Center_Number}) AND
+  schedule_status.ssID In ({Status}) AND
+  work_order_update.current_update = 1</SqlCommand>
+      </rsMainInfo>
+      <rsNotes Ref="4" type="Stimulsoft.Report.Dictionary.StiMySqlSource" isKey="true">
+        <Alias>rsNotes</Alias>
+        <Columns isList="true" count="11">
+          <value>Days_Open,System.Int64</value>
+          <value>Note_Date_Entered,System.String</value>
+          <value>Note_Description,System.String</value>
+          <value>Tennt_User_ID,System.UInt32</value>
+          <value>WO_Date_Requested,System.String</value>
+          <value>WO_ID_Link,System.Int32</value>
+          <value>Work_Order_Number,System.Int64</value>
+          <value>email,System.String</value>
+          <value>firstName,System.String</value>
+          <value>internal,System.Int32</value>
+          <value>lastName,System.String</value>
+        </Columns>
+        <CommandTimeout>30</CommandTimeout>
+        <Dictionary isRef="1" />
+        <Key>1ff41ddccdc0497e95a985e3b6537455</Key>
+        <Name>rsNotes</Name>
+        <NameInSource>Con_workorders</NameInSource>
+        <Parameters isList="true" count="0" />
+        <SqlCommand>Select
+    wo.woId As WO_ID_Link,
+    wo.wo_number As Work_Order_Number,
+    Date_Format(wo.date_requested, '%m/%d/%Y') As WO_Date_Requested,
+    DateDiff(CurDate(), wo.date_requested) As Days_Open,
+    users.uid As Tennt_User_ID,
+    Date_Format(wo_note.note_date, '%m/%d/%Y') As Note_Date_Entered,
+    wo_note.note As Note_Description,
+    wo_note.internal,
+    users.firstName,
+    users.lastName,
+    users.email
+From
+    work_order As wo Left Join
+    wo_note On wo.woId = wo_note.woId Left Join
+    users On wo_note.user_id = users.uid
+Where
+    wo_note.user_id  =  {User} And
+    wo.building In ({buildkey}) And
+    wo.status In  ({Status})  And
+    users.uid &lt;&gt; 0</SqlCommand>
+      </rsNotes>
+      <rdWODescription Ref="5" type="Stimulsoft.Report.Dictionary.StiMySqlSource" isKey="true">
+        <Alias>rdWODescription</Alias>
+        <Columns isList="true" count="5">
+          <value>WO_ID_Link,System.Int32</value>
+          <value>Work_Order_Completed_Description,System.String</value>
+          <value>building,System.Int32</value>
+          <value>status,System.Int32</value>
+          <value>user_id,System.Int32</value>
+        </Columns>
+        <CommandTimeout>30</CommandTimeout>
+        <Dictionary isRef="1" />
+        <Key>ac0dd15cf00e4ebc834e104b802113d9</Key>
+        <Name>rdWODescription</Name>
+        <NameInSource>Con_workorders</NameInSource>
+        <Parameters isList="true" count="0" />
+        <SqlCommand>Select
+    work_description.description As Work_Order_Completed_Description,
+    work_description.woId As WO_ID_Link,
+    work_order.user_id,
+    work_order.building,
+    work_order.status
+From
+    work_description Right Join
+    work_order On work_description.woId = work_order.woId
+Where
+    work_description.description Is Not Null And
+    work_order.building In ({buildkey})  </SqlCommand>
+      </rdWODescription>
+    </DataSources>
+    <Relations isList="true" count="2">
+      <relWork_ID_Link Ref="6" type="DataRelation" isKey="true">
+        <Alias>relWork_ID_Link</Alias>
+        <ChildColumns isList="true" count="1">
+          <value>WO_ID_Link</value>
+        </ChildColumns>
+        <ChildSource isRef="4" />
+        <Dictionary isRef="1" />
+        <Name>relWork_ID_Link</Name>
+        <NameInSource>rsNotes</NameInSource>
+        <ParentColumns isList="true" count="1">
+          <value>WO_ID_Link</value>
+        </ParentColumns>
+        <ParentSource isRef="3" />
+      </relWork_ID_Link>
+      <relDescrip Ref="7" type="DataRelation" isKey="true">
+        <Alias>relDescrip</Alias>
+        <ChildColumns isList="true" count="1">
+          <value>WO_ID_Link</value>
+        </ChildColumns>
+        <ChildSource isRef="5" />
+        <Dictionary isRef="1" />
+        <Name>relDescrip</Name>
+        <NameInSource>relWorkOrder_Descp</NameInSource>
+        <ParentColumns isList="true" count="1">
+          <value>WO_ID_Link</value>
+        </ParentColumns>
+        <ParentSource isRef="3" />
+      </relDescrip>
+    </Relations>
+    <Report isRef="0" />
+    <Resources isList="true" count="0" />
+    <Variables isList="true" count="4">
+      <value>,User,User,,System.String,_x0034_21,False,False,False,False,_x003C__x003F_xml_x0020_version_x003D__x0022_1.0_x0022__x0020_encoding_x003D__x0022_utf-16_x0022__x0020_standalone_x003D__x0022_yes_x0022__x003F__x003E__x003C_StiSerializer_x0020_version_x003D__x0022_1.02_x0022__x0020_type_x003D__x0022_Net_x0022__x0020_application_x003D__x0022_State_x0022__x003E__x003C_DateTimeType_x003E_DateAndTime_x003C__x002F_DateTimeType_x003E__x003C_BindingVariable_x0020_isNull_x003D__x0022_true_x0022__x0020__x002F__x003E__x003C_Keys_x0020_isList_x003D__x0022_true_x0022__x0020_count_x003D__x0022_0_x0022__x0020__x002F__x003E__x003C_Values_x0020_isList_x003D__x0022_true_x0022__x0020_count_x003D__x0022_0_x0022__x0020__x002F__x003E__x003C__x002F_StiSerializer_x003E_,,True</value>
+      <value>,buildkey,buildkey,,System.String,_x0034_4,False,False,False,False,_x003C__x003F_xml_x0020_version_x003D__x0022_1.0_x0022__x0020_encoding_x003D__x0022_utf-16_x0022__x0020_standalone_x003D__x0022_yes_x0022__x003F__x003E__x003C_StiSerializer_x0020_version_x003D__x0022_1.02_x0022__x0020_type_x003D__x0022_Net_x0022__x0020_application_x003D__x0022_State_x0022__x003E__x003C_DateTimeType_x003E_DateAndTime_x003C__x002F_DateTimeType_x003E__x003C_BindingVariable_x0020_isNull_x003D__x0022_true_x0022__x0020__x002F__x003E__x003C_Keys_x0020_isList_x003D__x0022_true_x0022__x0020_count_x003D__x0022_0_x0022__x0020__x002F__x003E__x003C_Values_x0020_isList_x003D__x0022_true_x0022__x0020_count_x003D__x0022_0_x0022__x0020__x002F__x003E__x003C__x002F_StiSerializer_x003E_,,True</value>
+      <value>,Cost_Center_Number,Cost_Center_Number,,System.String,_x0031_460335468,False,False,False,False,_x003C__x003F_xml_x0020_version_x003D__x0022_1.0_x0022__x0020_encoding_x003D__x0022_utf-16_x0022__x0020_standalone_x003D__x0022_yes_x0022__x003F__x003E__x003C_StiSerializer_x0020_version_x003D__x0022_1.02_x0022__x0020_type_x003D__x0022_Net_x0022__x0020_application_x003D__x0022_State_x0022__x003E__x003C_DateTimeType_x003E_DateAndTime_x003C__x002F_DateTimeType_x003E__x003C_BindingVariable_x0020_isNull_x003D__x0022_true_x0022__x0020__x002F__x003E__x003C_Keys_x0020_isList_x003D__x0022_true_x0022__x0020_count_x003D__x0022_0_x0022__x0020__x002F__x003E__x003C_Values_x0020_isList_x003D__x0022_true_x0022__x0020_count_x003D__x0022_0_x0022__x0020__x002F__x003E__x003C__x002F_StiSerializer_x003E_,,True</value>
+      <value>,Status,Status,,System.String,_x0031__x002C__x0020_2,False,False,False,False,_x003C__x003F_xml_x0020_version_x003D__x0022_1.0_x0022__x0020_encoding_x003D__x0022_utf-16_x0022__x0020_standalone_x003D__x0022_yes_x0022__x003F__x003E__x003C_StiSerializer_x0020_version_x003D__x0022_1.02_x0022__x0020_type_x003D__x0022_Net_x0022__x0020_application_x003D__x0022_State_x0022__x003E__x003C_DateTimeType_x003E_DateAndTime_x003C__x002F_DateTimeType_x003E__x003C_BindingVariable_x0020_isNull_x003D__x0022_true_x0022__x0020__x002F__x003E__x003C_Keys_x0020_isList_x003D__x0022_true_x0022__x0020_count_x003D__x0022_0_x0022__x0020__x002F__x003E__x003C_Values_x0020_isList_x003D__x0022_true_x0022__x0020_count_x003D__x0022_0_x0022__x0020__x002F__x003E__x003C__x002F_StiSerializer_x003E_,,True</value>
+    </Variables>
+  </Dictionary>
+  <EngineVersion>EngineV2</EngineVersion>
+  <GlobalizationStrings isList="true" count="0" />
+  <Key>5a2d850465a44f7fa82cced3ee3fd0b1</Key>
+  <MetaTags isList="true" count="0" />
+  <Pages isList="true" count="3">
+    <Page1 Ref="8" type="Page" isKey="true">
+      <Border>None;Black;2;Solid;False;4;Black</Border>
+      <Brush>Transparent</Brush>
+      <Components isList="true" count="6">
+        <PageHeaderBand1 Ref="9" type="PageHeaderBand" isKey="true">
+          <Brush>Transparent</Brush>
+          <ClientRectangle>0,20,1060.63,7.87</ClientRectangle>
+          <Components isList="true" count="0" />
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>PageHeaderBand1</Name>
+          <Page isRef="8" />
+          <Parent isRef="8" />
+        </PageHeaderBand1>
+        <PageFooterBand1 Ref="10" type="PageFooterBand" isKey="true">
+          <Brush>Transparent</Brush>
+          <ClientRectangle>0,734.88,1060.63,55.12</ClientRectangle>
+          <Components isList="true" count="2">
+            <Text77 Ref="11" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>634.02,36.1,425.19,15.75</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,6</Font>
+              <Guid>ef563554a7d9ec3d04b0e04644b13f91</Guid>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text77</Name>
+              <Page isRef="8" />
+              <Parent isRef="10" />
+              <Text>Vocational Technologies, LLC 2000 - {Today.ToString("yyyy")}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Bottom</VertAlignment>
+            </Text77>
+            <Text36 Ref="12" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>849.02,19.13,210,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>b6a54609f2ea4eae2bfc4a50ab955f8f</Guid>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text36</Name>
+              <Page isRef="8" />
+              <Parent isRef="10" />
+              <Text>{PageNofMThrough}</Text>
+              <TextBrush>Black</TextBrush>
+            </Text36>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>PageFooterBand1</Name>
+          <Page isRef="8" />
+          <Parent isRef="8" />
+        </PageFooterBand1>
+        <HeaderBand1 Ref="13" type="HeaderBand" isKey="true">
+          <Brush>Transparent</Brush>
+          <ClientRectangle>0,67.87,1060.63,118.11</ClientRectangle>
+          <Components isList="true" count="5">
+            <Text1 Ref="14" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <CanShrink>True</CanShrink>
+              <ClientRectangle>819.02,2.87,240.98,90.99</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,12</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <Guid>aefbdfc161b321862f7f49c37ca75e5a</Guid>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text1</Name>
+              <Page isRef="8" />
+              <Parent isRef="13" />
+              <Text>{rsMainInfo.Building_Address}
+
+{Today.ToString("MMMM d, yyyy")}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text1>
+            <Image1 Ref="15" type="Image" isKey="true">
+              <AspectRatio>True</AspectRatio>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,0,200,80</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <DataColumn isNull="true" />
+              <Expressions isList="true" count="0" />
+              <Guid>bd869ede30d3478ae4ce49c37ca743c3</Guid>
+              <IconColor>68, 114, 196</IconColor>
+              <ImageURL>https://www.visionworkorders.com/public/images/clogo/{rsMainInfo.Management_Logo}</ImageURL>
+              <Margins>0,0,0,0</Margins>
+              <Name>Image1</Name>
+              <Page isRef="8" />
+              <Parent isRef="13" />
+              <ProcessingDuplicates>Merge</ProcessingDuplicates>
+              <Stretch>True</Stretch>
+            </Image1>
+            <Text15 Ref="16" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>110.24,86.61,700.78,23.63</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,12,Italic</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text15</Name>
+              <Page isRef="8" />
+              <Parent isRef="13" />
+              <Text>{rsMainInfo.Building_Name}</Text>
+              <TextBrush>Black</TextBrush>
+            </Text15>
+            <Text16 Ref="17" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,86.61,110.24,23.63</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,10,Bold</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text16</Name>
+              <Page isRef="8" />
+              <Parent isRef="13" />
+              <Text>Building Name</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text16>
+            <Text2 Ref="18" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <CanGrow>True</CanGrow>
+              <CanShrink>True</CanShrink>
+              <ClientRectangle>204.72,0.63,608.9,79.37</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,25,Bold</Font>
+              <Guid>5e29e22639bb5d7232b049c37ca7881e</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text2</Name>
+              <Page isRef="8" />
+              <Parent isRef="13" />
+              <Text>Work Order Status Report with Notes
+{rsMainInfo.Building_Name}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text2>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>HeaderBand1</Name>
+          <Page isRef="8" />
+          <Parent isRef="8" />
+        </HeaderBand1>
+        <GroupHeaderBand1 Ref="19" type="GroupHeaderBand" isKey="true">
+          <Bookmark>{rsMainInfo.Building_Name}</Bookmark>
+          <Border>All;Black;1;Solid;False;4;Black</Border>
+          <Brush>MediumAquamarine</Brush>
+          <CanBreak>True</CanBreak>
+          <CanGrow>False</CanGrow>
+          <ClientRectangle>0,225.98,1060.63,55.12</ClientRectangle>
+          <Components isList="true" count="8">
+            <Text4 Ref="20" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>15.75,7.87,86.61,39.37</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,11,Bold</Font>
+              <Guid>b6e6c2e6c89d5cc4909a49c49c2697e3</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Interaction Ref="21" type="Stimulsoft.Report.Components.StiInteraction" isKey="true">
+                <SortingColumn>DBrsMainInfo.WO_Date_Requested</SortingColumn>
+              </Interaction>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text4</Name>
+              <Page isRef="8" />
+              <Parent isRef="19" />
+              <Text>Date 
+Recieved</Text>
+              <TextBrush>Black</TextBrush>
+              <ToolTip>Sort Report By Date Recieved</ToolTip>
+              <Type>Expression</Type>
+            </Text4>
+            <Text7 Ref="22" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>102.36,7.87,86.62,39.37</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,11,Bold</Font>
+              <Guid>27d841f601528e6b4cc849c49c2720ba</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Interaction Ref="23" type="Stimulsoft.Report.Components.StiInteraction" isKey="true">
+                <SortingColumn>DBrsMainInfo.Work_Order_Number</SortingColumn>
+              </Interaction>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text7</Name>
+              <Page isRef="8" />
+              <Parent isRef="19" />
+              <Text>Work Order
+Number</Text>
+              <TextBrush>Black</TextBrush>
+              <ToolTip>Sort Report by Work Order Number</ToolTip>
+              <Type>Expression</Type>
+            </Text7>
+            <Text12 Ref="24" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <CanBreak>True</CanBreak>
+              <ClientRectangle>448.82,7.87,417.32,39.37</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,11,Bold</Font>
+              <Guid>4ada88cc7de07d59078049bff69a64d8</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text12</Name>
+              <Page isRef="8" />
+              <Parent isRef="19" />
+              <Text>Work Request:</Text>
+              <TextBrush>Black</TextBrush>
+              <VertAlignment>Center</VertAlignment>
+            </Text12>
+            <Text17 Ref="25" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>188.98,7.87,62.99,39.37</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,11,Bold</Font>
+              <Guid>6e941b1dd45e0ab72d1649eebad8da20</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Interaction Ref="26" type="Stimulsoft.Report.Components.StiInteraction" isKey="true">
+                <SortingColumn>DBrsMainInfo.Curent_Status</SortingColumn>
+              </Interaction>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text17</Name>
+              <Page isRef="8" />
+              <Parent isRef="19" />
+              <Text>Status</Text>
+              <TextBrush>Black</TextBrush>
+              <ToolTip>Sort Report by Status</ToolTip>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text17>
+            <Text6 Ref="27" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>874.02,8.27,182.99,39.01</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,11,Bold</Font>
+              <Guid>2caa3878626add53276a49c49c277909</Guid>
+              <Interaction Ref="28" type="Stimulsoft.Report.Components.StiInteraction" isKey="true">
+                <SortingColumn>DataBand1.Tenant_Name</SortingColumn>
+              </Interaction>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text6</Name>
+              <Page isRef="8" />
+              <Parent isRef="19" />
+              <Text>Contact Information</Text>
+              <TextBrush>Black</TextBrush>
+              <ToolTip>Sort Report by Tenant Name</ToolTip>
+              <VertAlignment>Center</VertAlignment>
+            </Text6>
+            <Text3 Ref="29" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>385.83,7.87,62.99,39.37</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,11,Bold</Font>
+              <Guid>aa2b1215bcf206657cff49c49c262845</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Interaction Ref="30" type="Stimulsoft.Report.Components.StiInteraction" isKey="true">
+                <SortingColumn>DBrsMainInfo.Days_Open</SortingColumn>
+              </Interaction>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text3</Name>
+              <Page isRef="8" />
+              <Parent isRef="19" />
+              <Text>Days 
+Open</Text>
+              <TextBrush>Black</TextBrush>
+              <ToolTip>Sort Report by number of Days Open</ToolTip>
+              <Type>Expression</Type>
+            </Text3>
+            <Text28 Ref="31" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>259.84,7.87,125.99,39.37</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,11,Bold</Font>
+              <Guid>27a6d8f3ccb912fcc20e5327c2101c25</Guid>
+              <Interaction Ref="32" type="Stimulsoft.Report.Components.StiInteraction" isKey="true">
+                <SortingColumn>DBrsMainInfo.Category</SortingColumn>
+              </Interaction>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text28</Name>
+              <Page isRef="8" />
+              <Parent isRef="19" />
+              <Text>Category</Text>
+              <TextBrush>Black</TextBrush>
+              <ToolTip>Sort Report by Status</ToolTip>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text28>
+            <Text34 Ref="33" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>[102:205:170]</Brush>
+              <ClientRectangle>1.18,2.4,12.76,50.32</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,6</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text34</Name>
+              <Page isRef="8" />
+              <Parent isRef="19" />
+              <Text>Line Number</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <TextOptions>,,,,,Angle=90</TextOptions>
+              <Type>Expression</Type>
+            </Text34>
+          </Components>
+          <Condition>{rsMainInfo.Building_Name}</Condition>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>GroupHeaderBand1</Name>
+          <Page isRef="8" />
+          <Parent isRef="8" />
+          <PrintOnAllPages>True</PrintOnAllPages>
+        </GroupHeaderBand1>
+        <DBrsMainInfo Ref="34" type="DataBand" isKey="true">
+          <Bookmark>{rsMainInfo.Work_Order_Number} - {rsMainInfo.Tenant_Name}</Bookmark>
+          <Border>All;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+          <Brush>Transparent</Brush>
+          <BusinessObjectGuid isNull="true" />
+          <CanShrink>True</CanShrink>
+          <ClientRectangle>0,321.1,1060.63,115.43</ClientRectangle>
+          <Components isList="true" count="10">
+            <Text21 Ref="35" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <CanGrow>True</CanGrow>
+              <CanShrink>True</CanShrink>
+              <ClientRectangle>866.14,1.65,193.86,62.37</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,10</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <Margins>0,0,1,1</Margins>
+              <Name>Text21</Name>
+              <Page isRef="8" />
+              <Parent isRef="34" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{rsMainInfo.Tenant_Name}
+{rsMainInfo.Tenant_Contact}
+{rsMainInfo.Tenant_E_Mail}
+{rsMainInfo.Tenant_Phone_Number}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text21>
+            <Text8 Ref="36" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>7.87,0,86.62,23.62</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,11</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text8</Name>
+              <Page isRef="8" />
+              <Parent isRef="34" />
+              <Text>{rsMainInfo.WO_Date_Requested}</Text>
+              <TextBrush>Black</TextBrush>
+            </Text8>
+            <Text9 Ref="37" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>394.02,0,45,24.02</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,11</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text9</Name>
+              <Page isRef="8" />
+              <Parent isRef="34" />
+              <Text>{rsMainInfo.Days_Open}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>DataColumn</Type>
+            </Text9>
+            <Text10 Ref="38" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>94.49,0,94.49,23.62</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,11</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text10</Name>
+              <Page isRef="8" />
+              <Parent isRef="34" />
+              <Text>{rsMainInfo.Work_Order_Number}</Text>
+              <TextBrush>Black</TextBrush>
+            </Text10>
+            <Text13 Ref="39" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <CanGrow>True</CanGrow>
+              <CanShrink>True</CanShrink>
+              <ClientRectangle>449.02,0.67,417.32,23.62</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,11</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text13</Name>
+              <Page isRef="8" />
+              <Parent isRef="34" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{rsMainInfo.Tenant_Request}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Text13>
+            <Text32 Ref="40" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,0,15.75,15.75</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,8,Bold</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text32</Name>
+              <Page isRef="8" />
+              <Parent isRef="34" />
+              <Text>{LineThrough}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>SystemVariables</Type>
+            </Text32>
+            <Text11 Ref="41" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>259.84,0,133.86,23.62</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,11</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text11</Name>
+              <Page isRef="8" />
+              <Parent isRef="34" />
+              <ShiftMode>None</ShiftMode>
+              <Text>{rsMainInfo.Category}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Text11>
+            <Text14 Ref="42" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>196.85,0,62.99,23.62</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,11</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text14</Name>
+              <Page isRef="8" />
+              <Parent isRef="34" />
+              <Text>{rsMainInfo.Curent_Status}</Text>
+              <TextBrush>Black</TextBrush>
+            </Text14>
+            <SubReport2 Ref="43" type="SubReport" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>3.94,31.54,857.52,39.29</ClientRectangle>
+              <Components isList="true" count="0" />
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Name>SubReport2</Name>
+              <Page isRef="8" />
+              <Parameters isList="true" count="0" />
+              <Parent isRef="34" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <SubReportPageGuid>fb924e34a734a0cc02d153608c5794d5</SubReportPageGuid>
+            </SubReport2>
+            <SubReport1 Ref="44" type="SubReport" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>4.29,77.24,881.14,31.42</ClientRectangle>
+              <Components isList="true" count="0" />
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Name>SubReport1</Name>
+              <Page isRef="8" />
+              <Parameters isList="true" count="0" />
+              <Parent isRef="34" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <SubReportPageGuid>907eab6486bf2f15fb2c531c4c1e5fef</SubReportPageGuid>
+            </SubReport1>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <DataRelationName isNull="true" />
+          <DataSourceName>rsMainInfo</DataSourceName>
+          <EvenStyle>SBack_Boarder</EvenStyle>
+          <Expressions isList="true" count="0" />
+          <Filters isList="true" count="0" />
+          <Name>DBrsMainInfo</Name>
+          <Page isRef="8" />
+          <Parent isRef="8" />
+          <Sort isList="true" count="2">
+            <value>DESC</value>
+            <value>Work_Order_Number</value>
+          </Sort>
+        </DBrsMainInfo>
+        <GroupFooterBand1 Ref="45" type="GroupFooterBand" isKey="true">
+          <Border>All;Black;1;Solid;False;4;Black</Border>
+          <Brush>Transparent</Brush>
+          <CanBreak>True</CanBreak>
+          <CanShrink>True</CanShrink>
+          <ClientRectangle>0,476.53,1060.63,11.89</ClientRectangle>
+          <Components isList="true" count="0" />
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <KeepGroupFooterTogether>False</KeepGroupFooterTogether>
+          <Name>GroupFooterBand1</Name>
+          <NewPageAfter>True</NewPageAfter>
+          <Page isRef="8" />
+          <Parent isRef="8" />
+          <PrintAtBottom>True</PrintAtBottom>
+        </GroupFooterBand1>
+      </Components>
+      <Conditions isList="true" count="0" />
+      <Expressions isList="true" count="0" />
+      <Guid>bc3ba8f95a23316df9de9fc0defa05fc</Guid>
+      <Margins>19.6850393700787,19.6850393700787,25,35</Margins>
+      <Name>Page1</Name>
+      <Orientation>Landscape</Orientation>
+      <PageHeight>850</PageHeight>
+      <PageWidth>1100</PageWidth>
+      <PaperSize>Letter</PaperSize>
+      <Report isRef="0" />
+    </Page1>
+    <WorkOrder_Completed_Description Ref="46" type="Page" isKey="true">
+      <Border>None;Black;2;Solid;False;4;Black</Border>
+      <Brush>Transparent</Brush>
+      <Components isList="true" count="2">
+        <HeaderBand3 Ref="47" type="HeaderBand" isKey="true">
+          <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+          <Brush>Transparent</Brush>
+          <CanShrink>True</CanShrink>
+          <ClientRectangle>0,15.75,857.52,15.75</ClientRectangle>
+          <Components isList="true" count="1">
+            <Text31 Ref="48" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <CanGrow>True</CanGrow>
+              <CanShrink>True</CanShrink>
+              <ClientRectangle>0,0,251.97,15.75</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,11,Bold</Font>
+              <Guid>a6368331655e35329888536171d677d7</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text31</Name>
+              <Page isRef="46" />
+              <Parent isRef="47" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Description of work</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Text31>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>HeaderBand3</Name>
+          <Page isRef="46" />
+          <Parent isRef="46" />
+        </HeaderBand3>
+        <DataBand3 Ref="49" type="DataBand" isKey="true">
+          <Brush>Transparent</Brush>
+          <BusinessObjectGuid isNull="true" />
+          <CanBreak>True</CanBreak>
+          <CanShrink>True</CanShrink>
+          <ClientRectangle>0,62.99,857.52,23.62</ClientRectangle>
+          <Components isList="true" count="1">
+            <Text30 Ref="50" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>0,0,850.39,23.62</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,11</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text30</Name>
+              <Page isRef="46" />
+              <Parent isRef="49" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{rdWODescription.Work_Order_Completed_Description}</Text>
+              <TextBrush>Black</TextBrush>
+            </Text30>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <DataRelationName>relWorkOrder_Descp</DataRelationName>
+          <DataSourceName>rdWODescription</DataSourceName>
+          <Expressions isList="true" count="0" />
+          <Filters isList="true" count="0" />
+          <MasterComponent isRef="34" />
+          <Name>DataBand3</Name>
+          <Page isRef="46" />
+          <Parent isRef="46" />
+          <Sort isList="true" count="0" />
+        </DataBand3>
+      </Components>
+      <Conditions isList="true" count="0" />
+      <Expressions isList="true" count="0" />
+      <Guid>fb924e34a734a0cc02d153608c5794d5</Guid>
+      <Margins>39,39,39,39</Margins>
+      <Name>WorkOrder_Completed_Description</Name>
+      <Orientation>Landscape</Orientation>
+      <PageHeight>393.7</PageHeight>
+      <PageWidth>936.26</PageWidth>
+      <Report isRef="0" />
+    </WorkOrder_Completed_Description>
+    <WorkOrder_Notes Ref="51" type="Page" isKey="true">
+      <Border>None;Black;2;Solid;False;4;Black</Border>
+      <Brush>Transparent</Brush>
+      <Components isList="true" count="2">
+        <HeaderBand2 Ref="52" type="HeaderBand" isKey="true">
+          <Brush>Transparent</Brush>
+          <CanShrink>True</CanShrink>
+          <ClientRectangle>0,15.75,881.14,47.24</ClientRectangle>
+          <Components isList="true" count="5">
+            <Text19 Ref="53" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,23.62,110.24,23.62</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,11,Bold</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text19</Name>
+              <Page isRef="51" />
+              <Parent isRef="52" />
+              <Text>Date</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text19>
+            <Text18 Ref="54" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <CanGrow>True</CanGrow>
+              <CanShrink>True</CanShrink>
+              <ClientRectangle>0,0,370.08,23.62</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,12,Bold</Font>
+              <Guid>23fe6082bb1f0243dc6b531e84911f8e</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text18</Name>
+              <Page isRef="51" />
+              <Parent isRef="52" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Work Order Notes</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Text18>
+            <Text22 Ref="55" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>118.11,23.62,267.72,23.62</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,11,Bold</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text22</Name>
+              <Page isRef="51" />
+              <Parent isRef="52" />
+              <Text>Work Order Notes</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text22>
+            <Text24 Ref="56" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>803.15,23.62,55.12,23.62</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,11,Bold</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text24</Name>
+              <Page isRef="51" />
+              <Parent isRef="52" />
+              <Text>Internal</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text24>
+            <Text26 Ref="57" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>669.29,23.62,125.99,23.62</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,11,Bold</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text26</Name>
+              <Page isRef="51" />
+              <Parent isRef="52" />
+              <Text>Entered By</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text26>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>HeaderBand2</Name>
+          <Page isRef="51" />
+          <Parent isRef="51" />
+        </HeaderBand2>
+        <DataBand2 Ref="58" type="DataBand" isKey="true">
+          <Brush>Transparent</Brush>
+          <BusinessObjectGuid isNull="true" />
+          <CanShrink>True</CanShrink>
+          <ClientRectangle>0,94.49,881.14,23.62</ClientRectangle>
+          <Components isList="true" count="4">
+            <Text5 Ref="59" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,0,110.24,23.62</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,12</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text5</Name>
+              <Page isRef="51" />
+              <Parent isRef="58" />
+              <Text>{rsNotes.Note_Date_Entered}</Text>
+              <TextBrush>Black</TextBrush>
+            </Text5>
+            <Text20 Ref="60" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <CanGrow>True</CanGrow>
+              <CanShrink>True</CanShrink>
+              <ClientRectangle>118.11,0,543.31,23.62</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,12</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text20</Name>
+              <Page isRef="51" />
+              <Parent isRef="58" />
+              <Text>{rsNotes.Note_Description}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Text20>
+            <Text23 Ref="61" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>818.9,0,39.37,23.62</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,12</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text23</Name>
+              <Page isRef="51" />
+              <Parent isRef="58" />
+              <Text>{IIF(rsNotes.internal &gt; 0,"Yes","No")}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text23>
+            <Text25 Ref="62" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>669.29,0,133.86,23.62</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,12</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text25</Name>
+              <Page isRef="51" />
+              <Parent isRef="58" />
+              <Text>{rsNotes.lastName}, {rsNotes.firstName}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text25>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <DataRelationName>rsNotes</DataRelationName>
+          <DataSourceName>rsNotes</DataSourceName>
+          <Expressions isList="true" count="0" />
+          <Filters isList="true" count="0" />
+          <MasterComponent isRef="34" />
+          <Name>DataBand2</Name>
+          <Page isRef="51" />
+          <Parent isRef="51" />
+          <Sort isList="true" count="0" />
+        </DataBand2>
+      </Components>
+      <Conditions isList="true" count="0" />
+      <Expressions isList="true" count="0" />
+      <Guid>907eab6486bf2f15fb2c531c4c1e5fef</Guid>
+      <Margins>39,39,39,39</Margins>
+      <Name>WorkOrder_Notes</Name>
+      <Orientation>Landscape</Orientation>
+      <PageHeight>393.7</PageHeight>
+      <PageWidth>959.88</PageWidth>
+      <Report isRef="0" />
+    </WorkOrder_Notes>
+  </Pages>
+  <ReferencedAssemblies isList="true" count="8">
+    <value>System.Dll</value>
+    <value>System.Drawing.Dll</value>
+    <value>System.Windows.Forms.Dll</value>
+    <value>System.Data.Dll</value>
+    <value>System.Xml.Dll</value>
+    <value>Stimulsoft.Controls.Dll</value>
+    <value>Stimulsoft.Base.Dll</value>
+    <value>Stimulsoft.Report.Dll</value>
+  </ReferencedAssemblies>
+  <ReportAlias>HTML_Open_WO_Detail_With_Notes_R1</ReportAlias>
+  <ReportAuthor>Robert Palermo</ReportAuthor>
+  <ReportChanged>12/19/2020 8:22:11 AM</ReportChanged>
+  <ReportCreated>4/9/2015 3:55:59 PM</ReportCreated>
+  <ReportFile>C:\Users\RobPalermo\Documents\Deramweaver\VE Test Site for workorders\reports\reports\HTML_Open_WO_Detail_With_Notes_R1.mrt</ReportFile>
+  <ReportGuid>bd9c616a77cb4336b1378212d82cbfe4</ReportGuid>
+  <ReportName>HTML_Open_WO_Detail_With_Notes_R1</ReportName>
+  <ReportUnit>HundredthsOfInch</ReportUnit>
+  <ReportVersion>2020.5.2.0</ReportVersion>
+  <Script>Imports System
+Imports System.Drawing
+Imports System.Windows.Forms
+Imports System.Data
+Imports Stimulsoft.Controls
+Imports Stimulsoft.Base.Drawing
+Imports Stimulsoft.Report
+Imports Stimulsoft.Report.Dialogs
+Imports Stimulsoft.Report.Components
+
+Namespace Reports
+    
+    Public Class Report
+        Inherits Stimulsoft.Report.StiReport
+        
+        Public Sub New()
+            MyBase.New
+            Me.InitializeComponent
+        End Sub
+        #Region "StiReport Designer generated code - do not modify"
+		#End Region 'StiReport Designer generated code - do not modify
+    End Class
+End Namespace</Script>
+  <ScriptLanguage>VB</ScriptLanguage>
+  <Styles isList="true" count="5">
+    <Style1 Ref="63" type="Stimulsoft.Report.StiStyle" isKey="true">
+      <Border>Left, Right;Black;1;Solid;False;4;Black</Border>
+      <Brush>Azure</Brush>
+      <Conditions isList="true" count="0" />
+      <Font>Arial,8</Font>
+      <Name>Style1</Name>
+      <NegativeTextBrush>Red</NegativeTextBrush>
+      <TextBrush>Black</TextBrush>
+    </Style1>
+    <sBackColor Ref="64" type="Stimulsoft.Report.StiStyle" isKey="true">
+      <Brush>Azure</Brush>
+      <Conditions isList="true" count="0" />
+      <Font>Arial,8</Font>
+      <Name>sBackColor</Name>
+      <NegativeTextBrush>Red</NegativeTextBrush>
+      <TextBrush>Black</TextBrush>
+    </sBackColor>
+    <OutLine Ref="65" type="Stimulsoft.Report.StiStyle" isKey="true">
+      <Border>All;Black;1;Solid;False;4;Black</Border>
+      <Brush>Transparent</Brush>
+      <Conditions isList="true" count="0" />
+      <Font>Arial,8</Font>
+      <Name>OutLine</Name>
+      <NegativeTextBrush>Red</NegativeTextBrush>
+      <TextBrush>Black</TextBrush>
+    </OutLine>
+    <Sback_DarkerGreen Ref="66" type="Stimulsoft.Report.StiStyle" isKey="true">
+      <Brush>[213:240:230]</Brush>
+      <Conditions isList="true" count="0" />
+      <Font>Arial,8</Font>
+      <Name>Sback_DarkerGreen</Name>
+      <NegativeTextBrush>Red</NegativeTextBrush>
+      <TextBrush>Black</TextBrush>
+    </Sback_DarkerGreen>
+    <SBack_Boarder Ref="67" type="Stimulsoft.Report.StiStyle" isKey="true">
+      <Border>All;Black;1;Solid;False;4;Black</Border>
+      <Brush>[213:240:230]</Brush>
+      <Conditions isList="true" count="0" />
+      <Font>Arial,8</Font>
+      <Name>SBack_Boarder</Name>
+      <NegativeTextBrush>Red</NegativeTextBrush>
+      <TextBrush>Black</TextBrush>
+    </SBack_Boarder>
+  </Styles>
+</StiSerializer>

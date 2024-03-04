@@ -1,0 +1,591 @@
+<!-- Start section to create a new task -->
+<?php echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/pm_task.js'); ?> 
+    
+    <?php 
+    $startdateadj = $this->startdateadjustment;
+    $frequency = $this->frequency;
+    $Interval = $this->Interval;
+    $taskjobtime = $this->jobtime;
+    $months = array(
+                    'January',
+                    'February',
+                    'March',
+                    'April',
+                    'May',
+                    'June',
+                    'July ',
+                    'August',
+                    'September',
+                    'October',
+                    'November',
+                    'December',
+                );
+ ?>
+
+<div class="container-right task-popup task-section">
+    <div class="message">               
+        <span class="error-txt" style="color:red; text-align:center;"></span>
+    </div>
+    <section style="z-index:9999" class="w-48 fr ch-home-form form-inline">
+        <section class="ch-form-header ">
+            <h3>Create New Level – Task </h3>
+        </section>
+        
+        
+        <div class="section-menu col-md-12 col-sm-12 col-xs-12" >
+<!--            <a class="modalbox create_conf" onclick="ActiveSction('Task');" > 
+                <button class="confirm active">Task(s)</button>
+            </a>
+            <a class="modalbox create_conf" onclick="ActiveSction('Reading');" > 
+                <button class="confirm">Reading(s)</button>
+            </a>        -->
+            <a class="modalbox create_conf position" onclick="importtask(<?php echo $this->desig_id; ?>);" href="#CreateNewMultiCon"> 
+                <button style="float: right;" class="confirm">Import</button>
+            </a>
+        </div>
+        
+        
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="form-group">
+                <label  class="control-label col-sm-3 col-md-3 col-xs-3">Level-Subset</label>
+                <select name="level" id="subset_level" class="form-control" >
+                    <option value="0">Root</option>
+                    <?php foreach($this->subset as $subset): ?>
+                        <option value="<?php echo $subset->VT_Template_Task_ID; ?>"><?php echo $subset->Task_Instruction; ?></option>
+                    <?php endforeach; ?>
+                </select>
+                <a class="modalbox create_conf " onclick="addTaskSubset('<?php echo $this->desig_id; ?>');"> 
+                    <button class="confirm" >Create a new subset</button>
+                </a>
+            </div>
+        </div>
+        
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="form-group">
+                <label  class="control-label col-sm-3 col-md-3 col-xs-3">Task Instruction</label>
+                <textarea name="task_instruction" class="form-control" id="task_instruction" style="width: 67%!important;"></textarea>
+                <span class="task_inst_error error"></span>
+            </div>
+        </div>
+       
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="form-group">
+                <label class="control-label col-sm-3 col-md-3 col-xs-3">Frequency</label>
+                <input type="radio" name="freq" id="freq" checked="checked"  onclick="check_freq()" value="1" >
+                <select name="level" id="frequency" class="form-control" onchange="return freqevent();" >
+                    <?php foreach($frequency as $key=>$val){ ?>
+                        <option value="<?php echo $key; ?>" <?php echo ($key==3?"Selected":""); ?> ><?php echo $val; ?></option>
+                    <?php } ?>                   
+                </select>
+                <input type="radio" name="freq" id="freq1" onclick="check_freq()" value="2"  > Perform Task Every 
+                <input type="number" onkeypress='return event.charCode > 48 && event.charCode <= 57' id="freq_num" max="59" style="width: 70px !important;" min="1" class="form-control" value="1">
+                <select name="level" id="frequency1" class="form-control" onchange="return freqevent();" >
+                    <?php foreach($Interval as $key=>$val){ ?>
+                        <option value="<?php echo $key; ?>"><?php echo $val; ?></option>
+                    <?php } ?>                   
+                </select>
+            </div>
+        </div>
+        
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="form-group">
+                <label class="control-label col-sm-3 col-md-3 col-xs-3">Start Date</label>
+                <div class="col-md-8 col-sm-8 col-xs-8">
+                    <!--    <input type='text' class="form-control" id='datetimepicker4' />-->
+                    <input name="startDate" readonly="readonly" id="startDate" class="date-picker1 form-control" value="<?php echo date("F Y"); ?>" />
+                    <input name="endDate" readonly="readonly" id="endDate" class="date-picker2 form-control"  /> End Date (Optional) 
+                    <a class="resetenddate" onclick="resetEnd()">Reset EndDate</a>
+                    <span class="startDate_error error"></span>
+                    <br>
+                    <input type="checkbox" name="seasonal" id="seasonal" onclick="seasonal();" > Seasonal task (If Checked)<br>
+                    <span id="seasonal_section">
+                        <span class="left">
+                            <label class="control-label">Begin Date</label>    
+<!--                            <input name="begDate" readonly="readonly" id="begDate" class="form-control" />-->
+                            <select name="begDate" id="begDate" class="form-control" disabled="disabled" onchange="begDate();">
+                                <?php foreach($months as $val){ ?>
+                                    <option value="<?php echo $val; ?>" <?php echo ($edittask->Seasonal_End_Date==$val?"SELECTED":"");?>><?php echo $val; ?></option>
+                                <?php } ?>
+                            </select>
+                            
+                        </span>
+                        <span class="right">
+                            <label class="control-label">Stop Date</label>   
+<!--                            <input name="stopDate" readonly="readonly" id="stopDate" class="form-control" />-->
+                            <select name="stopDate" id="stopDate" class="form-control"  disabled="disabled">
+                                <?php foreach($months as $val){ ?>
+                                    <option value="<?php echo $val; ?>" <?php echo ($edittask->Seasonal_End_Date==$val?"SELECTED":"");?>><?php echo $val; ?></option>
+                                <?php } ?>
+                            </select>
+                        </span>
+                    </span>
+                    
+                    
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="form-group">
+                <label class="control-label col-sm-3 col-md-3 col-xs-3">Day Of Month</label>
+                <select name="level" id="sdom" class="form-control">
+                    <?php   for($i=1;$i<=28;$i++): 
+                                echo '<option value="'.$i.'" >'.$i.'</option>';
+                            endfor;
+                    ?>
+                </select>
+                <span id="sdomView" style="display:none;">
+                    <input type="checkbox" name="domlast" id="domlast" value="lastday" onclick="lastday();" > Last Day
+                </span>
+            </div>
+        </div>
+        
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="form-group">
+                <label class="control-label col-sm-3 col-md-3 col-xs-3">Date Adjustment</label>            
+                <select name="level" class="form-control" id="startdateadjustment">
+                    <?php foreach($startdateadj as $key=>$val){ ?>
+                        <option value="<?php echo $key; ?>"><?php echo $val; ?></option>
+                    <?php } ?>
+                </select>
+            </div>
+        </div>
+        
+        <div class="col-md-12 col-sm-12 col-xs-12">    
+            <div class="form-group">
+                <label class="control-label col-sm-3 col-md-3 col-xs-3">Job-Time(In Hours)</label>
+                <input type="radio" name="jobtime" id="jobtime1" value="1" checked="checked" onclick="jobtimeact();" >
+                <select name="level"  class="form-control" id="taskjobtime" onchange="taskjobcheck()"  style="width: 120px!important;">
+                    <?php foreach($taskjobtime as $key=>$val){ ?>
+                        <option value="<?php echo $key; ?>"><?php echo $val; ?></option>
+                    <?php } ?>
+                </select>
+                    <input type="radio" name="jobtime" id="jobtime2" value="1" onclick="jobtimeact();" > Hour(s) 
+<!--                    <input type="number" min="1" max="59" onkeypress='return number_validation(event,this.value)' id="custome_hours" style="width: 60px!important;" class="form-control" name="custome_hours" value="1">-->
+                    <select name="level"  class="form-control" id="custome_hours">
+                        <?php for($jtime = 1; $jtime<=59; $jtime++){ ?>
+                            <option value="<?php echo $jtime; ?>" ><?php echo $jtime; ?></option>
+                        <?php } ?>
+                    </select>
+                    Minute(s)                        
+                    <select name="level"  class="form-control" id="taskjobtime1" onchange="taskjobcheck()"  style="width: 130px!important;">
+                    <?php foreach($taskjobtime as $key=>$val){
+                        if($key >= 1)
+                            continue;
+                        ?>
+                        <option value="<?php echo $key; ?>"><?php echo $val; ?></option>
+                    <?php } ?>
+                </select>
+                        
+<!--                    <input type="text" id="custome_minutes" class="form-control" style="width: 40px!important;"  name="custome_minutes" value="">-->
+                
+            </div>
+            <span class="job_time_error error"></span>
+        </div>
+        
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="form-group">
+                <label class="control-label col-sm-3 col-md-3 col-xs-3">Over Time/Off Hours</label>
+            <select name="level" id="overtime" class="form-control">
+                <option value="0">No</option>
+                <option value="1">YES</option>                
+            </select>           
+           </div>
+        </div>
+        
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="form-group">
+                <label class="control-label col-sm-3 col-md-3 col-xs-3">Assigned To</label>
+            <select name="level" id="assignedto" class="form-control">
+                <option value="1">Default</option>
+            </select>
+            <input type="hidden" name="action" id="action" value="add">
+            <input type="hidden" name="task_id" id="task_id" value="">
+            <input type="hidden" name="desig_id" id="desig_id" value="<?php echo $this->desig_id; ?>">
+            </div>
+        </div>
+        
+        <div class="col-md-12 col-sm-12 col-xs-12" style="text-align: center;">
+            <button class="confirm" onclick="closepopup();">Cancel</button>
+            <button class="confirm" onclick="validationtask('add');">Save & Close</button>
+            <button class="confirm" onclick="validationtask('new');">Save & New</button>
+        </div>  
+    </section>
+</div>
+
+<div id="add_subsetpopup" class="bd-dft-cls" style="display: none;"></div>
+<div class="loader" style="display:none;" > <img src="<?php echo BASEURL.'public/images/loader.gif';?>">
+    </div>
+<div class="fade_default_opt" id="fd_dft_div" style="display:none">
+    <a href="#file_form" id="file_form_href" class="modalbox">&nbsp;</a>	
+    <div id="file_form" class="bd-dft-cls" style="display:none"></div>
+</div>
+<script>
+    $(function() {
+        
+        
+    $('.date-picker').datepicker( {
+        changeMonth: true,
+        changeYear: true,
+        showButtonPanel: true,
+        dateFormat: 'MM yy',
+        minDate: 0,
+        onClose: function(dateText, inst) { 
+            
+            
+            function isDonePressed(){
+                            return ($('#ui-datepicker-div').html().indexOf('ui-datepicker-close ui-state-default ui-priority-primary ui-corner-all ui-state-hover') > -1);
+                        }
+
+                        if (isDonePressed()){
+                            var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+                            
+                            var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+                                $(this).datepicker('setDate', new Date(year, month, 1));
+                                console.log('Done is pressed'+month);
+                                month = parseInt(month) + 1;
+                                var alldays = new Date(year, month, 0).getDate();
+                                console.log("Number of days in selected Days"+alldays);
+                                html = "";
+                                //html +='<option value="lastday" >Last day</option>';
+                                for(i=1;i<=alldays;i++){
+                                    html+='<option value="'+i+'">'+i+'</option>';
+                                }
+                                
+                                // 28 days 
+                                
+                                html1 = "";
+                                //html +='<option value="lastday" >Last day</option>';
+                                for(i=1;i<=28;i++){
+                                    html1+='<option value="'+i+'">'+i+'</option>';
+                                }
+                                
+                                var Frequency_ID = "";
+                                if($("#freq:checked").length===1){
+                                    Frequency_ID = $("#frequency").val();
+                                }else{
+                                    Frequency_ID = $("#frequency1").val();
+                                }
+                                
+                                //alert(Frequency_ID);
+                                if(Frequency_ID < 3){
+                                  $("#sdom").html(html);  
+                                  $("#sdomView").hide();
+                                }else{
+                                    $("#sdom").html(html1);
+                                    $("#sdomView").show();
+                                }
+                                
+                        }
+                        function getformatedays(n){
+                            if (n >= 11 && n <= 13) {
+                                return "th";
+                            }
+                            switch (n % 10) {
+                                case 1:  return "st";
+                                case 2:  return "nd";
+                                case 3:  return "rd";
+                                default: return "th";
+                            }
+                        }
+            
+        }
+    });
+    
+    
+    
+
+      from = $( ".date-picker1" )
+        .datepicker({
+          defaultDate: "+1w",
+          changeMonth: true,
+          changeYear: true,
+          dateFormat: 'MM yy',
+          minDate: 0,
+          showButtonPanel: true,
+          numberOfMonths: 1,
+        
+        onClose: function(dateText, inst) {
+            //alert(dateText);
+            
+            var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+                            
+            var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+            var datetime =  new Date(year, month, 1);
+            $(this).datepicker('setDate', new Date(year, month, 1));
+            //alert(datetime);
+            var d = new Date( datetime );
+                d.setMonth( d.getMonth( ) + 1 );
+             textbox1 = ( d.getMonth( ) + 1 ) + '/' + d.getDate( ) + '/' + d.getFullYear( );
+            
+               // var dt = getDate( this );
+                //alert(d);
+            month = parseInt(month) + 1;
+            var alldays = new Date(year, month, 0).getDate();
+            console.log("Number of days in selected Days"+alldays);
+            html = "";
+            //html +='<option value="lastday" >Last day</option>';
+            for(i=1;i<=alldays;i++){
+                html+='<option value="'+i+'">'+i+'</option>';
+            }
+
+            // 28 days 
+
+            html1 = "";
+            //html +='<option value="lastday" >Last day</option>';
+            for(i=1;i<=28;i++){
+                html1+='<option value="'+i+'">'+i+'</option>';
+            }
+
+            var Frequency_ID = "";
+            if($("#freq:checked").length===1){
+                Frequency_ID = $("#frequency").val();
+            }else{
+                Frequency_ID = $("#frequency1").val();
+            }
+
+            //alert(Frequency_ID);
+            if(Frequency_ID < 3){
+              $("#sdom").html(html);  
+              $("#sdomView").hide();
+            }else{
+                $("#sdom").html(html1);
+                $("#sdomView").show();
+            }    
+                
+          to.datepicker( "option", "minDate", d );
+        }
+    }),
+      to = $( ".date-picker2" ).datepicker({
+        defaultDate: "+1w",
+        changeMonth: true,
+        changeYear: true,
+        dateFormat: 'MM yy',
+        showButtonPanel: true,
+        numberOfMonths: 1,
+      
+        
+        onClose: function(dateText, inst) {
+            var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();                            
+            var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+            $(this).datepicker('setDate', new Date(year, month, 1));
+            var datetime =  new Date(year, month, 1);
+            //alert(datetime);
+            //from.datepicker( "option", "maxDate", datetime );
+    }
+      });
+ 
+    function getDate( element ) {
+      var date;
+      try {
+        date = $.datepicker.parseDate( dateFormat, element.value );
+      } catch( error ) {
+        date = null;
+      }
+ 
+      return date;
+    }
+    
+    });
+    
+    
+    
+    
+//    $("#begDate").datepicker({
+//        
+//        viewmode:"year",
+//        minViewMode: 1,
+//        changeMonth: true,
+//        changeYear: true,
+//        showButtonPanel: true,
+//        dateFormat: 'MM',
+//        minDate: 0,
+//        onClose: function(dateText, inst) { 
+//        
+//            //var dt = new Date(selected);
+//            //dt.setDate(dt.getDate() + '+1M');
+//            //$("#stopDate").datepicker("option", "minDate", dt);
+//            
+//            function isDonePressed(){
+//                           return ($('#ui-datepicker-div').html().indexOf('ui-datepicker-close ui-state-default ui-priority-primary ui-corner-all ui-state-hover') > -1);
+//                       }
+//
+//                        if (isDonePressed()){
+//                            var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+//                            
+//                            var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+//                                $("#stopDate").datepicker('setDate', new Date(year, month, 1));
+//                            }
+//                            var dt = new Date(year, month, 1);
+//                            dt.setDate(dt.getDate() + '+1M');
+//                            $("#stopDate").datepicker("option", "minDate", dt);
+//        }
+//    });
+//    $("#stopDate").datepicker({
+//        viewmode:"year",
+//        minViewMode: 1,
+//        changeMonth: true,
+//        changeYear: true,
+//        showButtonPanel: true,
+//        dateFormat: 'MM',
+//        minDate: 0,
+//        onClose: function(dateText, inst) { 
+//            var dt = new Date(selected);
+//            dt.setDate(dt.getDate() - 1);
+//            $("#begDate").datepicker("option", "maxDate", dt);
+//        }
+//    });
+//    
+//});
+
+//$("#begDate").click(function(){
+
+function freqevent(){
+        // 28 days 
+                                
+                                var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();                            
+                                var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+                                
+                                var date = new Date(), y = year, m = month;
+                                //alert(year);
+                               // alert(month);
+                                //alert(year);
+                                var firstDay = new Date(y, m, 1);
+                                var lastDay = new Date(y, m + 1, 0).getDate();
+                                //alert(lastDay);
+                                //var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+                                
+                                
+                                html = "";
+                                
+                                for(i=1;i<=lastDay;i++){
+                                    html+='<option value="'+i+'">'+i+'</option>';
+                                }
+                                //
+                                // 28 days
+                                html1 = "";
+                                //html +='<option value="lastday" >Last day</option>';
+                                for(i=1;i<=28;i++){
+                                    html1+='<option value="'+i+'">'+i+'</option>';
+                                }
+                                
+                                var Frequency_ID = "";
+                                if($("#freq:checked").length===1){
+                                    Frequency_ID = $("#frequency").val();
+                                }else{
+                                    Frequency_ID = $("#frequency1").val();
+                                }
+                                
+                                //alert(html);
+                                if(Frequency_ID < 3){
+                                  $("#sdom").html(html);  
+                                  $("#sdomView").hide();
+                                }else{
+                                    $("#sdom").html(html1);
+                                    $("#sdomView").show();
+                                }
+    }
+    
+     function getformatedays(n){
+                            if (n >= 11 && n <= 13) {
+                                return "th";
+                            }
+                            switch (n % 10) {
+                                case 1:  return "st";
+                                case 2:  return "nd";
+                                case 3:  return "rd";
+                                default: return "th";
+                            }
+                        }
+
+</script>
+<style>
+    
+    span.left {    width: 39%;
+                }
+    input#begDate {
+        width: 100% !important;
+    }
+    .ch-home-form .form-group{
+        width:100%;
+        margin: 8px 0;
+    }
+    .ch-home-form .form-group #startDate{
+        width: 130px !important;
+    }
+    .ch-home-form .form-group #endDate{
+        width: 130px !important;
+    }
+    .ch-home-form .form-group .form-control{
+        width: auto!important;
+            display: inline-block;
+    }
+    .ch-home-form .left{
+        float: left;
+        margin: 0;
+    }
+    .ch-home-form .right{
+        float: right;
+        margin: 0;
+    }
+    .ch-home-form .left label, .ch-home-form .right label{
+        width: 100%
+    }
+    
+ table.ui-datepicker-calendar {
+     display: none;
+}
+button.confirm.active {
+    background-color: #45e4a8;
+}
+
+#startDate[readonly]{
+     cursor: auto !important; 
+     background-color: white !important; 
+     opacity: 1 !important; 
+}
+
+#endDate[readonly]{
+     cursor: auto !important; 
+     background-color: white !important; 
+     opacity: 1 !important; 
+}
+#begDate[readonly]{
+     cursor: auto !important; 
+     background-color: white !important; 
+     opacity: 1 !important; 
+}
+
+#stopDate[readonly]{
+     cursor: auto !important; 
+     background-color: white !important; 
+     opacity: 1 !important; 
+}
+#custome_hours[readonly]{
+     cursor: auto !important; 
+     background-color: white !important; 
+     opacity: 1 !important; 
+}
+
+#freq_num[readonly]{
+     cursor: auto !important; 
+     background-color: white !important; 
+     opacity: 1 !important; 
+}
+.resetenddate{
+    margin-left: 273px;
+    border: 1px solid green;
+    background: green;
+    color: white;
+    padding: 1px 7px 2px 6px;
+}
+</style>
+ <script>
+             function resetEnd(){
+             $("#endDate").val("");
+         }
+        check_freq();
+        jobtimeact(); 
+        freqevent();
+        begDate();
+        </script>

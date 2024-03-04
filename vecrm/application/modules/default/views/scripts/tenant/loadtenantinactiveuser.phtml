@@ -1,0 +1,68 @@
+<?php
+$roleMapper = new Model_Role();
+$roleDetail = $roleMapper->getRole();
+$role_data = array();
+foreach($roleDetail as $rd){
+	$role_data[$rd['roleID']] = $rd['title'];
+}
+
+$sendMapper = new Model_SendAs();
+$sendDetail = $sendMapper->getSendAs();
+$send_data = array();
+foreach($sendDetail as $sd){
+	$send_data[$sd['sid']] = $sd['title'];
+}
+$uinfo = $this->tenantData[0];
+//var_dump($this->tenantData);
+?>
+<div>
+   
+	<div class="tuser-list">
+		<table width="100%" class="building_table_grid">
+			<tr>
+				<th>Last Name</th>
+				<th>First Name</th>			
+				<th>E-mail Address</th>
+				<th>Cc Enabled</th>
+				<th>Send As</th>
+				<th>Access</th>
+				<th>Complete Notification</th>
+				<?php if($this->tenantData[0]->remove_status==0){ ?><th style="border:none;">Action</th> <?php } ?>
+			</tr>
+			<?php if($this->tenantuser){ 
+					 foreach($this->tenantuser as $tuser){
+						 
+				 ?>
+				 <input type="hidden" name="main_tenant" id="main_tenant" value="<?php echo $this->tenantId;?>" />
+				 <input type="hidden" name="buildID" id="buildID" value="<?php echo $this->buildId;?>" />
+				 <input type="hidden" name="totalUser" id="totalUser" value="<?php echo count($this->tenantuser);?>" />
+				 <tr>
+					 <td><?php echo $tuser->lastName;?> </td>
+					 <td><?php echo $tuser->firstName;?></td>				 
+					 <td><?php echo $tuser->email;?></td>
+					 <td><?php echo ($tuser->cc_enable)?'Yes':'No';?></td>
+					 <td><?php echo $send_data[$tuser->send_as];?></td>
+					 <td><?php echo $role_data[$tuser->role_id]?></td>
+					 <td><?php echo ($tuser->complete_notification)?'Yes':'No';?></td>
+					 <?php if($this->tenantData[0]->remove_status==0){ ?>
+					 <td>
+					 	Recover User &nbsp; <input type="checkbox" value="<?php echo $tuser->uid;?>" class="recover-user" name="tenantUser[]" />
+						 
+					 </td>
+					 <?php } ?>
+				 </tr>
+
+				 
+			<?php    }
+				 }else{
+					echo '<tr><td colspan="8"> No Tenant User </td></tr>'; 
+				 }
+			?>
+					
+		</table>
+		<?php if(!empty($this->tenantuser) && $this->tenantData[0]->remove_status==0){ ?>
+		<input class="confirm" type="submit" value="Recover Users" name="">
+		<?php } ?>
+	 </div>
+</div>
+

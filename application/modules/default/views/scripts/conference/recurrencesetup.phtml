@@ -1,0 +1,162 @@
+<?php
+    echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/conference.js');
+    echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/jquery.form.js');
+    $cscheduleDetails = $this->cscheduleDetails;
+    $cPlan = $this->cPlan;
+    $crDetails = $this->crDetails;
+    $startTime = '08:00 AM';
+    $endTime = '09:00 AM';
+    $cscheduleMapper = new Model_ConferenceSchedule();
+?>
+<div class="container-right">
+    <div class="message">
+        <span class="error-txt" style="color:red; text-align:center;"></span>
+    </div>
+    <section style="z-index:9999" class="w-48 fr ch-home-form">
+        <section class="ch-form-header ">
+            <h3>Recurrence Setup  <span> <?php //echo date("F d, Y",strtotime($this->fullDate)); ?> </span></h3>
+        </section>
+        <div class="room-setup">
+            <div class="tableGrid list_tableGrid my_table_grid">
+                <div class="message">
+                    <div class="success_message" style="text-align:center;width:100%;font-weight:bold;color:red;"></div>				  			
+                    <span id="success_msg"></span>
+                    <span id="error_msg"></span>
+                </div>
+                <div class="container"> 
+                    <div id="step1">
+                        <div class="row" >    
+                            <!--     <h3>Recurrence Setup Schedule</h3>-->
+                            <label>How Often <span class="required">*</span> </label><span class="ugroupErr" id="tenant-error"></span>
+                             <span id="howaften_error"></span>
+                            <select name="howafter" id="howafter">
+                                <option value="">Select From list</option>
+                                <option value="daily">Daily</option>
+                                <option value="weekly">Weekly</option>
+                                <option value="monthly">Monthly</option>
+                                <option value="yearly">Yearly</option>
+                            </select>
+                        </div> 
+                        <div class="row">
+                            <b>Note: </b> Room Avaliable day's in <b>" <?php echo $this->roomavaliable; ?> " </b>
+                        </div>
+                          <div class="row">    
+                             <h3>Date Range of Recurrence </h3>
+                            <label>Requested By:<span class="required">*</span> </label><span class="ugroupErr" id="requestedby-error"></span>
+                            <div class="align">
+                                <div id='show_tenant_user' > 
+                                    <input type="radio" name="reqBy" value="1" checked="checked" onclick="disableall()"> 
+                                    NO End Date:
+                                </div>
+                                <div id='show_tenant_user'> 
+                                    <span><input type="radio" name="reqBy" value="2" onclick="disablenumber()"> 
+                                        End After  </span>
+                                    <p><input type="number" name="number" id="number"  min="1" readonly >&nbsp;<b>Occurrences</b> <br>
+                                    <span id="number_error"></span></p>
+                                </div>                            
+                                <?php  $end = date('Y-m-d', strtotime('+2 years',strtotime($this->requestdate)));  ?>
+                                <div id='show_tenant_user'> 
+                                    <span>
+                                        <input type="radio" name="reqBy" value="3" onclick="disabledate()">End By 
+                                    </span>
+                                    <p>
+                                        <input type="date" name="date" id="daterec" min="<?php echo date("Y-m-d",strtotime($this->requestdate)); ?>" max="<?php echo $end; ?>" readonly >
+                                        <span id="date_error"></span>
+                                    </p>
+                                </div> 
+                            </div>
+                        </div>
+                    </div>
+                    <div class="confirmBtn float_none">
+                        <input type="hidden" name="type" value="auser">
+                        <input type="hidden" name="month" id="month" value="<?php echo $this->month; ?> ">
+                        <input type="button" value="Save" name="save" class="confirm" id='emailsave' onclick="makerecurrenceclone();">
+                        <!--  <input type="button" style="display:none;" value="Save as Recurrence" name="save" class="confirm" id='saveRecurrence' onclick="validateCRoomRequest();">-->
+                        <input type="button" value="Cancel" name="cancel" class="cancel" onclick="cancelrecurrence();">
+                    </div>
+                </div>   
+            </div>
+        </div>
+</div>
+</section>
+</div>
+<div class="fade_default_opt" id="fd_dft_div" style="display:none">
+    <a href="#file_form" id="file_form_href" class="modalbox">&nbsp;</a>	
+    <div id="file_form" class="bd-dft-cls" style="display:none"></div>
+</div>
+<div class="loader" style="display:none;" > <img src="<?php echo BASEURL.'public/images/loader.gif';?>"><div>
+
+ <style>
+.loader {
+    height: 100% !important;
+}
+.tableGrid > div {
+    margin: 0 auto !important;
+    width: 100% !important;
+}
+
+.align {
+    float: left;
+    margin: 0 auto;
+    text-align: left;
+    width: 260px;
+}
+.room-setup #step1 input[type=date] {
+    line-height: normal;
+}
+
+.align > div {
+    overflow: hidden;
+}
+
+#show_tenant_user > span {
+    float: left;
+    width: 87px;
+}
+
+#show_tenant_user {
+    width: 140%;
+}
+
+#show_tenant_user p {
+    float: left;
+    max-width:100%;
+    padding-top: 11px;
+}
+
+.room-setup #step1 .row h3::after {
+    border-bottom: 1px solid #ddd;
+    bottom: -12px;
+    content: "";
+    left: 0;
+    position: absolute;
+    width: 100%;
+}
+
+.room-setup #step1 .row h3 {
+    font-size: 20px;
+    margin-bottom: 20px;
+    position: relative;
+}
+</style>
+<script>
+    
+// Changes the Html templete design for all monthly booking 
+
+
+
+function disabledate(){
+    $('#daterec').attr("readonly",false);
+    $('#number').attr("readonly",true);
+}
+
+function disablenumber(){
+    $('#daterec').attr("readonly",true);
+    $('#number').attr("readonly",false);
+}
+
+function disableall(){
+    $('#daterec').attr("readonly",true);
+    $('#number').attr("readonly",true);
+}
+</script>

@@ -1,0 +1,251 @@
+<?php
+
+$reportModel = new Model_Report();
+$reportDetailLinks = '';
+$dashboard_menu = array(50);
+$reportDetailLinks = $reportModel->getReport($this->custID, $dashboard_menu);
+
+$dashboard_menu2 = array(52);
+$vTTemplateNameLinks = $reportModel->getReport($this->custID, $dashboard_menu2);
+
+$dashboard_menu3 = array(53);
+$vTTypeDesignationNameLinks = $reportModel->getReport($this->custID, $dashboard_menu3);
+?>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<style>
+    .bs-example{
+        margin: 20px;
+    }
+</style>
+<div class="container-right " style="padding: 10px;
+    margin-left: 250px;" >
+
+
+    <ul class="nav nav-tabs">
+        <li class="nav-item active">
+            <a href="#home" class="nav-link" data-toggle="tab">General Liability</a>
+        </li>
+        <li class="nav-item">
+            <a href="#profile" class="nav-link" data-toggle="tab">Automobile Liability</a>
+        </li>
+        <li class="nav-item">
+            <a href="#messages" class="nav-link" data-toggle="tab">Umbrella Liability</a>
+        </li>
+
+        <li class="nav-item">
+            <a href="#Workers" class="nav-link" data-toggle="tab">Workers Compensation</a>
+        </li>
+
+        
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane active" id="home">
+            <br>
+           <table width="98%" class="priority-list">
+
+                        
+                        <tr>
+                            <th>Description</th>
+                            <th>Tenant</th>
+                            <th>Vender</th>
+                            <th>Action</th>
+                        </tr>
+                        <tbody>
+                        <?php foreach ($this->templatedetails as $val){
+
+            //echo $val->coi_vt_default_description
+            ?>
+                                 <tr>
+                                <td><?php echo $val->coi_vt_default_description ;?></td>
+                                <td style="text-align: right;"><?php echo preg_replace("/(\d+?)(?=(\d\d)+(\d)(?!\d))(\.\d+)?/i", "$1,", $val->coi_vt_defaults_Tenant);?></td>
+                                <td style="text-align: right;"><?php echo preg_replace("/(\d+?)(?=(\d\d)+(\d)(?!\d))(\.\d+)?/i", "$1,", $val->coi_vt_defaults_Vendor);?></td>
+                                <td style="text-align: center;">
+                                    <div class="col02 coladdlastcol lastcol edit_delete_icon">
+
+                                        <?php $id= $val->coi_vt_default_ID;?>
+                                        
+
+                                             <a href="<?php echo BASEURL . 'coi/editecio/id/' . $id; ?>"  title="Edit"><img src="<?php echo BASEURL . 'public/images/edit.png' ?>" /></a> 
+                                         
+                                                                            </div>
+                                </td>
+
+                            </tr>
+                            <?php
+                        }
+                        ?>
+                                                   
+                                                   
+                                                   
+                                                 
+                                                   
+                                                 
+                                            
+                      
+
+                    </tbody></table>
+
+        </div>
+        <div class="tab-pane fade" id="profile">
+            
+
+             <br>
+           <table width="98%" class="priority-list">
+
+                        
+                        <tr>
+                            <th>Description</th>
+                            <th>Tenant</th>
+                            <th>Vender</th>
+                            <th>Action</th>
+                        </tr>
+                        <tbody>
+                        <?php foreach ($this->templatedetailsseconnd as $valst){
+
+            //echo $val->coi_vt_default_description
+            ?>
+                                 <tr>
+                                <td><?php echo $valst->coi_vt_default_description ;?></td>
+                                <td style="text-align: right;"><?php echo preg_replace("/(\d+?)(?=(\d\d)+(\d)(?!\d))(\.\d+)?/i", "$1,", $valst->coi_vt_defaults_Tenant);?></td>
+                                <td style="text-align: right;"><?php echo preg_replace("/(\d+?)(?=(\d\d)+(\d)(?!\d))(\.\d+)?/i", "$1,", $valst->coi_vt_defaults_Vendor);?></td>
+                                <td style="text-align: center;">
+                                    <div class="col02 coladdlastcol lastcol edit_delete_icon">
+
+                                         <?php $id= $valst->coi_vt_default_ID;?>
+                                        
+
+                                             <a href="<?php echo BASEURL . 'coi/editecio/id/' . $id; ?>"  title="Edit"><img src="<?php echo BASEURL . 'public/images/edit.png' ?>" /></a> 
+                                        
+                                                                            </div>
+                                </td>
+
+                            </tr>
+                            <?php
+                        }
+                        ?>
+                                                   
+                                                   
+                                                   
+                                                 
+                                                   
+                                                 
+                                            
+                      
+
+                    </tbody></table>
+
+
+
+         </div>
+        <div class="tab-pane fade" id="messages">
+
+
+            <br>
+           <table width="98%" class="priority-list">
+
+                        
+                        <tr>
+                            <th>Description</th>
+                            <th>Tenant</th>
+                            <th>Vender</th>
+                            <th>Action</th>
+                        </tr>
+                        <tbody>
+                        <?php foreach ($this->templatedetailsthird as $ute){
+
+            //echo $val->coi_vt_default_description
+            ?>
+                                 <tr>
+                                <td><?php echo $ute->coi_vt_default_description ;?></td>
+                                <td style="text-align: right;"><?php echo preg_replace("/(\d+?)(?=(\d\d)+(\d)(?!\d))(\.\d+)?/i", "$1,", $ute->coi_vt_defaults_Tenant);?></td>
+                                <td style="text-align: right;"><?php echo preg_replace("/(\d+?)(?=(\d\d)+(\d)(?!\d))(\.\d+)?/i", "$1,", $ute->coi_vt_defaults_Vendor);?></td>
+                                <td style="text-align: center;">
+                                    <div class="col02 coladdlastcol lastcol edit_delete_icon">
+                                        <?php $id= $ute->coi_vt_default_ID;?>
+                                        
+
+                                             <a href="<?php echo BASEURL . 'coi/editecio/id/' . $id; ?>"  title="Edit"><img src="<?php echo BASEURL . 'public/images/edit.png' ?>" /></a> 
+                                        
+                                                                            </div>
+                                </td>
+
+                            </tr>
+                            <?php
+                        }
+                        ?>
+                                                   
+                                                   
+                                                   
+                                                 
+                                                   
+                                                 
+                                            
+                      
+
+                    </tbody></table>
+
+
+
+             
+        </div>
+
+
+        <div class="tab-pane fade" id="Workers">
+
+
+             <br>
+           <table width="98%" class="priority-list">
+
+                        
+                        <tr>
+                            <th>Description</th>
+                            <th>Tenant</th>
+                            <th>Vender</th>
+                            <th>Action</th>
+                        </tr>
+                        <tbody>
+                        <?php foreach ($this->templatteWorkers as $workorv){
+
+
+            //echo $val->coi_vt_default_description
+            ?>
+                                 <tr>
+                                <td><?php echo $workorv->coi_vt_default_description ;?></td>
+                                <td style="text-align: right;"><?php echo preg_replace("/(\d+?)(?=(\d\d)+(\d)(?!\d))(\.\d+)?/i", "$1,", $workorv->coi_vt_defaults_Tenant);?></td>
+                                <td style="text-align: right;"><?php echo preg_replace("/(\d+?)(?=(\d\d)+(\d)(?!\d))(\.\d+)?/i", "$1,", $workorv->coi_vt_defaults_Vendor);?></td>
+                                <td style="text-align: center;">
+                                    <div class="col02 coladdlastcol lastcol edit_delete_icon">
+                                        <?php $id= $workorv->coi_vt_default_ID;?>
+                                        
+
+                                             <a href="<?php echo BASEURL . 'coi/editecio/id/' . $id; ?>"  title="Edit"><img src="<?php echo BASEURL . 'public/images/edit.png' ?>" /></a> 
+                                        
+                                                                            </div>
+                                </td>
+
+                            </tr>
+                            <?php
+                        }
+                        ?>
+                                                   
+                                                   
+                                                   
+                                                 
+                                                   
+                                                 
+                                            
+                      
+
+                    </tbody></table>
+
+
+
+           
+             
+        </div>
+    </div>
+</div>

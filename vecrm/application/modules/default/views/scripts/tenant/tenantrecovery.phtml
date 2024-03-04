@@ -1,0 +1,101 @@
+<?php    $this->headLink()->appendStylesheet($this->baseUrl() . '/public/tabs.css');
+   echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/tenant.js');      
+ ?>
+<?php
+
+$this->headLink()->appendStylesheet($this->baseUrl() . '/public/css/bootstrap.css');
+$this->headLink()->appendStylesheet($this->baseUrl() . '/public/css/bootstrap-editable.css');
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/bootstrap.js');
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/bootstrap-editable.js');
+
+?>
+<?php
+$roleMapper = new Model_Role();
+$roleDetail = $roleMapper->getRole();
+$role_data = array();
+foreach($roleDetail as $rd){
+	$role_data[$rd['roleID']] = $rd['title'];
+}
+?>
+<div class="container-right" id="userinfo-data">
+    <?php 
+       if($this->roleId!=1){ 
+    if($this->custID!=null && $this->custID && $this->companyListing!='' && $this->companyListing!=false){?>
+		<div id="contents">
+			<ol id="toc">
+				<?php 
+					$j = 1;
+					foreach($this->companyListing as $cb){ ?>					
+					<li><a href="<?php echo $this->baseUrl().'/tenant/tenantrecovery/bid/'.$cb['build_id']; ?>" <?php if($cb['build_id']==$this->select_build_id) echo 'class="active"';?>><span><?php echo $cb['buildingName']; ?></span></a></li>
+				<?php $j++; } ?>
+			</ol>					
+			<div class="content" id="page">
+			 <span id="page_heading"><h3>Tenant Recovery</h3></span>
+			 <div id="msg">
+				 <span class="message">
+					 <?php $tm = new Zend_Session_Namespace('tenant_message'); 
+						 echo $tm->msg;
+						$tm->setExpirationSeconds(1);
+					 ?>
+				 </span>
+		         <span class="error-txt" style="color:red;"></span>
+		       </div>
+			 <div class="tenant-data">
+			 	<form id="tenant_recovery_form" name="tenant_recovery_form" method="POST" action="<?php echo BASEURL.'tenant/activetenantuser';?>" onSubmit="return validateRecoverUser(this)">
+				 <table width="100%" border="1">
+					 <tr>
+						<th width="4%">&nbsp;</th>
+						<th>Tenant Name</th> 
+					 </tr>
+					 <?php
+					      if(!empty($this->tenantList)){									
+							 foreach($this->tenantList as $uinfo){
+					 ?>
+					 <tr>
+						<td>
+							<div class="open_plus" id="open_div_<?php echo $uinfo->id;?>">
+								<a href="javascript:void(0);" id="<?php echo $uinfo->id;?>" onClick="return loadTenantInactiveUser(<?php echo $uinfo->id;?>,<?php echo $this->select_build_id; ?>)";>&nbsp; &nbsp;</a>
+							</div>
+						    <div class="open_close" id="close_div_<?php echo $uinfo->id;?>" style="display:none">
+						    	<a href="javascript:void(0);" id="<?php echo $uinfo->id;?>" onClick="return hideTenantInactiveUser(<?php echo $uinfo->id;?>)";><?php echo '&nbsp;&nbsp;';?></a>
+						    </div>
+						</td>
+						
+						<td>
+						    <div class="tt_name"><?php echo $uinfo->tenantName;?></div>
+							<?php if($uinfo->remove_status == 1){ ?>
+							<div class="recover_tenant recover_button"> <a href="javascript:void(0);" id="recover_tenant_<?php echo $uinfo->id;?>" onClick="return activeTenantRecoveryUser(<?php echo $uinfo->id;?>,<?php echo $this->select_build_id; ?>)";> Recover Tenant </a></div>
+							<?php } ?>
+						</td> 
+						
+					 </tr>
+					 <tr id="trId_<?php echo $uinfo->id; ?>" class="trtenant-class" style="display:none">
+					     <td>&nbsp;</td>
+					     <td id="loadtenant_<?php echo $uinfo->id; ?>" class="tdtenant-class"></td>
+
+					 </tr>
+					 <?php }
+					 }else{?>
+						 <tr>
+						<td colspan="2"> No Inactive Tenant Exist</td>
+					 </tr>
+					 <?php }?>	 
+				 </table>
+				</form>
+			 </div>				   
+	  <input type="hidden" name="building_id" id="building_id" value="<?php echo $this->select_build_id;?>"/>   
+   <?php }
+	   else{
+		   echo 'No Building has assign to you.';
+	   }  
+	  }else{?>
+	    You don't have access for this module.
+	  <?php }?>
+</div>
+<?php if($this->tId){?>
+<script type="text/javascript">
+	loadTenantInactiveUser('<?php echo $this->tId;?>','<?php echo $this->select_build_id; ?>');
+</script>	
+<?php }?>
+<div class="messageBox"></div>
+<div class="loader" style="display:none;" > <img src="<?php echo BASEURL.'public/images/loader.gif';?>"><div>

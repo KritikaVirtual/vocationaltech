@@ -1,0 +1,147 @@
+<?php
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/report.js');
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/jquery/multiple-select1.js');
+echo $this->headLink()->appendStylesheet($this->baseUrl() . '/public/css/multiple-select.css');
+?>
+<div class="container-right" id="user-Complete" >
+
+    <div class="gridContainer" >       
+
+        <section style="z-index:9999;min-height:525px;" class="w-48 fr ch-home-form1 ch-home-form" id="first_step">
+            <section class="ch-form-header">
+                <h3>Create New Report Wizard</h3>
+            </section>
+            <div class="tableGrid" style="padding:0px 0 20px 0">
+                <div id="first" class="step">
+                    <form method="post"  class="bbq">
+                        <div style="padding: 0px 0px 15px 20px; text-align:center;"><h4 style="font-weight:bold">New Report Setup</h4></div>
+                        <div id="report_nameDiv" class="row">
+                            <label for="report_name">Report Name: <span class="required">*</span></label>
+                            <span id="report_name_error" class="uofficeErr"></span>
+                            <input type="text" class="input_field_12em" name="report_name" id="report_name"  />
+                        </div>   
+                        <div id="dashboard_menuDiv" class="row">
+                            <label for="dashboard_menu">Dashboard Menu: <span class="required">*</span></label>
+                            <span id="dashboard_menu_error" class="uofficeErr"></span>
+
+                            <!--<select name="dashboard_menu" id="dashboard_menu" >
+                                <option value=""> Select Dashboard Menu </option>
+                                <?php if (isset($this->dashboardmenu) && $this->dashboardmenu != '') {
+                                    foreach ($this->dashboardmenu as $value) { ?> <option value="<?php echo $value->did; ?>" <?php if ($value->parent_id == 0) { ?> disabled style="font-weight:bold;" <?php } else { ?> style="margin-left:15px;"  <?php } ?>> <?php echo $value->menu_name; ?> </option> <?php }
+                                } ?>
+                            </select>-->
+                            
+                            <select name="dashboard_menu" id="dashboard_menu" >
+                                <option value=""> Select Dashboard Menu </option>
+                                <?php if (isset($this->dashboardmenu) && $this->dashboardmenu != '') {
+                                    foreach ($this->dashboardmenu as $value) {?>
+                                    <option value="<?php echo $value->did; ?>" 
+									<?php if ($value->parent_id == 0) { ?> disabled style="font-weight:bold;" 
+									<?php } else { ?> style="margin-left:15px;"  <?php } ?>> 
+									<?php echo $value->menu_name; ?> </option>
+									
+									<?php foreach ($this->childTabmenu as $value1) { 
+									     if($value->did == $value1->parent_id){
+									?> 
+									<option value="<?php echo $value1->did; ?>" 
+									<?php if ($value1->parent_id == 0) { ?> disabled style="font-weight:bold;" 
+									<?php } else { ?> style="margin-left:15px;"  <?php } ?>> 
+									<?php echo $value1->menu_name; ?> </option> <?php }
+									}}
+                                } ?>
+                            </select>
+
+                        </div> 
+
+                        <div id="report_mrtDiv" class="row">
+                            <label for="report_mrt">Select Report(MRT) From List: <span class="required">*</span></label>
+                            <span id="report_mrt_error" class="uofficeErr"></span>
+                            <select class="input_field_12em" name="report_mrt" id="report_mrt"> 
+                                <option value="">Select Report(MRT) </option>
+                                <?php foreach ($this->reportMrt as $value) {
+                                    $report_mrt = str_replace(REPORTMRT, "", $value); ?> 
+                                    <option value="<?php echo $report_mrt; ?>"><?php echo $report_mrt; ?> </option>
+<?php } ?>								
+
+                            </select>
+                        </div>
+
+                        <div id="optionDiv" class="row" >
+
+                            <div> 
+                                <label for="report_option">Option: <span class="required">*</span></label>
+                                <span id="report_option_error" class="uofficeErr"></span> <?php $reportoption = REPORTOPTION;
+$reportoption = explode(',', $reportoption) ?>
+                            </div>
+                            <div class="ms-choice_wrapper" >
+                                <select class="input_field_12em city"  id="report_option">
+                                    <option value=""  ><p id="removeselectoption">Select Option<p></option>
+<?php foreach ($reportoption as $value) { ?> <option value="<?php echo $value; ?>" > <?php echo $value; ?> </option> <?php } ?>
+                                </select>
+                            </div></div>
+
+                        <div id="targetDiv" class="row">
+                            <label for="report_target">Target: <span class="required">*</span></label>
+                            <span id="report_target_error" class="uofficeErr"></span>
+                            <select name="report_target" id="report_target"  >
+                                <option value="1"> _blank(Default) </option>
+                                <option value="0"> _self</option>
+                            </select>
+
+                        </div>
+
+                        <div id="accountsDiv" class="row">
+                            <label for="accounts">Accounts: <span class="required">*</span></label>
+                            <span id="accounts_error" class="uofficeErr"></span> 
+                            <select name="accounts" id="accounts"  >
+                                <option value="0">All Accounts</option>
+<?php foreach ($this->companyUser as $company) { ?> <option value="<?php echo $company->cust_id; ?>"> <?php echo $company->companyName; ?> </option> <?php } ?>
+                            </select>
+
+                        </div>
+
+                        <div id="accountsDiv" class="row">
+                            <label for="reporttype">Report Type: <span class="required">*</span></label>
+                            <span id="reporttype_error" class="uofficeErr"></span> 
+                            <label class="radio-inline rd-btn rd-html">
+                                <input type="radio" name="report_type" id="report_type" checked class="rd-txt" value="HTML">HTML
+                            </label>
+                            <label class="radio-inline rd-btn">
+                                <input type="radio" name="report_type" id="report_type" class="rd-txt" value="Flash">Flash
+                            </label>
+
+                        </div>
+
+
+                        <div class="confirmBtn float_none">
+                            <input type="button" value="Save" id='addnewreport' name="add" class="confirm next" onclick="checkNewReport()"/>
+                            <input type="button" value="Cancel" name="cancel" class="cancel" onclick="cancelReport()"/>                                
+                        </div>
+
+                    </form>                        
+                </div>
+            </div>
+        </section>  
+
+    </div></div>
+<div class="loader" style="display:none;"><img src="<?php echo BASEURL . 'public/images/loader.gif'; ?>"></div>
+<script>
+    $(function () {
+        $('#report_option').change(function () {
+            console.log($(this).val());
+        }).multipleSelect({
+            width: '100%'
+        });
+        $('.multicheckdd').click(function () {
+            $(".multicheckdd:eq(0)").prop("checked", false);
+            var selectedoption = $(".ms-choice span").text();
+            var res = selectedoption.replace(/Select Option,/g, "");
+            $(".ms-choice span").text(res);
+        });
+
+        $('.ms-choice').click(function () {
+            $(".ms-drop ul li:eq(1)").css("display", "none");
+        });
+
+    });
+</script>

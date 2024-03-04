@@ -1,0 +1,128 @@
+<?php
+
+if (Zend_Auth::getInstance()->hasIdentity()) {
+?>
+<script>
+    
+	function OpenReportLink(cust_id, dash_menu) {
+		$('.loader').show();
+		if(cust_id!='' && dash_menu!=''){
+				$.ajax({
+						url         : baseUrl+"report/showtreportlink",
+						type        : "post",
+						datatype    : 'json',
+						data        : {cust_id:cust_id,dash_menu:dash_menu },
+						success     : function( data ) {
+							$('.loader').hide();
+						   $('#showtreportlink').html(data);
+						},
+						error       : function(){
+							$('.loader').hide();
+							alert('There was an error');
+						}
+
+					 });
+		}
+	}
+	</script>
+<script type="text/javascript">
+	
+//************************************* check session *******************************************//
+var check_session;
+function CheckForSession(baseUrl) {
+    //alert(1);
+    //console.log(baseUrl);
+    var str="chksession=true";
+    jQuery.ajax({
+            type: "POST",
+            url         : baseUrl+"user/checksession",
+            data: str,
+            cache: false,
+            success: function(res){
+                
+                if(parseInt(res) != 1) {
+                    if(parseInt(res) != 2) {
+                        $("#error-pop").trigger("click");                                                        
+            
+                    }else{
+                        
+                        document.location.href = baseUrl+"/index/logout";
+                        $('#popup_container').hide();
+                        return false; 
+                    }
+            }
+        }
+    });
+}
+
+ setInterval(function(){ CheckForSession(baseUrl); }, 18000);
+
+function closepop(){    
+    document.location.href = baseUrl+"/index/logout";     
+}
+function yespop(){
+    window.location=document.URL;
+}
+function CheckForSessionpop(baseUrl) {
+var ua = window.navigator.userAgent;
+var msie = ua.indexOf("MSIE ");
+        var str="chksession=true";
+        jQuery.ajax({
+                type: "POST",
+                url         : baseUrl+"user/checksession",
+                data: str,
+                cache: false,
+                success: function(res){
+                    if(parseInt(res) != 1) {
+					$('#popup_container').show();
+					$(".fancybox-wrap ").empty();
+					$('#fancybox-overlay').remove();
+					
+					
+					
+						if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) { 
+							document.execCommand("Stop");
+						} else {
+						
+							document.location.href = baseUrl+"/index/logout";							
+							window.stop();
+						}
+						
+						document.location.href = baseUrl+"/index/logout";
+						return false;
+                    }
+                }
+        });
+}
+
+
+
+// $(document).ajaxStart(function(evt, request, settings){
+//    CheckForSession(baseUrl);
+// });
+
+//************************************* check session *******************************************// 
+// $(function() {
+//  $("input, select, textarea, radio, checkbox").on("change", function(){
+//         CheckForSession(baseUrl);
+//     });  });
+	
+</script>
+
+<?php } ?>
+<style>
+.alertstyle { position: fixed !important;  z-index: 99999 !important; padding: 0px !important; margin: 0px !important; min-width: 300px !important; max-width: 300px !important; top: 35% !important; left: 41% !important; }
+
+@media only screen and (min-width:320px) and (max-width: 479px)  { .alertstyle { left: 4% !important; }}
+@media only screen and (min-width:480px) and (max-width: 640px)  { .alertstyle { left: 14% !important; }}
+.modal-header {
+    background-color: #34455e !important;
+    color: white !important;
+    text-align: center !important;
+}
+.btn-default {
+    background-color: #39b54a !important;
+    border-color: #39b54a !important;
+    color: white !important;
+}
+</style>

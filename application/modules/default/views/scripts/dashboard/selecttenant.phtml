@@ -1,0 +1,8 @@
+<select name="tenant" id="tenant" onchange="showTenantUser(this.value)" class="all_select">
+	<option value="">Select..</option>
+	<?php if($this->tnData!=''){
+		   foreach($this->tnData as $tn){?>
+			   <option value="<?php echo $tn->id?>"><?php echo stripslashes($tn->tenantName); ?></option>
+			<?php }?>   
+	<?php }?>	
+</select>

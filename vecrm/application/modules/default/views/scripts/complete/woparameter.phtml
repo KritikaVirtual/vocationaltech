@@ -1,0 +1,141 @@
+<?php
+   echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/complete_workorder.js');
+   $wpData = $this->wpData;
+   $default_data = array('status_closed'=>1, 'billable'=>'', 'inc_tnt_rqt'=>'', 'email_tenant'=>'',
+                        'sale_tax'=>'0','auto_charge'=>'0','dft_markup'=>'15','override_markup'=>'0',
+                         'time_in_start'=>'8:00 AM', 'time_in_incmt'=>'30 Minutes','time_min_charge'=>'30 Minutes');
+   $wparam = '';
+   
+   if($wpData!=''){
+	   $wparam = $wpData;
+   }else{
+	   $wparam = $default_data;
+   }                      
+?>
+
+<div class="woparam-section">
+	 <span>Work Order Defaults</span>
+	 <div id="wpm_form_div">
+		 <form name="param_work_order" id="param_work_order" post="">			  
+			   <div class="wo_row">
+				  <label>Status Closed:</label>
+				  <div class="wo_row_ibox">
+					  <span class="field_error" id="tenant_error"></span>
+					   <input type="checkbox" name="status_closed" id="status_closed" value="1" <?php echo ($wparam['status_closed']=='1')?'checked="checked"':'';?>/>
+					   Change Status Closed
+				  </div>
+			  </div>
+			   <div class="wo_row">
+				  <label>Billable:</label>
+				  <div class="wo_row_ibox">
+					  <span class="field_error" id="date_error"></span>
+				      <input type="checkbox" name="billable" id="billable" value="1" <?php echo ($wparam['billable']=='1')?'checked="checked"':'';?>/>
+					   Check to default all work order as billable
+				   </div>   
+			  </div>
+			   <div class="wo_row">
+				  <label>Include Tenant Request:</label>
+				  <div class="wo_row_ibox">
+					  <span class="field_error" id="time_error"></span>
+				      <input type="checkbox" name="inc_tnt_rqt" id="inc_tnt_rqt" value="1" <?php echo ($wparam['inc_tnt_rqt']=='1')?'checked="checked"':'';?>/>
+					   Check to show Tenant Request in Invoice
+				   </div>   
+			  </div>
+			  <div class="wo_row">
+				  <label>Email Tenant When Completed:</label>
+				  <div class="wo_row_ibox">
+					  <span class="field_error" id="create_user_error"></span>
+					  <div id="create_user_dropdown">
+						  <input type="checkbox" name="email_tenant" id="email_tenant" value="1" <?php echo ($wparam['email_tenant']=='1')?'checked="checked"':'';?>/>
+					      Send an e-mail inform tenant wo is completed
+					  </div>
+				  </div>
+			  </div>
+			  <div class="wo_row">
+				  <label>Sales Tax %:</label>
+				  <input type="text" name="sale_tax" id="sale_tax" value="<?php echo $wparam['sale_tax'];?>" />
+			  </div>
+			   <div class="wo_row">
+				  <label>Automatically Charge :</label>
+				  <select name="auto_charge" id="auto_charge">
+					  <option value="1" <?php echo ($wparam['auto_charge']=='1')?'selected="selected"':'';?>>Yes</option>
+					  <option value="0" <?php echo ($wparam['auto_charge']=='0')?'selected="selected"':'';?>>No</option>
+				  </select>
+			  </div>
+			   <div class="wo_row">
+				  <label>Default Mark-up %:</label>
+				  <input type="text" name="dft_markup" id="dft_markup" value="<?php echo $wparam['dft_markup'];?>"/>
+			  </div>
+			  <div class="wo_row">
+				  <label>Override pre-defined Mark-ups:</label>
+				  <div class="wo_row_ibox">
+					    <select name="override_markup" id="override_markup">
+							  <option value="1" <?php echo ($wparam['override_markup']=='1')?'selected="selected"':'';?>>Yes</option>
+							  <option value="0" <?php echo ($wparam['override_markup']=='0')?'selected="selected"':'';?>>No</option>
+						  </select>
+						  Select "Yes" to over ride Mark-up set in the Material, Labor
+						  and other console(s)
+				  </div>
+			  </div>
+			  <span class="heading">Work Order Time Defaults</span>
+			  <div class="wo_row">
+				  <label>Time-in-start:</label>
+				  <div class="wo_row_ibox">
+					  <span class="field_error" id="worequest_error"></span>
+					  <select name="time_in_start" id="time_in_start">
+						   <?php 
+								$start = strtotime('5:00am');
+								$end = strtotime('9:00am');
+								for( $i = $start; $i <= $end; $i += 3600) 
+								{
+									//$selected = ( $rounded_time == $i) ? ' selected="selected"' : '';
+									echo '<option value="'.date('g:i A', $i).'"';
+									echo  (date('g:i A', $i)==$wparam['time_in_start'])?' selected="selected"' : '';
+									echo '>' . date('g:i A', $i) . '</option>';
+								}
+						   
+						   ?>
+						   </select>
+				  </div>	  
+			  </div>
+			  <div class="wo_row">
+				  <label>Time-in Increment:</label>
+				  <div class="wo_row_ibox">
+					  <span class="field_error" id="worequest_error"></span>
+					  <select name="time_in_incmt" id="time_in_incmt">
+						   <?php 
+								$time_inc = array('05 Minutes','10 Minutes','15 Minutes','20 Minutes','25 Minutes','30 Minutes');
+								foreach( $time_inc as $tnc) 
+								{
+									$selected = ( $wparam['time_in_incmt'] == $tnc) ? ' selected="selected"' : '';
+									echo '<option value="'.$tnc.'" '.$selected.'>' .  $tnc . '</option>';
+								}
+						   
+						   ?>
+						   </select>
+				  </div>	  
+			  </div>
+			  <div class="wo_row">
+				  <label>Time (minimum charge)	:</label>
+				  <div class="wo_row_ibox">
+					  <span class="field_error" id="worequest_error"></span>
+					  <select name="time_min_charge" id="time_min_charge">
+						   <?php 
+								$time_charge = array('05 Minutes','10 Minutes','15 Minutes','20 Minutes','25 Minutes','30 Minutes','45 Minutes','1 Hour');
+								foreach( $time_charge as $tch) 
+								{
+									$selected = ( $wparam['time_min_charge'] == $tch) ? ' selected="selected"' : '';
+									echo '<option value="'.$tch.'"  '.$selected.'>' .  $tch . '</option>';
+								}
+						   
+						   ?>
+						   </select>
+				  </div>	  
+			  </div>
+			  <div class="buttons">
+				   <button type="button" name="save" id="save" value="Save" onclick="updateBuildOpt('<?php echo $this->bId?>')">Save</button>
+				   <button type="button" name="cancel" id="cancel" value="Cancel" onclick="cancelWoParam()">Cancel</button>
+			  </div>
+		 </form>
+	 </div>
+</div>

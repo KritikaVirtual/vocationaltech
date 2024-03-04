@@ -1,0 +1,81 @@
+<?php 
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/vendor.js');
+
+?>
+<div class="container-right" id="add-tenant-data">
+<section class="w-48 fr ch-home-form">
+<section class="ch-form-header">
+	<h3>Edit Alternate Vendor Contact</h3>
+    </section>
+			 <div class="vendor-user-data">
+		        <?php if(!empty($this->mvId)){
+					   if($this->mvData){
+						   $mvData = $this->mvData[0];
+						   $materialData = $this->materialData[0];						   
+					?>
+				  <div class="form_head">
+						<span><?php echo $materialData['description'];?> </span>
+						<?php if($this->message && $this->message['msg']!=''){?>
+						   <span class="error-msg"><?php echo $this->message['msg'];?></span>
+						<?php }?>
+				   </div>
+				   
+					  <form name="addNewVContact" id="addNewVContact" action="<?php echo BASEURL.'material/editvendorcontact/mid/'.$mvData['material'];?>" method="post">
+						  <input type="hidden" value="<?php echo $mvData['mvId'];?>" name="mvId" id="mvId"/>
+						  <input type="hidden" value="<?php echo $materialData['buildingId']?>" name="building" id="building"/>
+						  <input type="hidden" value="<?php echo $mvData['material']?>" name="mid" id="mid"/>
+						  <input type="hidden" value="<?php echo $mvData['email'];?>" name="current_email" id="current_email"/>						  						  					  						  					  						  					  
+						 
+						  <div class="row">	
+							<label>First name :<span class="required">*</span></label><span class="field_error" id="vendor_name-error"></span> 	
+							<div class="row_vender_input">
+                            <input type="text"  id="vendor_name" class="" name="vendor_name" value="<?php echo $mvData['vendor_name'];?>">
+                            </div>
+						 </div>	
+						<div class="row">	
+							
+							<label>Last Name :<span class="required">*</span></label><span class="field_error" id="contact-error"></span> 
+                            <div class="row_vender_input">	
+							<input type="text" id="contact" class="" name="contact" value="<?php echo $mvData['contact'];?>">
+                            </div>
+						</div>	
+						 <div class="row">
+							<label>E-mail :</label> <span class="field_error" id="email-error"></span>
+                            <div class="row_vender_input">
+							<input type="text" id="email" name="email" value="<?php echo $mvData['email'];?>">
+                            </div>
+						   </div>	
+						<div class="row">	
+							
+							<label>Phone Number :<span class="required">*</span></label><span class="field_error" id="phone_number-error"></span>
+                            <div class="row_vender_input"> 	
+							<input type="text" id="phone_number"  name="phone_number" value="<?php echo $mvData['phone_number'];?>">
+                            </div>
+						</div>
+						<div class="row">	
+							<label>Cell Number :</label>	
+                            <div class="row_vender_input">						 		
+							<input type="text" id="cell_number" class="" name="cell_number"  value="<?php echo $mvData['cell_number'];?>">
+                            </div>
+						</div>	
+						
+						<div class="row">
+							<label>Vendor Part No. :</label>
+                            <div class="row_vender_input">
+							     <input type="text" id="part_number" class="" name="part_number"  value="<?php echo $mvData['part_number'];?>">
+                            </div>
+						</div>											
+							<div class="confirmBtn float_none">
+								<input type="reset" value="Reset" name="cancel" class="cancel"/>
+								<input type="button" value="Confirm" name="next" class="confirm next" onclick="editVendorContact()"/>
+								<input type="button" value="Cancel" name="cancel" class="cancel" onclick="cancelVendorContact()"/>
+							</div>
+					  </form>
+				     <?php }else
+				           echo 'Invalid Page URL';
+				     } else echo 'Invalid Page URL';?> 
+			  </div>
+              </section> 
+			  </div>
+			  
+

@@ -1,0 +1,33 @@
+<div class="success_message_vendor" style="text-align:center;width:100%;font-weight:bold;color:red;"></div>				  			
+						<?php if($this->message && $this->message['msg']!=''){?>
+						   <span class="error-msg"><?php echo $this->message['msg'];?></span>
+						<?php }?> 
+				 
+<h1>Add Work Order</h1>
+			    <div class="form_fields">
+				<div class="loader loaderpop" style="">
+
+</div> <div id="batch_error" class="batch_error"></div>
+					<form name="batchform" >
+					<div class="row">
+							<label>Select Work Order<span>*</span></label>
+                            <div class="cv-pselect col-sm-8">
+								<div id="vendor_dropdown">									
+									   <select id="batchdropdown">  
+                                           <option value="">Select Work Order</option>   
+                                              <?php
+											  if($this->worklistingbybatch){
+                                                 foreach($this->worklistingbybatch as $value) {?>
+                                            <option value="<?php echo $value->woId; ?>"> <?php echo $value->wo_number; ?> </option>
+                                             <?php } }?>
+                                        </select>
+								  </div>
+                            </div>
+						</div>
+						<div class="confirmBtn float_none">
+							<input type="button" value="Save" onclick="addWorkBatch(<?php echo $this->batchnumber  ?>);" name="SaveVendor" class="confirm next" />
+							<input type="button" value="Cancel" name="cancel" class="cancel" onclick="cancelWorkBatch()"/>
+						</div>
+					</form>
+				</div>
+     

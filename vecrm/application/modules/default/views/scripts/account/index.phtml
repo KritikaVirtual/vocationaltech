@@ -1,0 +1,165 @@
+<script src="<?php echo BASEURL . 'public/js/account.js'?>"></script>
+<div class="loader" style="display:none;" > <img src="<?php echo BASEURL.'public/images/loader.gif';?>"/></div>
+<?php 
+/*
+ Add company form. 
+*/
+$order = $this->order;
+   $dir = $this->dir;
+   $cndir = 'ASC';
+   $andir = 'ASC';
+   $sdir = 'ASC';
+   if($order=='companyName')
+      $cndir = ($dir=='ASC')?'DESC':'ASC';
+   else if($order=='acnum')
+      $andir = ($dir=='ASC')?'DESC':'ASC';
+   else if($order=='status')
+      $sdir = ($dir=='ASC')?'DESC':'ASC';
+?>
+<div id="msg" class="welcome_text"><?php $am = new Zend_Session_Namespace('account_message'); 
+		 echo $am->msg;
+		   $am->setExpirationSeconds(1);
+		 ?></div>
+<div class="acc_company_block_main" style="display:none" id="acc_company_block">	
+<div id="ac_company_popup" style="display:none;"></div>	 
+<div style="display:none" id="addcompanydiv" class="acc_company_block">
+<div class="add_company_head"><h3>Add New Company</h3></div>
+<div class="add_company_form ac-comp-fdiv">
+	<form method="post" name="addcompanyform" id="addcompanyform"  enctype="multipart/form-data" action="<?php echo BASEURL.'account/savecompany';?>">
+            <div class="ac-form-row">
+                <label>Company Name :</label> 
+                <div class="ac-form-ibox">
+                    <span id="cNameErr" class="cNameErr2"></span>
+                    <input type="text" name="companynamee" id="companynamee" onchange="findCompany(this);" value="" maxlength="40">
+                </div>
+             </div>
+             <div class="ac-form-row">    
+			<label>Account Number :</label> <div class="ac-form-ibox"><span id="acNumErr" class="cNameErr2"></span>
+			<input name="accountNumber" id="accountNumber" type="text" maxlength="10" onchange="findAccNo(this);"  value="<?php echo rand(1000, 100000);?>">   </div>
+             </div>
+             <div class="ac-form-row">  
+			<label>Activation Date :</label><div class="ac-form-ibox"><span id="acDateErr" class="cNameErr2"></span><input type="text" name="activationDate" id="activationDate" class="cac_date">
+              </div>
+             </div>
+             <div class="ac-form-row">  
+			<label>Company Logo:</label><div class="ac-form-ibox"><span id="logoErr" class="cNameErr2"></span><input type="file" name="company_logo" id="company_logo">
+              </div>
+             </div>
+             <div class="ac-form-row">  
+			<label class="clear">Active ?</label><div class="ac-form-ibox"> <select id="isactive" name="isactive"><option value="1">Yes</option><option value="0">No</option></select>   </div>
+             </div>
+             
+		   <div class="add-comp-but">
+			   <a href="javascript:void(0)" onclick="checkCompany()">Confirm</a>  <a href="javascript:void(0)" id="canceladdcompany">Cancel</a></div>
+	</form>
+    </div>
+
+
+</div>
+
+</div>
+
+<div class="acc_company_block_main upload_com_logo" style="display:none" id="acc_company_block">	
+	<div style="height: 647px;" id="ac_upload_popup"></div>	
+		<div style="display:none" id="uploadcompanydiv" class="acc_company_block">
+
+			<div class="add_logo_head"><h3>Change Company Logo</h3></div>
+				<div class="upload_logo">
+					<form method="post" name="uploadlogoform" id="uploadlogoform" enctype="multipart/form-data" action="<?php echo BASEURL.'account/updatelogo';?>">
+							<div class="logo-form-row">
+							<label>Company Logo:</label><div class="logo-form-ibox"><span id="logoError" class="cNameErr2"></span><input type="file" name="company_logo1" id="company_logo1">
+							  </div>
+                         </div>
+							<input type="hidden" name="cust_id" id="cust_id"/>
+						    <div class="add-comp-but">
+							   <a href="javascript:void(0)" onclick="uploadLogo()">Upload</a>  <a href="javascript:void(0)" id="canceluploadlogoform">Cancel</a>
+							</div>
+					</form>
+				</div>   
+			</div>
+		</div>   
+
+<?php 
+/*
+ Comapny listing and edit form section. 
+*/
+?>
+<input type="hidden" name="page" id="page" value="<?php echo $this->page;?>"/>
+
+
+
+<div class="panel-body" id="companyListData">
+      <div class="table-responsive">
+      
+     
+      <table id="dataTables-example" class="table table-striped table-bordered table-hover dataTable no-footer">
+                      <thead>
+                        <tr>
+                          <th><a href="<?php echo BASEURL.'account/index/order/acnum/dir/'.$andir?>"
+                            class="<?php if($order=='acnum') echo $dir; else echo 'sorting';?>">Account</a></th>
+                          <th><a href="<?php echo BASEURL.'account/index/order/companyName/dir/'.$cndir?>"
+                           class="<?php if($order=='companyName') echo $dir; else echo 'sorting';?>">Company Name</a></th>
+                          <th>Logo</th>
+                          <th>Date Activated</th>
+                          <th><a href="<?php echo BASEURL.'account/index/order/status/dir/'.$sdir?>"
+                           class="<?php if($order=='status') echo $dir; else echo 'sorting';?>">Active</a></th>
+                          <th><a href="javascript:void(0);" id="openaddcompanydiv">Add Company</a></th>
+                         
+                        </tr>
+                      </thead>
+                      
+                      <tbody>                        
+                        <?php if(count($this->companyListing)>0 && !empty($this->companyListing)){
+							   $i=1;foreach($this->companyListing as $companydata){
+							   
+							   $img_src = ($companydata['company_logo'])?$companydata['company_logo']:'nologo.png';
+							   $view_image_path = BASEURL.'public/images/clogo/'.$img_src;
+							   ?>
+							   <tr class="rowGrid <?php if($i%2!==0){?>utr<?php }?> showCompany" id="compID-<?php echo $companydata['cust_id'];?>">
+								  <td><?php echo $companydata['corp_account_number'];?></td>
+								  <td><?php echo $companydata['companyName'];?></td>
+								  <td><img src="<?php echo $view_image_path;?>" width="50" height="30" class="ac_logo"/></td>
+								  <td><?php echo date('M d, Y',strtotime($companydata['activationDate']));?></td>
+								  <td><?php if($companydata['status']==1){echo "Yes";}else{echo "No";};?></td>
+								  <td><a title="Edit" href="javascript:void(0);" onclick="showEditCompany('<?php echo $companydata['cust_id']?>')"  data-id="<?php echo $companydata['cust_id']?>"><img src="<?php echo BASEURL . 'public/images/edit.png'?>" /></a> <a title="Delete" href="javascript:void(0);" onclick="deleteCompany('<?php echo $companydata['cust_id']?>')" data-id="<?php echo $companydata['cust_id']?>"><img src="<?php echo BASEURL . 'public/images/delete.png'?>" /></a></td>								 
+								</tr>
+								<tr class="rowGrid editComapny" id="editcompID-<?php echo $companydata['cust_id'];?>" style="display:none">
+								  <td><?php echo $companydata['corp_account_number'];?><input type="hidden" id="editAccountNum-<?php echo $companydata['cust_id'];?>" value="<?php echo $companydata['corp_account_number'];?>" maxlength="10" onkeypress="return isNumberKey(event)" readonly></td>
+								  <td><input type="text" id="editCName-<?php echo $companydata['cust_id'];?>" value="<?php echo $companydata['companyName'];?>" maxlength="40"></td>
+								  <td><img src="<?php echo $view_image_path;?>" width="50" height="30"/><a id="openuploadlogoform" name="<?php echo $companydata['cust_id'];?>" href="javascript:void(0);">Change Logo</a></td>
+								  <td><input type="text" id="editActivateDate-<?php echo $companydata['cust_id'];?>" value="<?php echo date('M d, Y',strtotime($companydata['activationDate']));?>" class="showcal" readonly onClick="showCalen(this);"></td>
+								  <td><select id="editActiveInactive-<?php echo $companydata['cust_id'];?>"><option value="1" <?php if($companydata['status']==1){echo "selected=selected";}?>>Yes</option><option value="0" <?php if($companydata['status']==0){echo "selected=selected";}?>>No</option></select></td>
+								  <td><a title="Save" href="javascript:void(0);" onclick="editCompanyy('<?php echo $companydata['cust_id']?>')" data-id="<?php echo $companydata['cust_id']?>" class="editcmpny"><img src="<?php echo BASEURL . 'public/images/yes_icon.png'?>" /></a><a title="Cancel" href="javascript:void(0);" onclick="hideEditCompany('<?php echo $companydata['cust_id']?>')" data-id="<?php echo $companydata['cust_id']?>" class="hideeditcmpny"><img src="<?php echo BASEURL . 'public/images/no_icon.png'?>" /></a></td>								 
+								</tr>
+								 <?php $i++;}}else{?>
+									 <tr>
+									    <td colspan="6"> No records found</td>
+									 </tr>
+						       
+						    <?php }?>
+						    </tbody>
+                      </table>
+                
+     
+       
+       
+	
+      
+      </div>
+      
+      <?php 
+	/*
+	 pagination code. 
+	*/
+	?>   
+	 <?php if(count($this->companyListing)>0 && !empty($this->companyListing)){
+	 echo $this->paginationControl($this->companyListing, 'Sliding', 'pagination.phtml'); 
+	 }?>	
+ </div>
+
+	
+   
+	
+
+<div class="messageBox"></div>
+

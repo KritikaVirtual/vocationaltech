@@ -1,0 +1,148 @@
+<?php
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/report.js');
+
+?>
+
+<div class="middle_btn my_middle_btn create-btn"> 
+    <ul>
+        <li>
+            <a href="#showNewPop" onclick="javascript:showNewPop('<?php echo BASEURL; ?>report/shownewreport/');" class="modalbox create_table_btn">Create Report</a>
+        <li>
+    </ul>
+</div>
+
+<div class="row report_table_row"> 
+    <div class="col-lg-12" style="overflow:auto">
+        <div class="report_table_scroll">
+            <table class="table table-bordered" >
+                <tr class="create_report_thead ">
+                    <!--<th colspan="6" class="thead_heading">Existing Reports <?php echo $this->layout()->whatever; ?></th>-->
+                    
+                <ul class="nav nav-tabs">
+                <?php
+        foreach ($this->reportTabs as $tabs) {
+            
+            ?> 
+                <li <?php if($tabs->did==$this->parent_id){ ?>class="active" <?php } ?>><a class="tab-list"  href="<?php echo $this->baseUrl() . '/report/list/parent_id/' . $tabs->did; ?>"><?php echo $tabs->menu_name; ?> </a> </li> 
+<?php } ?> 
+                </ul>
+                    
+                <tr>
+                <tr class="create_report_thead ">
+                    <th>Report Name </th>
+                    <th>Dashboard Menu </th>
+                    <th>Report Name </th>
+                    <th>Options </th>
+                    <th>Accounts </th>
+                    <th> </th>
+                </tr> 
+                <?php if (isset($this->reportDetails) && !empty($this->reportDetails)) {
+                    foreach ($this->reportDetails as $reportDetails) { ?> 
+                        <tr class="create_report_table">
+                            <td><?php echo $reportDetails->report_name; ?> </td>
+                            <td> <?php echo $reportDetails->menu_name; ?> </td>
+                            <td> <?php echo $reportDetails->report_mrt; ?> </td>
+                            <td><?php
+                                if ($reportDetails->report_option != '') {
+                                    $optionDetails = ltrim($reportDetails->report_option, ',');
+                                    $optionDetails = explode(',', $optionDetails);
+                                    if (is_array($optionDetails)) {
+                                        foreach ($optionDetails as $value) {
+                                            if ($value == '[[++CostCenterNumber]]') {
+                                                echo '&Cost_Center_Number';
+                                            }
+                                            if ($value == '[[++CostCenterAllBuildings]]') {
+                                                echo '&Cost_Center_All_Buildings';
+                                            }
+                                            if ($value == '[[++KeyBuildingNumber]]') {
+                                                echo '&Key_Building_Number';
+                                            } echo ' ';
+                                            if ($value == '[[++KeyBuildingAllBuildings]]') {
+                                                echo '&Key_Building_All_Buildings';
+                                            }
+                                            if ($value == '[[++BatchNumber]]') {
+                                                echo '&Batch_Number';
+                                            } echo ' ';
+                                            if ($value == '[[++WONumber]]') {
+                                                echo '&WO_Number';
+                                            }
+                                            if ($value == '[[++InvoiceNumber]]') {
+                                                echo '&Invoice_Number';
+                                            } echo ' ';
+                                            if ($value == '[[++user_id]]') {
+                                                echo '&User_Id';
+                                            }
+                                            if ($value == '[[++Status_id]]') {
+                                                echo '&Status';
+                                            }
+                                            if ($value == '[[++coi_au_tenant_id]]') {
+                                                echo '&coi_au_tenant_id';
+                                            }
+											if ($value == '[[++coi_tenant_id]]') {
+                                                echo '&coi_tenant_id';
+                                            }
+											if ($value == '[[++coi_au_requir_id]]') {
+                                                echo '&coi_au_requir_id';
+                                            }
+											if ($value == '[[++coi_au_details_id]]') {
+                                                echo '&coi_au_details_id';
+                                            }
+                                        }
+                                    }
+                                }
+                                ?></td>
+                            <td><?php if ($reportDetails->companyName != '') {
+                                    echo $reportDetails->companyName;
+                                } else {
+                                    echo 'All';
+                                } ?></td>
+                            <td>
+                                <a  onclick="showEditReport(<?php echo $reportDetails->rid; ?>)" href="javascript:void(0);" title="Edit"><img src="<?php echo BASEURL . 'public/images/edit.png' ?>"></a> 
+                                <a onclick="deleteReport(<?php echo $reportDetails->rid; ?>)" href="javascript:void(0);" title="Delete"><img src="<?php echo BASEURL . 'public/images/delete.png' ?>"></a>
+                            </td>
+                        </tr>
+    <?php }
+} else { ?>
+                    <tr>
+                        <td colspan='6' style="text-align:center;"> No Report Exists </td>
+                    </tr>
+<?php } ?>
+            </table>
+        </div>
+    </div>
+<?php
+if (isset($this->reportDetails) && !empty($this->reportDetails)) {
+    echo $this->paginationControl($this->reportDetails, 'Sliding', 'pagination.phtml');
+}
+?>
+</div>
+
+
+<a href="#show_Edit_Report_div" id="show_Edit_Report_div_href" class="modalbox"> </a>
+<div id="show_Edit_Report_div" class="show_Edit_Report_div" style="display:none" ></div> 
+
+<script>
+    function showNewPop(url) {
+        CheckForSessionpop(baseUrl);
+        //$('form#first_form input#tenantName').trigger('click');
+        $('a[href="#showNewPop"]').fancybox({
+            type: 'iframe',
+            href: url,
+            width: 750,
+            height: 600,
+            'beforeClose': function () {
+                $('.loader').hide();
+            },
+            'afterLoad': function () {
+                $.fancybox.hideLoading();
+                $('.loader').show();
+                setInterval(function () {
+                    $('.loader').hide();
+                }, 5000);
+            },
+            afterShow: function () {
+
+            }
+        });
+    }
+</script>

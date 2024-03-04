@@ -1,0 +1,33 @@
+<div class="container-right">
+<section class="w-48 fr ch-home-form" style="z-index:9999">
+<section class="ch-form-header ">
+<h3>New Building Setup Wizard</h3>
+</section>
+<div class="gridContainer">
+<div class="tableGrid">
+                             
+              <form id="addNewBuilding"><input type="hidden" id="companyID" name="companyID" value="'.$cust_id.'" >
+				<label>(Auto Fill) Account Number :</label> <input type="text" name="accountNumber" class="" id="accountNumber" value="" disabled="disabled" >
+				<label>Cost Center :</label> 	<input type="text" name="costCenter" class="" id="costCenter" required ><span class="costCenterErr"></span>
+				<label>Building Name :</label> 	<input type="text" name="buildingName" class="" id="buildingName" required ><span class="buildingNameErr"></span>
+				<label>Address :</label>		<input type="text" name="address" class="" id="address"  required><span class="addressErr"></span>
+				<label>Address2 :</label> 		<input type="text" name="address2" class="" id="address2" ><span class="address2Err"></span>
+				<label>City :</label>			<input type="text" name="city" class="" id="city" required ><span class="cityErr"></span>
+				<label>State :</label> 			<input type="text" name="state" class="" id="state" required ><span class="stateErr"></span>
+				<label>Postal Code :</label> 	<input type="text" name="postalCode" class="" id="postalCode" required ><span class="postalCodeErr"></span>
+				<label>Phone Number :</label> 	<input type="text" name="phoneNumber" class="" id="phoneNumber" required ><span class="phoneNumberErr"></span>
+				<label>Fax Number :</label> 	<input type="text" name="faxNumber" class="" id="faxNumber" required ><span class="faxNumberErr"></span>
+				<label>Active? :</label> <select name="status" class="status" id="status" required>
+								<option value="1">Yes</option>
+								<option value="0">No</option>
+								</select>
+				<div class="confirmBtn"><input type="submit" onClick="return addNewBuilding();" class="confirm" name="confirm" value="Confirm">
+					<input type="reset" class="cancel" name="cancel" value="Cancel"></div></form   
+              
+		</div>
+</div>
+
+</section>
+
+
+</div>

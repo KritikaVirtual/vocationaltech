@@ -1,0 +1,31 @@
+<?php
+$eqpManual = $this->eqpManual;
+$eqpDetail = $this->eqpDetail;
+?>
+<div class="manual-pdf">
+    <ul>
+        <?php
+        if (!empty($eqpDetail->Equipment_Manual)) {
+            ?>
+            <li><?php echo $eqpDetail->Equipment_Manual; ?><span><a onclick="deletemanualpdf('',<?php echo $eqpDetail->AU_Equipment_Detail_ID; ?>)"><img src="<?php echo $this->baseUrl(); ?>/public/images/delete.png"></a></span></li>
+
+
+            <?php
+            // Listing the multiple of pdf file
+            foreach ($eqpManual as $val) {
+                ?> 
+
+                <li><?php echo $val->Equipment_Manual; ?><span><a onclick="deletemanualpdf(<?php echo $val->AU_Equipment_Manual_ID; ?>, <?php echo $val->AU_Equipment_Detail_ID; ?>)"><img src="<?php echo $this->baseUrl(); ?>/public/images/delete.png"></a></span></li> 
+                <?php
+            }
+        } else if (count($eqpManual) > 0) {
+            // Listing the multiple of pdf file
+            foreach ($eqpManual as $val) {
+                ?>
+                <li><?php echo $val->Equipment_Manual; ?><span><a onclick="deletemanualpdf(<?php echo $val->AU_Equipment_Manual_ID; ?>, <?php echo $val->AU_Equipment_Detail_ID; ?>)"><img src="<?php echo $this->baseUrl(); ?>/public/images/delete.png"></a></span></li> 
+                <?php
+            }
+        }
+        ?>
+    </ul>
+</div>

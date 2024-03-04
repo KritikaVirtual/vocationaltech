@@ -1,0 +1,133 @@
+<?php
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/tenant.js');
+$tenantData = $this->tenantData;
+$tenantadmin = $this->tenantadmin;
+?>
+<div class="container-right" id="add-tenant-data">
+	<span id="page_heading" class="tu-heading">
+		<h3>Tenant Information (EDIT)</h3>
+	</span>
+	<div class="tenant-user-data">
+
+		<div class="form_head">
+			<div class="success_message" style="text-align:center;width:100%;font-weight:bold;color:red;"></div>
+			<span><?php echo stripslashes($tenantData->tenantName); ?> </span>
+			<?php if ($this->message && $this->message['msg'] != '') { ?>
+				<span class="error-msg"><?php echo $this->message['msg']; ?></span>
+			<?php } ?>
+		</div>
+		<section class="w-48 fr ch-home-form">
+			<?php if (!empty($tenantadmin[0]->role_id) && $tenantadmin[0]->role_id == 5) { ?>
+				<form name="editUser" id="editUser" class="tenantadmin" action="<?php echo BASEURL . 'tenant/edittuser/tuId/' . $this->tuserDetial->uid; ?>" method="post">
+					<input type='hidden' id='tId' name='tId' value="<?php echo $tenantData->id; ?>">
+                    <input type='hidden' id='tenanttype' name='tenanttype' value="">
+					<div class="row">
+						<label>Tenant Name :<span class="required">*</span></label> <span class="tanameErr" id="taname-error"></span>
+						<div class="tt-input-div">
+							<input type="text" id="tenantName" name="tenantName" value="<?php echo stripslashes(htmlentities($tenantData->tenantName)); ?>">
+						</div>
+					</div>
+					<div class="row">
+						<label>Tenant Contact :<span class="required">*</span></label><span class="maincontactErr" id="maincontact-error"></span>
+						<div class="tt-input-div">
+							<input type="text" required id="tenantContact" class="status" name="tenantContact" value="<?php echo stripslashes(htmlentities($tenantData->tenantContact)); ?>">
+
+						</div>
+					</div>
+					<div class="row">
+						<label>Phone Number :<span class="required">*</span></label>
+						<span class="uofficeErr" id="office-phone-error"></span>
+						<div class="tt-input-div">
+							<input type="text" id="phone" class="" name="phone" value="<?php echo htmlentities($tenantData->phoneNumber); ?>">
+						</div>
+					</div>
+					<div class="row row_textarea">
+						<label>Billing Address :<span class="required">*</span></label>
+						<span class="uofficeErr" id="office-bill-error"></span>
+						<div class="tt-input-div">
+							<textarea name='billtoAddress' id='billtoAddress' rows="5"> <?php echo htmlentities($tenantData->billtoAddress); ?></textarea>
+						</div>
+					</div>
+
+					<div class="confirmBtn">
+						<input type="button" value="Save" name="next" id='edit_tenant_admin' class="confirm next" onclick="editTenantAdmin()" />
+						<input type="button" value="Cancel" name="cancel" class="cancel" onclick="cancelUser()" />
+					</div>
+				</form>
+			<?php } else { ?>
+				<form name="editUser" id="editUser" action="<?php echo BASEURL . 'tenant/edittuser/tuId/' . $this->tuserDetial->uid; ?>" method="post">
+					<input type='hidden' id='tId' name='tId' value="<?php echo $tenantData->id; ?>">
+
+					<div class="row">
+						<label>Tenant Name :<span class="required">*</span></label> <span class="tanameErr" id="taname-error"></span>
+						<div class="tt-input-div">
+							<input type="text" id="tenantName" name="tenantName" value="<?php echo stripslashes(htmlentities($tenantData->tenantName)); ?>">
+						</div>
+					</div>
+					<div class="row">
+						<label>Main Contact :<span class="required">*</span></label><span class="maincontactErr" id="maincontact-error"></span>
+						<div class="tt-input-div">
+							<select required id="main_contact" class="status" name="main_conact">
+								<?php
+								foreach ($tenantuser as $tenantuserdetails) {
+									echo '<option value="' . $tenantuserdetails->uid . '" ';
+									echo ($tenantuserdetails->main_contact == 1) ? 'selected' : '';
+									echo '>' . stripslashes(htmlentities($tenantuserdetails->lastName)) . ', ' . stripslashes(htmlentities($tenantuserdetails->firstName)) . '</option>';
+								}
+								?>
+							</select>
+						</div>
+					</div>
+
+					<div class="row">
+						<label>Suite/Location :<span class="required">*</span></label><span class="usuiteErr" id="suite-error"></span>
+						<div class="tt-input-div">
+							<input type="text" required="" id="suite_location" class="" name="suite_location" value="<?php echo htmlentities($tenantData->suite); ?>">
+						</div>
+					</div>
+					<div class="row">
+						<label>Main Contact Phone Number :<span class="required">*</span></label>
+						<span class="uofficeErr" id="office-phone-error"></span>
+						<div class="tt-input-div">
+							<input type="text" id="phone" class="" name="phone" value="<?php echo htmlentities($tenantData->phoneNumber); ?>">
+						</div>
+					</div>
+					<div class="row row_textarea">
+						<label>Billing Address :<span class="required">*</span></label>
+						<span class="uofficeErr" id="office-bill-error"></span>
+						<div class="tt-input-div">
+							<textarea name='billtoAddress' id='billtoAddress'> <?php echo htmlentities($tenantData->billtoAddress); ?></textarea>
+						</div>
+					</div>
+
+					<div class="confirmBtn">
+						<input type="button" value="Save" name="next" id='edit_tenant_admin' class="confirm next" onclick="editTenantAdmin()" />
+						<input type="button" value="Cancel" name="cancel" class="cancel" onclick="cancelUser()" />
+					</div>
+				</form>
+			<?php } ?>
+
+		</section>
+	</div>
+</div>
+
+<script type="text/javascript">
+	$("#phone").mask("?999.999.9999");
+	$(function() {
+		$(".modalbox").fancybox({
+			'openEffect': 'none',
+			fitToView: true
+		});
+		$("#expiration_date").datepicker({
+			changeMonth: true,
+			changeYear: true,
+			minDate: 0
+		});
+		$("#edit_expiration_date").datepicker({
+			changeMonth: true,
+			changeYear: true,
+			minDate: 0
+		});
+
+	});
+</script>

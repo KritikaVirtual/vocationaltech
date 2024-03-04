@@ -1,0 +1,118 @@
+<div class="form-section">
+	<div class="workorder_error" id="message"></div>
+	<div class="left-order">
+		<div class="tenant-name">
+			<span>Tenant Name</span>
+			<div>
+					<input type="text" name="tenant_name" id="tenant_name" value="<?php echo $this->tenantData['firstname'].' '.$this->tenantData['lastname'];?>">
+			</div>
+		</div>
+		<div class="suite">
+				<span>Suite/Location</span>
+				<div>
+					<input type="text" name="suite_location" id="suite_location" value="<?php echo $this->tenantData['suite'];?>"/>
+				</div>
+				<div>
+					<textarea name="suite_location2" id="suite_location2"><?php echo $this->tenantData['suite'];?></textarea>
+				</div>
+		</div>
+		<div class="tenant-address" id="tenant_address">
+		   <span><?php echo $this->buildingDetail['buildingName'];?></span>
+		   <span></span>
+		   <span><?php echo $this->tenantData['address1'];?></span>
+		   <?php if($this->tenantData['address2']!=''){?>
+			   <span><?php echo $this->tenantData['address2'];?></span>
+		   <?php }?>
+		   <span>Suite No-<?php echo $this->tenantData['suite'];?></span>
+		   <span><?php echo $this->tenantData['city'];?></span>
+		   <span><?php echo $this->tenantData['state'];?>,<?php echo $this->tenantData['postalCode'];?></span>
+		</div>
+		<div class="email-id">
+				<input type="text" name="email_id" id="email_id" placeholder="Email-id" value="<?php echo $this->tenantData['email']?>"/>
+		</div>
+	</div>
+	<div class="right-order">
+		  <div class="date-requested">
+			  <span>Date Requested</span>
+			  <div>
+				 <input type="text" name="date_requested" id="date_requested" placeholder="YYYY-MM-DD" readonly/>
+			  </div>   
+		  </div>
+		  <div class="time-requested">
+			  <span>Time Requested</span>
+			   <div class="time-field">
+				   <select name="hour" id="hour">
+					   <option value="">Hour</option>
+					   <?php 
+						  for($i=1; $i<=12; $i++){
+							  if($i<10)
+							   $i= '0'.$i;
+							 echo '<option value="'.$i.'">'.$i.'</option>';  
+						  }
+					   ?>
+				   </select> :
+				   <select name="minute" id="minute">
+					   <option value="">Minute</option>
+					   <?php 
+						  for($i=0; $i<60; $i+=5){
+							  if($i<10)
+							   $i= '0'.$i;
+							 echo '<option value="'.$i.'">'.$i.'</option>';  
+						  }
+					   ?>
+				   </select>
+				   <select name="am_pm" id="am_pm">
+					   <option value="am">am</option>
+					   <option value="pm">pm</option>
+				   </select>								   
+				</div>   
+			</div>
+			<div class="building-priority">
+			   <span>Priority</span>
+			   <div class="priority-field">
+				  <select name="priority" id="priority">
+					  <option value="">Select Priority</option>
+					  <?php foreach($this->priorityDetail as $priorData){
+						    echo '<option value="'.$priorData['pid'].'">'.$priorData['priorityName'].'</option>';
+						  }?>
+				  </select>
+			   </div>
+		   </div>
+		   <div class="building-category">
+			   <span>Category</span>
+			   <div class="category-field">
+				  <select name="category" id="category">
+					  <option value="">Select Category</option>
+					  <?php foreach($this->categoryDetail as $catData){
+						    echo '<option value="'.$catData['cat_id'].'">'.$catData['categoryName'].'</option>';
+						  }?>
+				  </select>
+			   </div>
+		   </div>
+		   <div class="main-check-internal">
+			   <div class="check-internal">
+					<input type="checkbox" name="internal_work_order" value="1" checked="checked"/>
+			   </div>
+			   <span>Internal work order only</span>
+		   </div>
+	</div>
+	<div class="work-order-request">
+		  <span>Work Order Request</span>
+		  <div>
+			  <textarea name="work_order_request" id="work_order_request" cols="80" rows="10"></textarea>
+		  </div>
+	</div>
+	<div class="buttons">
+		  <input type="submit" name="save" value="Save" class="confirm"/>
+		  <input type="button" name="cancel" value="Cancel" class="cancel" onclick="cancelUser()"/>
+	</div>
+</div>	
+<script type="text/javascript">
+	$(function() {
+	$( "#date_requested" ).datepicker({
+		 dateFormat:'yy-mm-dd',
+		 changeMonth: true,
+		 changeYear: true,minDate: 0
+		 });
+});
+</script>

@@ -1,0 +1,32 @@
+<?php
+$layoutDetails = $this->layoutDetails;
+$did=$this->did;
+if(!empty($did)){
+    $i=2;
+}else{
+    $i=1;
+}
+echo $i;
+?>
+<tr class="tr-bg"><th>Select</th><th>Design Name </th><th>View PDF</th></tr> 	
+<?php 
+if($layoutDetails) {
+    
+    foreach($layoutDetails as $layoutDetailsVal) { ?>					
+            <tr>
+                <td>
+                    <input type='radio' name='design_id' value="<?php echo $layoutDetailsVal->d_id;  ?>"
+                       <?php echo ($i==1 ||$layoutDetailsVal->d_id==$did ?"CHECKED":"");?> > 
+                </td>
+                <td>
+                    <?php echo $layoutDetailsVal->design_name;  ?> </td><td><?php echo $layoutDetailsVal->attachment;  ?> 
+                </td>
+            </tr>
+
+    <?php $i++;} 
+} else { ?>
+    <tr id='no_design'><td colspan="3">No Room Layout Design!</td></tr>
+<?php 
+} ?>
+
+						

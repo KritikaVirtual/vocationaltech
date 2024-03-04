@@ -1,0 +1,124 @@
+<?php 
+/*
+ * add corresponding js and css 
+ * file in the header.
+ */
+$this->headLink()->appendStylesheet($this->baseUrl() . '/public/tabs.css');
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/category.js');
+ ?>
+
+<div class="container-right" id="companyListData">
+    <?php 
+       /***
+        * building tabs
+        */  
+       if($this->roleId!=1){   
+    if($this->custID!=null && $this->custID && $this->companyListing!='' && $this->companyListing!=false){ 
+			?>	
+		<div id="contents">
+			<ol id="toc">
+				<?php  
+					$j = 1;
+					foreach($this->companyListing as $cb){ ?>
+					<li><a href="<?php echo $this->baseUrl().'/category/recovercategory/bid/'.$cb['build_id']; ?>" <?php if($cb['build_id']==$this->select_build_id) echo 'class="active"';?>><span><?php echo $cb['buildingName']; ?></span></a></li>
+		
+				<?php } ?>
+			</ol>
+			<?php
+			/***
+			 * page content
+			 * 
+			 */
+			?>
+			<?php //print_r($this->priorityDetail)?>
+			<div class="content" id="page-content">
+				<div class="message"></div>
+				<input type="hidden" name="building_id" id="building_id" value="<?php echo $this->select_build_id;?>"/>
+				<div>
+				     <h3>Category for Recovery:</h3>
+				     <div class="message">
+				         <?php
+				            $activate_category = new Zend_Session_Namespace('activate_category');
+				            if(isset($activate_category)){
+								echo $activate_category->msg;
+								$activate_category->msg ='';
+							}
+				         ?>
+				     </div>				     
+				         <section class="w-48 fr ch-home-form">							
+							 <input type="hidden" name="category_page" id="category_page" value="<?php echo $this->page;?>"/>
+							 <table class="category-list" width="100%">
+								 <tr>									 
+									 <th>Categry Name</th>									 
+									 <th>Send E-mail To</th>
+									 <th>Include/Exclude</th>
+									 <th>Active</th>
+									 <th>Action</th>
+								 </tr>
+								 
+								 <?php 
+								      if(!empty($this->categoryDetail)){
+								        foreach($this->categoryDetail as $cat_detail){ 
+								        $priority_name = '';
+								        $status = '';								            								            
+								        ?>
+											<tr class="show-category" id="show_category_id_<?php echo $cat_detail['cat_id']; ?>">
+											    <td><?php echo $cat_detail['categoryName']?></td>												
+												<td>
+												    <?php if($cat_detail['send_email']==''){
+														 echo 'None Selected';
+													   }else{
+														   echo 'Selected';
+													     //echo $cat_detail['send_email'];
+													     }
+														?>
+												</td>
+												<td>
+												   <?php
+												         if($cat_detail['include_exclude']=='' && $cat_detail['visible_status']=='1'){
+															 echo 'Visible to All Tenants';
+														 }else if($cat_detail['visible_status']=='1'){
+															 echo 'Visible to- Selected Tenant';
+														 }else{
+															 echo 'Non visible to- Selected Tenant';
+														 }
+												    ?>
+												</td>
+												<td><?php echo ($cat_detail['status']=='1')?'Yes':'No';?></td>
+												<td class="yesnotooltips">
+													<div>
+														<input type="button" value="Recover" name="recover"  class="confirm" onclick="recoverCategory('<?php echo $cat_detail['cat_id']; ?>')"/>
+													</div>	
+													
+
+												</td>
+											</tr>
+											
+								  <?php }}else{ ?>
+
+								  			<tr>
+												<td colspan="7">No Category available for recovery!!! </td>
+											</tr>
+
+									  <?php }?>									  
+							 </table>
+						 </section>
+						 <?php if(count($this->categoryDetail)>0 && !empty($this->categoryDetail)){
+											echo '<tr><td colspan="5">';
+										 echo $this->paginationControl($this->categoryDetail, 'Sliding', 'pagination.phtml'); 
+										 echo '</td></tr>';
+										 }?>
+						 
+
+		<?php }
+	   else{
+		   echo 'No Building has assign to you.';
+	   }  
+	  }else{?>
+	    You don't have access for this module.
+	  <?php }?>
+	  </div>
+      <div class="messageBox"></div>
+<div class="loader" style="display:none;" ><img src="<?php echo BASEURL.'public/images/loader.gif';?>"><div>
+
+

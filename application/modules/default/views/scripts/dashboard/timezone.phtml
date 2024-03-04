@@ -1,0 +1,50 @@
+<?php
+ $bid= $this->bid;
+ $buildModel = new Model_Building();
+ $build_data = $buildModel->getbuildingbyid($bid);
+ $current_time= date('h:i:s A');
+ if($build_data){
+	 $btimezone = $build_data[0]['timezone'];
+	 if($btimezone!=0){
+		 $tModel = new Model_TimeZone();
+		 $tzonelist = $tModel->getTimeZoneById($btimezone);
+		 $time_zone = $tzonelist[0]['time_value'];
+		 $date = new DateTime(null, new DateTimeZone($time_zone));
+		$current_time =	 $date->format('h:i:s A');
+		$current_date =	 $date->format('m/d/Y');
+	 } else {
+	    $date = new DateTime(null, new DateTimeZone(DEFAULT_TIMEZONE));
+		$current_time =	 $date->format('h:i:s A');
+		$current_date =	 $date->format('m/d/Y');
+	 }
+  }
+?>
+
+
+
+<div>
+					  <div class="form_group">
+						 <div class="workorder_error" id="date_error"></div>
+							<label>Date</label>
+						 
+							<!-- Split button -->
+							<div class="btn-group work_update_select">
+							<input id="date_requested" class="hasDatepicker" type="text" value="<?php echo $current_date;?>" placeholder="mm/dd/yyyy" readonly="true" name="date_requested">
+							  
+							</div>
+						</div>
+					</div>
+					<div >
+					  <div class="form_group">
+						 <div class="workorder_error" id="time_error"></div>
+							<label>Time</label>
+						 
+							<!-- Split button -->
+							<div class="btn-group work_update_select" id="time_request_div">
+								<input type="text" name="time_requested" id="time_requested" value="<?php echo $current_time; ?>" readonly="readonly"/>
+							</div>
+						</div>
+					</div>
+					<div><input type="checkbox" name="m_inter_workorder" value="1"/> Internal work order only</div>
+					
+				

@@ -1,0 +1,1810 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<StiSerializer type="Flex" application="StiReport" version="1.02">
+  <Dictionary type="Dictionary" isKey="true" Ref="1">
+    <Databases count="1" isList="true">
+      <Con_workorders type="Stimulsoft.Report.Dictionary.StiMySqlDatabase" isKey="true" Ref="2">
+        <Alias>Con_workorders</Alias>
+        <ConnectionStringEncrypted>w9qt68YKo6TwTJzc6gghD9Va0YjleKmZYkax7GpctA/DbNkCx0urhWlA7ZDoXOI/08TNqE5Oo5lF
+S83MYgTjH8VW98JIBfPF7FrR3GQAYUbGev3LT0xD3Wo=</ConnectionStringEncrypted>
+        <Name>Con_workorders</Name>
+      </Con_workorders>
+    </Databases>
+    <DataSources count="1" isList="true">
+      <rsMainInfo type="Stimulsoft.Report.Dictionary.StiMySqlSource" isKey="true" Ref="3">
+        <Alias>rsMainInfo</Alias>
+        <Columns count="18" isList="true">
+          <value>Management_Company_Name,System.String</value>
+          <value>Building_Name,System.String</value>
+          <value>Building_Address,System.String</value>
+          <value>Building_Address_2,System.String</value>
+          <value>City_State_Zip,System.String</value>
+          <value>Work_Order_Number,System.String</value>
+          <value>Category,System.String</value>
+          <value>Tenant_Name,System.String</value>
+          <value>Tenant_Suite,System.String</value>
+          <value>Tenant_Contact,System.String</value>
+          <value>Tenant_E_x002D_Mail,System.String</value>
+          <value>Tenant_Phone_Number,System.String</value>
+          <value>Tenant_Request,System.String</value>
+          <value>Management_Logo,System.String</value>
+          <value>WO_Date_Requested,System.String</value>
+          <value>Key_Building_Number,System.String</value>
+          <value>Building_Cost_Center,System.String</value>
+          <value>WO_ID_Link,System.String</value>
+        </Columns>
+        <CommandTimeout>30</CommandTimeout>
+        <Dictionary isRef="1"/>
+        <Name>rsMainInfo</Name>
+        <NameInSource>Con_workorders</NameInSource>
+        <Parameters count="0" isList="true"/>
+        <SqlCommand>Select
+  company.companyName As Management_Company_Name,
+  buildings.buildingName As Building_Name,
+  buildings.address As Building_Address,
+  buildings.address2 As Building_Address_2,
+  Concat(buildings.city, ', ', buildings.state, ' ', buildings.postalCode) As
+  City_State_Zip,
+  work_order.wo_number As Work_Order_Number,
+  category.categoryName As Category,
+  tenant.tenantName As Tenant_Name,
+  tenantusers.suite_location As Tenant_Suite,
+  Concat(u.lastName, ', ', u.firstName) As Tenant_Contact,
+  u.email As `Tenant_E-Mail`,
+  u.phoneNumber As Tenant_Phone_Number,
+  work_order.work_order_request As Tenant_Request,
+  company.company_logo As Management_Logo,
+  Date_Format(work_order.date_requested, '%m/%d/%Y') As WO_Date_Requested,
+  buildings.build_id As Key_Building_Number,
+  buildings.uniqueCostCenter As Building_Cost_Center,
+  work_order.woId As WO_ID_Link
+From
+  work_order Left Join
+  tenant On tenant.id = work_order.tenant Right Join
+  buildings On buildings.build_id = work_order.building Left Join
+  category On category.cat_id = work_order.category Left Join
+  users As u On work_order.create_user = u.uid Left Join
+  company On buildings.cust_id = company.cust_id Left Join
+  tenantusers On u.uid = tenantusers.userId
+Where
+  buildings.build_id In ({buildkey}) And
+  buildings.uniqueCostCenter In ({Cost_Center_Number}) AND
+  work_order.wo_number In ({WO_Number})</SqlCommand>
+      </rsMainInfo>
+    </DataSources>
+    <Relations count="0" isList="true"/>
+    <Report isRef="0"/>
+    <Variables count="6" isList="true">
+      <value>,Total_Labor,Total_Labor,Total_x0020_Labor_x0020_for_x0020_work_x0020_order_x0020_number,System.Double,_x0030_,False,False,False</value>
+      <value>,Total_BuildingSVS,Total_BuildingSVS,Total_x0020_Cost_x0020_of_x0020_Building_x0020_Services,System.Double,_x0030_,False,False,False</value>
+      <value>,Total_Materials,Total_Materials,Total_x0020_amount_x0020_of_x0020_materials_x0020_used_x0020_on_x0020_a_x0020_work_x0020_order,System.Double,_x0030_,False,False,False</value>
+      <value>,Total_Tax,Total_Tax,System.Double,_x0030_,False,False</value>
+      <value>,Total_OutSideSvs,Total_OutSideSvs,System.Double,_x0030_,False,False</value>
+      <value>,Total_Tax_OutSideSVS,Total_Tax_OutSideSVS,System.Double,_x0030_,False,False</value>
+    </Variables>
+  </Dictionary>
+  <EngineVersion>EngineV2</EngineVersion>
+  <GlobalizationStrings count="0" isList="true"/>
+  <MetaTags count="0" isList="true"/>
+  <Pages count="1" isList="true">
+    <Page1 type="Page" isKey="true" Ref="4">
+      <Border>None;Black;2;Solid;False;4;Black</Border>
+      <Brush>Transparent</Brush>
+      <Components count="6" isList="true">
+        <PageHeaderBand1 type="PageHeaderBand" isKey="true" Ref="5">
+          <Brush>Transparent</Brush>
+          <ClientRectangle>0,4,200.66,2</ClientRectangle>
+          <Components count="0" isList="true"/>
+          <Conditions count="0" isList="true"/>
+          <Name>PageHeaderBand1</Name>
+          <Page isRef="4"/>
+          <Parent isRef="4"/>
+        </PageHeaderBand1>
+        <PageFooterBand1 type="PageFooterBand" isKey="true" Ref="6">
+          <Brush>Transparent</Brush>
+          <ClientRectangle>0,265.78,200.66,6</ClientRectangle>
+          <Components count="1" isList="true">
+            <Text77 type="Text" isKey="true" Ref="7">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>94,1.58,106,4</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Arial,6</Font>
+              <Guid>ef563554a7d9ec3d04b0e04644b13f91</Guid>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text77</Name>
+              <Page isRef="4"/>
+              <Parent isRef="6"/>
+              <Text>Vocational Technologies, LLC 2000 - {Today.ToString("YYYY")}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Bottom</VertAlignment>
+            </Text77>
+          </Components>
+          <Conditions count="0" isList="true"/>
+          <Name>PageFooterBand1</Name>
+          <Page isRef="4"/>
+          <Parent isRef="4"/>
+        </PageFooterBand1>
+        <GroupHeaderBand2 type="GroupHeaderBand" isKey="true" Ref="8">
+          <Brush>Transparent</Brush>
+          <ClientRectangle>0,14,200.66,2</ClientRectangle>
+          <Components count="0" isList="true"/>
+          <Condition>{rsMainInfo.Work_Order_Number}</Condition>
+          <Conditions count="0" isList="true"/>
+          <Name>GroupHeaderBand2</Name>
+          <Page isRef="4"/>
+          <Parent isRef="4"/>
+        </GroupHeaderBand2>
+        <GroupHeaderBand1 type="GroupHeaderBand" isKey="true" Ref="9">
+          <Brush>Transparent</Brush>
+          <CanBreak>True</CanBreak>
+          <CanShrink>True</CanShrink>
+          <ClientRectangle>0,24,200.66,70.04</ClientRectangle>
+          <Components count="15" isList="true">
+            <Text34 type="Text" isKey="true" Ref="10">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>Black</Brush>
+              <ClientRectangle>164,0,36,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text34</Name>
+              <Page isRef="4"/>
+              <Parent isRef="9"/>
+              <Text>Work Order NO.</Text>
+              <TextBrush>EmptyBrush</TextBrush>
+              <Type>Expression</Type>
+            </Text34>
+            <Text1 type="Text" isKey="true" Ref="11">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,6.16,200.66,10.16</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,22,Bold</Font>
+              <Guid>25971f6a0f90ad998568131664d11538</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text1</Name>
+              <Page isRef="4"/>
+              <Parent isRef="9"/>
+              <Text>Work Order Service Request</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text1>
+            <Text48 type="Text" isKey="true" Ref="12">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>164,6,36,10</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,20</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text48</Name>
+              <Page isRef="4"/>
+              <Parent isRef="9"/>
+              <Text>{rsMainInfo.Work_Order_Number}</Text>
+              <TextBrush>Red</TextBrush>
+              <Type>DataColumn</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text48>
+            <Image2 type="Image" isKey="true" Ref="13">
+              <AspectRatio>True</AspectRatio>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,0,50.8,20.32</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <DataColumn isNull="true"/>
+              <Guid>abac99fb7dc1c6fb09f370705fbde99f</Guid>
+              <HorAlignment>Right</HorAlignment>
+              <Image/>
+              <ImageURL>https://www.visionworkorders.com/public/images/clogo/{rsMainInfo.Management_Logo}</ImageURL>
+              <Name>Image2</Name>
+              <Page isRef="4"/>
+              <Parent isRef="9"/>
+              <ProcessingDuplicates>Merge</ProcessingDuplicates>
+              <Stretch>True</Stretch>
+            </Image2>
+            <Text7 type="Text" isKey="true" Ref="14">
+              <Brush>Transparent</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>0,20.83,96.52,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <Guid>2a679883398bdb50c55513169f2629fd</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text7</Name>
+              <Page isRef="4"/>
+              <Parent isRef="9"/>
+              <Text>{IIF(rsMainInfo.Building_Name != "", rsMainInfo.Building_Name,"" )}
+{IIF(rsMainInfo.Building_Name!=
+rsMainInfo.Building_Address,rsMainInfo.Building_Address, rsMainInfo.City_State_Zip)}
+{IIF(rsMainInfo.Building_Name!=rsMainInfo.Building_Address, rsMainInfo.City_State_Zip,NULL)}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text7>
+            <Text2 type="Text" isKey="true" Ref="15">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>130,16,70,10</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text2</Name>
+              <Page isRef="4"/>
+              <Parent isRef="9"/>
+              <Text>Phone : {rsMainInfo.Tenant_Phone_Number}
+www.visionworkorders.com</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text2>
+            <Text4 type="Text" isKey="true" Ref="16">
+              <Bookmark>{rsMainInfo.Work_Order_Number} - {rsMainInfo.Tenant_Name}</Bookmark>
+              <Brush>DarkGray</Brush>
+              <ClientRectangle>0,30,74,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12,Bold</Font>
+              <Guid>50e7964f9afbb570628ed4dcaa6cbf73</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text4</Name>
+              <Page isRef="4"/>
+              <Parent isRef="9"/>
+              <Text>Tenant Information</Text>
+              <TextBrush>EmptyBrush</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text4>
+            <Text3 type="Text" isKey="true" Ref="17">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,36,98,30</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text3</Name>
+              <Page isRef="4"/>
+              <Parent isRef="9"/>
+              <Text>{rsMainInfo.Tenant_Name}
+Contact : {rsMainInfo.Tenant_Contact}
+Suite/Location : {rsMainInfo.Tenant_Suite}
+Phone : {rsMainInfo.Tenant_Phone_Number}
+E-Mail : {rsMainInfo.Tenant_E_Mail}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text3>
+            <Text6 type="Text" isKey="true" Ref="18">
+              <Brush>DarkGray</Brush>
+              <ClientRectangle>152,30,48,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12,Bold</Font>
+              <Guid>be7654ce07b503ef628dda23d0a10a94</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text6</Name>
+              <Page isRef="4"/>
+              <Parent isRef="9"/>
+              <Text>Date Recieved</Text>
+              <TextBrush>EmptyBrush</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text6>
+            <Text8 type="Text" isKey="true" Ref="19">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>152,36,48,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text8</Name>
+              <Page isRef="4"/>
+              <Parent isRef="9"/>
+              <Text>{rsMainInfo.WO_Date_Requested}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>DataColumn</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text8>
+            <Text9 type="Text" isKey="true" Ref="20">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,0,200,10</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,14,Bold</Font>
+              <Guid>d8a9771462f2bc6acda64eee0b4bba1e</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text9</Name>
+              <Page isRef="4"/>
+              <Parent isRef="9"/>
+              <Text>{rsMainInfo.Management_Company_Name}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text9>
+            <Text10 type="Text" isKey="true" Ref="21">
+              <Brush>DarkGray</Brush>
+              <ClientRectangle>152,42,48,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12,Bold</Font>
+              <Guid>71971e492182559a7c504ef271505858</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text10</Name>
+              <Page isRef="4"/>
+              <Parent isRef="9"/>
+              <Text>Requested By</Text>
+              <TextBrush>EmptyBrush</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text10>
+            <Text11 type="Text" isKey="true" Ref="22">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>152,48,48,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <Guid>237479230a1924201c364efe6ebf5e50</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text11</Name>
+              <Page isRef="4"/>
+              <Parent isRef="9"/>
+              <Text>{rsMainInfo.Tenant_Contact}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>DataColumn</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text11>
+            <Text12 type="Text" isKey="true" Ref="23">
+              <Brush>DarkGray</Brush>
+              <ClientRectangle>152,54,48,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12,Bold</Font>
+              <Guid>e4633040f3ea093e836f4f007775c174</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text12</Name>
+              <Page isRef="4"/>
+              <Parent isRef="9"/>
+              <Text>Requested By</Text>
+              <TextBrush>EmptyBrush</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text12>
+            <Text13 type="Text" isKey="true" Ref="24">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>152,60,48,8</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <Guid>94b28f1acbd3342778524f008e1676a7</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text13</Name>
+              <Page isRef="4"/>
+              <Parent isRef="9"/>
+              <Text>{rsMainInfo.Category}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>DataColumn</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text13>
+          </Components>
+          <Condition>{rsMainInfo.Tenant_Name}</Condition>
+          <Conditions count="0" isList="true"/>
+          <Name>GroupHeaderBand1</Name>
+          <Page isRef="4"/>
+          <Parent isRef="4"/>
+        </GroupHeaderBand1>
+        <DataBand1 type="DataBand" isKey="true" Ref="25">
+          <Brush>Transparent</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,102.04,200.66,29.32</ClientRectangle>
+          <Components count="2" isList="true">
+            <Text14 type="Text" isKey="true" Ref="26">
+              <Brush>DarkGray</Brush>
+              <ClientRectangle>0,-0.04,200,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12,Bold</Font>
+              <Guid>f2ab4b60344de62b911f4f0771110ddc</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text14</Name>
+              <Page isRef="4"/>
+              <Parent isRef="25"/>
+              <Text>Tenant Information</Text>
+              <TextBrush>EmptyBrush</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text14>
+            <Text5 type="Text" isKey="true" Ref="27">
+              <Brush>Transparent</Brush>
+              <CanBreak>True</CanBreak>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>0,6,200.66,5.32</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Arial,10</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text5</Name>
+              <Page isRef="4"/>
+              <Parent isRef="25"/>
+              <Text>{rsMainInfo.Tenant_Request}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>HotkeyPrefix=None, LineLimit=False, RightToLeft=False, Trimming=None, WordWrap=True, Angle=0, FirstTabOffset=40, DistanceBetweenTabs=20,</TextOptions>
+            </Text5>
+          </Components>
+          <Conditions count="0" isList="true"/>
+          <DataSourceName>rsMainInfo</DataSourceName>
+          <Filters count="0" isList="true"/>
+          <Interaction type="Stimulsoft.Report.Components.StiBandInteraction" isKey="true" Ref="28">
+            <SortingColumn>DataBand1.Tenant_Tenant_Name</SortingColumn>
+          </Interaction>
+          <Name>DataBand1</Name>
+          <Page isRef="4"/>
+          <Parent isRef="4"/>
+          <Sort count="2" isList="true">
+            <value>ASC</value>
+            <value>{rsMainInfo.WO_Number}</value>
+          </Sort>
+        </DataBand1>
+        <GroupFooterBand1 type="GroupFooterBand" isKey="true" Ref="29">
+          <Border>Left, Bottom;Black;1;Solid;False;4;Black</Border>
+          <Brush>Transparent</Brush>
+          <CanShrink>True</CanShrink>
+          <ClientRectangle>0,139.36,200.66,129.02</ClientRectangle>
+          <Components count="80" isList="true">
+            <Text16 type="Text" isKey="true" Ref="30">
+              <Brush>DarkGray</Brush>
+              <ClientRectangle>0,0,200,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12,Bold</Font>
+              <Guid>0677680c11530b62d5904f08a1a0330a</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text16</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <Text>Description of Work</Text>
+              <TextBrush>EmptyBrush</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text16>
+            <Text17 type="Text" isKey="true" Ref="31">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>DarkGray</Brush>
+              <ClientRectangle>0,8,32,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12,Bold</Font>
+              <Guid>cb4b2708892e31dddd214f0a3df684a7</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text17</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <Text>Date Completed</Text>
+              <TextBrush>EmptyBrush</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text17>
+            <Text18 type="Text" isKey="true" Ref="32">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>DarkGray</Brush>
+              <ClientRectangle>72,8,32,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12,Bold</Font>
+              <Guid>642f4654b18fef9bc5ea4f0aa72e0248</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text18</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <Text>Time in</Text>
+              <TextBrush>EmptyBrush</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text18>
+            <Text19 type="Text" isKey="true" Ref="33">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>DarkGray</Brush>
+              <ClientRectangle>136,8,32,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12,Bold</Font>
+              <Guid>b13a631844cda8fe1d074f0ae94613fd</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text19</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <Text>Time out</Text>
+              <TextBrush>EmptyBrush</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text19>
+            <Text15 type="Text" isKey="true" Ref="34">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>32,8,40,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Arial,10</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text15</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text15>
+            <Text21 type="Text" isKey="true" Ref="35">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>104,8,32,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Arial,10</Font>
+              <Guid>1645a3a67755c29c571b4f0d7ce40531</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text21</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text21>
+            <Text22 type="Text" isKey="true" Ref="36">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>168,8,32,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Arial,10</Font>
+              <Guid>884f808a711fe4a58e2f4f0da1f41d29</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text22</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text22>
+            <Text23 type="Text" isKey="true" Ref="37">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,14,200,8</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Arial,10</Font>
+              <Guid>89d2bd03327cecea54e24f0f3ff2d28d</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text23</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text23>
+            <Text24 type="Text" isKey="true" Ref="38">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,22,200,8</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Arial,10</Font>
+              <Guid>94ae5824ea84246a8b884f0f82c23480</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text24</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text24>
+            <Text26 type="Text" isKey="true" Ref="39">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,30,200,8</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Arial,10</Font>
+              <Guid>1739e86e8825f8b0c2774f0fa9336991</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text26</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text26>
+            <Text20 type="Text" isKey="true" Ref="40">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,38,200,8</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Arial,10</Font>
+              <Guid>8090dd9a66e98a9496ca4f0fa933ec38</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text20</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text20>
+            <Text28 type="Text" isKey="true" Ref="41">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,46,200,8</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Arial,10</Font>
+              <Guid>6ba96a31be36b7e0957b4f102912c460</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text28</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text28>
+            <Text25 type="Text" isKey="true" Ref="42">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,54,200,8</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Arial,10</Font>
+              <Guid>2c7da4a19960a9deeb724f1029120b96</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text25</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text25>
+            <Text29 type="Text" isKey="true" Ref="43">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,62,132,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,6,Bold</Font>
+              <Guid>fb71046fee508e7380fb4f10582b66ed</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text29</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <Text>Tenant Approval:</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text29>
+            <Text30 type="Text" isKey="true" Ref="44">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>132,62,68,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,6,Bold</Font>
+              <Guid>e7c868c9136daa2589574f113b79ee7a</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text30</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <Text>Completed By:</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text30>
+            <Text31 type="Text" isKey="true" Ref="45">
+              <Brush>DarkGray</Brush>
+              <ClientRectangle>0,68,100,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12,Bold</Font>
+              <Guid>05226331e78ce4738b674f11d6c19e02</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text31</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <Text>Materials and Parts Used</Text>
+              <TextBrush>EmptyBrush</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text31>
+            <Text32 type="Text" isKey="true" Ref="46">
+              <Border>Left;Black;1;Solid;False;4;Black</Border>
+              <Brush>DarkGray</Brush>
+              <ClientRectangle>100,68,100,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12,Bold</Font>
+              <Guid>4923a91493f07daec6854f123bb18f89</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text32</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <Text>Materials and Parts Used</Text>
+              <TextBrush>EmptyBrush</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text32>
+            <Text33 type="Text" isKey="true" Ref="47">
+              <Border>Left, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,74,20,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>3691c83dcde8120ffa534f131d81dc04</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text33</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <Text>Quantity</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text33>
+            <Text35 type="Text" isKey="true" Ref="48">
+              <Border>Left, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>20,74,60,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>479e2e555cfdae9d1fef4f139a809463</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text35</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <Text>Description</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text35>
+            <Text36 type="Text" isKey="true" Ref="49">
+              <Border>Left, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>80,74,20,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>884a63afb7e07a67446b4f13bda89d31</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text36</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <Text>Unit Cost</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text36>
+            <Text37 type="Text" isKey="true" Ref="50">
+              <Border>AdvBlack;1;None;Black;1;Solid;Black;3;Solid;Black;1;None;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>100,74,36,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>5975bf1cecd173899aba4f1482f0ee40</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text37</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <Text>Employee Name</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text37>
+            <Text38 type="Text" isKey="true" Ref="51">
+              <Border>AdvBlack;1;None;Black;1;Solid;Black;1;Solid;Black;1;Solid;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>136,74,20,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>e2982148f30da503b9f34f14ec809340</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text38</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <Text>Time In</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text38>
+            <Text39 type="Text" isKey="true" Ref="52">
+              <Border>AdvBlack;1;None;Black;1;Solid;Black;1;Solid;Black;1;Solid;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>156,74,20,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>d5c1239c1dc20fd8c8e14f15291feb4e</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text39</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <Text>Time Out</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text39>
+            <Text40 type="Text" isKey="true" Ref="53">
+              <Border>AdvBlack;1;None;Black;1;Solid;Black;1;Solid;Black;1;Solid;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>176,74,24,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>002c474c4c4ce02fe3db4f155be07995</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text40</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <Text>Hour(s) Billed</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text40>
+            <Text41 type="Text" isKey="true" Ref="54">
+              <Border>AdvBlack;0.5;None;Black;0.5;Solid;Black;3;Solid;Black;0.5;None;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>100,80,36,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>63883b695d0c663449604f17868fe442</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text41</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text41>
+            <Text44 type="Text" isKey="true" Ref="55">
+              <Border>AdvBlack;0.5;None;Black;0.5;Solid;Black;0.5;Solid;Black;0.5;None;False;1;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>136,80,20,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>32d37bedc3be812f87c54f17f2767e6f</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text44</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text44>
+            <Text27 type="Text" isKey="true" Ref="56">
+              <Border>AdvBlack;0.5;None;Black;0.5;Solid;Black;0.5;Solid;Black;0.5;Solid;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>156,80,20,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>1487618dcba47f6ba1a34f17f2762d96</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text27</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text27>
+            <Text42 type="Text" isKey="true" Ref="57">
+              <Border>AdvBlack;0.5;None;Black;0.5;Solid;Black;0.5;Solid;Black;0.5;Solid;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>176,80,24,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>427ec76629fa43cb9c5c4f17f276461a</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text42</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text42>
+            <Text49 type="Text" isKey="true" Ref="58">
+              <Border>AdvBlack;0.5;None;Black;0.5;Solid;Black;3;Solid;Black;0.5;None;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>100,86,36,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>67d9cf1539ce1d5167314f182b7f6a36</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text49</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text49>
+            <Text43 type="Text" isKey="true" Ref="59">
+              <Border>AdvBlack;0.5;None;Black;0.5;Solid;Black;0.5;Solid;Black;0.5;None;False;1;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>136,86,20,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>865438495ca4892a605f4f182b7f12ea</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text43</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text43>
+            <Text45 type="Text" isKey="true" Ref="60">
+              <Border>AdvBlack;0.5;None;Black;0.5;Solid;Black;0.5;Solid;Black;0.5;Solid;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>156,86,20,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>ab9215d3cf464767721c4f182b7fec27</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text45</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text45>
+            <Text46 type="Text" isKey="true" Ref="61">
+              <Border>AdvBlack;0.5;None;Black;0.5;Solid;Black;0.5;Solid;Black;0.5;Solid;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>176,86,24,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>ab2e3b25301a3f4a91964f182b7f8080</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text46</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text46>
+            <Text53 type="Text" isKey="true" Ref="62">
+              <Border>AdvBlack;0.5;None;Black;0.5;Solid;Black;3;Solid;Black;0.5;None;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>100,92,36,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>2b04b14359d9c2c5f2aa4f1859608d26</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text53</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text53>
+            <Text47 type="Text" isKey="true" Ref="63">
+              <Border>AdvBlack;0.5;None;Black;0.5;Solid;Black;0.5;Solid;Black;0.5;None;False;1;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>136,92,20,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>84d1d6a25be86f9f58b34f185960bc19</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text47</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text47>
+            <Text50 type="Text" isKey="true" Ref="64">
+              <Border>AdvBlack;0.5;None;Black;0.5;Solid;Black;0.5;Solid;Black;0.5;Solid;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>156,92,20,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>7b57c12fd55ea67c2cc44f185960b37d</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text50</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text50>
+            <Text51 type="Text" isKey="true" Ref="65">
+              <Border>AdvBlack;0.5;None;Black;0.5;Solid;Black;0.5;Solid;Black;0.5;Solid;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>176,92,24,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>9aa6204d803b6a24bc684f185960ced2</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text51</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text51>
+            <Text57 type="Text" isKey="true" Ref="66">
+              <Border>AdvBlack;0.5;None;Black;0.5;Solid;Black;3;Solid;Black;0.5;None;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>100,98,36,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>9d5592e7a34bf301a0b64f1875506c94</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text57</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text57>
+            <Text52 type="Text" isKey="true" Ref="67">
+              <Border>AdvBlack;0.5;None;Black;0.5;Solid;Black;0.5;Solid;Black;0.5;None;False;1;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>136,98,20,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>4fb96623bb16a6eedf384f1875504582</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text52</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text52>
+            <Text54 type="Text" isKey="true" Ref="68">
+              <Border>AdvBlack;0.5;None;Black;0.5;Solid;Black;0.5;Solid;Black;0.5;Solid;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>156,98,20,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>d9b8525c18e8e71c38d14f187550c266</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text54</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text54>
+            <Text55 type="Text" isKey="true" Ref="69">
+              <Border>AdvBlack;0.5;None;Black;0.5;Solid;Black;0.5;Solid;Black;0.5;Solid;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>176,98,24,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>bba6cc51a4ce871dc8464f1875502821</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text55</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text55>
+            <Text61 type="Text" isKey="true" Ref="70">
+              <Border>AdvBlack;0.5;None;Black;0.5;Solid;Black;3;Solid;Black;0.5;None;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>100,104,36,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>565efd30e7ae696a0c204f187f37f107</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text61</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text61>
+            <Text56 type="Text" isKey="true" Ref="71">
+              <Border>AdvBlack;0.5;None;Black;0.5;Solid;Black;0.5;Solid;Black;0.5;None;False;1;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>136,104,20,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>dcda8d030e2703e64f454f187f37880e</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text56</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text56>
+            <Text58 type="Text" isKey="true" Ref="72">
+              <Border>AdvBlack;0.5;None;Black;0.5;Solid;Black;0.5;Solid;Black;0.5;Solid;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>156,104,20,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>b966659f3005445755e04f187f37b122</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text58</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text58>
+            <Text59 type="Text" isKey="true" Ref="73">
+              <Border>AdvBlack;0.5;None;Black;0.5;Solid;Black;0.5;Solid;Black;0.5;Solid;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>176,104,24,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>19ea7d55516e8796e7524f187f370c6b</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text59</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text59>
+            <Text65 type="Text" isKey="true" Ref="74">
+              <Border>AdvBlack;0.5;None;Black;0.5;Solid;Black;3;Solid;Black;0.5;None;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>100,110,36,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>bf1df505e6060a3aa8b04f1892195fdf</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text65</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text65>
+            <Text60 type="Text" isKey="true" Ref="75">
+              <Border>AdvBlack;0.5;None;Black;0.5;Solid;Black;0.5;Solid;Black;0.5;None;False;1;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>136,110,20,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>526e47f9a66a4a82c9684f1892192623</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text60</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text60>
+            <Text62 type="Text" isKey="true" Ref="76">
+              <Border>AdvBlack;0.5;None;Black;0.5;Solid;Black;0.5;Solid;Black;0.5;Solid;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>156,110,20,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>469a847c702aef8c02b04f189219a094</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text62</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text62>
+            <Text63 type="Text" isKey="true" Ref="77">
+              <Border>AdvBlack;0.5;None;Black;0.5;Solid;Black;0.5;Solid;Black;0.5;Solid;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>176,110,24,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>ca3a4dfc33eea6a4c20a4f189219a149</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text63</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text63>
+            <Text69 type="Text" isKey="true" Ref="78">
+              <Border>AdvBlack;0.5;None;Black;0.5;Solid;Black;3;Solid;Black;0.5;None;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>100,116,36,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>c3eb295ccd1e4fe3d83f4f18a3f1330b</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text69</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text69>
+            <Text64 type="Text" isKey="true" Ref="79">
+              <Border>AdvBlack;0.5;None;Black;0.5;Solid;Black;0.5;Solid;Black;0.5;None;False;1;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>136,116,20,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>8e47fc571cd8df2262624f18a3f16829</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text64</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text64>
+            <Text66 type="Text" isKey="true" Ref="80">
+              <Border>AdvBlack;0.5;None;Black;0.5;Solid;Black;0.5;Solid;Black;0.5;Solid;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>156,116,20,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>1976a4cdd1a6c17e840b4f18a3f114a2</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text66</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text66>
+            <Text67 type="Text" isKey="true" Ref="81">
+              <Border>AdvBlack;0.5;None;Black;0.5;Solid;Black;0.5;Solid;Black;0.5;Solid;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>176,116,24,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>7417cb8582e3162edcb74f18a3f1ea02</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text67</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text67>
+            <Text73 type="Text" isKey="true" Ref="82">
+              <Border>AdvBlack;0.5;None;Black;0.5;Solid;Black;3;Solid;Black;0.5;None;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>100,122,36,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>fc74dfeeaba68672a9054f18c1a8588d</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text73</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text73>
+            <Text68 type="Text" isKey="true" Ref="83">
+              <Border>AdvBlack;0.5;None;Black;0.5;Solid;Black;0.5;Solid;Black;0.5;None;False;0.5;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>136,122,20,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>96c60806f1acbc5843f74f18c1a8b628</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text68</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text68>
+            <Text70 type="Text" isKey="true" Ref="84">
+              <Border>AdvBlack;0.5;None;Black;0.5;Solid;Black;0.5;Solid;Black;0.5;Solid;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>156,122,20,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>6b0792e028bfa79230674f18c1a8993c</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text70</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text70>
+            <Text71 type="Text" isKey="true" Ref="85">
+              <Border>AdvBlack;0.5;None;Black;0.5;Solid;Black;0.5;Solid;Black;0.5;Solid;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>176,122,24,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>4f0e3c3bd6b6b7db17004f18c1a8c262</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text71</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text71>
+            <Text76 type="Text" isKey="true" Ref="86">
+              <Border>Left, Bottom;Black;0.5;Solid;False;0.5;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,80,20,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>2d2d384d821b3255dd8f4f23e9e8069a</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text76</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text76>
+            <Text72 type="Text" isKey="true" Ref="87">
+              <Border>Left, Bottom;Black;0.5;Solid;False;0.5;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>20,80,60,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>e84094ceaa148b927e114f23e9e82158</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text72</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text72>
+            <Text74 type="Text" isKey="true" Ref="88">
+              <Border>Left, Bottom;Black;0.5;Solid;False;0.5;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>80,80,20,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>b383d48bc56e22279b174f23e9e877fe</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text74</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text74>
+            <Text80 type="Text" isKey="true" Ref="89">
+              <Border>Left, Bottom;Black;0.5;Solid;False;0.5;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,86,20,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>67a1060b2f5928b1ac5a4f25135783cd</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text80</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text80>
+            <Text75 type="Text" isKey="true" Ref="90">
+              <Border>Left, Bottom;Black;0.5;Solid;False;0.5;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>20,86,60,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>731a27da5a66ff9d248c4f2513570ede</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text75</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text75>
+            <Text78 type="Text" isKey="true" Ref="91">
+              <Border>Left, Bottom;Black;0.5;Solid;False;0.5;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>80,86,20,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>cf226b7b35c10f825fb84f25135708d8</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text78</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text78>
+            <Text83 type="Text" isKey="true" Ref="92">
+              <Border>Left, Bottom;Black;0.5;Solid;False;0.5;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,92,20,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>dd4cd8135ea0bd33bb134f25277ff91e</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text83</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text83>
+            <Text79 type="Text" isKey="true" Ref="93">
+              <Border>Left, Bottom;Black;0.5;Solid;False;0.5;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>20,92,60,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>71872c869031e2ba54d44f25277f141e</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text79</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text79>
+            <Text81 type="Text" isKey="true" Ref="94">
+              <Border>Left, Bottom;Black;0.5;Solid;False;0.5;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>80,92,20,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>c78fc4633921a9778f684f25277f5213</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text81</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text81>
+            <Text86 type="Text" isKey="true" Ref="95">
+              <Border>Left, Bottom;Black;0.5;Solid;False;0.5;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,98,20,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>3307da77909fa10ca1344f253be7d019</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text86</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text86>
+            <Text82 type="Text" isKey="true" Ref="96">
+              <Border>Left, Bottom;Black;0.5;Solid;False;0.5;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>20,98,60,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>01ef00830ca509fa17944f253be7da0f</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text82</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text82>
+            <Text84 type="Text" isKey="true" Ref="97">
+              <Border>Left, Bottom;Black;0.5;Solid;False;0.5;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>80,98,20,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>d4ed6cff7bd542bd1fb74f253be762e1</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text84</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text84>
+            <Text89 type="Text" isKey="true" Ref="98">
+              <Border>Left, Bottom;Black;0.5;Solid;False;0.5;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,104,20,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>8129ae87193848c295f04f25569fdd02</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text89</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text89>
+            <Text85 type="Text" isKey="true" Ref="99">
+              <Border>Left, Bottom;Black;0.5;Solid;False;0.5;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>20,104,60,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>2ea28a1597d7392c44a64f25569fff41</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text85</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text85>
+            <Text87 type="Text" isKey="true" Ref="100">
+              <Border>Left, Bottom;Black;0.5;Solid;False;0.5;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>80,104,20,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>ef514e0c01406a8c12564f25569fcae8</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text87</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text87>
+            <Text92 type="Text" isKey="true" Ref="101">
+              <Border>Left, Bottom;Black;0.5;Solid;False;0.5;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,110,20,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>ef3b7ca22d1cd8a672584f2567470283</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text92</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text92>
+            <Text88 type="Text" isKey="true" Ref="102">
+              <Border>Left, Bottom;Black;0.5;Solid;False;0.5;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>20,110,60,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>e4108d84a5a9950f38d94f256747e656</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text88</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text88>
+            <Text90 type="Text" isKey="true" Ref="103">
+              <Border>Left, Bottom;Black;0.5;Solid;False;0.5;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>80,110,20,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>98b04657c2797914e1844f256747fa4e</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text90</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text90>
+            <Text95 type="Text" isKey="true" Ref="104">
+              <Border>Left, Bottom;Black;0.5;Solid;False;0.5;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,116,20,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>d416531dc17f7d36eef74f258108e656</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text95</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text95>
+            <Text91 type="Text" isKey="true" Ref="105">
+              <Border>Left, Bottom;Black;0.5;Solid;False;0.5;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>20,116,60,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>cf8c7699a6293b8035b44f2581087914</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text91</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text91>
+            <Text93 type="Text" isKey="true" Ref="106">
+              <Border>Left, Bottom;Black;0.5;Solid;False;0.5;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>80,116,20,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>737c0df2729ac4b9bf064f2581084a85</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text93</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text93>
+            <Text98 type="Text" isKey="true" Ref="107">
+              <Border>Left, Bottom;Black;0.5;Solid;False;0.5;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,122,20,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>239108b0bd58307c69804f2592cf8a48</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text98</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text98>
+            <Text94 type="Text" isKey="true" Ref="108">
+              <Border>Left, Bottom;Black;0.5;Solid;False;0.5;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>20,122,60,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>9f43af281a0906fef0644f2592cff82c</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text94</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text94>
+            <Text96 type="Text" isKey="true" Ref="109">
+              <Border>Left, Bottom;Black;0.5;Solid;False;0.5;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>80,122,20,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10,Bold</Font>
+              <Guid>e287d55f751a124d46484f2592cf0f48</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text96</Name>
+              <Page isRef="4"/>
+              <Parent isRef="29"/>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text96>
+          </Components>
+          <Conditions count="0" isList="true"/>
+          <KeepGroupFooterTogether>False</KeepGroupFooterTogether>
+          <Name>GroupFooterBand1</Name>
+          <NewPageAfter>True</NewPageAfter>
+          <Page isRef="4"/>
+          <Parent isRef="4"/>
+          <PrintAtBottom>True</PrintAtBottom>
+        </GroupFooterBand1>
+      </Components>
+      <Conditions count="0" isList="true"/>
+      <Guid>bc3ba8f95a23316df9de9fc0defa05fc</Guid>
+      <Margins>8.89,6.35,5.08,2.54</Margins>
+      <Name>Page1</Name>
+      <PageHeight>279.4</PageHeight>
+      <PageWidth>215.9</PageWidth>
+      <PaperSize>Letter</PaperSize>
+      <Report isRef="0"/>
+      <ReportUnit type="hi" isKey="true" Ref="110"/>
+      <ResetPageNumber>True</ResetPageNumber>
+      <Watermark type="Stimulsoft.Report.Components.StiWatermark" isKey="true" Ref="111">
+        <Font>Arial,100</Font>
+        <TextBrush>[50:0:0:0]</TextBrush>
+      </Watermark>
+    </Page1>
+  </Pages>
+  <PrinterSettings type="Stimulsoft.Report.Print.StiPrinterSettings" isKey="true" Ref="112"/>
+  <ReportAlias>Work Order Service Request</ReportAlias>
+  <ReportChanged>08/11/2020 02:11:53 PM</ReportChanged>
+  <ReportCreated>04/09/2015 03:55:59 PM</ReportCreated>
+  <ReportFile>C:\Users\robpalermo\Documents\Deramweaver\visionworkorders\www\visionworkorders.com\reports\reports\Tenant_List_R1.mrt</ReportFile>
+  <ReportGuid>6f5d73a2546e5c8435ccdeb8b38d288b</ReportGuid>
+  <ReportName>Work Order Service Request</ReportName>
+  <ReportUnit>Millimeters</ReportUnit>
+  <ReportVersion>2016.1</ReportVersion>
+  <Script>Imports System
+Imports System.Drawing
+Imports System.Windows.Forms
+Imports System.Data
+Imports Stimulsoft.Controls
+Imports Stimulsoft.Base.Drawing
+Imports Stimulsoft.Report
+Imports Stimulsoft.Report.Dialogs
+Imports Stimulsoft.Report.Components
+
+Namespace Reports
+    
+    Public Class Report
+        Inherits Stimulsoft.Report.StiReport
+        
+        Public Sub New()
+            MyBase.New
+            Me.InitializeComponent
+        End Sub
+        #Region "StiReport Designer generated code - do not modify"#End Region 'StiReport Designer generated code - do not modify
+    End Class
+End Namespace</Script>
+  <ScriptLanguage>VB</ScriptLanguage>
+  <Styles count="4" isList="true">
+    <Style1 type="Stimulsoft.Report.StiStyle" isKey="true" Ref="113">
+      <Border>Left, Right;Black;1;Solid;False;4;Black</Border>
+      <Brush>Azure</Brush>
+      <Conditions count="0" isList="true"/>
+      <Font>Arial,8</Font>
+      <Name>Style1</Name>
+      <TextBrush>Black</TextBrush>
+    </Style1>
+    <sBackColor type="Stimulsoft.Report.StiStyle" isKey="true" Ref="114">
+      <Brush>Azure</Brush>
+      <Conditions count="0" isList="true"/>
+      <Font>Arial,8</Font>
+      <Name>sBackColor</Name>
+      <TextBrush>Black</TextBrush>
+    </sBackColor>
+    <OutLine type="Stimulsoft.Report.StiStyle" isKey="true" Ref="115">
+      <Border>All;Black;1;Solid;False;4;Black</Border>
+      <Brush>Transparent</Brush>
+      <Conditions count="0" isList="true"/>
+      <Font>Arial,8</Font>
+      <Name>OutLine</Name>
+      <TextBrush>Black</TextBrush>
+    </OutLine>
+    <Sback_DarkerGreen type="Stimulsoft.Report.StiStyle" isKey="true" Ref="116">
+      <Brush>[213:240:230]</Brush>
+      <Conditions count="0" isList="true"/>
+      <Font>Arial,8</Font>
+      <Name>Sback_DarkerGreen</Name>
+      <TextBrush>Black</TextBrush>
+    </Sback_DarkerGreen>
+  </Styles>
+</StiSerializer>

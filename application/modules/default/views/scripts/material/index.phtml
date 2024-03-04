@@ -1,0 +1,347 @@
+<?php
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/material.js');
+$reportModel = new Model_Report();
+$reportDetailLinks = ''; 
+$dashBoardViewsdetails=''; 
+$dashBoardViews=''; 
+$woNumberAll=''; 
+$invoiceAll=''; 
+$uniqueCostCenterAll=''; 
+$buildIdReportAll=''; 
+$batch_number_report=''; 
+$uniqueCostCenter=''; 
+$batch_number_reportallbuilding=''; 
+$buildIdReport=$this->select_build_id;
+$woNumberAllbuilding=''; 
+$invoiceAllbuilding =''; 
+$batch_number_reportall='';
+$reportDetailLinks = $reportModel->getReport($this->custID, 18);
+?>
+<?php
+    $this->headLink()->appendStylesheet($this->baseUrl() . '/public/css/bootstrap.css');
+    $this->headLink()->appendStylesheet($this->baseUrl() . '/public/css/bootstrap-editable.css');
+    echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/bootstrap.js');
+    echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/bootstrap-editable.js');
+    $sarray = array();
+    $servModel = new Model_Services();
+    $serviceList = $servModel->getServices();
+    $search_by = '';
+    $search_value='';
+    $service_value ='';
+    if(!empty($this->search) && isset($this->search['search_by'])){
+        $search_by = $this->search['search_by'];
+        if($search_by!='service' && $search_by!='vendor')
+           $search_value=$this->search['search_value'];
+        else 
+            $service_value=$this->search['search_value']; 
+    }
+    $vendor_array = array();	
+    $vendorMapper = new Model_Vendor();
+    $vendorlist = $vendorMapper->getVendorListByBid($this->select_build_id);
+    if($vendorlist){	
+        foreach($vendorlist as $vl){
+            $vendor_array[$vl['vid']]=$vl['company_name'];
+        }
+    }
+
+    $material_access = $this->acessHelper->checkAccess($this->roleId,$this->material_location);
+    /*override access by custom user access if exist */
+    $customeAccessmodel = new Model_UserAccess();
+    $customeAccessmodeld = $customeAccessmodel->getUserCustomAccess($this->userId,$this->material_location);
+    if($customeAccessmodeld[0]) {
+        $material_access = $customeAccessmodeld[0];
+    }
+/* end overriding access */
+?>
+    <div class="container-right" id="userinfo-data">
+	 <?php 
+        if($this->roleId!=1 && $material_access->is_access == 0){ 
+            if($this->custID!=null && $this->custID && $this->companyListing!='' && $this->companyListing!=false){
+                $order = $this->order;
+                $dir = $this->dir;
+                $ddir= 'ASC';
+                $sdir = 'ASC';
+                $vdir = 'ASC';
+                $pdir = 'ASC';
+                $mdir = 'ASC';
+                $gdir = 'ASC';
+                if($order=='description')
+                    $ddir = ($dir=='ASC')?'DESC':'ASC';
+                else if($order=='service')
+                           $sdir = ($dir=='ASC')?'DESC':'ASC';
+                    else if($order=='vendor')
+                           $vdir = ($dir=='ASC')?'DESC':'ASC';
+                    else if($order=='vendor_part')
+                           $pdir = ($dir=='ASC')?'DESC':'ASC';
+                    else if($order=='manufacturer')
+                           $mdir = ($dir=='ASC')?'DESC':'ASC';
+                    else if($order=='mfg')
+                           $gdir = ($dir=='ASC')?'DESC':'ASC';  	  
+                $url = BASEURL.'material/index/bid/'.$this->select_build_id;	  
+            ?>
+               <!-- All Report link -->
+		<?php
+                if($reportDetailLinks!='') { 
+                            $woReport = new Model_Report();
+                            $woBatch = new Model_WoBatch();
+                                foreach($this->companyListing as $cb){ 
+                                    $uniqueCostCenterAll=$uniqueCostCenterAll.$cb['uniqueCostCenter'].',';
+                                    $buildIdReportAll=$buildIdReportAll.$cb['build_id'].',';
+                                    $batchDetails=$woBatch->showBatch($cb['build_id']);
+                                    if($batchDetails!='') {
+                                        foreach($batchDetails as $bd ) {
+                                           $batch_number_reportallbuilding= $batch_number_reportallbuilding.$bd['batch_number'].',';
+                                        }
+                                    }  
+                                    $order='woId';
+                                    $dir='DESC';
+                                    $wolist = $woReport->getWorkOrderByBuilding($cb['build_id'],$order,$dir);
+                                    $invoicelist = $woReport->invoiceByBatch($cb['build_id'],$order,$dir);
+                                        if($wolist!='') {
+                                            foreach($wolist as $woNumber) {
+                                                $woNumberAllbuilding=$woNumberAllbuilding.$woNumber->wo_number .',' ;
+                                            }
+                                        }
+                                        if($invoicelist!='') {
+                                            foreach($invoicelist as $invoiceNumber) {
+                                                $invoiceAllbuilding=$invoiceAllbuilding.$invoiceNumber->wo_number .',' ;
+                                            }
+                                        }
+                                        $batchDetails=$woBatch->showBatch($cb['build_id']);
+                                        if($batchDetails!='') {
+                                            foreach($batchDetails as $bd ) {
+                                                $batch_number_reportall=$batch_number_reportall.$bd['batch_number'].',';
+                                            }
+                                        }
+                                }  
+                } ?>
+				
+		<!-- End all report Link -->
+		<div id="contents">
+                    <ol id="toc">
+                    <?php
+                        $sarray = array();
+                        $servModel = new Model_Services();
+                        $serviceList = $servModel->getServices();
+                        foreach($serviceList as $sl){
+                            $sarray[$sl['sid']]=$sl['service'];
+                        }
+                        $j = 1;
+                        foreach($this->companyListing as $cb){ ?>					
+                            <li><a class="<?php if($cb['build_id']==$this->select_build_id) echo 'active';?>" href="<?php echo $this->baseUrl().'/material/index/bid/'.$cb['build_id']; ?>" ><span><?php echo $cb['buildingName']; ?></span></a>
+                                <?php   
+                                    if($reportDetailLinks!='') {  
+                                        if($cb['build_id']==$this->select_build_id) {
+                                            $uniqueCostCenter=$cb['uniqueCostCenter'];
+                                            $batchDetails=$woBatch->showBatch($cb['build_id']);
+                                            $batch_number_report='';
+                                            if($batchDetails!='') {
+                                                foreach($batchDetails as $bd ) {
+                                                   $batch_number_report=$batch_number_report.$bd['batch_number'].',';
+                                                }
+                                            }	
+                                            $order='woId';
+                                            $dir='DESC';
+                                            $wolist = $woReport->getWorkOrderByBuilding($cb['build_id'],$order,$dir);
+                                            $invoicelist = $woReport->invoiceByBatch($cb['build_id'],$order,$dir);
+                                            if($wolist!='') {
+                                                foreach($wolist as $woNumber) {
+                                                   $woNumberAll=$woNumberAll.$woNumber->wo_number .',' ;
+                                                }
+                                            }
+                                            if($invoicelist!='') {
+                                                foreach($invoicelist as $invoiceNumber) {
+                                                   $invoiceAll=$invoiceAll.$invoiceNumber->wo_number .',' ;
+                                                }
+                                            }
+                                    } 
+                                }  ?> 
+                            </li>
+			<?php $j++; } ?>
+		    </ol>
+		<!-- Report Link -->
+		<?php  if($reportDetailLinks!='') { ?> <div class="clearfix"></div><div class="tabmenu report_tab_menus" ><ul><?php foreach($reportDetailLinks as $reportvalue){
+		    if ($reportvalue->Report_Type == 'Flash') {
+				     $report_type = 'reports/VisionReportEngine/index.php?stimulsoft_client_key=ViewerFx&stimulsoft_';
+                }else{
+                     $report_type = 'vnsreports/index.php?';
+                }
+		$reportOption=explode(',',$reportvalue->report_option); ?> 
+		<li class="report_text" ><a   <?php if($reportvalue->report_target==1) { ?> target='_blank' <?php } ?> href="<?php echo BASEURL; ?><?php echo $report_type; ?>report_key=<?php echo $reportvalue->report_mrt; ?><?php if(in_array('[[++user_id]]',$reportOption)) { echo '&User='.$this->userId; } ?><?php if((in_array('[[++CostCenterAllBuildings]]',$reportOption)) && $uniqueCostCenterAll!='' ) { echo '&Cost_Center_Number='.rtrim($uniqueCostCenterAll,','); } else if((in_array('[[++CostCenterNumber]]',$reportOption)) && $uniqueCostCenter!=''){ echo '&Cost_Center_Number='.$uniqueCostCenter;} ?><?php if((in_array('[[++KeyBuildingAllBuildings]]',$reportOption)) && $buildIdReportAll!='' ) { echo '&buildkey='.rtrim($buildIdReportAll,','); } else if((in_array('[[++KeyBuildingNumber]]',$reportOption)) && $buildIdReport!='') { echo '&buildkey='.$this->select_build_id; } ?><?php if(in_array('[[++BatchNumber]]',$reportOption)) { if((in_array('[[++CostCenterAllBuildings]]',$reportOption)) && (in_array('[[++CostCenterAllBuildings]]',$reportOption)) ) { echo '&Batch_Number='.rtrim($batch_number_reportall,','); } else { echo '&Batch_Number='.rtrim($batch_number_report,','); } } ?><?php if((in_array('[[++WONumber]]',$reportOption)) ) { if((in_array('[[++CostCenterAllBuildings]]',$reportOption)) && (in_array('[[++CostCenterAllBuildings]]',$reportOption))) { echo "&WO_Number=".rtrim($woNumberAllbuilding,','); } else {  echo "&WO_Number=".rtrim($woNumberAll,','); } } ?><?php if((in_array('[[++InvoiceNumber]]',$reportOption)) ) { if((in_array('[[++CostCenterAllBuildings]]',$reportOption)) && (in_array('[[++CostCenterAllBuildings]]',$reportOption))) { echo '&Invoice_Number='.rtrim($invoiceAllbuilding,','); }  else { echo '&Invoice_Number='.rtrim($invoiceAll,','); }} ?>" ><?php echo $reportvalue->report_name; ?> </a> </li> <?php } ?> </ul></div>	<?php } ?>	
+		
+		
+                <div id="page" class="content">
+                    <span class="vendor-heading"><h1>Material Console</h1></span>             
+                    <div id="material_search_div" style="margin-top: 10px;">
+                        <div class="row-limit" style="float: left;">
+                            Show:
+                            <select id="show_limit" onchange="showlimit();" dir="rtl">
+                                <option value="10" <?php echo ($this->show==10?"selected":"");?> >10</option>
+                                <option value="25" <?php echo ($this->show==25?"selected":"");?>>25</option>
+                                <option value="50" <?php echo ($this->show==50?"selected":"");?>>50</option>
+                                <option value="100" <?php echo ($this->show==100?"selected":"");?>>100</option>
+                                <option value="all" <?php echo ($this->show=='all'?"selected":"");?>>All</option>
+                            </select>
+                        </div>
+                        <div id="search_form_div">
+                            <div id="search_message"></div>
+                            <form name="search_form" id="search_form" method="post" onsubmit="return checkSearch(this)">
+                                <div id="form_field">
+                                    <div style='float:left;'>
+                                    <label class='labelcenter'>Search For</label>
+                                    </div>
+                                    <select name="search_by" id="search_by" onchange="showSVDropdown(this)">
+                                        <option value="description" <?php echo ($search_by=='description')?'selected':''?>>Description</option>
+                                        <option value="service" <?php echo ($search_by=='service')?'selected':''?>>Service</option>
+                                        <option value="vendor" <?php echo ($search_by=='vendor')?'selected':''?>>Vendor</option>
+                                        <option value="vendor_part" <?php echo ($search_by=='vendor_part')?'selected':''?>>Part No.</option>
+                                        <option value="manufacturer" <?php echo ($search_by=='manufacturer')?'selected':''?>>Manufacturer</option>
+                                        <option value="mfg" <?php echo ($search_by=='mfg')?'selected':''?>>MFG No.</option>
+                                    </select>
+                                    <div class="text-select-div">
+                                        <div id="search_txt" <?php if($search_by=='service' || $search_by=='vendor') echo 'style="display:none"';?>><input type="text" name="search_value" id="search_value" value="<?php echo stripslashes(stripslashes(stripslashes($search_value)));?>"/></div>
+                                        <div id="service_select" <?php if($search_by!='service') echo 'style="display:none"';?>>
+                                            <select name="service_value" id="service_value">
+                                                <option value="">Select Services</option>
+                                                <?php 
+                                                   if($serviceList){
+                                                        foreach ($serviceList as  $service) {											
+                                                            echo '<option value="'.stripslashes($service['sid']).'"';
+                                                            echo ($service_value==$service['sid'])?'selected':'';
+                                                            echo '>'.stripslashes($service['service']).'</option>';				   
+                                                        }
+                                                    }
+                                                ?>
+                                            </select>
+                                        </div>
+                                        <div id="vendor_select" <?php if($search_by!='vendor') echo 'style="display:none"';?>>
+                                            <select name="vendor_value" id="vendor_value">
+                                                <option value="">Select Vendor</option>
+                                                    <?php 
+                                                       if($vendorlist){
+                                                            foreach ($vendorlist as  $vl) {											
+                                                                echo '<option value="'.$vl['vid'].'"';
+                                                                echo ($service_value==$vl['vid'])?'selected':'';
+                                                                echo '>'.stripslashes($vl['company_name']).'</option>';				   
+                                                            }
+                                                            }
+                                                    ?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-button">
+                                    <input type="submit" name="search" id="search" value="Search"/>
+                                    <input type="button" name="reset" id="reset" value="Reset" onclick="window.location.href='<?php echo BASEURL.'material/index/bid/'.$this->select_build_id;?>'"/>
+                                </div>  
+                            </form>
+                        </div>
+                    </div>
+                    <div id="message">
+                       <span class="success_message"></span>
+                       <span class="error-txt"></span>
+                    </div>
+                    <div id="vendor_data_div">
+                        <table id="vendor_data_table" class="building_table_grid" width="100%">
+                            <tr>
+                                <td class="service_head" colspan="6">Materials</td>
+                                <td class="gt_heading" colspan="2">
+                                    <?php if($material_access->is_write==1){?><a class="modalbox" href="#addMaterialTemplate" onclick="javascript:addMaterialTemplate('<?php echo $this->baseUrl().'/material/creatematerialtemplate/bid/'.$this->select_build_id; ?>');">Import Global Template</a><?php }?> &nbsp;
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>&nbsp;</th>
+                                <th><a href="<?php echo $url.'/order/description/dir/'.$ddir?>"  class="<?php if($order=='description') echo $ddir; else echo 'sorting';?>">Description</a></th>
+                                <th><a href="<?php echo $url.'/order/service/dir/'.$sdir?>"  class="<?php if($order=='service') echo $sdir; else echo 'sorting';?>">Service</a></th>
+                                <th>Mark-up</th>
+                                <th><a href="<?php echo $url.'/order/vendor_part/dir/'.$pdir?>"  class="<?php if($order=='vendor_part') echo $pdir; else echo 'sorting';?>">Vendor Part#</a></th>
+                                <th><a href="<?php echo $url.'/order/manufacturer/dir/'.$mdir?>"  class="<?php if($order=='manufacturer') echo $mdir; else echo 'sorting';?>">Manufacturer</a></th>
+                                <th><a href="<?php echo $url.'/order/mfg/dir/'.$gdir?>"  class="<?php if($order=='mfg') echo $gdir; else echo 'sorting';?>">MFG#</a></th>	
+                                <th>Imported</th>						  
+                            </tr>
+                            <?php 
+                            if($this->materialList){
+                                foreach($this->materialList as $ml){
+                                    $ml = $search_array = array_map("stripslashes", $ml);
+                                    $mid = $ml['mid'];
+                                ?>
+                                    <tr>
+                                        <td>
+                                            <div class="open_plus" id="open_div_<?php echo $mid;?>"><a href="javascript:void(0);" id="<?php echo $mid;?>" onClick="loadMaterial(<?php echo $mid;?>)";><?php echo '&nbsp;&nbsp;';?></a></div>
+                                            <div class="open_close" id="close_div_<?php echo $mid;?>" style="display:none"><a href="javascript:void(0);" id="<?php echo $mid;?>" onClick="hideMaterial(<?php echo $mid;?>)";><?php echo '&nbsp;&nbsp;';?></a>
+                                             </div>
+                                        </td>
+                                        <td><?php echo stripslashes($ml['description']);?></td>
+                                        <td><?php echo stripslashes($sarray[$ml['service']]);?></td>
+                                        <td><?php echo ($ml['markup']!='')?$ml['markup']:'0';?>%</td>
+                                        <!--<td>
+                                        <?php 
+                                        /*
+                                        if(isset($vendor_array[$ml['vendor']])){
+                                                echo $vendor_array[$ml['vendor']];
+                                        }else{ echo " ";} 
+                                        */
+                                        ?>
+                                        </td>-->
+                                        <td><?php echo $ml['vendor_part']?></td>
+                                        <td><?php echo $ml['manufacturer']?></td>
+                                        <td><?php echo $ml['mfg']?></td>
+                                        <td><?php echo ($ml['import_template']=='1')?'Yes':'No';?></td>
+                                    </tr>
+                                    <tr id="material_tr_<?php echo $mid;?>" class="trmaterial-class" style="display:none">
+                                        <td>&nbsp;</td>
+                                        <td id="material_data_<?php echo $mid;?>" colspan="8" class="tdmaterial-class"></td>
+                                    </tr>	
+                                      <?php
+                                   }
+                            }else {?>
+                                    <tr>
+                                        <td colspan="8">No Material's Data Exist..</td>
+                                    </tr>		 
+                                <?php }?>
+                                    <?php
+                                        if (count($this->materialList) > 0 && !empty($this->materialList)) {
+                                            echo '<tr><td colspan="8">';
+                                            echo $this->paginationControl($this->materialList, 'Sliding', 'pagination.phtml');
+                                            echo '</td></tr>';                  
+                                        }
+                                    ?> 
+                                        <?php if($material_access->is_write==1){?>		 
+                                        <tr>
+                                                <th colspan="8" style="text-align:left"><a  class="modalbox" onclick="javascript:addMaterial('<?php echo $this->baseUrl().'/material/creatematerial/bid/'.$this->select_build_id; ?>');" href="#addnewmaterial">Add New</a></th>
+                                        </tr>
+                                        <?php }?>
+                                </table>
+                    </div>
+					</div>
+				</div>
+			    <input type="hidden" name="building_id" id="building_id" value="<?php echo $this->select_build_id;?>"/>
+			<?php }
+		   else{
+			   echo 'No Building has assign to you.';
+		   }  
+		  }else{?>
+			You don't have access for this module.
+		  <?php }?>
+</div>
+<?php if($this->mId){?>
+<script type="text/javascript">
+    loadMaterial('<?php echo $this->mId;?>');
+</script>	
+<?php }?>        			
+<div class="loader" style="display:none;" > <img src="<?php echo BASEURL.'public/images/loader.gif';?>"><div>
+        
+<script>
+    function showlimit(){
+        var data = $("#show_limit").val();
+        window.location =baseUrl+"material/index/show/"+data;
+    }
+</script>
+
+
+
+
+
+
+
+

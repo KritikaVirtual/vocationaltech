@@ -1,0 +1,219 @@
+<?php 
+$vendor = $this->vdata;
+$sarray = array();
+$servModel = new Model_Services();
+$serviceList = $servModel->getServicesByBuilding($vendor['buildingId']);
+foreach($serviceList as $sl){
+	$sarray[$sl['sid']]=$sl['service'];
+}
+
+$carray = array();
+$contModel = new Model_ContactType();
+$contactList = $contModel->getContactTypeByBuilding($vendor['buildingId']);
+foreach($contactList as $cl){
+	$carray[$cl['cid']]=$cl['contact'];
+}
+//print_r($this->vdata);
+
+$vid = $vendor['vid'];
+$mid=$this->mid;
+$vcModel = new Model_VendorContact();
+$vendor_access = $this->acessHelper->checkAccess($this->roleId,$this->vendor_location);
+/*override access by custom user access if exist */
+$customeAccessmodel = new Model_UserAccess();
+$customeAccessmodeld = $customeAccessmodel->getUserCustomAccess($this->userId,$this->vendor_location);
+if($customeAccessmodeld[0]) {
+	$vendor_access = $customeAccessmodeld[0];
+}
+/* end overriding access */
+if($vendor_access->is_access == 0){
+?>  
+		<div id="vendor_contact_info_div no-editable">
+			<div id="vendor_info_div">
+				 <?php if($vendor_access->is_write==1){?>
+					   <div id="left_right_main" class="vendor_lr_row">
+						 <div id="left_section">
+						   <div class="field_edit_popup">
+								<li class="required">&nbsp;</li><label>Vendor Name</label> <span>:</span>
+								 <?php //echo (!empty($uinfo->tenantName))?$uinfo->tenantName:''; ?>
+								<span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($vendor['company_name']))?stripslashes($vendor['company_name']):''; ?></span>
+								<input type="hidden" name="role_id" id="role_id" value="9"/>
+							  </div>
+							  <div class="field_edit_popup">
+								<li class="required">&nbsp;</li><label>First Name</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($vendor['first_name']))?$vendor['first_name']:''; ?></span>										
+							  </div>
+							  <div class="field_edit_popup">
+								<li class="required">&nbsp;</li><label>Last Name</label> <span style="float:left;">:</span>
+								<span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($vendor['last_name']))?$vendor['last_name']:''; ?></span>										
+							  </div>
+							  <div class="field_edit_popup">
+								<li class="required">&nbsp;</li><label>Phone Number</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($vendor['phone_number']))?$vendor['phone_number']:''; ?></span>										
+							  </div>
+							  <div class="field_edit_popup">
+								<li class="not_required">&nbsp;</li><label>Cell Number</label> <span style="float:left;">:</span>
+								<span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($vendor['cell_number']))?$vendor['cell_number']:''; ?></span>										
+							  </div>
+							  <div class="field_edit_popup">
+								<li class="not_required">&nbsp;</li><label>Email</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($vendor['email']))?$vendor['email']:''; ?></span>										
+							  </div>
+							  <div class="field_edit_popup">
+								<li class="required">&nbsp;</li><label> Address </label> <span style="float:left;">:</span>
+								   <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($vendor['address1']))?$vendor['address1']:''; ?></span>				 										 
+							  </div>
+							  <div class="field_edit_popup">
+								 <li class="not_required">&nbsp;</li> <label>&nbsp;</label>
+								  <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($vendor['address2']))?$vendor['address2']:''; ?></span>
+							  </div>	  
+							  <div class="field_edit_popup">
+								<li class="required">&nbsp;</li><label>City</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($vendor['city']))?$vendor['city']:''; ?></span>										
+							  </div>
+							  <div class="field_edit_popup">
+								<li class="required">&nbsp;</li><label>State</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($vendor['statename']))?$vendor['statename']:''; ?></span>										
+							  </div>
+							  <div class="field_edit_popup">
+								<li class="required">&nbsp;</li><label>Postal Code</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($vendor['postal_code']))?$vendor['postal_code']:''; ?></span>										
+							  </div>			  
+						 </div> 
+						 <div id="right_section">
+							  <div class="field_edit_popup">
+								<label>Date Created</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo date("F d,Y" ,strtotime($vendor['created_at']));?></span>
+							  </div>
+							   <div class="field_edit_popup">
+								<label>Last Modified</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo ($vendor['updated_at']!=NULL && $vendor['updated_at']!='0000-00-00 00:00:00')?date("F d,Y" ,strtotime($vendor['updated_at'])):'--';?></span>
+							  </div>
+							   <div class="field_edit_popup">
+								<label>Account Number</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($vendor['account_number']))?$vendor['account_number']:''; ?></span>										
+							  </div>
+							   <div class="field_edit_popup">
+								<label>Service</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo $sarray[$vendor['services']]; ?></span>										
+							  </div>
+							   <div class="field_edit_popup">
+								<label>Contact Type</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo $carray[$vendor['contact_type']]; ?></span>										
+							  </div>
+							   <div class="field_edit_popup">
+								<label>Emergency Contact</label> <span style="float:left;">:</span>
+								<span style="display:table-cell; padding: 0 0 0 3px;"><?php echo ($vendor['emergency_contact']=='1')?'Yes':'No'; ?></span>										
+							  </div>			 
+							  <div class="field_edit_popup">
+									 <label>Active </label> <span>:</span>
+									 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo ($vendor['status']=='1')?'Yes':'No'; ?></span>
+																																 
+							  </div>
+							  
+							  <div class="field_edit_popup">
+									 <label>Remove Vendor </label> <span>:</span>
+									 <span><a href="javascript:void(0);"  title="Delete" onclick="deleteVendor('<?php echo $vid;?>', '<?php echo $mid; ?>')"><img src="<?php echo BASEURL . 'public/images/delete.png'?>" /></a></span>													 										 
+							  </div>
+							  
+							  <div class="field_edit_popup">
+								<label>Notes:</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($vendor['notes']))?$vendor['notes']:''; ?></span>										
+							  </div>
+							  
+						 </div>
+					   </div>  
+						
+				 <?php }else{?>
+					    <div id="left_right_main" class="vendor_lr_row">
+						 <div id="left_section">
+						   <div class="field_edit_popup">
+								<li class="required">&nbsp;</li><label>Vendor Name</label> <span>:</span>
+								 <?php //echo (!empty($uinfo->tenantName))?$uinfo->tenantName:''; ?>
+								<span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($vendor['company_name']))?stripslashes($vendor['company_name']):''; ?></span>
+								<input type="hidden" name="role_id" id="role_id" value="9"/>
+							  </div>
+							  <div class="field_edit_popup">
+								<li class="required">&nbsp;</li><label>First Name</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($vendor['first_name']))?$vendor['first_name']:''; ?></span>										
+							  </div>
+							  <div class="field_edit_popup">
+								<li class="required">&nbsp;</li><label>Last Name</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($vendor['last_name']))?$vendor['last_name']:''; ?></span>										
+							  </div>
+							  <div class="field_edit_popup">
+								<li class="required">&nbsp;</li><label>Phone Number</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($vendor['phone_number']))?$vendor['phone_number']:''; ?></span>										
+							  </div>
+							  <div class="field_edit_popup">
+								<li class="not_required">&nbsp;</li><label>Cell Number</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($vendor['cell_number']))?$vendor['cell_number']:''; ?></span>										
+							  </div>
+							  <div class="field_edit_popup">
+								<li class="not_required">&nbsp;</li><label>Email</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($vendor['email']))?$vendor['email']:''; ?></span>										
+							  </div>
+							  <div class="field_edit_popup">
+								<li class="required">&nbsp;</li><label> Address </label> <span style="float:left;">:</span>
+								   <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($vendor['address1']))?$vendor['address1']:''; ?></span>				 										 
+							  </div>
+							  <div class="field_edit_popup">
+								 <li class="not_required">&nbsp;</li> <label>&nbsp;</label>
+								  <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($vendor['address2']))?$vendor['address2']:''; ?></span>
+							  </div>	  
+							  <div class="field_edit_popup">
+								<li class="required">&nbsp;</li><label>City</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($vendor['city']))?$vendor['city']:''; ?></span>										
+							  </div>
+							  <div class="field_edit_popup">
+								<li class="required">&nbsp;</li><label>State</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($vendor['statename']))?$vendor['statename']:''; ?></span>										
+							  </div>
+							  <div class="field_edit_popup">
+								<li class="required">&nbsp;</li><label>Postal Code</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($vendor['postal_code']))?$vendor['postal_code']:''; ?></span>										
+							  </div>			  
+						 </div> 
+						 <div id="right_section">
+							  <div class="field_edit_popup">
+								<label>Date Created</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo date("F d,Y" ,strtotime($vendor['created_at']));?></span>
+							  </div>
+							   <div class="field_edit_popup">
+								<label>Last Modified</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo ($vendor['updated_at']!=NULL && $vendor['updated_at']!='0000-00-00 00:00:00')?date("F d,Y" ,strtotime($vendor['updated_at'])):'--';?></span>
+							  </div>
+							   <div class="field_edit_popup">
+								<label>Account Number</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($vendor['account_number']))?$vendor['account_number']:''; ?></span>										
+							  </div>
+							   <div class="field_edit_popup">
+								<label>Service</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo $sarray[$vendor['services']]; ?></span>										
+							  </div>
+							   <div class="field_edit_popup">
+								<label>Contact Type</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo $carray[$vendor['contact_type']]; ?></span>										
+							  </div>
+							   <div class="field_edit_popup">
+								<label>Emergency Contact</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo ($vendor['emergency_contact']=='1')?'Yes':'No'; ?></span>										
+							  </div>			 
+							  <div class="field_edit_popup">
+									 <label>Active </label> <span>:</span>
+									<span style="display:table-cell; padding: 0 0 0 3px;"><?php echo ($vendor['status']=='1')?'Yes':'No'; ?></span>
+																																 
+							  </div>							  
+							  <div class="field_edit_popup">
+								<label>Notes:</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($vendor['notes']))?$vendor['notes']:''; ?></span>										
+							  </div>
+							  
+						 </div>
+				 <?php }?> 	
+			</div>
+		</div>
+<?php }?>
+<style> 
+.field_edit_popup span:hover{ text-decoration:none; cursor:default  }
+<style>

@@ -1,0 +1,236 @@
+<?php
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/building_registration.js');
+/*
+ * Building Information Form
+ */
+?>
+<div class="container-right">
+    <section class="w-48 fr ch-home-form" style="z-index:9999">
+		<section class="ch-form-header ">
+			<h3>New Building Setup Wizard </h3>
+		</section>
+		<div class="gridContainer">
+		<div class="tableGrid">
+			<div class="message">
+				<span id="success_msg"></span>
+				<span id="error_msg"></span>				
+			</div>			           
+			 <div id="step1">
+				 <form id="regBuildingPInfo" name="regBuildingPInfo" >
+						<h3>(Please enter building information)</h3>						
+						  <input type="hidden" name="cust_id" class="" id="cust_id" value="" readonly>
+						<div class="bd_form_row"><label>Cost Center :<span class="required">*</span></label>
+                         <div class="bd_form_inputs"><span class="ccenterErr"></span><input type="text" name="uniqueCostCenter" class="" id="uniqueCostCenter" value="<?php echo time();?>"></div> </div> 
+                        <div class="bd_form_row">
+						<label>Company Name :<span class="required">*</span></label> <div class="bd_form_inputs"><span class="cname-err"></span><input type="text" name="cname" class="" id="cname" value="" ></div> </div> 
+                        <div class="bd_form_row">
+                        
+						<label>Building Name :<span class="required">*</span></label><div class="bd_form_inputs"><span class="building-err"></span><input type="text" name="buildingName" class="" id="buildingName" ></div> </div> 
+                        <div class="bd_form_row">
+						<label>Address :<span class="required">*</span></label><div class="bd_form_inputs"><span class="address-err"></span><input type="text" name="address" class="" id="address" ></div> </div> 
+                        <div class="bd_form_row">
+						<label>Address 2 :</label><div class="bd_form_inputs"><span class="address2-err"></span><input type="text" name="address2" class="" id="address2">
+                        </div> </div> 
+                        <div class="bd_form_row">
+						<label>City :<span class="required">*</span></label><div class="bd_form_inputs"><span class="city-err"></span><input type="text" name="city" class="" id="city"></div> </div> 
+                        <div class="bd_form_row">
+						<label>State :<span class="required">*</span></label><div class="bd_form_inputs"><span class="state-err"></span><input type="text" name="state" class="" id="state"></div> </div> 
+                        <div class="bd_form_row">
+						<label>Postal Code :<span class="required">*</span></label><div class="bd_form_inputs"><span class="postal-err"></span><input type="text" name="postalCode" class="" id="postalCode" onkeypress="return isNumberKey(event);" maxlength="5"></div> </div> 
+                        <div class="bd_form_row">
+						<label>Phone Number :<span class="required">*</span></label>
+                        <div class="bd_form_inputs">
+                        <div class="phone_eror">
+                        <span class="phone-err"></span>
+                        <input type="text" name="phoneNumber" class="" id="phoneNumber" onkeypress="return isNumberKey(event);" >
+                        <label class="ext_label build_ext">EXT</label> <input type="text" id="ext" name="ext" onkeypress="return isNumberKey(event);" class="ext" maxlength="5">
+                        </div>
+                        
+						</div> </div> 
+                        <div class="bd_form_row">
+						<label>Fax Number :</label><div class="bd_form_inputs"><span class="fax-err"></span><input type="text" name="faxNumber" class="" id="faxNumber" onkeypress="return isNumberKey(event);" />
+                        </div> </div> 
+                        <div class="bd_form_row">
+						<label>Time Zone</label><div class="bd_form_inputs">
+                        <span class="tzone-err"></span>
+						<select name="timezone" id="timezone">
+							<option value="">Select Time Zone</option>
+						<?php $tModel = new Model_TimeZone();
+						      $tzonelist = $tModel->getTimeZone();
+						     foreach($tzonelist as $tzone){
+						?>	
+						     <option value="<?php echo $tzone['id'];?>"><?php echo $tzone['time_value'];//.' - '.$tzone['time_label'];?></option>
+                         <?php }?>
+
+						</select>
+                        </div> </div> 
+                        <div class="bd_form_row">
+						<label>Active? :</label><div class="bd_form_inputs"><select name="status" class="status" id="status">
+										<option value="1">Yes</option>
+										<option value="0">No</option>
+										</select></div> </div> 
+                        
+						<div class="confirmBtn">
+							<input type="reset" class="reset" name="perReset" id="perReset" value="Reset">&nbsp;
+						    <input type="button" class="cancel" name="cancel" value="Cancel" onclick="return cancelForm()"> &nbsp;
+						    <input type="button" id="pernext" class="confirm" name="pernext" value="Next" onclick="return checkCostCenter()">
+						</div>
+				   </form>	
+			   </div>	
+			<?php
+			   /*
+			    * Billing Information Section
+			    */ 
+			?>
+				
+			<div id="step2" style="display:none;">
+			   <form id="regBuildingBillInfo" name="regBuildingBillInfo">
+						<h3>Please enter billing information</h3>
+						
+                        <div class="bd_form_row">
+                        <label>Billing Company Name :<span class="required">*</span></label>
+                        <div class="bd_form_inputs"> <span class="billCName-Err"></span><input type="text" name="billCName" class="" id="billCName" value=""></div>
+                        </div>
+                        
+                         <div class="bd_form_row">
+						<label>Address :<span class="required">*</span></label>
+                        <div class="bd_form_inputs"><span class="billaddress-Err"></span><input type="text" name="billaddress" class="" id="billaddress"></div>
+                        </div>
+                        
+						<div class="bd_form_row">
+                        <label>Address 2 :</label>
+                        <div class="bd_form_inputs"><span class="billaddress2-Err"></span><input type="text" name="billaddress2" class="" id="billaddress2"></div>
+                        </div>
+                        
+                        <div class="bd_form_row">
+						<label>Suite :<span class="required">*</span></label>
+                        <div class="bd_form_inputs"><span class="billsuite-Err"></span><input type="text" name="billsuite" class="" id="billsuite"></div>
+                        </div>
+                        
+						<div class="bd_form_row">
+                        <label>City :<span class="required">*</span></label>
+                        <div class="bd_form_inputs"><span class="billcity-Err"></span><input type="text" name="billcity" class="" id="billcity"></div>
+                        </div>
+                        
+                        <div class="bd_form_row">
+						<label>State :<span class="required">*</span></label>
+                        <div class="bd_form_inputs"><span class="billstate-Err"></span><input type="text" name="billstate" class="" id="billstate"></div>
+                        </div>
+                        
+                        <div class="bd_form_row">
+						<label>Postal Code :<span class="required">*</span></label>
+                        <div class="bd_form_inputs"><span class="billpostalCode-Err"></span>
+                        <input type="text" name="billpostalCode" class="" id="billpostalCode" onkeypress="return isNumberKey(event);" maxlength="5"></div>
+                        </div>
+                        
+                         <div class="bd_form_row">
+						<label>Phone Number :<span class="required">*</span></label> <div class="bd_form_inputs">
+                        <div class="phone_eror">
+                        <span class="billphoneNumber-Err"></span><input type="text" name="billphoneNumber" class="" id="billphoneNumber" onkeypress="return isNumberKey(event);" >
+                        <label class="ext_label build_ext">EXT</label> <input type="text" id="billPhoneExt" name="billPhoneExt" onkeypress="return isNumberKey(event);" class="ext" maxlength="5" style="width:73px;">
+                        </div>
+						
+                        </div>
+                        </div>
+                        <div class="bd_form_row">
+						<label>Fax Number :</label><div class="bd_form_inputs"><span class="billfaxNumber-Err"></span><input type="text" name="billfaxNumber" class="" id="billfaxNumber" onkeypress="return isNumberKey(event);" >
+                        </div>
+                        </div>
+                        
+                        <div class="bd_form_row">
+						<label>Attention :<span class="required">*</span></label><div class="bd_form_inputs"><span class="attention-Err"></span><input type="text" name="attention" class="" id="attention"></div>
+                        </div>
+						
+						<div class="confirmBtn">
+						<input type="button" class="back" name="billback" value="Back" onclick="backAdminSetp();">				
+						<input type="button" class="confirm" name="billnext" value="Next" onclick="nextAdminSetp();">
+						</div>					
+				</form>	
+			</div>	
+			<?php
+			   /*
+			    * Admin User Information Section
+			    */ 
+			?>	
+			<div id="step3" style="display:none; position:relative;">
+				<form id="regBuildingAdminInfo" name="regBuildingAdminInfo">
+					<h3>Admin User Setup</h3>
+				    <input type="hidden" name="uid" class="" id="uid" value="">
+                   
+                        
+                        <div class="bd_form_row">
+					<label>Enter E-Mail Address :<span class="required">*</span></label> <div class="bd_form_inputs"><span class="adminEmailAddressErr"></span><input type="text" name="adminEmailAddress" class="" id="adminEmailAddress" value="" required >
+                     </div>
+                        </div>
+                        
+                        <div class="bd_form_row">
+					<label>First Name :<span class="required">*</span></label><div class="bd_form_inputs"><span class="fnameErr"></span><input type="text" name="fname" class="" id="fname"> </div>
+                        </div>
+                        
+                        <div class="bd_form_row">
+					<label>Last Name :<span class="required">*</span></label><div class="bd_form_inputs"><span class="lnameErr"></span><input type="text" name="lname" class="" id="lname"> </div>
+                        </div>
+                        
+                       
+					
+					<div id="password_section">
+                    <div class="password-adminuser">
+							 <span>Note :</span>Password must contain atleast one Upper letter, small leter, digit, special character and should be minimum 8 character.
+						</div>                      
+                        
+                        <div class="bd_form_row">
+						<label>Auto generate password:</label><div class="check-generate"><input type="checkbox" name="auto_generate" id="auto_generate" value="1" checked="checked"/></div>
+                        </div>
+                        <div class="bd_form_row">
+						<label class="clear">User Password :<span class="required">*</span></label><div class="bd_form_inputs"><span class="uPassErr"></span><input type="password" name="uPass" class="" id="uPass" readonly>
+                        </div>
+                        </div>
+                        <div class="bd_form_row">
+						<label>Confirm Password:<span class="required">*</span></label><div class="bd_form_inputs"><span class="uConfErr"></span><input type="password" name="uConfPass" class="" id="uConfPass" readonly>						
+						</div>
+                        </div>
+                        
+					</div>
+                    
+                        
+                        <div class="bd_form_row">
+					<label>Phone Number :<span class="required">*</span></label><div class="bd_form_inputs">
+                    <div class="phone_eror">
+                    <span class="phoneErr"></span><input type="text" name="phone" class="" id="phone" onkeypress="return isNumberKey(event);">
+                    <label class="ext_label build_ext">EXT</label> <input type="text" name="aphoneExt" id="aphoneExt" onkeypress="return isNumberKey(event);" class="ext" maxlength="5"> 
+                     </div>
+					</div>
+                        </div>
+                        
+                        <div class="bd_form_row">
+					<label>Select Access :<span class="required">*</span></label>
+					<div class="bd_form_inputs"><span class="accesslevelErr"></span>
+					<select id="accesslevel" name="accesslevel">
+						<?php if(count($this->roleList)>0){
+							$selectedRole = array(2, 3, 4,6);
+							foreach($this->roleList as $rolelists){ if(in_array($rolelists['roleID'], $selectedRole)){?>
+						<option value="<?php echo $rolelists['roleID'];?>"><?php echo $rolelists['title'];?></option>
+						<?php }}}?>
+					</select>
+							 </div>
+                        </div>
+                        
+                        <div class="bd_form_row">		
+					<label>Select Modules :</label>
+									<div class="chk_module">
+                                    <span id="select_mod" class="select_mod_error"></span>
+					<?php if(count($this->moduleList)>0){foreach($this->moduleList as $modulelists){?>
+					<input type="checkbox" name="modules[]" class="" id="modulee" value="<?php echo $modulelists['module_id'] ?>"> <?php echo $modulelists['module_name']; ?> 
+					<?php }}?>
+									</div>
+                                     </div>
+                        
+					<div class="confirmBtn"><input type="button" onClick="finalSubmit();" class="confirm" name="finalsubmit" value="Submit" id="finalsubmit">
+					</div>
+				</form>	
+			</div>
+		 </div>
+      </div>
+  </section>
+</div>
+<div class="loader" style="display:none;" > <img src="<?php echo BASEURL.'public/images/loader.gif';?>"><div>

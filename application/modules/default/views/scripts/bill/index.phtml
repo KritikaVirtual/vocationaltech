@@ -1,0 +1,272 @@
+<?php
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/bill.js');
+$bill_access = $this->acessHelper->checkAccess($this->roleId,$this->bill_location);
+/*override access by custom user access if exist */
+$customeAccessmodel = new Model_UserAccess();
+$customeAccessmodeld = $customeAccessmodel->getUserCustomAccess($this->userId,$this->bill_location);
+if($customeAccessmodeld[0]) {
+	$bill_access = $customeAccessmodeld[0];
+}
+/* end overriding access */
+$reportModel = new Model_Report();
+$reportDetailLinks = ''; $dashBoardViewsdetails=''; $dashBoardViews=''; $woNumberAll=''; $invoiceAll=''; $uniqueCostCenterAll=''; $buildIdReportAll=''; $batch_number_report=''; $uniqueCostCenter=''; $batch_number_reportallbuilding=''; $buildIdReport=$this->select_build_id; $woNumberAllbuilding=''; $invoiceAllbuilding =''; $batch_number_reportall='';
+$reportDetailLinks = $reportModel->getReport($this->custID, 19);
+?>
+<div class="container-right" id="userinfo-data">
+	 <?php 
+       if($this->roleId!=1 && $bill_access->is_access == 0){ 
+           if($this->custID!=null && $this->custID && $this->companyListing!='' && $this->companyListing!=false){
+			      $order = $this->order;
+				   $dir = $this->dir;
+				   $grid = $this->grid;
+				   $ddir= 'ASC';
+				   $cdir = 'ASC';
+				   $tdir = 'ASC';
+				   $adir = 'ASC';
+				   $rdir = 'ASC';
+				   $mdir = 'ASC';				   
+				  if($order=='description')
+					  $ddir = ($dir=='ASC')?'DESC':'ASC';
+			     else if($order=='charge_hour')
+					  $cdir = ($dir=='ASC')?'DESC':'ASC';
+				   else if($order=='global_template')
+					  $tdir = ($dir=='ASC')?'DESC':'ASC';
+				   else if($order=='assign_to')
+					  $adir = ($dir=='ASC')?'DESC':'ASC';
+				else if($order=='rate_name')
+					  $rdir = ($dir=='ASC')?'DESC':'ASC';
+			    else if($order=='multiplier')
+					  $mdir = ($dir=='ASC')?'DESC':'ASC';		  	  				   
+			   	$url = BASEURL.'bill/index/bid/'.$this->select_build_id;	  
+			   ?>
+			    <!-- All Report link -->
+		<?php if($reportDetailLinks!='') { 
+					$woReport = new Model_Report();
+					$woBatch = new Model_WoBatch();
+					foreach($this->companyListing as $cb){ 
+						$uniqueCostCenterAll=$uniqueCostCenterAll.$cb['uniqueCostCenter'].',';
+						$buildIdReportAll=$buildIdReportAll.$cb['build_id'].',';
+						$batchDetails=$woBatch->showBatch($cb['build_id']);
+					    if($batchDetails!='') {
+						    foreach($batchDetails as $bd ) {
+							   $batch_number_reportallbuilding= $batch_number_reportallbuilding.$bd['batch_number'].',';
+						    }
+					    }  
+				
+						
+					        $order='woId';
+							$dir='DESC';
+							$wolist = $woReport->getWorkOrderByBuilding($cb['build_id'],$order,$dir);
+						    $invoicelist = $woReport->invoiceByBatch($cb['build_id'],$order,$dir);
+							if($wolist!='') {
+								foreach($wolist as $woNumber) {
+								   $woNumberAllbuilding=$woNumberAllbuilding.$woNumber->wo_number .',' ;
+								}
+							}
+								if($invoicelist!='') {
+									foreach($invoicelist as $invoiceNumber) {
+									   $invoiceAllbuilding=$invoiceAllbuilding.$invoiceNumber->wo_number .',' ;
+									}
+								}
+								
+						    $batchDetails=$woBatch->showBatch($cb['build_id']);
+						    
+						    if($batchDetails!='') {
+							   foreach($batchDetails as $bd ) {
+								   $batch_number_reportall=$batch_number_reportall.$bd['batch_number'].',';
+							    }
+						    }
+						
+					}  
+				} ?>
+				
+				<!-- End all report Link -->
+			  <div id="contents">
+					<ol id="toc">
+						<?php
+						    $sarray = array();
+						    $servModel = new Model_Services();
+						    $serviceList = $servModel->getServices();
+						    foreach($serviceList as $sl){
+								$sarray[$sl['sid']]=$sl['service'];
+							}
+							$j = 1;
+							
+							foreach($this->companyListing as $cb){ ?>					
+							<li><a  class="<?php if($cb['build_id']==$this->select_build_id) echo 'active';?>"  href="<?php echo $this->baseUrl().'/bill/index/bid/'.$cb['build_id']; ?>" ><span><?php echo $cb['buildingName']; ?></span></a>
+							
+							<!-- selected report Link -->
+					<?php   
+					if($reportDetailLinks!='') {  
+						if($cb['build_id']==$this->select_build_id) {
+						    $uniqueCostCenter=$cb['uniqueCostCenter'];
+						    $batchDetails=$woBatch->showBatch($cb['build_id']);
+						    $batch_number_report='';
+						    if($batchDetails!='') {
+							   foreach($batchDetails as $bd ) {
+								   $batch_number_report=$batch_number_report.$bd['batch_number'].',';
+							    }
+						    }	
+							$order='woId';
+							$dir='DESC';
+							$wolist = $woReport->getWorkOrderByBuilding($cb['build_id'],$order,$dir);
+							$invoicelist = $woReport->invoiceByBatch($cb['build_id'],$order,$dir);
+							if($wolist!='') {
+								foreach($wolist as $woNumber) {
+								   $woNumberAll=$woNumberAll.$woNumber->wo_number .',' ;
+								}
+							}
+							if($invoicelist!='') {
+								foreach($invoicelist as $invoiceNumber) {
+								   $invoiceAll=$invoiceAll.$invoiceNumber->wo_number .',' ;
+								}
+							}
+						} 
+					}  ?>
+							
+							
+							
+							</li>
+						<?php $j++; } ?>
+					</ol>
+	<!-- Report Link -->
+		<?php  if($reportDetailLinks!='') { ?> <div class="clearfix"></div><div class="tabmenu report_tab_menus" ><ul><?php foreach($reportDetailLinks as $reportvalue){ $reportOption=explode(',',$reportvalue->report_option); ?> <li class="report_text" ><a   <?php if($reportvalue->report_target==1) { ?> target='_blank' <?php } ?> href="<?php echo BASEURL; ?>reports/VisionReportEngine/index.php?stimulsoft_client_key=ViewerFx&stimulsoft_report_key=<?php echo $reportvalue->report_mrt; ?><?php if(in_array('[[++user_id]]',$reportOption)) { echo '&User='.$this->userId; } ?><?php if((in_array('[[++CostCenterAllBuildings]]',$reportOption)) && $uniqueCostCenterAll!='' ) { echo '&Cost_Center_Number='.rtrim($uniqueCostCenterAll,','); } else if((in_array('[[++CostCenterNumber]]',$reportOption)) && $uniqueCostCenter!=''){ echo '&Cost_Center_Number='.$uniqueCostCenter;} ?><?php if((in_array('[[++KeyBuildingAllBuildings]]',$reportOption)) && $buildIdReportAll!='' ) { echo '&buildkey='.rtrim($buildIdReportAll,','); } else if((in_array('[[++KeyBuildingNumber]]',$reportOption)) && $buildIdReport!='') { echo '&buildkey='.$this->select_build_id; } ?><?php if(in_array('[[++BatchNumber]]',$reportOption)) { if((in_array('[[++CostCenterAllBuildings]]',$reportOption)) && (in_array('[[++CostCenterAllBuildings]]',$reportOption)) ) { echo '&Batch_Number='.rtrim($batch_number_reportall,','); } else { echo '&Batch_Number='.rtrim($batch_number_report,','); } } ?><?php if((in_array('[[++WONumber]]',$reportOption)) ) { if((in_array('[[++CostCenterAllBuildings]]',$reportOption)) && (in_array('[[++CostCenterAllBuildings]]',$reportOption))) { echo "&WO_Number=".rtrim($woNumberAllbuilding,','); } else {  echo "&WO_Number=".rtrim($woNumberAll,','); } } ?><?php if((in_array('[[++InvoiceNumber]]',$reportOption)) ) { if((in_array('[[++CostCenterAllBuildings]]',$reportOption)) && (in_array('[[++CostCenterAllBuildings]]',$reportOption))) { echo '&Invoice_Number='.rtrim($invoiceAllbuilding,','); }  else { echo '&Invoice_Number='.rtrim($invoiceAll,','); }} ?>" ><?php echo $reportvalue->report_name; ?> </a> </li> <?php } ?> </ul></div>	<?php } ?>	
+		
+		
+					<div id="page" class="content">
+					     <span class="bill-heading"><h1>Bill Back Console</h1></span>
+					     <div class="bill_message" id="bill_message">
+							<span id="bill_success" class="success"></span>
+							<span id="bill_error" class="error"></span>
+						</div>
+					     <div id="labor_grid_div">
+							  <table id="labor_data_table" class="building_table_grid" width="100%">
+								  <tr>
+									  <td class="bill_head" colspan="4">Labor Charges</td>
+									  <td class="gt_heading" colspan="2"><?php if($bill_access->is_write==1){?><a href="javascript:void(0)" onclick="importLaborTemplate('<?php echo $this->select_build_id;?>')">Import Global Template</a><?php }?>&nbsp;</td>
+								  </tr>
+								  <tr>
+									<th><a href="<?php echo $url.'/grid/labor/order/charge_hour/dir/'.$cdir?>" 
+                          class="<?php if($order=='charge_hour') echo $cdir; else echo 'sorting';?>">Charge/Hour $</a></th>
+									  <th><a href="<?php echo $url.'/grid/labor/order/description/dir/'.$ddir?>" 
+                          class="<?php if($order=='description' && $grid=='labor') echo $ddir; else echo 'sorting';?>">Description</a></th>
+									  <th><a href="<?php echo $url.'/grid/labor/order/assign_to/dir/'.$adir?>" 
+                          class="<?php if($order=='assign_to') echo $adir; else echo 'sorting';?>">Assigned To</a></th>
+									  <th><a href="<?php echo $url.'/grid/labor/order/global_template/dir/'.$tdir?>" 
+                          class="<?php if($order=='global_template' && $grid=='labor') echo $tdir; else echo 'sorting';?>">Template</a></th>
+                                      <th>Imported</th>
+									 <?php if($bill_access->is_write==1){?>	  <th>Action</th> <?php }?>
+								  </tr>
+								  <?php
+								      if($this->blList){
+										  foreach($this->blList as $bl){
+											 ?>
+										<tr>
+											<td><?php echo '$'.$bl['charge_hour'];?></td>
+											<td><?php echo $bl['description'];?></td>
+											<td><?php echo ($bl['assign_to']!='')?'Assigned':'Not Assigned';
+											          echo  ($bl['set_default']=='1')?'(Default)':'';											
+											?></td>
+											<td><?php echo ($bl['global_template']==1)?'Yes':'No';?></td>
+											<td><?php echo ($bl['import_template']=='1')?'Yes':'No';?></td>
+											<?php if($bill_access->is_write==1){?><td><a title="Edit" href="javascript:void(0);" onclick="showEditLabor('<?php echo $bl['blid'];?>','<?php echo $bl['building'];?>')"><img src="<?php echo BASEURL . 'public/images/edit.png'?>" /></a>
+						 <a href="javascript:void(0);"  title="Delete" onclick="deleteLaborCharge('<?php echo $bl['blid'];?>')"><img src="<?php echo BASEURL . 'public/images/delete.png'?>" /></a></td>
+						                       <?php } ?> 
+											
+										</tr>	 
+									 <?php		  
+										  }
+										  
+								     }else{
+								  ?>
+								  <tr>
+									  <td colspan="6">No Record Exist.</td>
+								  </tr>
+								  <?php }?>
+								  <?php if($bill_access->is_write==1){?>
+								  <tr>
+									  <th colspan="6"><a href="javascript:void(0)" onclick="showAddLabor('<?php echo $this->select_build_id;?>')">Add New</a></th>
+								  </tr>
+								  <?php }?>
+							  </table>
+							  
+					     </div>
+					     <div id="rate_grid_div">
+							 <table id="rate_data_table" class="building_table_grid" width="100%">
+								  <tr>
+									  <td class="bill_head" colspan="4">Rate Charge</td>
+									  <td class="gt_heading" colspan="2"><?php if($bill_access->is_write==1){?><a href="javascript:void(0)" onclick="importRateTemplate('<?php echo $this->select_build_id;?>')">Import Global Template</a><?php }?>&nbsp;</td>
+								  </tr>
+								  <tr>
+									  <th><a href="<?php echo $url.'/grid/rate/order/rate_name/dir/'.$rdir?>" 
+                          class="<?php if($order=='rate_name') echo $rdir; else echo 'sorting';?>">Rate Name</a></th>
+									  <th><a href="<?php echo $url.'/grid/rate/order/description/dir/'.$ddir?>" 
+                          class="<?php if($order=='description' && $grid=='rate') echo $ddir; else echo 'sorting';?>">Description</a></th>
+									  <th><a href="<?php echo $url.'/grid/rate/order/multiplier/dir/'.$mdir?>" 
+                          class="<?php if($order=='multiplier') echo $mdir; else echo 'sorting';?>">Multiplier</a></th>
+									  <th><a href="<?php echo $url.'/grid/rate/order/global_template/dir/'.$tdir?>" 
+                          class="<?php if($order=='global_template' && $grid=='rate') echo $tdir; else echo 'sorting';?>">Template</a></th>
+                                      <th>Imported</th>
+									  <?php if($bill_access->is_write==1){?><th>Action</th><?php }?>
+								  </tr>
+								 <?php 
+								      if($this->brList){
+										  foreach($this->brList as $br){
+											 ?>
+										<tr>
+											<td><?php echo $br['rate_name'];?></td>
+											<td><?php echo $br['description'];?></td>
+											<td><?php echo $br['multiplier'];
+											     echo  ($br['set_default']=='1')?'(Default)':'';
+											?></td>
+											<td><?php echo ($br['global_template']=='1')?'Yes':'No';?></td>
+											<td><?php echo ($br['import_template']=='1')?'Yes':'No';?></td>
+											<?php if($bill_access->is_write==1){?>
+											<td>
+												<a title="Edit" href="javascript:void(0)" onclick="showEditRate('<?php echo $br['brid'];?>','<?php echo $br['building'];?>')"><img src="<?php echo BASEURL . 'public/images/edit.png'?>" /></a>
+						                        <a href="javascript:void(0);"  title="Delete" onclick="deleteRateCharge('<?php echo $br['brid'];?>')"><img src="<?php echo BASEURL . 'public/images/delete.png'?>" /></a>
+						                    </td>
+						                    <?php }?>
+											
+										</tr>	 
+									 <?php		  
+										  }
+										  
+								     }else{
+								  ?>
+								  <tr>
+									  <td colspan="6">No Record Exist.</td>
+								  </tr>
+								  <?php }?>
+								  <?php if($bill_access->is_write==1){?>
+								  <tr>
+									  <th colspan="6"><a href="javascript:void(0)" onclick="showAddRate('<?php echo $this->select_build_id;?>')">Add New</a></th>
+								  </tr>
+								  <?php }?>
+							  </table>
+					     </div>
+					 </div>    					
+				</div>
+				<div id="popup_form" style="display:none" class="labor_popup_form">
+					 <a href="#add_labor_form" id="add_labor_form_href" class="modalbox">&nbsp;</a>					
+					 <div id="add_labor_form" class="bd-dft-cls" style="display:none"></div>
+					 <a href="#edit_labor_form" id="edit_labor_form_href" class="modalbox">&nbsp;</a>					
+					 <div id="edit_labor_form" class="bd-dft-cls" style="display:none"></div>
+					 <a href="#labor_template_form" id="labor_template_form_href" class="modalbox">&nbsp;</a>					
+					 <div id="labor_template_form" class="bd-dft-cls" style="display:none"></div>
+					 <a href="#add_rate_form" id="add_rate_form_href" class="modalbox">&nbsp;</a>					
+					 <div id="add_rate_form" class="bd-dft-cls" style="display:none"></div>
+					 <a href="#edit_rate_form" id="edit_rate_form_href" class="modalbox">&nbsp;</a>					
+					 <div id="edit_rate_form" class="bd-dft-cls" style="display:none"></div>
+					 <a href="#rate_template_form" id="rate_template_form_href" class="modalbox">&nbsp;</a>					
+					 <div id="rate_template_form" class="bd-dft-cls" style="display:none"></div>
+				</div>
+			<?php }
+		   else{
+			   echo 'No Building has assign to you.';
+		   }  
+		  }else{?>
+			You don't have access for this module.
+		  <?php }?>
+</div>        			
+<div class="loader" style="display:none;" > <img src="<?php echo BASEURL.'public/images/loader.gif';?>"><div>

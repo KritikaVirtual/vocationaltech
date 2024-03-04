@@ -1,0 +1,105 @@
+<?php 
+    $priorityDetail = $this->priorityDetail['priorityDetail'][0];
+    if(!empty($this->priorityDetail['scheduleDetail'])) {
+        $scheduleDetail = $this->priorityDetail['scheduleDetail'][0];
+    }
+    if(!empty($scheduleDetail)) {
+        $this->priorityDetail['id'] = $scheduleDetail['id'];
+    }
+?>
+ 
+<section class="ch-form-header ">
+    <h3>Add Priority Schedule to <?php echo $priorityDetail['priorityName']?> (ID : <?php echo $priorityDetail['pid']?>)</h3>
+</section>
+<section class="w-48 fr ch-home-form">
+    <div class="tableGrid catgry">
+        <form id="addNewBuildings" action="<?php echo BASEURL.'category/addpriorityschedule'; ?>" method="post">
+            <input type="hidden" name="actionType" value="<?php echo (!empty($scheduleDetail) ? "edit" : "insert")?>">
+            <input type="hidden" name="data[priority_id]" value="<?php echo $priorityDetail['pid']?>">
+            <label>Id* :</label> 
+            <input type="text" value="<?php echo $this->priorityDetail['id']?>" id="priority_number" 
+                   name="data[id]" readonly="readonly">
+            <span class="costCenterErr" id="priority-number-error"></span>
+
+            <label>Start status* :</label> 
+            <select name="data[start_status]" id="status" class="status">
+                <option value="New" 
+                    <?php echo (isset($scheduleDetail['start_status']) ? 
+                            ($scheduleDetail['start_status'] == "New" ? 
+                            "selected" : "") : "")
+                     ?>
+                 >New</option>
+                <option value="Open" 
+                    <?php echo (isset($scheduleDetail['start_status']) ? 
+                            ($scheduleDetail['start_status'] == "Open" ? 
+                            "selected" : "") : "")
+                     ?>>Open</option>
+            </select>
+            <span class="costCenterErr" id="priority-name-error"></span>
+            <br style="clear:both">
+
+            <label>End status* :</label> 
+            <select name="data[end_status]" id="status" class="status">
+                <option value="Open"
+                    <?php echo (isset($scheduleDetail['end_status']) ? 
+                            ($scheduleDetail['end_status'] == "Open" ? 
+                            "selected" : "") : "")
+                     ?>>Open</option>
+                <option value="Closed"
+                    <?php echo (isset($scheduleDetail['end_status']) ? 
+                            ($scheduleDetail['end_status'] == "Closed" ? 
+                            "selected" : "") : "")
+                     ?>>Closed</option>
+            </select>
+            <span class="costCenterErr" id="priority-description-error"></span>
+            <br style="clear:both">
+
+            <label>time* :</label> 
+            <input type="text" class="number" 
+                   name="data[Time]" value="<?php echo (isset($scheduleDetail['Time']) ? $scheduleDetail['Time'] : "0")?>">                
+            <span class="costCenterErr" id="priority-status-error"></span>
+            <br style="clear:both">
+
+            <label>Length* :</label> 
+            <select name="data[length]" id="status" class="status">
+                <option value="Minute(s)"
+                    <?php echo (isset($scheduleDetail['length']) ? 
+                            ($scheduleDetail['length'] == "Minute(s)" ? 
+                            "selected" : "") : "")
+                     ?>>Minute(s)</option>
+                <option value="Hour(s)"
+                    <?php echo (isset($scheduleDetail['length']) ? 
+                            ($scheduleDetail['length'] == "Hour(s)" ? 
+                            "selected" : "") : "")
+                     ?>>Hour(s)</option>
+            </select>
+            <span class="costCenterErr" id="priority-description-error"></span>
+            <br style="clear:both">
+
+            <label>Day's of the week* :</label> 
+            <select name="data[access_days]" id="status" class="status">
+                <option value="Every Day (Sun-Sat)"
+                    <?php echo (isset($scheduleDetail['access_days']) ? 
+                            ($scheduleDetail['access_days'] == "Every Day (Sun-Sat)" ? 
+                            "selected" : "") : "")
+                     ?>>Every Day (Sun-Sat)</option>
+            </select>
+            <span class="costCenterErr" id="priority-description-error"></span>
+            <br style="clear:both">
+
+            <label>Active* :</label> 
+            <select name="data[status]" id="status" class="status">
+                <option value="1">Yes</option>
+                <option value="0">No</option>
+            </select>
+            <span class="costCenterErr" id="priority-status-error"></span>
+
+             <div class="confirmBtn">
+                <input type="reset" value="Reset" name="cancel" class="cancel"/>
+                <input type="submit" value="Save" name="next" class="confirm savePriority" onclick="savePSchedule()"/>
+                <a href="<?php echo BASEURL.'category'; ?>" class="cancel" 
+                   style="height:auto;">Cancel</a>
+            </div>
+        </form>
+    </div>
+</section>

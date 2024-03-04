@@ -1,0 +1,60 @@
+<div class="row">
+<table cellpadding="5" cellspacing="5" class="cate_table avl-rooms">
+    <tbody>
+        <tr>
+            <td>
+                <span class="span">List of Available Rooms</span>
+                <select id="croom_from_list" multiple="multiple" name="usre_from_list" width="240">                          
+                    <?php 
+                    $crDetails=$this->crDetails;
+                             
+                    foreach ($crDetails as $crDetailsVal) {
+                         if(!empty($crDetailsVal->multi_id) )
+                         $cr_array = explode(',', $crDetailsVal->multi_id); 
+                    }
+                  
+                    if($this->action=="edit"):
+                            foreach ($crDetails as $crDetailsVal) {
+                                     if (!in_array($crDetailsVal->cid, $cr_array) && $crDetailsVal->multi_mode!=1) { 
+                                        echo  '<option value="'.$crDetailsVal->cid.'">'.$crDetailsVal->room_name.'</option>';
+                                   }
+                            }
+                    else:
+                            foreach ($crDetails as $crDetailsVal) { 
+                               if($crDetailsVal->multi_mode!=1)
+                               echo '<option value="'.$crDetailsVal->cid.'">'.$crDetailsVal->room_name.'</option>';
+                            }
+                    endif;
+                    ?> 
+                </select>
+            </td>
+            <td style="border:none;">
+                <div id="arrow-switcher">
+                    <a href="javascript:void(0)" onClick="move_list_items('croom_from_list', 'croom_to_list')">
+                        <img src="<?php echo BASEURL . 'public/images/right-arrow.png'; ?>" width="50"/>
+                    </a>
+                    <a href="javascript:void(0)" onClick="move_list_items('croom_to_list', 'croom_from_list')">
+                        <img src="<?php echo BASEURL . 'public/images/left-arrow.png'; ?>" width="50"/>
+                    </a>
+                </div>
+            </td>
+            <td>
+                <span class="span">Selected Rooms</span>
+                <select id="croom_to_list" name="user_to_list[]" multiple="multiple" width="240"> 
+                    <?php 
+                    if($this->action=="edit"): 
+                      // $cr_array = explode(',', $creditDetails->multi_id);
+                        print_r($crDetails);
+                        foreach ($crDetails as $crDetailsVal) {
+                                    if (in_array($crDetailsVal->cid, $cr_array)) { ?>
+                                            <option value='<?php echo $crDetailsVal->cid; ?>' selected="selected"><?php echo $crDetailsVal->room_name; ?> </option>
+                                    <?php }
+                            }
+                    endif;?>
+                </select>
+            </td>
+        </tr>                                                              
+    </tbody>
+</table>
+</div>
+<?php die; ?>

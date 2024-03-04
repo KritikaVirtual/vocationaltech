@@ -1,0 +1,167 @@
+<?php
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/pm.js');
+?>
+<div class="fdw" id="access-matrix">
+    
+    <ol id="toc">
+		   
+                <?php
+                $j = 1;
+                //print_r($this->companyListing);
+                //die;
+                
+                foreach ($this->companyListing as $cb) {
+                    //print_r($cb);
+                    ?>
+                    <li><a class="<?php if ($cb['build_id'] == $this->select_build_id) echo 'active'; ?>"  href="<?php echo $this->baseUrl() . '/pm/equipment/bid/' . $cb['build_id']; ?>" ><span><?php echo $cb['buildingName']; ?></span></a>
+                        <?php
+                        if ($reportDetailLinks != '') {
+                            if ($cb['build_id'] == $this->select_build_id) {
+                                $uniqueCostCenter = $cb['uniqueCostCenter'];
+                                $batchDetails = $woBatch->showBatch($cb['build_id']);
+                                $batch_number_report = '';
+                                if ($batchDetails != '') {
+                                    foreach ($batchDetails as $bd) {
+                                        $batch_number_report = $batch_number_report . $bd['batch_number'] . ',';
+                                    }
+                                }
+                                $order = 'woId';
+                                $dir = 'DESC';
+                                $wolist = $woReport->getWorkOrderByBuilding($cb['build_id'], $order, $dir);
+                                $invoicelist = $woReport->invoiceByBatch($cb['build_id'], $order, $dir);
+                                if ($wolist != '') {
+                                    foreach ($wolist as $woNumber) {
+                                        $woNumberAll = $woNumberAll . $woNumber->wo_number . ',';
+                                    }
+                                }
+                                if ($invoicelist != '') {
+                                    foreach ($invoicelist as $invoiceNumber) {
+                                        $invoiceAll = $invoiceAll . $invoiceNumber->wo_number . ',';
+                                    }
+                                }
+                            }
+                        }
+                        ?> 
+                    </li>
+
+                <?php } ?>
+            </ol>
+            <!-- Report Link -->
+    
+    <section>
+        
+        <a class="modalbox create_conf " id="add_equp" onclick="javascript:addnewtemplete('<?php echo $this->baseUrl() . '/pm/addequipment'; ?>');" href="#CreateNewMultiCon"> 
+            <button class="confirm"  >Add Equipment</button>
+        </a>
+        <a class="modalbox create_conf " onclick="javascript:addnewtemplete('<?php echo $this->baseUrl() . '/pm/createequipmenttemplatedesignation'; ?>');" href="#CreateNewMultiCon"> 
+            <button class="confirm"  >Add Multiple Equipment of same type</button>
+        </a>
+<!--        <a class="modalbox create_conf " onclick="javascript:addnewtemplete('<?php //echo $this->baseUrl() . '/pm/importtemplate'; ?>');" href="#CreateNewMultiCon"> 
+            <button class="confirm" > Import Templates </button>
+        </a>-->
+        <div id="vendor_search_div">
+                <div id="search_form_div">
+                        <div id="search_message"></div>
+                        <form name="search_form" id="search_form" action="<?php echo $this->baseUrl();?>/pm/equipmenttemplate" method="post">
+                                <div id="form_field">
+                                    <div style="float:left;">
+                                       <label class="labelcenter">Search For</label>
+                                       </div>
+                                    <input id="pmsearch_by" type="text" name="templatename" placeholder="Equipment Name" value="<?php echo $this->templateName; ?>">
+                                        
+                                    <div class="text-select-div" style="float: right;">
+                                        <div id="search_txt"><input type="text" name="designationname" placeholder="" value="<?php echo $this->designationName; ?>"></div>
+                                       </div>
+                                 </div>
+                                 <div class="form-button">
+                                          <input type="submit" name="search" id="search" value="Search">
+                                          <input type="button" name="reset" id="reset" value="Reset" onclick="window.location.href='<?php echo BASEURL;?>pm/'">
+                                 </div>  
+                        </form>
+
+                </div>
+        </div>
+    </section>
+    <section style="z-index:9999" class="w-48 fr ch-home-form" id="first">
+        <section class="ch-form-header">
+            <h3>Equipment List</h3>
+        </section>
+        <div class="gridContainer-1">
+            <div class="tableGrid">
+                <table border="1" width="100%">
+                    <tr class="table-title"><td colspan="7">Equipment Name </td></tr>
+                
+                <?php foreach($this->totalEquipment as $val): ?>
+                    
+                    <tr>
+                        <td colspan="6" Class="border-top"><?php echo $val['AU_Equipment_Name']; ?></td>
+                        <td>
+                            <a onclick="javascript:edittemplete('<?php echo $this->baseUrl() . '/pm/updateequipmentname/equipment_id/'.$val['AU_Equipment_Name_ID']; ?>');" href="#CreateNewMultiCon"><img src="<?php echo $this->baseUrl();?>/public/images/edit.png" ></a> 
+                            <a  onclick="deleteequipmentname(<?php echo $val['AU_Equipment_Name_ID']; ?>)"><img src="<?php echo $this->baseUrl();?>/public/images/delete.png"></a>
+                        </td>
+                    </tr>
+                    <?php if(!empty($val['Equipment_detail'])){ ?>
+                    <tr class="table-title">
+                        <td width="10%"  style="border-bottom-color: transparent;background: #fff;"></td>
+                        <td>Floor</td>
+                        <td>Unit</td>
+                        <td>Make / Model</td>
+                        <td>Location</td>
+                        <td>Template</td>
+                        <td></td>
+                    </tr>
+                        <?php foreach($val['Equipment_detail'] as  $EquiomentData): ?>
+                            <tr>
+                                <td width="10%" style="border-bottom-color: transparent; background: #fff;"></td>
+                                <td><a   href=""><?php echo $EquiomentData->Equipment_Floor; ?></a></td>
+                                <td><a   href=""><?php echo $EquiomentData->Equipment_Unit; ?></a></td>
+                                <td><a   href=""><?php echo $EquiomentData->Equipment_Make_Model; ?></a></td>
+                                <td><a   href=""><?php echo $EquiomentData->Equipment_Location; ?></a></td>
+                                <td><a   href=""><?php echo $EquiomentData->Equipment_Location; ?></a></td>
+   
+                                <td style="width: 65px;">
+                                    <a  onclick="javascript:editdesignation('<?php echo $this->baseUrl() . '/pm/editequipmenttemplatedesignation/desig_id/'.$EquiomentData->AU_Equipment_Detail_ID; ?>');" href="#CreateNewMultiCon"><img src="<?php echo $this->baseUrl();?>/public/images/edit.png" ></a> 
+                                    <a  onclick="deleteequipmenttemplatedesignation(<?php echo $EquiomentData->AU_Equipment_Detail_ID; ?>)"><img src="<?php echo $this->baseUrl();?>/public/images/delete.png"></a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php } ?>                   
+                
+                <?php endforeach; ?>
+                </table>
+            </div>
+        </div>
+    </section>
+
+
+
+</div>
+
+<div class="loader" style="display:none;" > <img src="<?php echo BASEURL . 'public/images/loader.gif'; ?>">
+
+<style>
+    #search_txt > input {
+        width: 200px;
+        padding: 4px 9px !important;
+    }
+    input#pmsearch_by {
+        margin-left: 32px;
+        /* padding-left: 38px; */
+        height: 30px;
+        width: 184px;
+    }
+    .gridContainer-1 .tableGrid {
+        display: block;
+        margin: 0px auto;
+        width: 100%;
+        padding: 0;
+    }
+    .border-top{ border-top: 1px solid #dddddd; }
+    .tableGrid table td{ padding: 5px 3px; }
+    .tableGrid table{ border-color: #dddddd;}
+    .table-title{
+            background-color: #2a6496;
+            color: #fff;
+    }
+    
+</style>

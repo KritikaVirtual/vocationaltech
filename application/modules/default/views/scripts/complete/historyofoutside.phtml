@@ -1,0 +1,59 @@
+<?php	
+	 $vendorModel = new Model_Vendor();
+	 $vendorList = $vendorModel->getVendorListByBid($this->bId);
+	 	
+?>
+
+<h1>Outside service</h1>
+			   <div id="lab_tab" class="tab_content cwo_content" >
+			   <div class="grid_content" style="height:180px;">
+											  <table name="labor_grid" class="cw_table_grid" width="100%">
+												  <tr>
+													  <th>Vendor Name</th>
+													  <th>Job Description/Work Completed</th>
+													  <th>Job Cost $</th>
+													  <th>Mark-Up(%)</th>
+													  <th>Tax</th>
+												  </tr> 
+												   <tr><?php if($this->current_value!='null' && $this->current_value!='') { ?><td><?php 
+										        if($vendorList){ 
+					                                foreach ($vendorList as  $vl) { if($this->current_value['vendor']==$vl['vid']) {echo stripslashes($vl['company_name']); }} } ?></td>
+												
+												<td><?php echo $this->current_value['job_description'];?></td>
+												<td><?php echo $this->current_value['job_cost'];?></td>
+												<td><?php echo $this->current_value['markup'];?></td>
+												<td><?php if($this->current_value['tax']=='1'){ echo "Yes"; } else { echo "No"; }?></td>
+											<?php } else { ?>
+											<td colspan="5" style="text-align:center"><?php echo HiSTORY_NONE; ?></td>
+											<?php } ?>
+											</tr>
+												  <tr style="background:none"> <td colspan="5" > 
+											<div style="text-align:center">	<span style="font-size:20px; font-weight:bold;"><i class="fa fa-arrow-circle-down big-arrow"></i>
+</span> </div>
+											</td>
+											</tr>
+												  
+												 <?php if($this->change_value!='') { ?>
+												 
+												  <tr>
+													<tr><td><?php 
+										        if($vendorList){ 
+					                                foreach ($vendorList as  $vl) { if($this->change_value['vendor']==$vl['vid']) {echo stripslashes($vl['company_name']); }} } ?></td>
+												
+												<td><?php echo $this->change_value['job_description'];?></td>
+												<td><?php echo $this->change_value['job_cost'];?></td>
+												<td><?php echo $this->change_value['markup'];?></td>
+												<td><?php if($this->change_value['tax']=='1'){ echo "Yes"; } else { echo "No"; }?></td>
+													
+											
+											</tr>
+												  </table> 
+												  <?php } else { ?>
+											<td colspan="5" style="text-align:center"><?php echo HiSTORY_NONE; ?></td>
+											<?php } ?>
+											</tr>
+												  </table> 
+												  </div> </div>
+												  <div class="buttons">
+		<button type="button" name="cancel" id="cancel" value="Cancel" onclick="cancelWoDesc()">Cancel</button>
+	    </div> 

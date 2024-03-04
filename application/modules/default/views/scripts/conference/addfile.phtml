@@ -1,0 +1,34 @@
+<div id="work_description_div">
+    <h1>Upload Attachment File</h1>
+
+        <div class="cw_row">
+            <label>Design Name</label>
+            <div class="cw-ibox-row">
+                <span class="field_error" id="cwerr_title"></span>
+                <input type="text" name="design_name" id="design_name" value="<?php echo $this->name; ?>"/>
+            </div>	
+        </div>	
+        <div class="cw_row">
+            <label>Select File</label>
+            <div class="cw-ibox-row">
+                <span class="field_error" id="cwerr_file"></span>
+                <input type="file" name="design_file" class='design_file' id="design_file" />
+				 
+            </div>	
+        </div>	
+        <div class="buttons">
+		
+			<?php 
+				if(!empty($this->room_id)){ 
+					echo '<button type="button"  name="upload" id="upload" value="Upload" onclick="updateFile()"> Update </button>';
+				}else{
+					echo '<button type="button"  name="upload" id="upload" value="Upload" onclick="uploadFile()">Upload</button>';					
+				}
+			?>
+			
+		    <input type="hidden" name="id" id="tblid" value="<?php echo $this->room_id; ?>" >
+		    <input type="hidden" name="image" id="check_image" value="<?php echo $this->url; ?>" >
+            
+            <button type="button" name="cancel" id="cancel" value="Cancel" onclick="cancelFile()">Cancel</button>
+        </div>
+</div>

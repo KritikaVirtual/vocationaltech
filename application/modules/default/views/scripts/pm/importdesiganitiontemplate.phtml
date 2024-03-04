@@ -1,0 +1,262 @@
+<?php
+$task = $this->taskdata;
+$reading = $this->readingdata;
+//print_r($EmailGroup ); 
+?>
+
+<!--                            <div class="task-reading-butttn">
+<?php //if(!empty($task)): ?>
+                                <button class="confirm active" id="task-btn" onclick="view_task_section();"> Task </button>
+<?php //endif; if(!empty($reading)): ?>
+                                <button class="confirm" id="reading-btn" onclick="view_reading_section();"> Reading </button>
+<?php //endif; ?>
+                            </div>-->
+<?php if (!empty($task)) { ?>
+    <div class="details-view" id="task-content">
+        <table border="1" style="border:1px solid #ccc;">
+            <tr class="heading-text">
+                <td>Task Order</td>
+                <td class="td-left-text">Task Instruction</td>  
+            </tr>
+            <?php
+            $i = 1;
+            foreach ($task as $data):
+                if (!empty($data['task'])) {
+                    //print_r($data);
+                    echo '<tr class="subset">
+                                                    <td>' . $i . '<i class="fa fa-minus-circle fa-minus-circle-custm" aria-hidden="true"></i></td>
+                                                    <td class="td-left-text">' . substr($data['name'], 0, 80) . '</td>
+                                                </tr>';
+                    $j = 1;
+                    foreach ($data['task'] as $data2):
+                        echo '<tr>';
+                        echo '<td style="padding:0px;">
+                                                                <table> 
+                                                                   <tr>
+                                                                       <td></td>
+                                                                       <td class="color-text-blue border-bottom-cusstm border-left-cusstm">' . $j . '</td>  
+                                                                    </tr>
+                                                                </table>
+                                                            </td>
+                                                            <td style="padding:0px;">
+                                                                <table> 
+                                                                   <tr>
+                                                                       <td class="td-left-text color-text-blue border-bottom-cusstm ">' . substr($data2->Task_Instruction, 0, 80) . '</td>
+                                                                    </tr>                                                
+                                                                </table>
+                                                            </td>';
+                        $j++;
+                        echo '</tr>';
+                    endforeach;
+                }else if (array_key_exists('task', $data)) {
+                    //print_r($data);
+                    echo '<tr class="subset">
+                                                    <td>' . $i . '<i class="fa fa-minus-circle fa-minus-circle-custm" aria-hidden="true"></i></td>
+                                                    <td class="td-left-text">' . substr($data['name'], 0, 80) . '</td>
+                                                </tr>';
+                } else {
+                    foreach ($data as $data1):
+                        //print_r($data1);
+                        echo '<tr>
+                                                    <td>' . $i . '</td>
+                                                    <td class="td-left-text">' . substr($data1->Task_Instruction, 0, 80) . '</td>
+                                                </tr>';
+                    endforeach;
+                }
+                $i++;
+            endforeach;
+            ?>
+        </table>
+    </div>
+<?php } else {
+    echo '<div class="empty-task-data">Template has no Task, this Template only has readings.</div>';
+}
+?>
+
+<?php if (!empty($reading)): ?>
+    <div class="details-view" id="reading-content" style="display:none;">
+        <table border="1" style="border:1px solid #ccc;">
+            <tr class="heading-text">
+                <td>Reading Order</td>
+                <td class="td-left-text">Reading Instruction</td>                                
+            </tr>
+            <?php
+            $i = 1;
+            foreach ($reading as $data):
+
+                if (!empty($data['task'])) {
+                    echo '<tr class="subset">
+                                                    <td>' . $i . '<i class="fa fa-minus-circle fa-minus-circle-custm" aria-hidden="true"></i></td>
+                                                    <td class="td-left-text">' . substr($data['name'], 0, 80) . '</td>
+                                                </tr>';
+                    $j = 1;
+                    foreach ($data['task'] as $data2):
+                        //print_r($data2);
+                        echo '<tr>';
+                        echo '<td style="padding:0px;">
+                                                                <table> 
+                                                                   <tr>
+                                                                       <td></td>
+                                                                       <td class="color-text-blue border-bottom-cusstm border-left-cusstm">' . $j . '</td>  
+                                                                    </tr>
+                                                                </table>
+                                                            </td>
+                                                            <td style="padding:0px;">
+                                                                <table> 
+                                                                   <tr>
+                                                                       <td class="td-left-text color-text-blue border-bottom-cusstm ">' . substr($data2->Reading_Instruction, 0, 80) . '</td>
+                                                                    </tr>                                                
+                                                                </table>
+                                                            </td>';
+                        $j++;
+                        echo '</tr>';
+                    endforeach;
+                }else if (array_key_exists('task', $data)) {
+                    //print_r($data);
+                    echo '<tr class="subset">
+                                                    <td>' . $i . '<i class="fa fa-minus-circle fa-minus-circle-custm" aria-hidden="true"></i></td>
+                                                    <td class="td-left-text">' . substr($data['name'], 0, 80) . '</td>
+                                                </tr>';
+                } else {
+                    foreach ($data as $data1):
+                        //print_r($data1);
+                        echo '<tr>
+                                                    <td>' . $i . '</td>
+                                                    <td class="td-left-text">' . substr($data1->Reading_Instruction, 0, 80) . '</td>
+                                                </tr>';
+                    endforeach;
+                }
+                $i++;
+            endforeach;
+            ?>
+        </table>
+    </div>
+<?php endif; ?>
+<style>
+    .left_box{
+        padding-left: 12%;
+        padding-top: 10%;
+        padding-bottom: 10%;
+    }
+
+    .left_box table{
+        width: 100%;
+        overflow-y: scroll;
+    }
+
+    .left_box table tbody{
+        height: 200px;
+        display: inline-block;
+        width: 100%;
+        overflow: auto;
+    }
+
+    .left_box table tbody td{
+        width: 100%;
+    }
+
+
+    .right_box
+    {
+        padding-top: 10%;
+        padding-bottom: 10%;  
+    }
+
+
+    .task-reading-butttn
+    {
+        margin-top: 2%;
+    }
+
+    .details-view
+    {
+
+    }
+
+    .details-view table td
+    {
+        padding:5px;
+        text-align: center;
+    }
+
+    .details-view table th
+    {
+
+        text-align: center;
+    }
+
+    .td-left-text
+    {
+        text-align: left !important;
+    }
+
+    .details-view
+    {
+        margin-top:0px;
+        margin-bottom:40px;
+    }
+
+    .heading-text {
+        background-color: #ccc;
+        color: #000;
+        font-weight: 500;
+    }
+
+    .sub-task-text {
+        background-color: lightblue;
+    }
+
+    .color-text-blue {
+        background-color:#F0F8FF;
+    }
+
+    .subset-table-td{
+        padding-top: 0px !important; 
+        padding-bottom: 0px !important;
+    }
+
+
+    .border-bottom-cusstm
+    {
+        border-bottom: 1px solid #ccc;
+    }
+
+    .border-left-cusstm
+    {
+        border-left: 1px solid #ccc;
+    }
+
+    .fa-minus-circle-custm
+    {
+        float: right;
+        padding-top: 4px;
+    }
+
+    .fa-pluse-circle-custm
+    {
+        float: right;
+        padding-top: 4px;
+    }
+
+</style>
+
+<script>
+     
+
+    function view_task_section() {
+        $("#reading-content").hide();
+        $("#task-content").show();
+        $("#reading-btn").removeClass("active");
+        $("#task-btn").addClass("active");
+        $(".empty-task-data").show();
+    }
+
+    function view_reading_section() {
+        $("#task-content").hide();
+        $("#reading-content").show();
+        $("#task-btn").removeClass("active");
+        $("#reading-btn").addClass("active");
+        $(".empty-task-data").hide();
+    }
+
+</script>

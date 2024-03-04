@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<title>Vocational Technologies</title>
+<?php  //echo $this->partial('header.phtml'); 
+$controller=Zend_Controller_Front::getInstance()->getRequest()->getControllerName();
+?>
+<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+<link href="<?php echo BASEURL.'/public'?>/css/mediaqueries.css" rel="stylesheet"/>
+<link href="<?php echo BASEURL.'/public'?>/css/custom-login.css" rel="stylesheet"/>
+</head>
+<body class="layout-backgorund">
+
+<div class="main_log">
+<div class="my_logo"><a href="<?php echo BASEURL;?>"><img src="<?php echo BASEURL.'public/images/logo.png'?>"  class="logo"/></a> </div>
+<div class="content">
+<?php echo $this->layout()->content ?>
+</div>
+<div class="footer"><p>© Copyright <?php echo date('Y');?>. Vocational Technologies. All Rights Reserved.</p></div>
+
+</div>
+<?php echo $this->partial('new_footer.phtml');?>
+</body>
+</html>

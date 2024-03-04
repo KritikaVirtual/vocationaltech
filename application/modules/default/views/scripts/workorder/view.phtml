@@ -1,0 +1,71 @@
+<div class="container-right">
+	<?php if(isset($this->buildingDetail)){	?>	
+		<div class="back-link" style="text-align:right"><a href="<?php echo BASEURL.'workorder';?>"><< Back To List of Work Order</a></div>
+		<div class="view-work-order">
+			<div id="building-company-order">
+				 <div id="building-info" class="build_info">
+					   <span class="heading">Building Information</span>
+					   <span><?php echo $this->buildingDetail['buildingName'];?></span>					   
+					   <span><?php if(isset($this->buildingDetail['address1'])) echo $this->buildingDetail['address1'];?></span>
+					   <?php if($this->tenantInfo['address2']!=''){?>
+						   <span><?php echo $this->buildingDetail['address2'];?></span>
+					   <?php }?>
+					   <span>Suite No-<?php echo $this->buildingDetail['billSuite'];?></span>
+					   <span><?php echo $this->buildingDetail['city'];?></span>
+					   <span><?php echo $this->buildingDetail['statename'];?>,<?php echo $this->buildingDetail['postalCode'];?></span>
+					   <span>Phone:<?php echo $this->buildingDetail['phoneNumber'];?></span>
+				 </div>
+				 <div id="company-info">
+					 <span>Company Name : <?php echo $this->companyName;?></span>
+					 <span class="service-request"><h2>Work Order Service Request</h2></span>
+					 <span class="priority">Priority : <?php echo $this->priorityName;?></span>
+				 </div>
+				 <div id="order-info">
+					 <div class="order-no">
+						 <span class="workorder_h">WORK ORDER NO.</span>
+						 <span class="workorder_h_no"><?php echo $this->workOrder['wo_number'];?></span>
+					 </div>
+					 <?php /*<div class="phone-div">
+						 <span>Phone: <?php echo $this->tenantInfo['phoneNumber'];?></span>
+						 <span>Fax  : <?php echo $this->tenantInfo['faxNumber'];?></span>						 
+					 </div>
+					 */?>
+				 </div>
+			</div>
+			<div id="tenant-date">
+				 <div class="tenant-info">
+					  <span class="heading">Tenant Information</span>
+					  <span><?php echo stripslashes($this->tenantInfo['tenantName']);?></span>
+					  <span>Contact: <?php echo stripslashes($this->tenantInfo['tenantContact']);?></span>
+					  <span>Suite/Location:<?php echo $this->tenantInfo['suite'];?></span>
+					  <span><?php echo $this->tenantInfo['city'];?></span>
+		              <span><?php echo $this->tenantInfo['statename'];?>,<?php echo $this->tenantInfo['postalCode'];?></span>
+					  <span>Phone:<?php echo $this->tenantInfo['phoneNumber'];?></span>
+				 </div>
+				 <div class="date-info">
+					  <span class="heading">Date Received</span>
+					  <span><?php echo $this->workOrder['date_requested'];?> <?php echo $this->workOrder['time_requested'];?></span>
+					  <span class="heading">Taken By</span>
+					  <span><?php echo stripslashes($this->tenantInfo['tenantName']);?></span>
+					  <span class="heading">Category</span>
+					  <span><?php echo $this->categoryName;?></span>
+				 </div>
+			</div>
+			<div id="work-request">
+				<span class="work-request_head">Work Request</span>
+				<div class="wrequest-cont"><?php echo nl2br($this->workOrder['work_order_request']);?></div>
+			</div>
+			<?php if($this->workOrder['wo_file']!=''){?>
+			<div id="file-attachment" class="wrequest-attach">
+				<span class="heading">Attachment</span>
+				<span><?php echo $this->workOrder['wo_file'];?> [ <a href="<?php echo BASEURL.'public/work_order/'.$this->workOrder['wo_file'];?>">Download</a>]</span>
+			</div>
+			<?php }?>
+			<div class="print-button">				
+				<input type="button" class="confirm" name="print" value="Print" onclick='window.open("<?php echo $this->baseUrl('/workorder/printworkorder/woId/'.$this->workOrder['woId']); ?>", "_blank", "scrollbars=yes, resizable=yes, top=300, left=400, width=700, height=800");'/>
+			</div>
+		</div>
+	<?php }else{
+		    echo $this->msg;
+		 }?>	
+</div>

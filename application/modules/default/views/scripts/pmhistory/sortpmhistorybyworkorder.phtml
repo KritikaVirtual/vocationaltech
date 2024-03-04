@@ -1,0 +1,419 @@
+<?php
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/pm-history.js');
+$pmTemplate = new Model_PmTemplate();
+$reportModel = new Model_Report();
+$reportDetailLinks = '';
+//This is for Task Instruction
+function buildTree($elements, $parentId = 0) {
+    $branch = array();
+    foreach ($elements as $element) {
+        if ($element['Parent_ID'] == $parentId) {
+            $children = buildTree($elements, $element['AU_Template_Task_ID']);
+            if ($children) {
+                $element['children'] = $children;
+            }
+            $branch[] = $element;
+        }
+    }
+    return $branch;
+}
+// For short Text
+function shorter($text, $chars_limit)
+{
+    // Check if length is larger than the character limit
+    if (strlen($text) > $chars_limit)
+    {
+        // If so, cut the string at the character limit
+        $new_text = substr($text, 0, $chars_limit);
+        // Trim off white space
+        $new_text = trim($new_text);
+        // Add at end of text ...
+        return $new_text . "...";
+    }
+    // If not just return the text as is
+    else
+    {
+    return $text;
+    }
+}
+
+function get_file_extension($file_name) {
+    return substr(strrchr($file_name,'.'),1);
+}
+$moduleMapper = new Model_UserBuildingModule();
+$moduleAccess = $moduleMapper->getModuleByBuildingId($this->select_build_id, 3);
+$buildhasAccess = array();
+if ($moduleAccess) {
+    foreach ($moduleAccess as $moduleAccessVal) {
+        $buildhasAccess[] = $moduleAccessVal->module_id;
+    }
+}
+
+$dashboard_menu = array(54);
+if (in_array(3, $buildhasAccess)) {
+    
+    $reportDetailLinks = $reportModel->getReport($this->custID, $dashboard_menu);            
+} else {
+    $reportDetailLinks = false;
+}
+
+$dashboard_menu = array(55);
+if (in_array(3, $buildhasAccess)) {
+    
+    $pmHistoryLinks = $reportModel->getReport($this->custID, $dashboard_menu);            
+} else {
+    $pmHistoryLinks = false;
+}
+
+function unique_multidim_array($array, $key) {
+    $temp_array = array();
+    $i = 0;
+    $key_array = array();
+   
+    foreach($array as $val) {
+        if (!in_array($val[$key], $key_array)) {
+            $key_array[$i] = $val[$key];
+            $temp_array[$i] = $val;
+        }
+        $i++;
+    }
+    return $temp_array;
+}
+
+?>
+<table class="table table-bordered table-bg">
+                        <tbody>
+<?php
+unset($_SESSION['wonumber']);
+$tree = buildTree($this->pmwoHistoryDetails);
+for ($i = 1; $i <= count($tree); $i++) {
+    if (array_key_exists("children", $tree[$i - 1])) {
+        ?>
+                            <tr class="sub-bg-color tr-bg history-row-wrap">
+                                <?php
+                                if($tree[$i - 1]['PM_WO_Number']!==$_SESSION['wonumber']){ ?> <td align="center" style="background-color: #92cddc!important; border-top: 1px solid #ddd!important; width:150px;"><?php echo $tree[$i - 1]['PM_WO_Number']; ?></td><?php } else { ?> <td align="center" style="width:150px;"></td><?php }                             
+                                $_SESSION['wonumber'] = $tree[$i - 1]['PM_WO_Number'];
+                                ?>
+                                <td style="width:50px;" align="center"><?php echo $i; ?></td>
+                                <td style="width:200px;"><?php echo $tree[$i - 1]['Task_Instruction']; ?></td>
+                                <td style="width:150px;"></td>
+                                <td style="width:150px;"></td>
+                                <td style="width:100px;"></td>
+                                <td style="width:100px;"></td>
+                                <td style="width:150px;"></td>
+                                <td style="width:150px;"></td>
+                                <td style="width:150px;"></td>
+                                <td align="center" style="width:50px;"><?php
+                                    
+                                        
+            foreach ($pmHistoryLinks as $reportvalue) {
+                $reportOptions = explode(',', $reportvalue->report_option);
+                if ($reportvalue->Report_Type == 'Flash') {
+
+                    if ((in_array('[[++CostCenterNumber]]', $reportOptions)) && $uniqueCostCenter != '') {
+                        $key = array_search('[[++CostCenterNumber]]', $reportOptions);
+                        $costCenterNumber = str_replace('[[++CostCenterNumber]]', $uniqueCostCenter, $reportOptions[$key]);
+                    }
+
+                    if ((in_array('[[++KeyBuildingNumber]]', $reportOptions)) && $this->select_build_id != '') {
+                        $key = array_search('[[++KeyBuildingNumber]]', $reportOptions);
+                        $buildingID = str_replace('[[++KeyBuildingNumber]]', $this->select_build_id, $reportOptions[$key]);
+                    }
+                    if ((in_array('[[++user_id]]', $reportOptions)) && $this->userId != '') {
+                        $key = array_search('[[++user_id]]', $reportOptions);
+                        $userID = str_replace('[[++user_id]]', $this->userId, $reportOptions[$key]);
+                    }
+
+                    if ((in_array('[[++PM_Hist_AU_Equip_TR_ID]]', $reportOptions)) && $tree[$i - 1]['AU_Equipment_Task_Reading_ID'] != '') {
+                        $key = array_search('[[++PM_Hist_AU_Equip_TR_ID]]', $reportOptions);
+                        $TRID = str_replace('[[++PM_Hist_AU_Equip_TR_ID]]', $tree[$i - 1]['AU_Equipment_Task_Reading_ID'], $reportOptions[$key]);
+                    } 
+                    
+                    if ((in_array('[[++PM_Hist_AU_Equip_Detail_ID]]', $reportOptions)) && $tree[$i - 1]['AU_Equipment_Detail_ID'] != '') {
+                        $key = array_search('[[++PM_Hist_AU_Equip_Detail_ID]]', $reportOptions);
+                        $EDID = str_replace('[[++PM_Hist_AU_Equip_Detail_ID]]', $tree[$i - 1]['AU_Equipment_Detail_ID'], $reportOptions[$key]);
+                    }
+                    if ((in_array('[[++PM_Hist_AU_Template_ID]]', $reportOptions)) && $tree[$i - 1]['AU_Template_Designation_ID'] != '') {
+                        $key = array_search('[[++PM_Hist_AU_Template_ID]]', $reportOptions);
+                        $TDID  = str_replace('[[++PM_Hist_AU_Template_ID]]', $tree[$i - 1]['AU_Template_Designation_ID'], $reportOptions[$key]);
+                    }
+                    if ((in_array('[[++PM_Hist_AU_WO_Start_Date]]', $reportOptions)) && $tree[$i - 1]['PM_WO_StartDate'] != '') {
+                        $key = array_search('[[++PM_Hist_AU_WO_Start_Date]]', $reportOptions);
+                        $DateS  = str_replace('[[++PM_Hist_AU_WO_Start_Date]]', $tree[$i - 1]['PM_WO_StartDate'], $reportOptions[$key]);
+                    }                    
+                    if ((in_array('[[++PM_Hist_AU_WO_Number]]', $reportOptions)) && $tree[$i - 1]['PM_WO_Number'] != '') {
+                        $key = array_search('[[++PM_Hist_AU_WO_Number]]', $reportOptions);
+                        $WoS  = str_replace('[[++PM_Hist_AU_WO_Number]]', $tree[$i - 1]['PM_WO_Number'], $reportOptions[$key]);
+                    }
+
+                    $print_url = $this->baseUrl() . '/reports/VisionReportEngine/index.php?stimulsoft_client_key=ViewerFx&stimulsoft_report_key=' . $reportvalue->report_mrt . '&Cost_Center_Number=' . $costCenterNumber . ' &buildkey=' . $buildingID . '&userID=' . $userID. '&TRID='.$TRID. '&EDID='.$EDID. '&TDID='.$TDID. '&DateS='.$DateS. '&DateE='.$DateS. '&WoS='.$WoS. '&WoE='.$WoS;
+                } else {
+
+
+                    if ((in_array('[[++CostCenterNumber]]', $reportOptions)) && $uniqueCostCenter != '') {
+                        $key = array_search('[[++CostCenterNumber]]', $reportOptions);
+                        $costCenterNumber = str_replace('[[++CostCenterNumber]]', $uniqueCostCenter, $reportOptions[$key]);
+                    }
+
+                    if ((in_array('[[++KeyBuildingNumber]]', $reportOptions)) && $this->select_build_id != '') {
+                        $key = array_search('[[++KeyBuildingNumber]]', $reportOptions);
+                        $buildingID = str_replace('[[++KeyBuildingNumber]]', $this->select_build_id, $reportOptions[$key]);
+                    }
+                    if ((in_array('[[++user_id]]', $reportOptions)) && $this->userId != '') {
+                        $key = array_search('[[++user_id]]', $reportOptions);
+                        $userID = str_replace('[[++user_id]]', $this->userId, $reportOptions[$key]);
+                    }
+                    
+                    if ((in_array('[[++PM_Hist_AU_Equip_TR_ID]]', $reportOptions)) && $tree[$i - 1]['AU_Equipment_Task_Reading_ID'] != '') {
+                        $key = array_search('[[++PM_Hist_AU_Equip_TR_ID]]', $reportOptions);
+                        $TRID = str_replace('[[++PM_Hist_AU_Equip_TR_ID]]', $tree[$i - 1]['AU_Equipment_Task_Reading_ID'], $reportOptions[$key]);
+                    } 
+                    
+                    if ((in_array('[[++PM_Hist_AU_Equip_Detail_ID]]', $reportOptions)) && $tree[$i - 1]['AU_Equipment_Detail_ID'] != '') {
+                        $key = array_search('[[++PM_Hist_AU_Equip_Detail_ID]]', $reportOptions);
+                        $EDID = str_replace('[[++PM_Hist_AU_Equip_Detail_ID]]', $tree[$i - 1]['AU_Equipment_Detail_ID'], $reportOptions[$key]);
+                    }
+                    if ((in_array('[[++PM_Hist_AU_Template_ID]]', $reportOptions)) && $tree[$i - 1]['AU_Template_Designation_ID'] != '') {
+                        $key = array_search('[[++PM_Hist_AU_Template_ID]]', $reportOptions);
+                        $TDID  = str_replace('[[++PM_Hist_AU_Template_ID]]', $tree[$i - 1]['AU_Template_Designation_ID'], $reportOptions[$key]);
+                    }
+                    if ((in_array('[[++PM_Hist_AU_WO_Start_Date]]', $reportOptions)) && $tree[$i - 1]['PM_WO_StartDate'] != '') {
+                        $key = array_search('[[++PM_Hist_AU_WO_Start_Date]]', $reportOptions);
+                        $DateS  = str_replace('[[++PM_Hist_AU_WO_Start_Date]]', $tree[$i - 1]['PM_WO_StartDate'], $reportOptions[$key]);
+                    }                    
+                    if ((in_array('[[++PM_Hist_AU_WO_Number]]', $reportOptions)) && $tree[$i - 1]['PM_WO_Number'] != '') {
+                        $key = array_search('[[++PM_Hist_AU_WO_Number]]', $reportOptions);
+                        $WoS  = str_replace('[[++PM_Hist_AU_WO_Number]]', $tree[$i - 1]['PM_WO_Number'], $reportOptions[$key]);
+                    }
+
+                        $print_url = $this->baseUrl() . '/vnsreports/index.php?report_key=' . $reportvalue->report_mrt . '&Cost_Center_Number=' . $costCenterNumber . ' &buildkey=' . $buildingID . '&User=' . $userID . '&TRID='.$TRID. '&EDID='.$EDID. '&TDID='.$TDID. '&DateS='.$DateS. '&DateE='.$DateS. '&WoS='.$WoS. '&WoE='.$WoS;
+                    
+                }
+            }
+            
+                                       ?>
+                                    <a <?php if ($reportvalue->report_target == 1) { ?> target='_blank' <?php } ?> href="<?php echo $print_url ?>"><img src="<?php echo BASEURL . 'public/images/printer.png'; ?>" style="width:18px;"></a>
+                                    </td>
+                            </tr>
+                            <?php
+        for ($k = 1; $k <= count($tree[$i - 1]['children']); $k++) {
+            ?>
+                            <tr class="history-row-wrap history-doc-extention ">
+                                <td style="width:150px;" ><?php if($k==1){
+                                    $photosDetails = $pmTemplate->getPmWoPhotos($tree[$i - 1]['AU_Equipment_Detail_ID'], $tree[$i - 1]['AU_Template_Designation_ID'], $tree[$i - 1]['PM_WO_Number']); 
+                                    //print_r($notesDetails);
+                                    echo '<ul>';
+                                    foreach($photosDetails as $photo){
+                                        $docsExtn =get_file_extension($photo['PM_WO_Photo']);
+                                        ?>
+                                    <li><?php if($docsExtn=='pdf'){
+                                        ?>
+                                        <i class="fa fa-file-pdf-o pdf-icon-color" aria-hidden="true"></i>
+                                            <a target="_blank" href="<?php echo BASEURL . 'public/pm/historyPhotos/'.$photo['PM_WO_Photo']; ?>"><?php echo shorter($photo['PM_WO_Photo'], 15); ?></a>
+                                        <?php
+                                        } else if($docsExtn=='png'){
+                                            
+                                            ?>
+                                            <img  class="format-wrap" src="<?php echo BASEURL . 'public/images/docpngicons.png'; ?>"><a target="_blank" href="<?php echo BASEURL . 'public/pm/historyPhotos/'.$photo['PM_WO_Photo']; ?>"><?php echo shorter($photo['PM_WO_Photo'], 15); ?></a>
+                                            <?php
+                                            } else if($docsExtn=='jpg'){
+                                                
+                                                ?>
+                                            <img  class="format-wrap" src="<?php echo BASEURL . 'public/images/docjpgicons.png'; ?>"><a target="_blank" href="<?php echo BASEURL . 'public/pm/historyPhotos/'.$photo['PM_WO_Photo']; ?>"><?php echo shorter($photo['PM_WO_Photo'], 15); ?></a>
+                                            <?php
+                                            } else if($docsExtn=='pmb') { ?>
+                                            <img  class="format-wrap" src="<?php echo BASEURL . 'public/images/docbmpicons.png'; ?>"><a target="_blank" href="<?php echo BASEURL . 'public/pm/historyPhotos/'.$photo['PM_WO_Photo']; ?>"><?php echo shorter($photo['PM_WO_Photo'], 15); ?></a>
+ <?php } else{ ?> <a target="_blank" href=""><?php echo shorter($photo['PM_WO_Photo'], 15); ?></a> <?php }?></li>
+                                    <?php
+                                                                                
+                                    }
+                                    echo '</ul>';
+                                    
+                                    /*echo '<ul>';
+                                    $notesDetails = $pmTemplate->getPmWoNotes($tree[$i - 1]['AU_Equipment_Detail_ID'], $tree[$i - 1]['AU_Template_Designation_ID'], $tree[$i - 1]['PM_WO_Number']); 
+                                    foreach($notesDetails as $note){
+                                        ?>
+                                    <li><?php echo shorter($note['PM_WO_Notes'], 15); ?></li>
+                                    <?php
+                                                                               
+                                    }
+                                    echo '</ul>';*/
+                                    } ?>
+                                </td>
+                                <td>
+                                    <table class="sub-tbl-col subitem">
+                                        <tbody>
+                                            <tr class="td-subitem">
+                                                <td><?php echo $i . '-' . $k; ?></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                                <td><?php echo $tree[$i - 1]['children'][$k - 1]['Task_Instruction']; ?></td>
+                                <td align="center"><?php echo $tree[$i - 1]['children'][$k - 1]['Frequency']; ?></td>
+                                <td align="center"><?php echo date("m/d/Y", strtotime($tree[$i - 1]['children'][$k - 1]['PM_WO_StartDate'])); ?></td>
+                                <td align="center" style="width:100px;"><?php echo $tree[$i - 1]['children'][$k - 1]['JobTime']; ?></td>
+                                <td align="center" style="width:100px;">
+                                    <?php echo $tree[$i - 1]['children'][$k - 1]['PM_Actual_JobTime']; ?>
+                                </td>
+                                <td class="completedDate" align="center">
+                                    <?php echo date("m/d/Y", strtotime($tree[$i - 1]['children'][$k - 1]['PM_WO_Complete_Date'])); ?>
+                                </td>
+                                <td>
+                                    <?php echo $tree[$i - 1]['children'][$k - 1]['PM_Note_Comments'];
+                                    $completedByuid = $tree[$i - 1]['children'][$k - 1]['PM_CompletedBy_UID']; ?>
+                                </td>
+                                <td>
+                                    <?php $pmcompletedby = $pmTemplate->getPmCompletedBy($this->select_build_id, $completedByuid); 
+                                    echo $pmcompletedby[0]->fullname; ?>
+                                </td>
+                                <td align="center" style="background-color:#ddd; width: 50px;"></td>
+                            </tr>
+                            
+                            <?php
+        }
+    } else {
+                            ?><tr class="history-row-wrap">
+                                <?php
+                                
+                                $uniqueWONumber = unique_multidim_array($tree,'PM_WO_Number');                                
+                                if(in_array($tree[$i - 1]['PM_WO_Number'],$uniqueWONumber[$i - 1])){
+                                    
+                                    ?>
+                                <?php
+                                if($tree[$i - 1]['PM_WO_Number']!==$_SESSION['wonumber']){ ?> <td align="center" style="background-color: #92cddc!important; border-top: 1px solid #ddd!important; width:150px;"><?php echo $tree[$i - 1]['PM_WO_Number']; ?></td><?php } else { ?> <td align="center" style="width:150px;"></td><?php }                                
+                                $_SESSION['wonumber'] = $tree[$i - 1]['PM_WO_Number'];
+                                ?>
+                                <?php
+                                    
+                                } else {
+                                    ?>
+                                <td align="center" style="width:150px;"></td>
+                                <?php
+                                    
+                                }
+                                ?>
+                                <td><?php echo $i; ?> </td>
+                                <td style="width:200px;"><?php echo $tree[$i - 1]['Task_Instruction']; ?></td>
+                                <td align="center"><?php echo $tree[$i - 1]['Frequency']; ?></td>
+                                <td align="center"><?php echo date("m/d/Y", strtotime($tree[$i - 1]['PM_WO_StartDate'])); ?></td>
+                                <td align="center" style="width:100px;"><?php echo $tree[$i - 1]['JobTime']; ?></td>
+                                <td align="center" style="width:100px;"><?php echo $tree[$i - 1]['PM_Actual_JobTime']; ?></td>
+                                <td align="center"><?php echo date("m/d/Y", strtotime($tree[$i - 1]['PM_WO_Complete_Date'])); ?></td>
+                                <td><?php echo $tree[$i - 1]['PM_Note_Comments']; ?></td>
+                                <td><?php
+                                $completedByuid = $tree[$i - 1]['PM_CompletedBy_UID'];
+                                $pmcompletedby = $pmTemplate->getPmCompletedBy($this->select_build_id, $completedByuid); 
+                                    echo $pmcompletedby[0]->fullname; ?></td>
+                                <?php
+                                
+                                $uniqueWONumber = unique_multidim_array($tree,'PM_WO_Number');                                
+                                if(in_array($tree[$i - 1]['PM_WO_Number'],$uniqueWONumber[$i - 1])){
+                                    
+                                    ?>
+                                <td align="center" style="background-color:#92cddc;width:50px;">
+                                    <?php
+                                    foreach ($pmHistoryLinks as $reportvalue) {
+                $reportOptions = explode(',', $reportvalue->report_option);
+                if ($reportvalue->Report_Type == 'Flash') {
+
+                    if ((in_array('[[++CostCenterNumber]]', $reportOptions)) && $uniqueCostCenter != '') {
+                        $key = array_search('[[++CostCenterNumber]]', $reportOptions);
+                        $costCenterNumber = str_replace('[[++CostCenterNumber]]', $uniqueCostCenter, $reportOptions[$key]);
+                    }
+
+                    if ((in_array('[[++KeyBuildingNumber]]', $reportOptions)) && $this->select_build_id != '') {
+                        $key = array_search('[[++KeyBuildingNumber]]', $reportOptions);
+                        $buildingID = str_replace('[[++KeyBuildingNumber]]', $this->select_build_id, $reportOptions[$key]);
+                    }
+                    if ((in_array('[[++user_id]]', $reportOptions)) && $this->userId != '') {
+                        $key = array_search('[[++user_id]]', $reportOptions);
+                        $userID = str_replace('[[++user_id]]', $this->userId, $reportOptions[$key]);
+                    }
+
+                    if ((in_array('[[++PM_Hist_AU_Equip_TR_ID]]', $reportOptions)) && $tree[$i - 1]['AU_Equipment_Task_Reading_ID'] != '') {
+                        $key = array_search('[[++PM_Hist_AU_Equip_TR_ID]]', $reportOptions);
+                        $TRID = str_replace('[[++PM_Hist_AU_Equip_TR_ID]]', $tree[$i - 1]['AU_Equipment_Task_Reading_ID'], $reportOptions[$key]);
+                    } 
+                    
+                    if ((in_array('[[++PM_Hist_AU_Equip_Detail_ID]]', $reportOptions)) && $tree[$i - 1]['AU_Equipment_Detail_ID'] != '') {
+                        $key = array_search('[[++PM_Hist_AU_Equip_Detail_ID]]', $reportOptions);
+                        $EDID = str_replace('[[++PM_Hist_AU_Equip_Detail_ID]]', $tree[$i - 1]['AU_Equipment_Detail_ID'], $reportOptions[$key]);
+                    }
+                    if ((in_array('[[++PM_Hist_AU_Template_ID]]', $reportOptions)) && $tree[$i - 1]['AU_Template_Designation_ID'] != '') {
+                        $key = array_search('[[++PM_Hist_AU_Template_ID]]', $reportOptions);
+                        $TDID  = str_replace('[[++PM_Hist_AU_Template_ID]]', $tree[$i - 1]['AU_Template_Designation_ID'], $reportOptions[$key]);
+                    }
+                    if ((in_array('[[++PM_Hist_AU_WO_Start_Date]]', $reportOptions)) && $tree[$i - 1]['PM_WO_StartDate'] != '') {
+                        $key = array_search('[[++PM_Hist_AU_WO_Start_Date]]', $reportOptions);
+                        $DateS  = str_replace('[[++PM_Hist_AU_WO_Start_Date]]', $tree[$i - 1]['PM_WO_StartDate'], $reportOptions[$key]);
+                    }                    
+                    if ((in_array('[[++PM_Hist_AU_WO_Number]]', $reportOptions)) && $tree[$i - 1]['PM_WO_Number'] != '') {
+                        $key = array_search('[[++PM_Hist_AU_WO_Number]]', $reportOptions);
+                        $WoS  = str_replace('[[++PM_Hist_AU_WO_Number]]', $tree[$i - 1]['PM_WO_Number'], $reportOptions[$key]);
+                    }
+
+                    $print_url = $this->baseUrl() . '/reports/VisionReportEngine/index.php?stimulsoft_client_key=ViewerFx&stimulsoft_report_key=' . $reportvalue->report_mrt . '&Cost_Center_Number=' . $costCenterNumber . ' &buildkey=' . $buildingID . '&userID=' . $userID. '&TRID='.$TRID. '&EDID='.$EDID. '&TDID='.$TDID. '&DateS='.$DateS. '&DateE='.$DateS. '&WoS='.$WoS. '&WoE='.$WoS;
+                } else {
+
+
+                    if ((in_array('[[++CostCenterNumber]]', $reportOptions)) && $uniqueCostCenter != '') {
+                        $key = array_search('[[++CostCenterNumber]]', $reportOptions);
+                        $costCenterNumber = str_replace('[[++CostCenterNumber]]', $uniqueCostCenter, $reportOptions[$key]);
+                    }
+
+                    if ((in_array('[[++KeyBuildingNumber]]', $reportOptions)) && $this->select_build_id != '') {
+                        $key = array_search('[[++KeyBuildingNumber]]', $reportOptions);
+                        $buildingID = str_replace('[[++KeyBuildingNumber]]', $this->select_build_id, $reportOptions[$key]);
+                    }
+                    if ((in_array('[[++user_id]]', $reportOptions)) && $this->userId != '') {
+                        $key = array_search('[[++user_id]]', $reportOptions);
+                        $userID = str_replace('[[++user_id]]', $this->userId, $reportOptions[$key]);
+                    }
+                    
+                    if ((in_array('[[++PM_Hist_AU_Equip_TR_ID]]', $reportOptions)) && $tree[$i - 1]['AU_Equipment_Task_Reading_ID'] != '') {
+                        $key = array_search('[[++PM_Hist_AU_Equip_TR_ID]]', $reportOptions);
+                        $TRID = str_replace('[[++PM_Hist_AU_Equip_TR_ID]]', $tree[$i - 1]['AU_Equipment_Task_Reading_ID'], $reportOptions[$key]);
+                    } 
+                    
+                    if ((in_array('[[++PM_Hist_AU_Equip_Detail_ID]]', $reportOptions)) && $tree[$i - 1]['AU_Equipment_Detail_ID'] != '') {
+                        $key = array_search('[[++PM_Hist_AU_Equip_Detail_ID]]', $reportOptions);
+                        $EDID = str_replace('[[++PM_Hist_AU_Equip_Detail_ID]]', $tree[$i - 1]['AU_Equipment_Detail_ID'], $reportOptions[$key]);
+                    }
+                    if ((in_array('[[++PM_Hist_AU_Template_ID]]', $reportOptions)) && $tree[$i - 1]['AU_Template_Designation_ID'] != '') {
+                        $key = array_search('[[++PM_Hist_AU_Template_ID]]', $reportOptions);
+                        $TDID  = str_replace('[[++PM_Hist_AU_Template_ID]]', $tree[$i - 1]['AU_Template_Designation_ID'], $reportOptions[$key]);
+                    }
+                    if ((in_array('[[++PM_Hist_AU_WO_Start_Date]]', $reportOptions)) && $tree[$i - 1]['PM_WO_StartDate'] != '') {
+                        $key = array_search('[[++PM_Hist_AU_WO_Start_Date]]', $reportOptions);
+                        $DateS  = str_replace('[[++PM_Hist_AU_WO_Start_Date]]', $tree[$i - 1]['PM_WO_StartDate'], $reportOptions[$key]);
+                    }                    
+                    if ((in_array('[[++PM_Hist_AU_WO_Number]]', $reportOptions)) && $tree[$i - 1]['PM_WO_Number'] != '') {
+                        $key = array_search('[[++PM_Hist_AU_WO_Number]]', $reportOptions);
+                        $WoS  = str_replace('[[++PM_Hist_AU_WO_Number]]', $tree[$i - 1]['PM_WO_Number'], $reportOptions[$key]);
+                    }
+
+                        $print_url = $this->baseUrl() . '/vnsreports/index.php?report_key=' . $reportvalue->report_mrt . '&Cost_Center_Number=' . $costCenterNumber . ' &buildkey=' . $buildingID . '&User=' . $userID . '&TRID='.$TRID. '&EDID='.$EDID. '&TDID='.$TDID. '&DateS='.$DateS. '&DateE='.$DateS. '&WoS='.$WoS. '&WoE='.$WoS;
+                    
+                }
+            }
+                                    ?>
+                                    <a <?php if ($reportvalue->report_target == 1) { ?> target='_blank' <?php } ?> href="<?php echo $print_url ?>"><img src="<?php echo BASEURL . 'public/images/printer.png'; ?>" style="width:18px;"></a>
+                                </td>
+                                <?php
+                                    
+                                } else {
+                                    ?>
+                                <td align="center" style="background-color:#ddd;width:50px;"><img src="<?php //echo BASEURL . 'public/images/printer.png'; ?>" style="width:18px;">                         
+                                </td>
+                                <?php
+                                    
+                                }
+                                ?>
+                            </tr>
+<?php } 
+
+    } ?>
+</tbody>
+</table>
+                        

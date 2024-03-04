@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Report.mrt - Viewer</title>
+	<link rel="stylesheet" type="text/css" href="css/stimulsoft.viewer.office2013.whiteblue.css">
+	<script type="text/javascript" src="scripts/stimulsoft.reports.js"></script>
+	<script type="text/javascript" src="scripts/stimulsoft.viewer.js"></script>
+
+	<script type="text/javascript">
+		function Start() {
+			Stimulsoft.Base.Localization.StiLocalization.setLocalizationFile("localization/en.xml", true);
+
+			var report = new Stimulsoft.Report.StiReport();
+			report.loadFile("reports/Report.mrt");
+
+			var dbCon_workorders = report.dictionary.databases.getByName("Con_workorders");
+			dbCon_workorders.connectionString = "server=qaworkorder.com;database=ve_crm_new;user=ve_report;password=Vision@4424!;";
+
+			report.dictionary.variables.getByName("TaskLineNumber").valueObject = 0;
+
+			var options = new Stimulsoft.Viewer.StiViewerOptions();
+			options.appearance.fullScreenMode = true;
+			options.toolbar.displayMode = Stimulsoft.Viewer.StiToolbarDisplayMode.Separated;
+			
+			var viewer = new Stimulsoft.Viewer.StiViewer(options, "StiViewer", false);
+			viewer.report = report;
+			viewer.renderHtml("viewerContent");
+		}
+	</script>
+</head>
+<body onload="Start()">
+	<div id="viewerContent"></div>
+</body>
+</html>

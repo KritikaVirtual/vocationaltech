@@ -1,0 +1,229 @@
+<?php
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/tenant.js');
+?>
+<style>
+    table.coidetail_desc {
+        width: 100%;
+        table-layout: fixed;
+
+    }
+
+    table.coidetail_desc th,
+    table.coidetail_desc td {
+        padding: 0 10px;
+    }
+
+    table.coidetail_desc .wrap {
+        width: auto;
+    }
+
+    .wrap {
+        width: 90%;
+        border: 1px solid;
+        padding: 10px 10px 40px;
+        margin-top: 20px;
+        word-break: break-word;
+        min-height: 100px;
+    }
+
+    td,
+    th {
+        vertical-align: top;
+    }
+
+    .grd_Clr {
+        background: rgb(222, 233, 203);
+        background: linear-gradient(0deg, rgba(222, 233, 203, 1) 0%, rgba(210, 222, 182, 1) 50%, rgba(245, 248, 240, 1) 100%);
+    }
+
+    tr.grd_Clr th {
+        border: solid 1px #000 !important;
+        text-align: center;
+    }
+
+    tr.coi_report_table td:last-child {
+        text-align: right;
+    }
+
+    tr.coi_report_table td {
+        text-align: center;
+    }
+
+    div.content.tenantcoi {
+        padding: 0;
+    }
+
+    .green-btn,
+    .green-btn:hover,
+    .green-btn:focus {
+        cursor: pointer;
+        background: #2ecc71;
+        border: medium none;
+        padding: 7px 24px;
+        color: #444;
+        text-decoration: none;
+    }
+
+    .coi-require {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    div.content.tenantcoi table,
+    div.content.tenantcoi table td {
+        border: none;
+    }
+
+    tr.grd_Clr th:last-child {
+        border-right: 0 !important;
+    }
+
+    tr.grd_Clr th:first-child {
+        border-left: 0 !important;
+    }
+</style>
+<div class="content no-padding active tenantcoi" id="contents">
+    <div class="message">
+        <span class="success-txt" style="color:green; text-align:center;"></span>
+        <span class="error-txt" style="color:red; text-align:center;"></span>
+    </div>
+    <div class="coi-title">
+        <h3>Current Users</h3>
+    </div>
+    <div class="row coi_table_row">
+        <div class="col" style="overflow:auto">
+            <div class="report_table_scroll">
+
+                <p class="tuser-type">Tenant Admin</p>
+                <table class="table table-bordered current-users">
+                    <tr class="grd_Clr">
+                        <th>Name</th>
+                        <th>Email Address</th>
+                        <th>Email Type/Send As</th>
+                        <th>Complete Notification</th>
+                        <th>Note Notification</th>
+                        <th>CC Enabled </th>
+                        <th>Active</th>
+                        <th>Action</th>
+                    </tr>
+                    <?php
+                    if (!empty($this->tenantAdminList)) {
+                        foreach ($this->tenantAdminList as $tu) {
+                            $tu = (array)$tu;
+                    ?>
+                            <tr>
+                                <td><?php echo stripslashes($tu['lastName']) . ', ' . stripslashes($tu['firstName']); ?></td>
+                                <td><?php echo $tu['email']; ?></td>
+                                <td><?php echo $this->send_data[$tu['send_as']]; ?></td>
+                                <td><?php echo ($tu['complete_notification'] == 1) ? 'Yes' : 'No' ?></td>
+                                <td><?php echo ($tu['note_notification'] == 1) ? 'Yes' : 'No' ?></td>
+                                <td><?php echo ($tu['cc_enable'] == 1) ? 'Yes' : 'No' ?></td>
+                                <td><?php echo ($tu['status'] == 1) ? 'Yes' : 'No' ?></td>
+                                <td>
+                                <a title="Edit" class="modalbox" onclick="javascript:editNewUser('<?php echo BASEURL . 'tenant/edittuser/tuId/' . $tu['uid']; ?>');" href="#editNewUser" ><img src="<?php echo BASEURL . 'public/images/edit.png' ?>" /></a>
+
+<?php if($tu['uid'] !== $this->userId){ ?>
+    <a href="javascript:void(0);" onclick ="deleteTUserByTadmin('<?php echo $this->tenantId;?>','<?php echo $tu['uid'];?>');" title="Delete"><img src="<?php echo $this->baseUrl() ?>/public/images/delete.png"></a>
+<?php }?>
+<a href="javascript:void(0);" title="Send" onclick="sendemail('<?php echo $this->tenantId;?>','<?php echo $tu['uid'];?>');"><img src="<?php echo $this->baseUrl() ?>/public/images/tnt-send-email.png"></a>
+                                </td>
+                            </tr>
+
+                    <?php }
+                    }
+
+                    ?>
+
+
+                </table>
+                <p class="tuser-type">Tenant Users</p>
+                <table class="table table-bordered current-users">
+                    <tr class="grd_Clr">
+                        <th>Name</th>
+                        <th>Email Address</th>
+                        <th>Email Type/Send As</th>
+                        <th>Complete Notification</th>
+                        <th>Note Notification</th>
+                        <th>Active</th>
+                        <th>Action</th>
+                    </tr>
+
+                    <?php
+
+                    if (!empty($this->tenantUserList)) {
+                        foreach ($this->tenantUserList as $tu) {
+                            $tu = (array)$tu;
+                    ?>
+
+                            <tr>
+                                <td><?php echo stripslashes($tu['lastName']) . ', ' . stripslashes($tu['firstName']); ?></td>
+                                <td><?php echo $tu['email']; ?></td>
+                                <td><?php echo $this->send_data[$tu['send_as']]; ?></td>
+                                <td><?php echo ($tu['complete_notification'] == 1) ? 'Yes' : 'No' ?></td>
+                                <td><?php echo ($tu['note_notification'] == 1) ? 'Yes' : 'No' ?></td>
+                                <td><?php echo ($tu['status'] == 1) ? 'Yes' : 'No' ?></td>
+                                <td>
+                                <a title="Edit" class="modalbox" onclick="javascript:editNewUser('<?php echo BASEURL . 'tenant/edittuser/tuId/' . $tu['uid']; ?>');" href="#editNewUser" ><img src="<?php echo BASEURL . 'public/images/edit.png' ?>" /></a>
+
+<?php if($tu['uid'] !== $this->userId){ ?>
+    <a href="javascript:void(0);" onclick ="deleteTUserByTadmin('<?php echo $this->tenantId;?>','<?php echo $tu['uid'];?>');" title="Delete"><img src="<?php echo $this->baseUrl() ?>/public/images/delete.png"></a>
+<?php }?>
+<a href="javascript:void(0);" title="Send" onclick="sendemail('<?php echo $this->tenantId;?>','<?php echo $tu['uid'];?>');"><img src="<?php echo $this->baseUrl() ?>/public/images/tnt-send-email.png"></a>
+                                </td>
+                            </tr>
+
+                    <?php }
+                    }
+
+                    ?>
+
+
+                </table>
+
+                <div class="buttons mg-50">
+                <a class="modalbox tnt-btn" href="#addNewUser" onclick="javascript:addNewUser('<?php echo BASEURL.'tenant/addtuser/tId/'.$this->tenantId; ?>');" ><input type="button"  class="confirm2" value="Add New User" name="tenant_edit"> </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="popup_form" style="display:none" class="service_popup_form">
+    <a href="#add_service_form" id="add_service_form_href" class="modalbox">&nbsp;</a>
+    <div id="add_service_form" class="bd-dft-cls" style="display:none"></div>
+    <a href="#edit_service_form" id="edit_service_form_href" class="modalbox">&nbsp;</a>
+    <div id="edit_service_form" class="bd-dft-cls" style="display:none"></div>
+    <a href="#service_template_form" id="service_template_form_href" class="modalbox">&nbsp;</a>
+    <div id="service_template_form" class="bd-dft-cls" style="display:none"></div>
+</div>
+<a href="#show_Edit_Report_div" id="show_Edit_Report_div_href" class="modalbox"> </a>
+<div id="show_Edit_Report_div" class="show_Edit_Report_div" style="display:none"></div>
+
+<script>
+    function showNewPop(url) {
+        CheckForSessionpop(baseUrl);
+        //$('form#first_form input#tenantName').trigger('click');
+        $('a[href="#showNewPop"]').fancybox({
+            type: 'iframe',
+            href: url,
+            width: 750,
+            height: 600,
+            'beforeClose': function() {
+                $('.loader').hide();
+            },
+            'afterLoad': function() {
+                $.fancybox.hideLoading();
+                $('.loader').show();
+                setInterval(function() {
+                    $('.loader').hide();
+                }, 5000);
+            },
+            afterShow: function() {
+
+            }
+        });
+    }
+</script>

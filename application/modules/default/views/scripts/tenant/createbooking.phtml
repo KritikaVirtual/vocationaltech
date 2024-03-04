@@ -1,0 +1,209 @@
+<?php
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/conference.js');
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/jquery.form.js');
+$cscheduleDetails = $this->cscheduleDetails;
+$cPlan = $this->cPlan;
+$crDetails = $this->crDetails;
+$startTime = '08:00 AM';
+$endTime = '09:00 PM';
+$cscheduleMapper = new Model_ConferenceSchedule();
+$tenantdetails = $this->tenantdetails[0];
+$tnuserdetail = $this->tnuserdetail;
+//print_r($tenantdetails);
+?>
+
+<div class="container-right">
+    <div class="message">
+        <span class="error-txt" style="color:red; text-align:center;"></span>
+    </div>
+    <section style="z-index:9999" class="w-48 fr ch-home-form">
+        <section class="ch-form-header ">
+           <h3>Add Conference room request  <span> <?php echo date("F d, Y",strtotime($this->fullDate)); ?> </span></h3>
+        </section>
+        <div class="room-setup">
+            <div class="tableGrid list_tableGrid my_table_grid">
+                <div class="message">
+                    <div class="success_message" style="text-align:center;width:100%;font-weight:bold;color:red;"></div>				  			
+                    <span id="success_msg"></span>
+                    <span id="error_msg"></span>
+                </div>
+                <div class="container">
+                    <div id="step1">
+                        <input type="hidden" value="<?php echo $this->select_build_id; ?>" name="building_id" id="building_id"/>
+                        <input type="hidden" value="<?php echo $this->requested_date; ?>" name="requested_date" id="requested_date"/>
+                        <div id='all_attachment' style="display:none;"></div>
+                        <div class="row">    
+                            <label>Select Tenant:<span class="required">*</span> </label><span class="ugroupErr" id="tenant-error"></span>
+							<div> <?php  echo $tenantdetails->tenantName; ?></div>
+                                                        <input type="hidden" name="tenant" id="tenant"  value="<?php echo $tenantdetails->id; ?>" >
+                                                        
+                                                        
+                            <?php /* ?><select name="tenant" id="tenant" >
+                                <option value="<?php echo $tenantdetails->id; ?>"><?php  echo $tenantdetails->tenantName; ?></option>
+                                
+                            </select><?php */ ?>
+                        </div> 
+                        <div class="row">    
+                    
+                            <label>Requested By:<span class="required">*</span> </label><span class="ugroupErr" id="requestedby-error"></span>
+                            <div id='show_tenant_user'> 
+                                
+                                <?php 
+                                if($tenantdetails->role_id==7){ 
+                                    echo $tenantdetails->lastName."&nbsp;".$tenantdetails->firstName;
+                                    echo '<input type="hidden" name="created_user" id="created_user" value="'.$tenantdetails->tenantuserId.'" >';
+                                    echo "<script> addEmailPhone('".$tenantdetails->tenantuserId ."' ); </script>";
+                                }else{
+                                    echo "<script> showTenantUser('".$tenantdetails->id ."' ); </script>";
+                                    
+                                ?>
+                                   <select name="created_user" id="created_user" onchange="addEmailPhone(this.value);" >
+                                    <option value="">Select Request</option>
+									<?php 
+                                                                        //print_r($tnuserdetail);
+                                                                        foreach($tnuserdetail as $tnuserdetailVal) { ?>
+									<option value="<?php echo $tnuserdetailVal->uid; ?>"><?php echo stripslashes($tnuserdetailVal->lastName).', '.stripslashes($tnuserdetailVal->firstName);?></option>
+									<?php } ?>
+
+                                </select>
+                                <?php } ?>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <label>Meeting Title:<span class="required">*</span></label><span class="ugroupErr" id="meeting-title-error"></span>    
+                            <input type="text" value="" id="meeting_title" class="" name="meeting_title" Placeholder ='Meeting Title'/>  
+                        </div>
+
+                        <div class="row">
+                            <label> Phone Number:<span class="required">*</span></label><span class="ugroupErr" id="phone-error"></span>
+                            <input type="text" value="" id="phone_number" class="" name="phone_number" placeholder="Phone Number" readonly="readonly"> 
+                        </div>
+                        <div class="row">
+                            <label> Email:<span class="required">*</span></label><span class="ugroupErr" id="email-error"></span>
+                            <input type="text" value="" id="email" class="" name="email" placeholder="Email" readonly="readonly"> 
+                        </div>
+
+                        <div class="row">    
+                            <label>Select Room:<span class="required">*</span> </label><span class="ugroupErr" id="room-error"></span>
+                            <select name="croom" id="croom" onchange="showLayout(this.value);">
+                                <option value="" > Select Room</option>
+                                <?php                               
+                                
+                                if ($crDetails) {
+                                    foreach ($crDetails as $crDetailsVal) {
+                                        ?>
+                                        <option value='<?php echo $crDetailsVal->cid; ?>'> <?php echo $crDetailsVal->room_name; ?> </option>
+                                        <?php
+                                    }
+                                }
+                                ?>
+                            </select>
+                        </div>
+
+
+
+                        <div class="row room-design">
+                            <label> Configuration(Select One): </label> 
+                            <div class="room-attachment">
+                                <span class="ugroupErr" id="design-error"></span>
+                                <table border='1' id="table_attachment"><tr class="tr-bg"><th>Select</th><th>Design Name </th><th>View PDF</th></tr> 
+                                    <tr id='no_design'><td colspan="3">No Room Layout Design!</td></tr>
+
+
+                                </table>
+                            </div>
+                        </div>
+                       <div class="view_type">
+                            
+                        </div>
+                      <div class="sch_view"> 
+                        <?php /* ?>
+                        <div class="row">
+                            <div class='col-lg-5 col-sm-5 col-xs-5'> 
+                                <label> Select Schedule:<span class="required">*</span></label><span class="ugroupErr" id="schedule-error"></span>
+                            </div>
+                            <div class='col-lg-2 col-sm-2 col-xs-2'> 
+                                <input type="radio" name='schedule_id' value="1" checked="checked" > Hourly
+                            </div>
+                            <div class='col-lg-2 col-sm-2 col-xs-2'> 
+                                <input type="radio" name='schedule_id' value='2'> 1/2 Day
+                            </div>
+                            <div class='col-lg-2 col-sm-2 col-xs-2'> 
+                                <input type="radio" name='schedule_id' value='3'> All Day
+                            </div>
+                        </div>
+                        <div class="row" id="timecontent">
+
+                            <select name="start_time" id="start_time" class="status time_active" style='width:100px;'>
+                                <?php
+                                for ($i = 0; $i <= 23; $i++) {
+                                    $fDate = date("h:i A", strtotime($i . ':00'));
+                                    $sDate = date("h:i A", strtotime($i . ':30'));
+                                    if (!in_array($fDate, $bookedArray))
+  {
+                                    ?>
+                                
+                                    <option value='<?php echo $fDate; ?>' <?php
+                                    if ($startTime == $fDate) {
+                                        echo 'selected';
+                                    }
+  }
+                                    ?>> <?php echo $fDate; ?> </option>
+                                  <?php if (!in_array($sDate, $bookedArray)) { ?>
+                                    <option value='<?php echo $sDate; ?>' <?php
+                                    if ($startTime == $sDate) {
+                                        echo 'selected';
+                                    }
+                                    ?>> <?php echo $sDate; ?> </option>
+                                <?php } } ?>
+                            </select>
+
+                            <label></label>
+                            <select name="end_time" id="end_time" class="status time_active" style='width:100px;'>
+                                <?php
+                                for ($i = 0; $i <= 23; $i++) {
+                                    $fDate = date("h:i A", strtotime($i . ':00'));
+                                    $sDate = date("h:i A", strtotime($i . ':30'));
+                                    ?>
+                                    <option value="<?php echo $fDate; ?>" <?php
+                                    if ($endTime == $fDate) {
+                                        echo 'selected';
+                                    }
+                                    ?>> <?php echo $fDate; ?> </option>
+                                    <option value='<?php echo $sDate; ?>' <?php
+                                    if ($endTime == $sDate) {
+                                        echo 'selected';
+                                    }
+                                    ?>> <?php echo $sDate; ?> </option>
+                                        <?php } ?>
+                            </select>
+
+                        </div>
+
+                      <?php */ ?>
+                        
+                    </div>
+
+                    <div> </div>
+                    <div class="confirmBtn float_none">
+                        <input type="button" value="Save" name="save" class="confirm" id='emailsave' onclick="validateCRoomRequest();">
+                        <input type="button" value="Cancel" name="cancel" class="cancel" onclick="cancelConRoom();">
+                    </div>
+
+                </div>   
+            </div>
+        </div>
+</div>
+</section>
+</div>
+<div class="fade_default_opt" id="fd_dft_div" style="display:none">
+    <a href="#file_form" id="file_form_href" class="modalbox">&nbsp;</a>	
+    <div id="file_form" class="bd-dft-cls" style="display:none"></div>
+</div>
+<div class="loader" style="display:none;" > <img src="<?php echo BASEURL.'public/images/loader.gif';?>"><div>
+<style>
+.loader {
+    height: 100% !important;
+}
+</style>

@@ -1,0 +1,85 @@
+<?php	
+	 $materialModel = new Model_Material();
+	 $materialList = $materialModel->getActiveMaterialByBId($this->bId);
+	 $mData = $this->materialData[0];
+	 $wpModel = new Model_WoParameter();
+	 $wpDetails = $wpModel->getWoParameterByBid($this->bId);
+?>
+<script type="text/javascript">
+	var material_cost = [];
+	var material_markup = [];
+	<?php 
+	     if($materialList){
+			 foreach($materialList as $ml){
+			 ?>
+				 material_cost['<?php echo $ml['mid'];?>'] = '<?php echo $ml['cost'];?>';
+				 material_markup['<?php echo $ml['mid'];?>'] = '<?php echo $ml['markup'];?>';
+			<?php
+			 }
+		 }
+	?>
+</script>
+<div id="ct_material_fm_div">
+	<h1>Edit Material(s) Charge(s)</h1>	
+	<div class="message">
+		<span id="success_msg" class="success"></span>
+		<span id="error_msg" class="error"></span>
+	</div>
+	<div id="material_form_ data">
+		 <div class="cw_row">
+			 <label>Description</label>
+			 <div class="cw-ibox-row">
+				 <span class="field_error" id="cwerr_desc"></span>
+				 <select name="material_id" id="edit_material_id" onchange="setMaterial(this.value)">
+					 <option value="">-- Select --</option>
+					 <?php
+					 if($materialList){ 
+					     foreach ($materialList as  $ml) { ?>
+							<option value="<?php echo $ml['mid']; ?>"
+							<?php if($mData['material_id']== $ml['mid']) echo 'selected="selected"';?>>
+								<?php echo stripslashes($ml['description']); ?>
+							</option>
+					<?php }
+					} ?>
+				 </select>
+			 </div>
+		 </div>
+		 <div class="cw_row">
+			  <label>Cost ($)</label>
+			  <div class="cw-ibox-row">
+				 <span class="field_error" id="cwerr_cost"></span>				 
+					   <input type="text" name="cost" id="edit_cost" onkeypress="return isNumber(event)" value="<?php echo $mData['cost'];?>">			 
+			  </div>
+		 </div>
+		 <div class="cw_row">
+			  <label>Markup(%)</label>
+			  <div class="cw-ibox-row">
+				 <span class="field_error" id="cwerr_markup"></span>				 
+					   <input type="text" name="markup" id="edit_markup" onkeypress="return isNumber(event)" value="<?php if($wpDetails[0]['override_markup']==1) { echo $wpDetails[0]['dft_markup']; } else { echo $mData['markup']; } ?>" >			 
+			  </div>
+		 </div>	
+		 <div class="cw_row">
+			  <label>Quantity</label>
+			  <div class="cw-ibox-row">
+				 <span class="field_error" id="cwerr_qty"></span>				 
+					   <input type="text" name="quantity" id="edit_quantity" onkeypress="return isNumber(event)" value="<?php echo $mData['quantity'];?>">			 
+			  </div>
+		 </div>		 
+		 <div class="cw_row">
+			 <label>Tax</label>
+			 <div class="cw-ibox-row">				  
+				    <select name="show_tax" id="edit_show_tax" >
+					   <option value="1" <?php echo ($mData['tax']=='1')?'selected="selected"':''?>>Yes</option>
+					   <option value="0" <?php echo ($mData['tax']=='0')?'selected="selected"':''?>>No</option>
+				   </select>
+				  <input type="hidden" name="tax" id="edit_tax" value="<?php echo $mData['tax'];?>"/> 
+			 </div>
+		 </div>
+	</div>
+	<div class="buttons">
+					<input type="hidden" name="woId" id="edit_woId" value="<?php echo $mData['woId']; ?>">
+					<input type="hidden" id="edittempmaterial" value="">
+				   <button type="button" name="save_material" id="save_material" value="Save" onclick="updateMaterialDataTemp2('<?php echo $this->index;?>')">Save</button>
+				   <button type="button" name="cancel" id="cancel" value="Cancel" onclick="cancelMaterialEdit()">Cancel</button>
+	  </div>
+</div>

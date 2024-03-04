@@ -1,0 +1,84 @@
+<?php
+
+$reportModel = new Model_Report();
+$reportDetailLinks = ''; $dashBoardViewsdetails=''; $dashBoardViews=''; $woNumberAll=''; $invoiceAll=''; $uniqueCostCenterAll=''; $buildIdReportAll=''; $batch_number_report=''; $uniqueCostCenter='';$woNumberAllbuilding=''; $invoiceAllbuilding=''; $buildIdReport=$this->select_build_id; 
+$batch_number_reportall=''; $batch_number_reportallbuilding='';
+$reportDetailLinks = $reportModel->getReport($this->cust_id, $this->dash_menu);
+?>
+
+<!-- All Report link -->
+		<?php if($reportDetailLinks!='') { 
+					$woReport = new Model_Report();
+					$woBatch = new Model_WoBatch();
+					foreach($this->companyListing as $cb){ 
+						$uniqueCostCenterAll=$uniqueCostCenterAll.$cb['uniqueCostCenter'].',';
+						$buildIdReportAll=$buildIdReportAll.$cb['build_id'].',';
+						$batchDetails=$woBatch->showBatch($cb['build_id']);
+					    if($batchDetails!='') {
+						    foreach($batchDetails as $bd ) {
+							   $batch_number_reportallbuilding= $batch_number_reportallbuilding.$bd['batch_number'].',';
+						    }
+					    }  
+				
+						
+					        $order='woId';
+							$dir='DESC';
+							$wolist = $woReport->getWorkOrderByBuilding($cb['build_id'],$order,$dir);
+						    $invoicelist = $woReport->invoiceByBatch($cb['build_id'],$order,$dir);
+							if($wolist!='') {
+								foreach($wolist as $woNumber) {
+								   $woNumberAllbuilding=$woNumberAllbuilding.$woNumber->wo_number .',' ;
+								}
+							}
+								if($invoicelist!='') {
+									foreach($invoicelist as $invoiceNumber) {
+									   $invoiceAllbuilding=$invoiceAllbuilding.$invoiceNumber->wo_number .',' ;
+									}
+								}
+								
+						    $batchDetails=$woBatch->showBatch($cb['build_id']);
+						    
+						    if($batchDetails!='') {
+							   foreach($batchDetails as $bd ) {
+								   $batch_number_reportall=$batch_number_reportall.$bd['batch_number'].',';
+							    }
+						    }
+						
+					}  
+				} ?>
+				
+				<!-- End all report Link -->
+
+		<!-- selected report Link -->
+					<?php   
+					foreach($this->companyListing as $cb){ 
+					if($reportDetailLinks!='') {
+						if($cb['build_id']==$this->select_build_id) { 
+						    $uniqueCostCenter=$cb['uniqueCostCenter'];
+						    $batchDetails=$woBatch->showBatch($cb['build_id']);
+						    $batch_number_report='';
+						    if($batchDetails!='') {
+							   foreach($batchDetails as $bd ) {
+								   $batch_number_report=$batch_number_report.$bd['batch_number'].',';
+							    }
+						    }	
+							$order='woId';
+							$dir='DESC';
+							$wolist = $woReport->getWorkOrderByBuilding($cb['build_id'],$order,$dir);
+							$invoicelist = $woReport->invoiceByBatch($cb['build_id'],$order,$dir);
+							if($wolist!='') {
+								foreach($wolist as $woNumber) {
+								   $woNumberAll=$woNumberAll.$woNumber->wo_number .',' ;
+								}
+							}
+							if($invoicelist!='') {
+								foreach($invoicelist as $invoiceNumber) {
+								   $invoiceAll=$invoiceAll.$invoiceNumber->wo_number .',' ;
+								}
+							}
+						} 
+					} } 
+					
+					?>
+<!-- Report Link -->
+		<?php  if($reportDetailLinks!='') { ?> <div class="clearfix"></div><div class="tabmenu report_tab_menus" ><ul><?php foreach($reportDetailLinks as $reportvalue){ $reportOption=explode(',',$reportvalue->report_option); ?> <li class="report_text" ><a   <?php if($reportvalue->report_target==1) { ?> target='_blank' <?php } ?> href="<?php echo BASEURL; ?>reports/VisionReportEngine/index.php?stimulsoft_client_key=ViewerFx&stimulsoft_report_key=<?php echo $reportvalue->report_mrt; ?><?php if(in_array('[[++user_id]]',$reportOption)) { echo '&User='.$this->userId; } ?><?php if((in_array('[[++CostCenterAllBuildings]]',$reportOption)) && $uniqueCostCenterAll!='' ) { echo '&Cost_Center_Number='.rtrim($uniqueCostCenterAll,','); } else if((in_array('[[++CostCenterNumber]]',$reportOption)) && $uniqueCostCenter!=''){ echo '&Cost_Center_Number='.$uniqueCostCenter;} ?><?php if((in_array('[[++KeyBuildingAllBuildings]]',$reportOption)) && $buildIdReportAll!='' ) { echo '&buildkey='.rtrim($buildIdReportAll,','); } else if((in_array('[[++KeyBuildingNumber]]',$reportOption)) && $buildIdReport!='') { echo '&buildkey='.$this->select_build_id; } ?><?php if(in_array('[[++BatchNumber]]',$reportOption)) { if((in_array('[[++CostCenterAllBuildings]]',$reportOption)) && (in_array('[[++CostCenterAllBuildings]]',$reportOption)) ) { echo '&Batch_Number='.rtrim($batch_number_reportall,','); } else { echo '&Batch_Number='.rtrim($batch_number_report,','); } } ?><?php if((in_array('[[++WONumber]]',$reportOption)) ) { if((in_array('[[++CostCenterAllBuildings]]',$reportOption)) && (in_array('[[++CostCenterAllBuildings]]',$reportOption))) { echo "&WO_Number=".rtrim($woNumberAllbuilding,','); } else {  echo "&WO_Number=".rtrim($woNumberAll,','); } } ?><?php if((in_array('[[++InvoiceNumber]]',$reportOption)) ) { if((in_array('[[++CostCenterAllBuildings]]',$reportOption)) && (in_array('[[++CostCenterAllBuildings]]',$reportOption))) { echo '&Invoice_Number='.rtrim($invoiceAllbuilding,','); }  else { echo '&Invoice_Number='.rtrim($invoiceAll,','); }} ?>" ><?php echo $reportvalue->report_name; ?> </a> </li> <?php } ?> </ul></div>	<?php } ?>	

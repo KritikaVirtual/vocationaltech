@@ -1,0 +1,118 @@
+<link href="<?php echo BASEURL.'/public'?>/css/bootstrap.css" rel="stylesheet">
+<style type="text/css">
+    #main-bg { margin: 0;padding: 0;background: -webkit-linear-gradient(to left, #bdc3c7, #2c3e50);	background: linear-gradient(to left, #bdc3c7 , #2c3e50);box-sizing:border-box; color:initial;}
+    .main-wrap {margin:0 ; padding:0;}
+    .wrap-inner { background: #fff;padding: 20px;margin:70px 0;clear: both;float: left; width: 100%;height: 100%;}
+    .wrap-inner .logo {max-width:250px;}
+    /*****Form Section*********/
+	.m15 {margin-bottom:15px;}
+	.gp10 {margin:20px 10%;}
+    .form-wrap {padding:0; margin:0;}
+    .btn-new { background:#ccc; border:2px solid #446B11; text-decoration:center; color:#333; border-radius:0;}
+    .btn-new:hover { background:#446B11; border:2px solid #446B11; text-decoration:center; color:#fff;}
+    a.back_btn {padding: 10px; background: #333; color: #fff; margin-bottom: 20px; text-decoration: none;  }
+    .form-control {border-radius:0;}
+    /******Footer Start********/
+    .footer-crm { background:#eee; width:100%; position:fixed; bottom:0; left:0; padding:0px; overflow: hidden;}
+    .logo-footer {float:left; display:inline-block; margin-right:20px; padding:4px 12px; max-width:140px;}
+    .footer-crm ul.footer-link {list-style:none; margin:12px 0 0 0;  padding:0; float:right;font-size: 12px;}
+    .footer-crm ul.footer-link li { display:inline; padding:12px 15px;}
+    .footer-crm p { display:inline-block; margin:12px 0 0  0;font-size: 12px;}
+    /******Media Query***********/
+    @media (max-width: 991px) {
+           .footer-crm {position:relative;}
+    }
+    .show{
+        display: block;
+    }  
+
+
+    </style>
+    
+    
+<div id="main-bg">
+<div class="main-wrap">
+  <div class="container">
+    <div class="row  wrap-inner">
+    <div class="logo"> <a href="#"><img src="<?php echo BASEURL.'/public'?>/images/vt_logo.png" alt="logo" class="img-responsive"></a> </div>
+      <div class="form-wrap">
+        <h3>Vocational Technologies Support Request</h3>
+        <p>If you have any support or training question, complete the contact form below and let us know how we can help.</p>
+        <p>You can also contact our support team at <a href="mailto:support@voc-tech.com">support@voc-tech.com</a></p>
+        <div class="alert alert-success" id="msg" style="display:none;"> <strong>Success!</strong> Your Request send to support they contact you as soon as possible. </div>
+		<div class="form-area">
+        <form name="support" method="post" id="form" onsubmit="return validation(event);">
+          <div class="row">
+		  <div class="form-group">
+            <div class="col-md-4 col-sm-6 col-xs-12 m15"><label for="usr">Name: <sup>*</sup></label></div>
+            <div class="col-md-8 col-sm-6 col-xs-12 m15"><input type="text" class="form-control" id="name" name="name"></div>
+            <div class="error_name"></div>
+          </div>
+		  </div>
+          <div class="row">
+		  <div class="form-group">
+            <div class="col-md-4 col-sm-6 col-xs-12 m15"><label for="usr">Company <sup>*</sup></label></div>
+            <div class="col-md-8 col-sm-6 col-xs-12 m15"><input type="text" class="form-control" id="company" name="company"></div>
+            <div class="error_company"></div>
+          </div>
+		  </div>
+		  <div class="row">
+          <div class="form-group">
+             <div class="col-md-4 col-sm-6 col-xs-12 m15"><label for="usr">Email <sup>*</sup></label></div>
+             <div class="col-md-8 col-sm-6 col-xs-12 m15"><input type="email" class="form-control" id="email" name="email"></div>
+            <div class="error_email"></div>
+          </div>
+		  </div>
+		  <div class="row">
+          <div class="form-group">
+            <div class="col-md-4 col-sm-6 col-xs-12 m15"><label for="usr">Telephone <sup>*</sup></label></div>
+            <div class="col-md-8 col-sm-6 col-xs-12 m15"><input type="tel" class="form-control" id="telephone" name="telephone" onkeypress="return isNumberKey(event);"></div>
+            <div class="error_telephone"></div>
+          </div>
+		  </div>
+		   <div class="row">
+          <div class="form-group">
+            <div class="col-md-4 col-sm-6 col-xs-12 m15"><label for="usr">Question/Comments</label></div>
+            <div class="col-md-8 col-sm-6 col-xs-12 m15"><textarea class="form-control m15" rows="3" id="question" name="question"></textarea>
+			<button type="submit" class="btn btn-success btn-new">Submit</button>
+              <button type="reset" class="btn btn-success btn-new">Reset</button>
+			  <a class="back_btn pull-right" href="<?php echo BASEURL; ?>">Home</a>
+			</div>
+          </div>
+		  </div>
+		  <div class="row">
+          <div class="form-group">
+            <input type="hidden" class="form-control" name="form_name" id="form_name" value="support">
+            <input type="hidden" class="form-control" name="baseurl" id="baseurl" value="<?php echo BASEURL; ?>">
+		</div>
+		</div>
+            <div class="pull-left">
+              
+            </div>
+            
+      
+        </form>
+		</div>
+      </div>
+    </div>
+  </div>
+	<div class="clearfix"></div>
+  <div class="footer-crm">
+     		<a href="#"> <img src="<?php echo BASEURL.'/public'?>/images/vt_logo.png" alt="logo" class="logo-footer"></a> 
+            <p> 1996-2017 Vision System by Vocational Technologies, LLC © Copyright 2017. Vocational Technologies. All Rights Reserved.</p>
+            <ul class="footer-link">
+            	<li><a href="<?php echo BASEURL.'index/support'; ?>">Support</a></li>
+                    <span class="footerSeprator">|</span>
+                <li><a href="<?php echo BASEURL.'index/contactus'; ?>">Contact Us </a></li>
+            </ul>
+  </div>
+</div>
+</div>
+<div class="loader" style="display:none; margin: -30% 3px 10% 40%;" > <img src="<?php echo BASEURL.'public/images/loader.gif';?>"><div>        
+<?php echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/support.js'); ?>
+<?php echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/bootstrap.js'); ?>
+<?php echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/jquery-1.10.2.js'); ?>
+
+    <script>
+        $(".main_log").removeClass("main_log");
+    </script>

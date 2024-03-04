@@ -1,0 +1,43 @@
+<div class="formBuild">			  
+									      <div id="priority-form_" class="priority_block_">
+											  <section class="consol_form_head">
+													<h3>Add New Priority</h3>
+											   </section>
+											   <section class="w-48 fr ch-home-form_ ad-ptform">
+											      <form name="addNewPriority">
+													  <input type="hidden" name="actionType" value="insert">
+														<input type="hidden" name="building_id" id="building_id" value='<?php echo $this->select_build_id;?>'>
+														<?php /*<div class="row">
+															<label>Id* :</label>
+															<span class="prioNumErr" id="priority-number-error"></span> 
+															<input type="text" value="<?php echo $this->priorityDetail['id']?>" id="pid" 
+																   name="data[pid]" readonly="readonly">														  
+														</div>*/?>
+														<div class="row">
+															<label>Priority Name <span class="required">*</span> :</label>
+															<span class="priNameErr" id="priority-name-error"></span> 
+															<input type="text" id="priority_name" name="priorityName" value="" style="float:left;" autofocus>
+														</div>
+														<div class="row">
+														   <label>Priority Description<span class="required">*</span> :</label> 
+														   <span class="priDescErr" id="priority-description-error"></span>
+														   <input type="text" id="priority_description" name="priorityDescription"  value="" style="float:left;">
+														</div>
+														<div class="row">
+														<label>Active<span class="required">*</span> :</label> 
+														<select name="status" id="status" class="status">
+															<option value="1">Yes</option>
+															<option value="0">No</option>
+														</select>
+														</div>
+														
+														
+														 <div class="confirmBtn">
+															<input type="reset" value="Reset" name="reset" class="cancel"/>
+															<input type="button" value="Save" name="next" id="save_priority" class="confirm savePriority" onclick="return addPriority()"/>
+															<input type="button" value="Cancel" name="cancel" class="cancel" onclick="hidePriorityForm()"/>
+														</div>
+											      </form>
+											   </section>    
+									      </div>
+                                          </div>

@@ -1,0 +1,94 @@
+<?php if($this->rateData) { 
+		  $rate = $this->rateData[0];		  
+		?>	
+	<div class="rate_row">
+		  <label>Rate Name:</label>
+		  <div class="labor_ibox_row">
+			   <span class="field_error" id="rerror_name"></span>
+			   <input type="text" name="rate_name" id="rate_name" value="<?php echo $rate['rate_name']?>" readonly="readonly"/>
+		  </div>			
+	</div>
+	<div class="rate_row">
+		  <label>Description:</label>
+		  <div class="labor_ibox_row">
+			   <span class="field_error" id="rerror_desc"></span>
+			   <input type="text" name="description" id="description" value="<?php echo $rate['description']?>" readonly="readonly"/>
+		  </div>			
+	</div>
+	<div class="rate_row">
+		 <label>Active:</label>
+		  <div class="labor_ibox_row">
+			   <span class="field_error" id="rerror_status"></span>
+			   <select name="status" id="status" disabled="disabled ">
+				   <option value="1" <?php echo ($rate['status']==1)?'selected="selected"':'';?>>Yes</option>
+				   <option value="0" <?php echo ($rate['status']==0)?'selected="selected"':'';?>>No</option>
+			   </select>
+			   <input type="hidden" name="status" id="status" value="<?php echo $labor['status']; ?>"/>
+			   <input type="hidden" name="import_template" id="import_template" value="1"/>
+		  </div>
+	</div>
+	<div class="rate_row">
+		  <label>Multiplier:</label>
+		  <div class="labor_ibox_row">
+			   <span class="field_error" id="rerror_multiplier"></span>
+			   <input type="text" name="multiplier" id="multiplier" onkeypress="return isNumber(event)" maxlength="6" value="<?php echo $rate['multiplier']?>"/>
+		  </div>			
+	</div>	
+	<div class="rate_row">
+		 <label>Set as Default:</label>
+		  <div class="labor_ibox_row">
+			   <span class="field_error" id="rerror_default"></span>
+			   <select name="set_default" id="set_default">
+				   <option value="1" <?php echo ($rate['set_default']==1)?'selected="selected"':'';?>>Yes</option>
+				   <option value="0" <?php echo ($rate['set_default']==0)?'selected="selected"':'';?>>No</option>
+			   </select>
+		  </div>
+	</div>	
+	 <?php 
+   }else{
+	   ?>
+	   <div class="rate_row">
+			  <label>Rate Name:</label>
+			  <div class="rate_ibox_row">
+				   <span class="field_error" id="rerror_name"></span>
+				   <input type="text" name="rate_name" id="rate_name"/>
+			  </div>			
+		</div>
+		<div class="rate_row">
+			  <label>Description:</label>
+			  <div class="rate_ibox_row">
+				   <span class="field_error" id="rerror_desc"></span>
+				   <input type="text" name="description" id="description"/>
+			  </div>			
+		</div>
+		<div class="rate_row">
+			 <label>Active:</label>
+			  <div class="rate_ibox_row">
+				   <span class="field_error" id="rerror_status"></span>
+				   <select name="status" id="status">
+					   <option value="1" selected="selected">Yes</option>
+					   <option value="0">No</option>
+				   </select>
+			  </div>
+		</div>
+		<div class="rate_row">
+			  <label>Multiplier:</label>
+			  <div class="rate_ibox_row">
+				   <span class="field_error" id="rerror_multiplier"></span>
+				   <input type="text" name="multiplier" id="multiplier" onkeypress="return isNumber(event)" maxlength="6"/>
+			  </div>			
+		</div>	
+		<div class="rate_row">
+			 <label>Set as Default:</label>
+			  <div class="rate_ibox_row">
+				   <span class="field_error" id="rerror_default"></span>
+				   <select name="set_default" id="set_default">
+					   <option value="1">Yes</option>
+					   <option value="0" selected="selected">No</option>
+				   </select>
+			  </div>
+		</div>
+	 <?php  
+   }
+	 ?>				  
+

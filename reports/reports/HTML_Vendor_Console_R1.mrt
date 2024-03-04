@@ -1,0 +1,1301 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<StiSerializer version="1.02" type="Net" application="StiReport">
+  <Dictionary Ref="1" type="Dictionary" isKey="true">
+    <BusinessObjects isList="true" count="0" />
+    <Databases isList="true" count="1">
+      <Con_workorders Ref="2" type="Stimulsoft.Report.Dictionary.StiMySqlDatabase" isKey="true">
+        <Alias>Con_workorders</Alias>
+        <ConnectionStringEncrypted>w9rZ680Ko53wFaWQZghlc9V00WDlTqPBYkax7GpwJV7VdNkCSExjgeJAuezoRHc/0wzNyWJdk0lFW6XM4Wxiethc1evFV6Pd4k3dgOpMYkbDaGWJzQ==</ConnectionStringEncrypted>
+        <Key>bd1b70f2ff1e46388858b3ab30606b54</Key>
+        <Name>Con_workorders</Name>
+      </Con_workorders>
+    </Databases>
+    <DataSources isList="true" count="2">
+      <rsMainInfo Ref="3" type="Stimulsoft.Report.Dictionary.StiMySqlSource" isKey="true">
+        <Alias>rsMainInfo</Alias>
+        <Columns isList="true" count="35">
+          <value>Management_Company,System.String</value>
+          <value>Management_Account_Number,System.String</value>
+          <value>Building_Name,System.String</value>
+          <value>Building_Cost_Center,System.String</value>
+          <value>Building_Address_1,System.String</value>
+          <value>Building_Address_2,System.String</value>
+          <value>Building_Suite_Location,System.String</value>
+          <value>Building_City,System.String</value>
+          <value>Building_State,System.String</value>
+          <value>Building_PostalCode,System.String</value>
+          <value>Building_Phone_Number,System.String</value>
+          <value>cust_id,System.Int32</value>
+          <value>Company_Active,System.String</value>
+          <value>Building_Active,System.String</value>
+          <value>build_id,System.Int32</value>
+          <value>company_logo,System.String</value>
+          <value>City_State_Zip,System.String</value>
+          <value>Vendor_Company,System.String</value>
+          <value>Vendor_FName,System.String</value>
+          <value>Vendor_LName,System.String</value>
+          <value>Vendor_Service,System.String</value>
+          <value>Vendor_Type_Contact,System.String</value>
+          <value>Vendor_Phone,System.String</value>
+          <value>Vendor_Cell,System.String</value>
+          <value>Vendor_EMail,System.String</value>
+          <value>Vendor_Account_Number,System.String</value>
+          <value>Vendor_Add1,System.String</value>
+          <value>Vendor_Add2,System.String</value>
+          <value>Vendor_City_State_Zip,System.String</value>
+          <value>Vendor_Emergency_Contact,System.String</value>
+          <value>status,System.Int32</value>
+          <value>Vendor_Notes,System.String</value>
+          <value>Vendor_Date_Created,System.String</value>
+          <value>Vendor_Date_Last_Modified,System.String</value>
+          <value>Vendor_ID,System.String</value>
+        </Columns>
+        <CommandTimeout>30</CommandTimeout>
+        <Dictionary isRef="1" />
+        <Key>5605fd02ebb24110a6f7c5df09c135a0</Key>
+        <Name>rsMainInfo</Name>
+        <NameInSource>Con_workorders</NameInSource>
+        <Parameters isList="true" count="0" />
+        <SqlCommand>Select
+  company.companyName As Management_Company,
+  company.corp_account_number As Management_Account_Number,
+  buildings.buildingName As Building_Name,
+  buildings.uniqueCostCenter As Building_Cost_Center,
+  buildings.address As Building_Address_1,
+  buildings.address2 As Building_Address_2,
+  buildings.suite As Building_Suite_Location,
+  buildings.city As Building_City,
+  buildings.state As Building_State,
+  buildings.postalCode As Building_PostalCode,
+  buildings.phoneNumber As Building_Phone_Number,
+  company.cust_id,
+  company.status As Company_Active,
+  buildings.status As Building_Active,
+  buildings.build_id,
+  company.company_logo,
+  Concat(buildings.city, ', ', buildings.state, ' ', buildings.postalCode) As
+  City_State_Zip,
+  vendor.company_name As Vendor_Company,
+  vendor.first_name As Vendor_FName,
+  vendor.last_name As Vendor_LName,
+  services.service As Vendor_Service,
+  contact_type.contact As Vendor_Type_Contact,
+  vendor.phone_number As Vendor_Phone,
+  vendor.cell_number As Vendor_Cell,
+  vendor.email As Vendor_EMail,
+  vendor.account_number As Vendor_Account_Number,
+  vendor.address1 As Vendor_Add1,
+  vendor.address2 As Vendor_Add2,
+  Concat(vendor.city, ', ', vendor.state, ' ', vendor.postal_code) As
+  Vendor_City_State_Zip,
+  vendor.emergency_contact As Vendor_Emergency_Contact,
+  vendor.status,
+  vendor.notes As Vendor_Notes,
+  Date_Format( vendor.created_at, '%m-%d-%Y') As Vendor_Date_Created,
+  Date_Format(vendor.updated_at, '%m-%d-%Y') As Vendor_Date_Last_Modified,
+  vendor.vid As Vendor_ID
+From
+  buildings Right Join
+  company On company.cust_id = buildings.cust_id Left Join
+  vendor On buildings.build_id = vendor.buildingId Left Join
+  services On vendor.services = services.sid Left Join
+  contact_type On vendor.contact_type = contact_type.cid
+Where
+  buildings.uniqueCostCenter in ({Cost_Center_Number}) And
+  buildings.build_id in ({buildkey}) And
+  company.status = 1 And
+  buildings.status = '1' And
+  vendor.status = 1</SqlCommand>
+      </rsMainInfo>
+      <rsVendorUsers Ref="4" type="Stimulsoft.Report.Dictionary.StiMySqlSource" isKey="true">
+        <Alias>rsVendorUsers</Alias>
+        <Columns isList="true" count="25">
+          <value>Management_Company,System.String</value>
+          <value>Management_Account_Number,System.String</value>
+          <value>Building_Name,System.String</value>
+          <value>Building_Cost_Center,System.String</value>
+          <value>Building_Address_1,System.String</value>
+          <value>Building_Address_2,System.String</value>
+          <value>Building_Suite_Location,System.String</value>
+          <value>Building_City,System.String</value>
+          <value>Building_State,System.String</value>
+          <value>Building_PostalCode,System.String</value>
+          <value>Building_Phone_Number,System.String</value>
+          <value>cust_id,System.Int32</value>
+          <value>Company_Active,System.String</value>
+          <value>Building_Active,System.String</value>
+          <value>Vendor_Fname,System.String</value>
+          <value>Vendor_LName,System.String</value>
+          <value>Vendor_Email,System.String</value>
+          <value>Vendor_Phone,System.String</value>
+          <value>Vendor_Cell,System.String</value>
+          <value>Vendor_Emergency,System.String</value>
+          <value>Vendor_DCreated,System.String</value>
+          <value>Vendor_DUpdated,System.String</value>
+          <value>company_name,System.String</value>
+          <value>status,System.Int32</value>
+          <value>Vendor_ID,System.String</value>
+        </Columns>
+        <CommandTimeout>30</CommandTimeout>
+        <Dictionary isRef="1" />
+        <Key>23d5823b57ed4adb93f0f983b4199dfd</Key>
+        <Name>rsVendorUsers</Name>
+        <NameInSource>Con_workorders</NameInSource>
+        <Parameters isList="true" count="0" />
+        <SqlCommand>Select
+  company.companyName As Management_Company,
+  company.corp_account_number As Management_Account_Number,
+  buildings.buildingName As Building_Name,
+  buildings.uniqueCostCenter As Building_Cost_Center,
+  buildings.address As Building_Address_1,
+  buildings.address2 As Building_Address_2,
+  buildings.suite As Building_Suite_Location,
+  buildings.city As Building_City,
+  buildings.state As Building_State,
+  buildings.postalCode As Building_PostalCode,
+  buildings.phoneNumber As Building_Phone_Number,
+  company.cust_id,
+  company.status As Company_Active,
+  buildings.status As Building_Active,
+  vendor_contact.first_name As Vendor_Fname,
+  vendor_contact.last_name As Vendor_LName,
+  vendor_contact.email As Vendor_Email,
+  vendor_contact.phone_number As Vendor_Phone,
+  vendor_contact.cell_number As Vendor_Cell,
+  vendor_contact.emergency_contact As Vendor_Emergency,
+  Date_Format(vendor_contact.created_at, '%m-%d-%Y') As Vendor_DCreated,
+  Date_Format(vendor_contact.updated_at, '%m-%d-%Y') As Vendor_DUpdated,
+  vendor.company_name,
+  vendor_contact.status,
+  vendor.vid As Vendor_ID
+From
+  buildings Right Join
+  company On company.cust_id = buildings.cust_id Left Join
+  vendor On buildings.build_id = vendor.buildingId Left Join
+  vendor_contact On vendor.vid = vendor_contact.vid
+Where
+  buildings.uniqueCostCenter in ({Cost_Center_Number}) And
+  buildings.build_id in ({buildkey}) And
+  company.status = 1 And
+  buildings.status = '1' And
+  vendor_contact.status = 1
+Order By
+  Vendor_LName</SqlCommand>
+      </rsVendorUsers>
+    </DataSources>
+    <Relations isList="true" count="1">
+      <rsVendorUsers Ref="5" type="DataRelation" isKey="true">
+        <Alias>rsVendorUsers</Alias>
+        <ChildColumns isList="true" count="1">
+          <value>Vendor_ID</value>
+        </ChildColumns>
+        <ChildSource isRef="4" />
+        <Dictionary isRef="1" />
+        <Name>rsVendorUsers</Name>
+        <NameInSource>relVendorUses</NameInSource>
+        <ParentColumns isList="true" count="1">
+          <value>Vendor_ID</value>
+        </ParentColumns>
+        <ParentSource isRef="3" />
+      </rsVendorUsers>
+    </Relations>
+    <Report isRef="0" />
+    <Resources isList="true" count="0" />
+    <Variables isList="true" count="3">
+      <value>,buildkey,buildkey,,System.String,_x0031_,False,False,False,False</value>
+      <value>,Cost_Center_Number,Cost_Center_Number,,System.String,_x0036_00,False,False,False,False</value>
+      <value>,User,User,,System.String,_x0034_21,False,False,False,False</value>
+    </Variables>
+  </Dictionary>
+  <EngineVersion>EngineV2</EngineVersion>
+  <GlobalizationStrings isList="true" count="0" />
+  <Key>bc1b6d39db70497eb06a2a1ba03dc070</Key>
+  <MetaTags isList="true" count="0" />
+  <Pages isList="true" count="2">
+    <Page1 Ref="6" type="Page" isKey="true">
+      <Border>None;Black;2;Solid;False;4;Black</Border>
+      <Brush>Transparent</Brush>
+      <Components isList="true" count="7">
+        <PageHeaderBand1 Ref="7" type="PageHeaderBand" isKey="true">
+          <Brush>Transparent</Brush>
+          <CanShrink>True</CanShrink>
+          <ClientRectangle>0,0.2,10.3,0.8</ClientRectangle>
+          <Components isList="true" count="4">
+            <Text4 Ref="8" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>3.8,0.5,2.8,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text4</Name>
+              <Page isRef="6" />
+              <Parent isRef="7" />
+              <Text>{Today.ToString("MMMM dd, YYYY")}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text4>
+            <Text7 Ref="9" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>7.8,0.02,2.5,0.8</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10</Font>
+              <Guid>2a679883398bdb50c55513169f2629fd</Guid>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text7</Name>
+              <Page isRef="6" />
+              <Parent isRef="7" />
+              <Text>{rsMainInfo.Management_Company}
+{IIF(rsMainInfo.Building_Name != "", rsMainInfo.Building_Name,"" )}
+{IIF(rsMainInfo.Building_Name!=rsMainInfo.Building_Address_1,rsMainInfo.Building_Address_1, rsMainInfo.City_State_Zip)}
+{IIF(rsMainInfo.Building_Name!=rsMainInfo.Building_Address_1, rsMainInfo.City_State_Zip,"")}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text7>
+            <Image2 Ref="10" type="Image" isKey="true">
+              <AspectRatio>True</AspectRatio>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,0,2,0.8</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <DataColumn isNull="true" />
+              <Expressions isList="true" count="0" />
+              <Guid>abac99fb7dc1c6fb09f370705fbde99f</Guid>
+              <HorAlignment>Right</HorAlignment>
+              <IconColor>68, 114, 196</IconColor>
+              <ImageURL>https://www.visionworkorders.com/public/images/clogo/{rsMainInfo.company_logo}</ImageURL>
+              <Margins>0,0,0,0</Margins>
+              <Name>Image2</Name>
+              <Page isRef="6" />
+              <Parent isRef="7" />
+              <ProcessingDuplicates>Merge</ProcessingDuplicates>
+              <Stretch>True</Stretch>
+            </Image2>
+            <Text1 Ref="11" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>2,0,5.8,0.4</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,24</Font>
+              <Guid>25971f6a0f90ad998568131664d11538</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text1</Name>
+              <Page isRef="6" />
+              <Parent isRef="7" />
+              <Text>Vendor Contact List</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text1>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>PageHeaderBand1</Name>
+          <Page isRef="6" />
+          <Parent isRef="6" />
+        </PageHeaderBand1>
+        <PageFooterBand1 Ref="12" type="PageFooterBand" isKey="true">
+          <Brush>Transparent</Brush>
+          <CanShrink>True</CanShrink>
+          <ClientRectangle>0,8.76,10.3,0.6</ClientRectangle>
+          <Components isList="true" count="2">
+            <Text35 Ref="13" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>6.07,0.33,4.2,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,6</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text35</Name>
+              <Page isRef="6" />
+              <Parent isRef="12" />
+              <Text>Vocational Technologies, LLC 2000 - {Today.ToString("YYYY")}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text35>
+            <Text33 Ref="14" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>8.77,0.03,1.5,0.3</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text33</Name>
+              <Page isRef="6" />
+              <Parent isRef="12" />
+              <Text>{Today.ToString("MMMM dd, YYYY")}
+{PageNofM}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text33>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>PageFooterBand1</Name>
+          <Page isRef="6" />
+          <Parent isRef="6" />
+        </PageFooterBand1>
+        <GroupHeaderBand1 Ref="15" type="GroupHeaderBand" isKey="true">
+          <Bookmark>{rsMainInfo.Building_Name}</Bookmark>
+          <Brush>Transparent</Brush>
+          <ClientRectangle>0,1.4,10.3,0.3</ClientRectangle>
+          <Components isList="true" count="1">
+            <Text34 Ref="16" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,0,5.5,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,14,Bold</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text34</Name>
+              <Page isRef="6" />
+              <Parent isRef="15" />
+              <Text>{rsMainInfo.Building_Name}</Text>
+              <TextBrush>Black</TextBrush>
+            </Text34>
+          </Components>
+          <Condition>{rsMainInfo.Building_Name}</Condition>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <KeepGroupHeaderTogether>False</KeepGroupHeaderTogether>
+          <Name>GroupHeaderBand1</Name>
+          <NewPageBefore>True</NewPageBefore>
+          <Page isRef="6" />
+          <Parent isRef="6" />
+        </GroupHeaderBand1>
+        <GroupHeaderBand2 Ref="17" type="GroupHeaderBand" isKey="true">
+          <Bookmark>{rsMainInfo.Vendor_Company}</Bookmark>
+          <Border>All;Black;1;Solid;False;4;Black</Border>
+          <Brush>[213:240:230]</Brush>
+          <ClientRectangle>0,2.1,10.3,0.3</ClientRectangle>
+          <Components isList="true" count="1">
+            <Text49 Ref="18" type="Text" isKey="true">
+              <Border>None;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,2.1,0.3</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <Guid>9f564679877ea46aa5baeb0d61f1dc75</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text49</Name>
+              <Page isRef="6" />
+              <Parent isRef="17" />
+              <Text>{rsMainInfo.Vendor_Company}</Text>
+              <TextBrush>Black</TextBrush>
+              <VertAlignment>Center</VertAlignment>
+            </Text49>
+          </Components>
+          <ComponentStyle>Back Ground w Black Boarder</ComponentStyle>
+          <Condition>{rsMainInfo.Vendor_Company}</Condition>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <KeepGroupHeaderTogether>False</KeepGroupHeaderTogether>
+          <Name>GroupHeaderBand2</Name>
+          <Page isRef="6" />
+          <Parent isRef="6" />
+          <SortDirection>None</SortDirection>
+        </GroupHeaderBand2>
+        <HeaderBand1 Ref="19" type="HeaderBand" isKey="true">
+          <Brush>Transparent</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,2.8,10.3,0.3</ClientRectangle>
+          <Components isList="true" count="0" />
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Interaction Ref="20" type="Stimulsoft.Report.Components.StiInteraction" isKey="true">
+            <SortingEnabled>False</SortingEnabled>
+          </Interaction>
+          <KeepHeaderTogether>False</KeepHeaderTogether>
+          <Name>HeaderBand1</Name>
+          <Page isRef="6" />
+          <Parent isRef="6" />
+        </HeaderBand1>
+        <DataBand1 Ref="21" type="DataBand" isKey="true">
+          <Border>All;Black;1;Solid;False;4;Black</Border>
+          <Brush>Transparent</Brush>
+          <BusinessObjectGuid isNull="true" />
+          <CanShrink>True</CanShrink>
+          <ClientRectangle>0,3.5,10.3,2</ClientRectangle>
+          <Components isList="true" count="27">
+            <Text9 Ref="22" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,0.3,1.4,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Bold</Font>
+              <Guid>aba4271a16b463b3982b144daba6381c</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text9</Name>
+              <Page isRef="6" />
+              <Parent isRef="21" />
+              <Text>Main Contact :</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text9>
+            <Text11 Ref="23" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,0.7,1.4,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Bold</Font>
+              <Guid>2265557facdd965a9bc5144df64722c2</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text11</Name>
+              <Page isRef="6" />
+              <Parent isRef="21" />
+              <Text>Phone Number :</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text11>
+            <Text6 Ref="24" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,0.1,1.4,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Bold</Font>
+              <Guid>2ac7e1c972d84f0f75151539beffab69</Guid>
+              <Interaction Ref="25" type="Stimulsoft.Report.Components.StiInteraction" isKey="true">
+                <SortingColumn>DataBand1.Vendor_Company</SortingColumn>
+              </Interaction>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text6</Name>
+              <Page isRef="6" />
+              <Parent isRef="21" />
+              <Text>Vendor Company Name :</Text>
+              <TextBrush>Black</TextBrush>
+              <TextQuality>Typographic</TextQuality>
+              <ToolTip>Sort by Vendor Company Name</ToolTip>
+              <Type>Expression</Type>
+            </Text6>
+            <Text2 Ref="26" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>1.5,0.1,2.1,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text2</Name>
+              <Page isRef="6" />
+              <Parent isRef="21" />
+              <Text>{rsMainInfo.Vendor_Company}</Text>
+              <TextBrush>Black</TextBrush>
+            </Text2>
+            <Text3 Ref="27" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>1.5,0.3,2.1,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text3</Name>
+              <Page isRef="6" />
+              <Parent isRef="21" />
+              <Text>{rsMainInfo.Vendor_LName}, {rsMainInfo.Vendor_FName}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text3>
+            <Text5 Ref="28" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>1.5,0.7,2.1,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text5</Name>
+              <Page isRef="6" />
+              <Parent isRef="21" />
+              <Text>{IIF(rsMainInfo.Vendor_Phone != "", rsMainInfo.Vendor_Phone,"" )}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text5>
+            <Text10 Ref="29" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,0.9,1.4,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Bold</Font>
+              <Guid>ebb7b5ab624e718362a1c94d249a15c5</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text10</Name>
+              <Page isRef="6" />
+              <Parent isRef="21" />
+              <Text>Cell Number :</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text10>
+            <Text12 Ref="30" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,1.1,1.4,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Bold</Font>
+              <Guid>90430a686d047a63dfc4c94d9811810f</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text12</Name>
+              <Page isRef="6" />
+              <Parent isRef="21" />
+              <Text>Address  :</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text12>
+            <Text8 Ref="31" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>1.5,1.1,2.1,0.4</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text8</Name>
+              <Page isRef="6" />
+              <Parent isRef="21" />
+              <Text>{IIF(rsMainInfo.Vendor_Add1 != "", rsMainInfo.Vendor_Add1,"" )}
+{IIF(rsMainInfo.Vendor_Add2 != "", rsMainInfo.Vendor_Add2, rsMainInfo.Vendor_City_State_Zip )}
+{IIF(rsMainInfo.Vendor_Add2 != "", rsMainInfo.Vendor_City_State_Zip,"" )}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text8>
+            <Text17 Ref="32" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,0.5,1.4,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Bold</Font>
+              <Guid>425d0b1aa04638a758b4c952714e5a26</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text17</Name>
+              <Page isRef="6" />
+              <Parent isRef="21" />
+              <Text>E-Mail Address :</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text17>
+            <Text13 Ref="33" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>1.5,0.5,2.1,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text13</Name>
+              <Page isRef="6" />
+              <Parent isRef="21" />
+              <Text>{rsMainInfo.Vendor_EMail}</Text>
+              <TextBrush>Black</TextBrush>
+            </Text13>
+            <SubReport1 Ref="34" type="SubReport" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0.1,1.5,10.1,0.4</ClientRectangle>
+              <Components isList="true" count="0" />
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Guid>1caa22331a3cba0adcc5c95395b61848</Guid>
+              <Name>SubReport1</Name>
+              <Page isRef="6" />
+              <Parameters isList="true" count="0" />
+              <Parent isRef="21" />
+              <SubReportPageGuid>14eb0efc658c09fdc54a2443d927e3db</SubReportPageGuid>
+            </SubReport1>
+            <Text14 Ref="35" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>1.5,0.9,2.1,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text14</Name>
+              <Page isRef="6" />
+              <Parent isRef="21" />
+              <Text>{IIF(rsMainInfo.Vendor_Cell != "", rsMainInfo.Vendor_Cell,"" )}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text14>
+            <Text16 Ref="36" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>5.3,0.1,1.5,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text16</Name>
+              <Page isRef="6" />
+              <Parent isRef="21" />
+              <Text>{rsMainInfo.Vendor_Date_Created}</Text>
+              <TextBrush>Black</TextBrush>
+            </Text16>
+            <Text19 Ref="37" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>3.9,0.1,1.4,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Bold</Font>
+              <Guid>30c387aa2c88d5c533aacbf0cac354ee</Guid>
+              <Interaction Ref="38" type="Stimulsoft.Report.Components.StiInteraction" isKey="true">
+                <SortingEnabled>False</SortingEnabled>
+              </Interaction>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text19</Name>
+              <Page isRef="6" />
+              <Parent isRef="21" />
+              <Text>Vendor Date Created :</Text>
+              <TextBrush>Black</TextBrush>
+              <TextQuality>Typographic</TextQuality>
+              <Type>Expression</Type>
+            </Text19>
+            <Text20 Ref="39" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>3.9,0.3,1.4,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Bold</Font>
+              <Guid>fa04268a2c47febc8eb1cbf15ea59716</Guid>
+              <Interaction Ref="40" type="Stimulsoft.Report.Components.StiInteraction" isKey="true">
+                <SortingEnabled>False</SortingEnabled>
+              </Interaction>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text20</Name>
+              <Page isRef="6" />
+              <Parent isRef="21" />
+              <Text>Date Last Modified :</Text>
+              <TextBrush>Black</TextBrush>
+              <TextQuality>Typographic</TextQuality>
+              <Type>Expression</Type>
+            </Text20>
+            <Text18 Ref="41" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>5.3,0.3,1.5,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text18</Name>
+              <Page isRef="6" />
+              <Parent isRef="21" />
+              <Text>{IIF(rsMainInfo.Vendor_Date_Last_Modified != "00-00-0000", rsMainInfo.Vendor_Date_Last_Modified,rsMainInfo.Vendor_Date_Created )}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text18>
+            <Text24 Ref="42" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>3.9,0.5,1.4,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Bold</Font>
+              <Guid>5a042c582275edaa2f60cbf1c983f160</Guid>
+              <Interaction Ref="43" type="Stimulsoft.Report.Components.StiInteraction" isKey="true">
+                <SortingColumn>DataBand1.Vendor_Service</SortingColumn>
+              </Interaction>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text24</Name>
+              <Page isRef="6" />
+              <Parent isRef="21" />
+              <Tag>this is a tag</Tag>
+              <Text>Service :</Text>
+              <TextBrush>Black</TextBrush>
+              <TextQuality>Typographic</TextQuality>
+              <ToolTip>Sort by Vendor Services</ToolTip>
+              <Type>Expression</Type>
+            </Text24>
+            <Text22 Ref="44" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>5.3,0.5,1.5,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text22</Name>
+              <Page isRef="6" />
+              <Parent isRef="21" />
+              <Text>{rsMainInfo.Vendor_Service}</Text>
+              <TextBrush>Black</TextBrush>
+            </Text22>
+            <Text41 Ref="45" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>7.3,0.1,1.4,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Bold</Font>
+              <Guid>db2cf4ccb494438c184ccbf26b5e5fb2</Guid>
+              <Interaction Ref="46" type="Stimulsoft.Report.Components.StiInteraction" isKey="true">
+                <SortingColumn>DataBand1.Vendor_Account_Number</SortingColumn>
+              </Interaction>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text41</Name>
+              <Page isRef="6" />
+              <Parent isRef="21" />
+              <Text>Account Number :</Text>
+              <TextBrush>Black</TextBrush>
+              <TextQuality>Typographic</TextQuality>
+              <ToolTip>Sort by Account Number</ToolTip>
+              <Type>Expression</Type>
+            </Text41>
+            <Text39 Ref="47" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>8.7,0.1,1.4,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text39</Name>
+              <Page isRef="6" />
+              <Parent isRef="21" />
+              <Text>{rsMainInfo.Vendor_Account_Number}</Text>
+              <TextBrush>Black</TextBrush>
+            </Text39>
+            <Text43 Ref="48" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>3.9,0.7,1.4,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Bold</Font>
+              <Guid>c2cf3d9df97383158868cbf323a2d429</Guid>
+              <Interaction Ref="49" type="Stimulsoft.Report.Components.StiInteraction" isKey="true">
+                <SortingColumn>DataBand1.Vendor_Type_Contact</SortingColumn>
+              </Interaction>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text43</Name>
+              <Page isRef="6" />
+              <Parent isRef="21" />
+              <Text>Contact Type :</Text>
+              <TextBrush>Black</TextBrush>
+              <TextQuality>Typographic</TextQuality>
+              <ToolTip>Sort by Vendor Type</ToolTip>
+              <Type>Expression</Type>
+            </Text43>
+            <Text42 Ref="50" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>5.3,0.7,1.5,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text42</Name>
+              <Page isRef="6" />
+              <Parent isRef="21" />
+              <Text>{rsMainInfo.Vendor_Type_Contact}</Text>
+              <TextBrush>Black</TextBrush>
+            </Text42>
+            <Text45 Ref="51" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>3.9,0.9,1.4,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Bold</Font>
+              <Guid>b2def8577dc55430e09dcbf409606c1e</Guid>
+              <Interaction Ref="52" type="Stimulsoft.Report.Components.StiInteraction" isKey="true">
+                <SortingEnabled>False</SortingEnabled>
+              </Interaction>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text45</Name>
+              <Page isRef="6" />
+              <Parent isRef="21" />
+              <Text>Emergency Contact :</Text>
+              <TextBrush>Black</TextBrush>
+              <TextQuality>Typographic</TextQuality>
+              <Type>Expression</Type>
+            </Text45>
+            <Text44 Ref="53" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>5.3,0.9,1.5,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text44</Name>
+              <Page isRef="6" />
+              <Parent isRef="21" />
+              <Text>{IIF(rsMainInfo.Vendor_Emergency_Contact != "0", "Yes","No" )}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text44>
+            <Text47 Ref="54" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>7.3,0.3,1.4,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Bold</Font>
+              <Guid>47e4fb136a7fa77cdcc3cbf5bfe0c51f</Guid>
+              <Interaction Ref="55" type="Stimulsoft.Report.Components.StiInteraction" isKey="true">
+                <SortingEnabled>False</SortingEnabled>
+              </Interaction>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text47</Name>
+              <Page isRef="6" />
+              <Parent isRef="21" />
+              <Text>Notes :</Text>
+              <TextBrush>Black</TextBrush>
+              <TextQuality>Typographic</TextQuality>
+              <Type>Expression</Type>
+            </Text47>
+            <Text46 Ref="56" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;True;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <CanGrow>True</CanGrow>
+              <CanShrink>True</CanShrink>
+              <ClientRectangle>7.3,0.5,2.8,0.9</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text46</Name>
+              <Page isRef="6" />
+              <Parent isRef="21" />
+              <Text>{rsMainInfo.Vendor_Notes}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Text46>
+          </Components>
+          <ComponentStyle>OutLine</ComponentStyle>
+          <Conditions isList="true" count="0" />
+          <DataSourceName>rsMainInfo</DataSourceName>
+          <Expressions isList="true" count="0" />
+          <Filters isList="true" count="0" />
+          <Interaction Ref="57" type="Stimulsoft.Report.Components.StiBandInteraction" isKey="true">
+            <SortingEnabled>False</SortingEnabled>
+          </Interaction>
+          <Name>DataBand1</Name>
+          <Page isRef="6" />
+          <Parent isRef="6" />
+          <Sort isList="true" count="2">
+            <value>ASC</value>
+            <value>Building_Name</value>
+          </Sort>
+        </DataBand1>
+        <GroupFooterBand2 Ref="58" type="GroupFooterBand" isKey="true">
+          <Brush>Transparent</Brush>
+          <ClientRectangle>0,5.9,10.3,0.1</ClientRectangle>
+          <Components isList="true" count="0" />
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>GroupFooterBand2</Name>
+          <Page isRef="6" />
+          <Parent isRef="6" />
+        </GroupFooterBand2>
+      </Components>
+      <Conditions isList="true" count="0" />
+      <Expressions isList="true" count="0" />
+      <Guid>bc3ba8f95a23316df9de9fc0defa05fc</Guid>
+      <Margins>0.35,0.35,0.5,0.2</Margins>
+      <Name>Page1</Name>
+      <Orientation>Landscape</Orientation>
+      <PageHeight>8.5</PageHeight>
+      <PageWidth>11</PageWidth>
+      <PaperSize>Letter</PaperSize>
+      <Report isRef="0" />
+    </Page1>
+    <Page_SubReport1 Ref="59" type="Page" isKey="true">
+      <Border>None;Black;2;Solid;False;4;Black</Border>
+      <Brush>Transparent</Brush>
+      <Components isList="true" count="2">
+        <HeaderBand2 Ref="60" type="HeaderBand" isKey="true">
+          <Brush>Transparent</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,0.2,10.1,0.6</ClientRectangle>
+          <Components isList="true" count="9">
+            <Text38 Ref="61" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,0.3,1.8,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Bold</Font>
+              <Guid>3dc8db8c562165f67f1b2dd8bff8b0f1</Guid>
+              <Interaction Ref="62" type="Stimulsoft.Report.Components.StiInteraction" isKey="true">
+                <SortingEnabled>False</SortingEnabled>
+              </Interaction>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text38</Name>
+              <Page isRef="59" />
+              <Parent isRef="60" />
+              <Text>Contact Name</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text38>
+            <Text37 Ref="63" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>4,0.3,1.2,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Bold</Font>
+              <Guid>f4a8e0305307d1a8566e385d4cd9050a</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text37</Name>
+              <Page isRef="59" />
+              <Parent isRef="60" />
+              <Text>Office Phone</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text37>
+            <Text26 Ref="64" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>5.3,0.3,1.2,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Bold</Font>
+              <Guid>85f83208b1d4bf92f0ad385d4cd97aea</Guid>
+              <Interaction Ref="65" type="Stimulsoft.Report.Components.StiInteraction" isKey="true">
+                <SortingEnabled>False</SortingEnabled>
+              </Interaction>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text26</Name>
+              <Page isRef="59" />
+              <Parent isRef="60" />
+              <Text>Cell Phone</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text26>
+            <Text28 Ref="66" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>6.6,0.3,1.2,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Bold</Font>
+              <Guid>605d312a616e12fcab4c385d4cd92415</Guid>
+              <Interaction Ref="67" type="Stimulsoft.Report.Components.StiInteraction" isKey="true">
+                <SortingEnabled>False</SortingEnabled>
+              </Interaction>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text28</Name>
+              <Page isRef="59" />
+              <Parent isRef="60" />
+              <Text>Emergency Contact</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text28>
+            <Text30 Ref="68" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>7.9,0.3,1,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Bold</Font>
+              <Guid>9a347a674e10c26d482a385d4cd99b3c</Guid>
+              <Interaction Ref="69" type="Stimulsoft.Report.Components.StiInteraction" isKey="true">
+                <SortingEnabled>False</SortingEnabled>
+              </Interaction>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text30</Name>
+              <Page isRef="59" />
+              <Parent isRef="60" />
+              <Text>Date Created</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text30>
+            <Text36 Ref="70" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>1.9,0.3,1.9,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Bold</Font>
+              <Guid>961a0d5c0453f0a4f642385d4cd97c57</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text36</Name>
+              <Page isRef="59" />
+              <Parent isRef="60" />
+              <Text>E-Mail Address</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text36>
+            <Text29 Ref="71" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,0.1,1.7,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Bold</Font>
+              <Guid>6e5a3355a5e006c163b3cda0608be454</Guid>
+              <Interaction Ref="72" type="Stimulsoft.Report.Components.StiInteraction" isKey="true">
+                <SortingEnabled>False</SortingEnabled>
+              </Interaction>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text29</Name>
+              <Page isRef="59" />
+              <Parent isRef="60" />
+              <Text>Alternative Contact(s)</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text29>
+            <Text32 Ref="73" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>9,0.3,1,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Bold</Font>
+              <Guid>37a48c8bbda1e17a5584385d4cd93f3a</Guid>
+              <Interaction Ref="74" type="Stimulsoft.Report.Components.StiInteraction" isKey="true">
+                <SortingEnabled>False</SortingEnabled>
+              </Interaction>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text32</Name>
+              <Page isRef="59" />
+              <Parent isRef="60" />
+              <Text>Last Modified</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text32>
+            <HorizontalLinePrimitive2 Ref="75" type="HorizontalLinePrimitive" isKey="true">
+              <ClientRectangle>0,0.5,10,0.01</ClientRectangle>
+              <Color>Black</Color>
+              <Conditions isList="true" count="0" />
+              <EndCap Ref="76" type="Cap" isKey="true">
+                <Color>Black</Color>
+              </EndCap>
+              <Expressions isList="true" count="0" />
+              <Guid>db830faf3bba75edf7bc385d90d5e0ec</Guid>
+              <Name>HorizontalLinePrimitive2</Name>
+              <Page isRef="59" />
+              <Parent isRef="60" />
+              <StartCap Ref="77" type="Cap" isKey="true">
+                <Color>Black</Color>
+              </StartCap>
+            </HorizontalLinePrimitive2>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Interaction Ref="78" type="Stimulsoft.Report.Components.StiInteraction" isKey="true">
+            <SortingEnabled>False</SortingEnabled>
+          </Interaction>
+          <KeepHeaderTogether>False</KeepHeaderTogether>
+          <Name>HeaderBand2</Name>
+          <Page isRef="59" />
+          <Parent isRef="59" />
+        </HeaderBand2>
+        <DataBand3 Ref="79" type="DataBand" isKey="true">
+          <Brush>Transparent</Brush>
+          <BusinessObjectGuid isNull="true" />
+          <CanShrink>True</CanShrink>
+          <ClientRectangle>0,1.2,10.1,0.3</ClientRectangle>
+          <Components isList="true" count="7">
+            <Text15 Ref="80" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,0,1.8,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text15</Name>
+              <Page isRef="59" />
+              <Parent isRef="79" />
+              <Text>{rsVendorUsers.Vendor_LName}, {rsVendorUsers.Vendor_Fname}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text15>
+            <Text21 Ref="81" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>1.9,0,1.9,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10</Font>
+              <Interaction Ref="82" type="Stimulsoft.Report.Components.StiInteraction" isKey="true">
+                <SortingEnabled>False</SortingEnabled>
+              </Interaction>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text21</Name>
+              <Page isRef="59" />
+              <Parent isRef="79" />
+              <Text>{rsVendorUsers.Vendor_Email}</Text>
+              <TextBrush>Black</TextBrush>
+            </Text21>
+            <Text23 Ref="83" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>4,0,1.2,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10</Font>
+              <Interaction Ref="84" type="Stimulsoft.Report.Components.StiInteraction" isKey="true">
+                <SortingEnabled>False</SortingEnabled>
+              </Interaction>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text23</Name>
+              <Page isRef="59" />
+              <Parent isRef="79" />
+              <Text>{rsVendorUsers.Vendor_Phone}</Text>
+              <TextBrush>Black</TextBrush>
+            </Text23>
+            <Text25 Ref="85" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>5.3,0,1.2,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text25</Name>
+              <Page isRef="59" />
+              <Parent isRef="79" />
+              <Text>{rsVendorUsers.Vendor_Cell}</Text>
+              <TextBrush>Black</TextBrush>
+            </Text25>
+            <Text27 Ref="86" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>6.8,0,0.7,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text27</Name>
+              <Page isRef="59" />
+              <Parent isRef="79" />
+              <Text>{IIF(rsVendorUsers.Vendor_Emergency != "0", "Yes","No" )}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text27>
+            <Text31 Ref="87" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>7.9,0,1,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text31</Name>
+              <Page isRef="59" />
+              <Parent isRef="79" />
+              <Text>{rsVendorUsers.Vendor_DCreated}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text31>
+            <Text40 Ref="88" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>9,0,1,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text40</Name>
+              <Page isRef="59" />
+              <Parent isRef="79" />
+              <Text>{IIF(rsVendorUsers.Vendor_DUpdated != "00-00-0000", rsVendorUsers.Vendor_DUpdated,rsVendorUsers.Vendor_DCreated )}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text40>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <DataRelationName>relVendorUses</DataRelationName>
+          <DataSourceName>rsVendorUsers</DataSourceName>
+          <EvenStyle>Sback_DarkerGreen</EvenStyle>
+          <Expressions isList="true" count="0" />
+          <Filters isList="true" count="0" />
+          <Guid>9115c58c3c33e4d9ddc524440e2966c3</Guid>
+          <MasterComponent isRef="21" />
+          <Name>DataBand3</Name>
+          <Page isRef="59" />
+          <Parent isRef="59" />
+          <Sort isList="true" count="0" />
+        </DataBand3>
+      </Components>
+      <Conditions isList="true" count="0" />
+      <Expressions isList="true" count="0" />
+      <Guid>14eb0efc658c09fdc54a2443d927e3db</Guid>
+      <Margins>0.5,0.2,0.35,0.35</Margins>
+      <Name>Page_SubReport1</Name>
+      <Orientation>Landscape</Orientation>
+      <PageHeight>8.5</PageHeight>
+      <PageWidth>10.8</PageWidth>
+      <PaperSize>Letter</PaperSize>
+      <Report isRef="0" />
+    </Page_SubReport1>
+  </Pages>
+  <ReferencedAssemblies isList="true" count="8">
+    <value>System.Dll</value>
+    <value>System.Drawing.Dll</value>
+    <value>System.Windows.Forms.Dll</value>
+    <value>System.Data.Dll</value>
+    <value>System.Xml.Dll</value>
+    <value>Stimulsoft.Controls.Dll</value>
+    <value>Stimulsoft.Base.Dll</value>
+    <value>Stimulsoft.Report.Dll</value>
+  </ReferencedAssemblies>
+  <ReportAlias>Vendor Contact List</ReportAlias>
+  <ReportChanged>12/2/2020 4:31:31 PM</ReportChanged>
+  <ReportCreated>4/9/2015 3:55:59 PM</ReportCreated>
+  <ReportFile>C:\Users\RobPalermo\Documents\Deramweaver\VE Test Site for workorders\reports\reports\HTML_Vendor_Console_R1.mrt</ReportFile>
+  <ReportGuid>6ff84c0767b74d8f86a942d4d1075d89</ReportGuid>
+  <ReportName>Vendor Contact List</ReportName>
+  <ReportUnit>Inches</ReportUnit>
+  <ReportVersion>2020.5.1.0</ReportVersion>
+  <Script>using System;
+using System.Drawing;
+using System.Windows.Forms;
+using System.Data;
+using Stimulsoft.Controls;
+using Stimulsoft.Base.Drawing;
+using Stimulsoft.Report;
+using Stimulsoft.Report.Dialogs;
+using Stimulsoft.Report.Components;
+
+namespace Reports
+{
+
+    public class Report : Stimulsoft.Report.StiReport
+
+    {
+        
+        public Report()
+        {
+            this.InitializeComponent();
+        }
+        #region StiReport Designer generated code - do not modify
+		#endregion StiReport Designer generated code - do not modify
+    }
+}</Script>
+  <ScriptLanguage>CSharp</ScriptLanguage>
+  <Styles isList="true" count="5">
+    <Style1 Ref="89" type="Stimulsoft.Report.StiStyle" isKey="true">
+      <Border>Left, Right;Black;1;Solid;False;4;Black</Border>
+      <Brush>Azure</Brush>
+      <Conditions isList="true" count="0" />
+      <Font>Arial,8</Font>
+      <Name>Style1</Name>
+      <NegativeTextBrush>Red</NegativeTextBrush>
+      <TextBrush>Black</TextBrush>
+    </Style1>
+    <sBackColor Ref="90" type="Stimulsoft.Report.StiStyle" isKey="true">
+      <Brush>Azure</Brush>
+      <Conditions isList="true" count="0" />
+      <Font>Arial,8</Font>
+      <Name>sBackColor</Name>
+      <NegativeTextBrush>Red</NegativeTextBrush>
+      <TextBrush>Black</TextBrush>
+    </sBackColor>
+    <OutLine Ref="91" type="Stimulsoft.Report.StiStyle" isKey="true">
+      <Border>All;Black;1;Solid;False;4;Black</Border>
+      <Brush>Transparent</Brush>
+      <Conditions isList="true" count="0" />
+      <Font>Arial,8</Font>
+      <Name>OutLine</Name>
+      <NegativeTextBrush>Red</NegativeTextBrush>
+      <TextBrush>Black</TextBrush>
+    </OutLine>
+    <Sback_DarkerGreen Ref="92" type="Stimulsoft.Report.StiStyle" isKey="true">
+      <Brush>[213:240:230]</Brush>
+      <Conditions isList="true" count="0" />
+      <Font>Arial,8</Font>
+      <Name>Sback_DarkerGreen</Name>
+      <NegativeTextBrush>Red</NegativeTextBrush>
+      <TextBrush>Black</TextBrush>
+    </Sback_DarkerGreen>
+    <Back_x0020_Ground_x0020_w_x0020_Black_x0020_Boarder Ref="93" type="Stimulsoft.Report.StiStyle" isKey="true">
+      <Border>All;Black;1;Solid;False;4;Black</Border>
+      <Brush>[213:240:230]</Brush>
+      <Conditions isList="true" count="0" />
+      <Font>Arial,8</Font>
+      <Name>Back Ground w Black Boarder</Name>
+      <NegativeTextBrush>Red</NegativeTextBrush>
+      <TextBrush>Black</TextBrush>
+    </Back_x0020_Ground_x0020_w_x0020_Black_x0020_Boarder>
+  </Styles>
+</StiSerializer>

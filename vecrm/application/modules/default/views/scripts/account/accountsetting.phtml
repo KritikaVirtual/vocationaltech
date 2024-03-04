@@ -1,0 +1,45 @@
+<script src="<?php echo BASEURL . 'public/js/account.js'?>"></script>
+<div class="container-right">
+<section style="z-index:9999" class="w-48 fr ch-home-form">
+<section class="ch-form-header ">
+<h3>Change Password </h3>
+</section>
+<div class="gridContainer">
+<div class="tableGrid">
+<div id="accountsetting">
+<form method="post" name="changepasswordform" id="changepasswordform">
+<?php /*<div id="current_password">	
+<label>Current password :</label> <span id="cNameErr"></span>
+<input type="text" name="curpwd" id="curpwd" value=""> 
+</div>*/ ?>
+<input type="hidden" name="passkey" id="passkey" value="<?php echo $this->passkey;?>"/>
+<div id="msg" class="welcome_text"></div>
+<div class="password-guide">
+				    <span>Note:</span> Password must contain atleast one Upper letter, small letter, digit, special character and should be minimum 8 character.
+				</div>
+<div class="user-ffield">                
+<div id="new_password" class="row">
+<label>New password :<span class="required">*</span></label><div class="user-inputbox"> <span id="newpwdErr"  class="newpwdErr"></span>
+
+<input name="newpwd" id="newpwd" type="password"> 
+</div>
+</div>
+<div id="repassword" class="row">
+<label>Confirm password :<span class="required">*</span></label><div class="user-inputbox"><span id="repwdErr" class="repwdErr"></span>
+
+<input name="repwd" id="repwd" type="password">
+</div>
+</div>
+</div> 
+<div class="add-comp-but">
+	<input type="button" class="confirm" name="confirm" value="Confirm" onclick="changePassword()">
+	 <input type="reset" value="Cancel" name="cancel" class="cancel"/>	
+</div>
+</form>
+</div>
+	</div>		
+			</div>
+</section>
+
+
+</div>

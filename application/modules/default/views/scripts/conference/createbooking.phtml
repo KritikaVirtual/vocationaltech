@@ -1,0 +1,158 @@
+<?php
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/conference.js');
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/jquery.form.js');
+$cscheduleDetails = $this->cscheduleDetails;
+$cPlan = $this->cPlan;
+
+$crDetails = $this->crDetails;
+$startTime = '08:00 AM';
+$endTime = '09:00 AM';
+$cscheduleMapper = new Model_ConferenceSchedule();
+?>
+<div class="container-right">
+    <div class="message">
+        <span class="error-txt" style="color:red; text-align:center;"></span>
+    </div>
+    <section style="z-index:9999" class="w-48 fr ch-home-form">
+        <section class="ch-form-header ">
+            <h3>Add Conference room request  <span> <?php echo date("F d, Y",strtotime($this->fullDate)); ?> </span></h3>
+        </section>
+        <div class="room-setup">
+            <div class="tableGrid list_tableGrid my_table_grid">
+                <div class="message">
+                    <div class="success_message" style="text-align:center;width:100%;font-weight:bold;color:red;"></div>				  			
+                    <span id="success_msg"></span>
+                    <span id="error_msg"></span>
+                </div>
+                <div class="container">
+                    <div id="step1">
+
+                        <input type="hidden" value="<?php echo $this->select_build_id; ?>" name="building_id" id="building_id"/>
+                        <input type="hidden" value="<?php echo $this->requested_date; ?>" name="requested_date" id="requested_date"/>
+                        <div id='all_attachment' style="display:none;">
+
+                        </div>
+                        <div class="row">    
+
+                            <label>Select Tenant:<span class="required">*</span> </label><span class="ugroupErr" id="tenant-error"></span>
+                            <select name="tenant" id="tenant" onchange="showTenantUser(this.value)">
+                                <option value="">Select Tenant</option>
+                                <?php
+                                if ($this->select_build_id != '') {
+                                    $tnModel = new Model_Tenant();
+                                    $tndetail = $tnModel->getTenantByBuildingId($this->select_build_id);
+                                    
+                                    if ($tndetail != '') {
+                                        $gTinant=array();
+                                        foreach($tndetail as $tenant){
+                                            $gTinant[$tenant->id]=strtolower($tenant->tenantName);
+                                        }
+                                        asort($gTinant);
+                                        foreach ($gTinant as $key=>$val) {
+                                            ?>
+                                            <option value="<?php echo $key ?>"><?php echo stripslashes($val); ?></option>
+                                        <?php } ?>   
+                                        <?php
+                                    }
+                                }
+                                ?>
+                            </select>
+                        </div> 
+                        <div class="row">    
+
+                            <label>Requested By:<span class="required">*</span> </label><span class="ugroupErr" id="requestedby-error"></span>
+                            <div id='show_tenant_user'> 
+                                <select name="created_user" id="created_user" >
+                                    <option value="">Select Request</option>
+
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <label>Meeting Title:<span class="required">*</span></label><span class="ugroupErr" id="meeting-title-error"></span>    
+                            <input type="text" value="" id="meeting_title" class="" name="meeting_title" Placeholder ='Meeting Title'/>  
+                        </div>
+
+                        <div class="row">
+                            <label> Phone Number:<span class="required">*</span></label><span class="ugroupErr" id="phone-error"></span>
+                            <input type="text" value="" id="phone_number" class="" name="phone_number" placeholder="Phone Number" readonly="readonly"> 
+                        </div>
+                        <div class="row">
+                            <label> Email:<span class="required">*</span></label><span class="ugroupErr" id="email-error"></span>
+                            <input type="text" value="" id="email" class="" name="email" placeholder="Email" readonly="readonly"> 
+                        </div>
+
+                        <div class="row">    
+
+                            <label>Select Room:<span class="required">*</span> </label><span class="ugroupErr" id="room-error"></span>
+                            <select name="croom" id="croom" onchange="showLayout(this.value);">
+                                <option value="">Select Room</option>
+                                <?php
+                                $select ="";
+                                if ($crDetails) {
+                                    if(count($crDetails)==1){
+                                       echo '<script>showLayout('.$crDetails[0]->cid.');</script>';
+                                        $select = "SELECTED";
+                                    }
+                                        
+                                    foreach ($crDetails as $crDetailsVal) {
+                                        echo $js;
+                                        ?>
+                                        <option value='<?php echo $crDetailsVal->cid; ?>' <?php echo $select; ?>  > <?php echo $crDetailsVal->room_name;  ?> </option>
+                                        <?php
+                                    }
+                                }
+                                ?>
+                            </select>
+                        </div>
+
+
+
+                        <div class="row room-design">
+                            <label> Configuration(Select One): </label> 
+                            <div class="room-attachment">
+                                <span class="ugroupErr" id="design-error"></span>
+                                <table border='1' id="table_attachment">
+									<thead>
+										<tr class="tr-bg"><th>Select</th><th>Design Name </th><th>View PDF</th></tr> 
+									</thead>
+                                    <tr id='no_design'><td colspan="3">No Room Layout Design!</td></tr>
+
+
+                                </table>
+                            </div>
+                        </div>
+                        <div class="view_type"></div>
+                        <div class="sch_view"></div>                        
+                        <div class="recurrence" ></div> 
+                        <p  id="warrningmsg" style="text-align: center;font-weight: bold; display: none;">* please set booking time before selecting Set Recurring</p>
+                    </div>
+                    <div class="confirmBtn float_none">
+                        <input type="hidden" name="type" value="auser">
+                        <input type="hidden" name="month" id="month" value="<?php echo $this->month; ?> ">
+                        <input type="hidden" name="enddate" id="enddate" value="">
+                        <input type="button" value="Save" name="save" class="confirm" id='emailsave' onclick="validateCRoomRequest();">
+<!--                        <a href="#saveRecurrence" >-->
+                        <input type="button" style="display:none;" value="Set Recurring" name="save" class="confirm" onclick="saveRecurrence()" id='saveRecurrence'>
+<!--                        </a>-->
+                        <input type="button" value="Cancel" name="cancel" class="cancel" onclick="cancelConRoom();">
+                    </div>
+
+                </div>   
+            </div>
+        </div>
+</div>
+</section>
+</div>
+<div class="fade_default_opt" id="fd_dft_div" style="display:none">
+    <a href="#file_form" id="file_form_href" class="modalbox">&nbsp;</a>	
+    <div id="file_form" class="bd-dft-cls" style="display:none"></div>
+</div>
+<div class="loader" style="display:none;" > <img src="<?php echo BASEURL.'public/images/loader.gif';?>"><div>
+
+ <style>
+.loader {
+    height: 100% !important;
+}
+</style>

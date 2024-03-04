@@ -1,0 +1,206 @@
+<?php 
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/vendor.js');
+$serviceMapper = new Model_Services();
+$servicelist = $serviceMapper->getServices();
+$contactMapper = new Model_ContactType();
+$contactlist = $contactMapper->getContactType();
+?>
+<div class="container-right" id="add-vendor-data">
+<section class="w-48 fr ch-home-form">
+<section class="ch-form-header">
+	<h3>New Vendor Setup Wizard</h3>
+    </section>
+			 <div class="tenant-user-data">
+		
+				  <div class="form_head">						
+						<?php if($this->message && $this->message['msg']!=''){?>
+						   <span class="error-msg"><?php echo $this->message['msg'];?></span>
+						<?php }?>
+				   </div>
+				   <?php if($this->build_id!=''){?>
+					  <form name="addNewVendor" id="addNewVendor" action="<?php echo BASEURL.'vendor/createvendor/';?>" method="post">
+					       <input type="hidden" name="form_key" value="<?php echo $this->form_key;?>"/>
+					       <input type="hidden" name="buildingId" id="buildingId" value="<?php echo $this->build_id?>"/>
+						  <div class="row">
+							<label>Company Name :<span class="required">*</span></label> <span class="field_error" id="company-error"></span>
+                            <div class="row_vender_input">
+							<input type="text" value="" id="company_name" name="company_name">
+                            </div>
+						   </div>
+						    <div class="row">
+							   <label>Contact First Name :<span class="required">*</span></label> <span class="field_error" id="first_name-error"></span>
+							   <div class="row_vender_input">
+                               <input type="text" value="" id="first_name" name="first_name">
+                               </div>
+						   </div>
+						   <div class="row">
+							   <label>Contact Last Name :<span class="required">*</span></label> <span class="field_error" id="last_name-error"></span>
+							   <div class="row_vender_input">
+                               <input type="text" value="" id="last_name" name="last_name">
+                               </div>
+						   </div>
+						   <div class="row">
+							   <label>Service :<span class="required">*</span></label>
+                               <div class="cv-select-div">
+                                <span class="field_error" id="services-error"></span>
+							   <div id="service_dropdown">
+								   <a href="javascript:void(0)" onclick="showServiceForm()">----Add New Service----</a>
+								   <select required id="services" class="status" name="services">
+									   <option value="">Select Service</option>
+										<?php 
+										   if($servicelist){
+												foreach ($servicelist as  $service) {											
+													  echo '<option value="'.$service['sid'].'">'.$service['service'].'</option>';
+												   
+												}
+											}
+										?>
+																			                    
+									</select>
+								</div>
+                                </div>								
+						   </div>
+						    <div class="row">
+							    <label>Contact Type :<span class="required">*</span></label> 
+                                <div class="cv-select-div">
+                                <span class="field_error" id="contact-error"></span>
+							    <div id="contact_dropdown">
+									<a href="javascript:void(0)" onclick="showContactForm()">----Add New Type----</a>
+									   <select required id="contact_type" class="status" name="contact_type">
+										   <option value="">Select Contact Type</option>
+											<?php 
+											  if($contactlist){
+												foreach ($contactlist as $contact) {													
+													  echo '<option value="'.$contact['cid'].'">'.$contact['contact'].'</option>';												  
+												}
+											 }
+											?>											                   
+										</select>
+								  </div>
+                                  </div>
+						   </div>
+						   <div class="row">
+							   <label>Phone Number:<span class="required">*</span></label> <span class="field_error" id="phone_number-error"></span>
+							   <div class="row_vender_input">
+                               <input type="text" value="" id="phone_number" name="phone_number">
+                               </div>
+						   </div>
+						   <div class="row">
+							   <label>Cell Number:</label> <span class="field_error" id="cell_number-error"></span>
+							  
+                              <div class="row_vender_input">
+                               <input type="text" value="" id="cell_number" name="cell_number">
+                               </div>
+						   </div>
+						  <div class="row">
+								<label>E-mail :</label> <span class="field_error" id="email-error"></span>
+                                <div class="row_vender_input">
+								<input type="text" value="" id="email" name="email"/>
+                                </div>
+						   </div>	
+						  <div class="row">	
+							<label>Account Number :</label><span class="field_error" id="account_number-error"></span> 	
+                            <div class="row_vender_input">
+							<input type="text" required="" id="account_number" class="" name="account_number">
+                            </div>
+						 </div>	
+						<div class="row">							
+							<label>Address :<span class="required">*</span></label><span class="field_error" id="address-error"></span> 
+                            <div class="row_vender_input">	
+							<input type="text" required="" id="address1" class="" name="address1">
+							<input type="text" required="" id="address2" class="" name="address2">
+                            </div>
+						</div>	
+						<!--<div class="row">	
+							<label>Title :</label>		
+							<input type="text" required="" id="title" class="" name="title">
+						</div>-->
+						<div class="row">	
+							
+							<label>City :<span class="required">*</span></label><span class="field_error" id="city-error"></span> 	
+                            
+                            <div class="row_vender_input">
+							<input type="text" required="" id="city" class="" name="city">
+                            </div>
+						</div>
+						<div class="row">	
+							<label>State :<span class="required">*</span></label>
+							<span class="field_error" id="state-error"></span> 		
+                            
+                            <div class="row_vender_input">
+							<input type="text" id="state" class="" name="state" >
+                            </div>
+						</div>
+						<div class="row">	
+							<label>Postal Code :<span class="required">*</span></label>
+							<span class="field_error" id="postal-error"></span> 	
+                            
+                            <div class="row_vender_input">	
+							<input type="text" id="postal_code" class="" name="postal_code" onkeypress="return isNumberKey(event)" maxlength="5">
+                            </div>
+						</div>	
+						<div class="row">	
+							<label>Emergency Contact? :</label>
+                            <div class="row_vender_input">
+							<select required id="emergency_contact" class="status" name="emergency_contact">
+								<option value="0" selected="selected">No</option>
+								<option value="1" >Yes</option>                
+							</select>
+                            </div>
+						</div>	
+							
+							<div class="confirmBtn float_none">								
+								<input type="button" value="Save" name="next" class="confirm next" onclick="validateVendor()"/>
+								<input type="button" value="Cancel" name="cancel" class="cancel" onclick="cancelVendor('<?php echo $this->build_id?>')"/>
+							</div>
+					  </form>
+				      <?php }else echo 'No building selected';?>
+			  </div>
+              </section> 
+			  </div>
+<div class="loader" style="display:none;" > <img src="<?php echo BASEURL.'public/images/loader.gif';?>"></div>
+    <div id="add_new_service_div" style="display:none" class="back_bg">
+          <div class="add_new_service">
+			   <span>Add New Service</span>
+			    <div class="form_fields">
+					<form name="service_form" id="service_from">
+						<div class="row">
+							<label>Service<span>*</span></label>
+                            <div class="cv-pselect">
+							<span class="field_error" id="add-service-error"></span>
+							<input type="text" name="service" id="service">
+                            </div>
+						</div>
+						<div class="confirmBtn float_none">
+							<input type="button" value="Add Service" name="next" class="confirm next" onclick="addService()"/>
+							<input type="button" value="Cancel" name="cancel" class="cancel" onclick="cancelAddService()"/>
+						</div>
+					</form>
+				</div>
+          </div>
+     </div>
+     
+    <div id="add_new_contact_div" style="display:none" class="back_bg">
+          <div class="add_new_contact">
+			   <span>Add New contact type</span>
+			    <div class="form_fields">
+					<form name="contact_form" id="contact_form">
+						<div class="row">
+							<label>Contact<span>*</span></label>
+                            <div class="cv-pselect">
+							<span class="field_error" id="add-contact-error"></span>
+							<input type="text" name="contact" id="contact">
+                            </div>
+						</div>
+						<div class="confirmBtn float_none">
+							<input type="button" value="Add Contact" name="next" class="confirm next" onclick="addContact()"/>
+							<input type="button" value="Cancel" name="cancel" class="cancel" onclick="cancelContact()"/>
+						</div>
+					</form>
+				</div>
+          </div>
+     </div>    	
+				  
+<script type="text/javascript">
+	 $("#phone").mask("999.999.9999")
+</script>

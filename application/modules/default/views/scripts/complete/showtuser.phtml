@@ -1,0 +1,12 @@
+<select name="create_user" id="create_user" onchange="showUserInfo(this.value)">
+  <option value="">Select Request By</option>
+  <?php
+	 if($this->tuserList!=''){
+		 foreach($this->tuserList as $tul){
+			?>
+			<option value="<?php echo $tul->uid?>"><?php echo $tul->firstName.' '.$tul->lastName;?></option>
+			<?php
+		 }
+	 }
+  ?>
+</select>

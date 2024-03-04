@@ -1,0 +1,42 @@
+					
+						<div class="success_message_vendor" style="text-align:center;width:100%;font-weight:bold;color:red;"></div>				  			
+						<?php if($this->message && $this->message['msg']!=''){?>
+						   <span class="error-msg"><?php echo $this->message['msg'];?></span>
+						<?php }?>
+				 
+
+
+<h1>Select Vendor</h1>
+			    <div class="form_fields">
+				<div class="loader loaderpop style="">
+<img src="http://localhost/vecrm/public/images/loader.gif">
+</div>
+					<form name="altvendorform" id="altvendorform_<?php echo $this->midajax; ?>" method="POST" action="<?php echo $this->baseUrl().'/material/addvendorcontact/mid/'.$this->midajax ?>">
+					<input type="hidden" name="vendor_mid" id="vendor_mid_<?php echo $this->midajax; ?>" value="<?php echo $this->midajax  ?>" >
+						<div class="row">
+							<label>Select Vendor<span>*</span></label>
+                            <div class="cv-pselect">
+							<span class="field_error" id="altenatevendorselected-error_<?php echo $this->midajax; ?>"></span>
+								<div id="vendor_dropdown">									
+									   <select name="altenatevendorid" class="altenatevendorselected" id="altenatevendorselected_<?php echo $this->midajax; ?>" onchange="changeSelectedValue(this.value);" >
+										   <option value="">Select Vendor</option>
+											<?php 
+											  if($this->vendorList){
+												foreach ($this->vendorList as $vl) {													
+													  echo '<option value="'.$vl['vid'].'">'.stripslashes($vl['company_name']).'</option>';												  
+												}
+											 }
+											?>											                   
+										</select>
+								  </div>
+                            </div>
+						</div>
+						<div class="confirmBtn float_none rd">
+							<input type="button" value="Save" onclick="addVendorAltContact(<?php echo $this->midajax  ?>);" name="SaveVendor" class="confirm next" />
+							<a class="modalbox" href="#addNewVendor" onclick="javascript:addNewVendor('<?php echo $this->baseUrl().'/vendor/createvendor/bid/'.$this->bidajax.'/redirect/material' ?>');">
+							<input type="button" value="Add New Vendor" name="addNewVendor" class="cancel"> </a>
+							<input type="button" value="Cancel" name="cancel" class="cancel" onclick="cancelAltVendorList()"/>
+						</div>
+					</form>
+				</div>
+     

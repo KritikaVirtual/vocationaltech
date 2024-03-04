@@ -1,0 +1,44 @@
+<?php
+// log out the page after session time out.
+//$session_time = ini_get('session.gc_maxlifetime');
+//echo $session_time;
+if (Zend_Auth::getInstance()->hasIdentity()) {
+?>
+<script type="text/javascript">
+	//setInterval(function(){location.reload();},3000);
+	/*var time = '<?php echo $session_time;?>';
+	setInterval(function(){location.reload();},time*1000);*/
+	var IDLE_TIMEOUT = 1320; //seconds
+	var _idleSecondsTimer = null;
+	var _idleSecondsCounter = 0;
+	var alert_flag=true;
+
+	document.onclick = function() {
+		_idleSecondsCounter = 0;
+	};
+
+	document.onmousemove = function() {
+		_idleSecondsCounter = 0;
+	};
+
+	document.onkeypress = function() {
+		_idleSecondsCounter = 0;
+	};
+
+	_idleSecondsCounter = window.setInterval(CheckIdleTime, 1000);
+
+	function CheckIdleTime() {
+		 _idleSecondsCounter++;
+		 var oPanel = document.getElementById("SecondsUntilExpire");
+		 if (oPanel)
+			 oPanel.innerHTML = (IDLE_TIMEOUT - _idleSecondsCounter) + "";
+		if (_idleSecondsCounter >= IDLE_TIMEOUT && alert_flag) {
+			alert_flag=false;
+			window.clearInterval(_idleSecondsCounter);
+			alert("Session Time expired!");
+			document.location.href = baseUrl+"/index/logout";
+		}
+	}
+</script>
+
+<?php } ?>

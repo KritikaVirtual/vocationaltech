@@ -1,0 +1,24 @@
+<?php 
+$contactMapper = new Model_ContactType();
+$contactlist = $contactMapper->getContactTypeByBuilding($this->build_id);
+
+?>
+<span class="field_error" id="contact-error"></span>
+									<div class="col-xs-10" style="padding:0px;">
+<select required id="contact_type" class="status" name="contact_type">
+	   <option value="">Select Contact Type</option>
+		<?php 
+		  if($contactlist){
+				foreach ($contactlist as $contact) {					
+					  echo '<option value="'.$contact['cid'].'">'.stripslashes($contact['contact']).'</option>';				  
+				}
+			}
+		?>		                    
+</select>
+</div>
+									<div class="col-xs-2" style="padding:6px 0 0 8px;">
+									<a href="javascript:void(0)" onclick="showContactForm()" class="vend_tooltip"><img height="24" src="<?php echo BASEURL; ?>public/images/add_vendor.png" >
+									<div class="vend_tooltip_content">Add New Type</div>
+									</a>
+									</div>
+									<div class="clearfix"></div>

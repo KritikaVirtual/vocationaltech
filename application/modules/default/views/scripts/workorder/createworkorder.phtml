@@ -1,0 +1,258 @@
+<?php 
+/*
+ *  Create work order section *
+*/
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/workorder.js'); 
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/ckeditor/ckeditor.js');
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/ckeditor/adapters/jquery.js');
+$current_time = '';
+$current_date = ''; 
+?>
+<div class="container-right" id="work-order-data">
+	<?php if($this->roleId=='5' || $this->roleId=='7'){ ?>
+	<?php
+	      //$tenant = $this->tenantData;
+	      $buildModel = new Model_Building();
+		  $buildData = $buildModel->getbuildingbyid($this->tenantData['buildingId']);
+		  $buildingName = $buildData[0]['buildingName'];
+		  $tenantModel = new Model_Tenant();
+		  $tenantdetailscount = $tenantModel -> getChildTenantByUserId($this->userId);
+		  
+		  //var_dump($this->tenantData);
+	?>	
+ <section id="first" class="w-48 fr ch-home-form" style="z-index:9999">
+    <section class="ch-form-header ">
+        <h3>Create Work Order</h3>
+    </section>
+    <script src="//cdn.ckeditor.com/4.4.6/standard/ckeditor.js"></script>
+	<div class="create-work-order">
+			
+		<form name="createWorkOrderForm" id="createWorkOrderForm"  enctype="multipart/form-data" method="post" action="<?php echo $this->baseUrl().'/workorder/saveworkorder'?>" onsubmit="return checkFormValidation()">
+		        <div id="building-div" class="cws_heading">
+					<span>Building Name:</span>
+					<?php echo $buildingName;?>
+					<input type="hidden" name="building" value="<?php echo $this->tenantData['buildingId']?>"/>
+		        </div>
+				<?php /*<div class="select-tenant">
+					<span>Select Tenant:</span>
+					<div>
+						<select name="select_tenant" id="select_tenant" onchange="showWorkOrder(this.value)">
+							<option value="">Select</option>
+							<?php foreach($this->buildingList as $build){?>
+								<option value="<?php echo $build['build_id']?>"><?php echo $build['buildingName']?></option>
+							<?php }?>	
+						</select>
+						
+					</div>
+				</div>*/?>
+				<div class="work-order-field" id="work_order_field">
+					<input type="hidden" name="form_key" value="<?php echo $this->form_key;?>"/>
+					 <div class="form-section">
+							<?php $msg = new Zend_Session_Namespace('message');?>
+							  <div class="workorder_error" id="message">
+								  <?php 
+									  echo $msg->error_message;
+									  $msg->error_message = '';
+								  ?>
+							  </div>
+							  <div class="workorder_success" id="message">
+								   <?php 
+									  echo $msg->success_message;
+									  $msg->success_message = '';
+								  ?>
+							  </div>	
+                            
+                            <div class="cw_order_top">
+							<div class="left-order">
+						
+								<div class="tenant-address" id="tenant_address">
+								<?php if($tenantdetailscount) { ?>
+								   <span><strong>Tenant Info</strong></span>
+								   <?php } else { ?>
+								   <span><strong>User Info</strong></span>
+								   <?php } ?>
+								<?php if($tenantdetailscount) { ?>  <input type="hidden" name="tenant" id="tenant" value="<?php echo $this->tenantData['tenantId'];?>">
+								   <span><?php echo stripslashes($this->tenantData['tenantName']);?></span>
+								   <span><?php echo stripslashes($this->tenantData['tenantContact']);?></span>
+								   <span><?php echo $this->tenantData['address1'];?></span>
+								   <?php if($this->tenantData['address2']!=''){?>
+									   <span><?php echo $this->tenantData['address2'];?></span>
+								   <?php } ?>
+								   <span>Suite No-<?php echo $this->tenantData['suite'];?></span>
+								   <span><?php echo $this->tenantData['city'];?></span>
+								   <span><?php echo $this->tenantData['state'];?>,<?php echo $this->tenantData['postalCode'];?></span>
+								   <?php } else { ?>
+								   
+								   <input type="hidden" name="tenant" id="tenant" value="<?php echo $this->tenantData['tenantId'];?>">
+								   <span> <?php echo $this->tenantData['firstName']. ' '.$this->tenantData['lastName']; ?></span>
+								   <span>Suite No-<?php echo $this->tenantData['suite_location'];?></span>
+								   <span>Phone No-<?php if(isset($this->tenantData['userPhoneNumber']) && $this->tenantData['userPhoneNumber']!='') { echo $this->tenantData['userPhoneNumber']; }?></span>
+								  
+								   <?php } ?>
+								</div>
+								
+								
+							</div>
+							<div class="right-order"> 
+								  <div class="date-requested col-lg-4">
+								  <div class="workorder_errort" id="date_error"></div>
+									  <span>Date Requested</span>
+									  <div> 
+									   <?php 
+										        $current_time= date('h:i:s A');
+												 if($buildData){
+													 $btimezone = $buildData[0]['timezone'];
+													 if($btimezone!=0){
+														 $tModel = new Model_TimeZone();
+														 $tzonelist = $tModel->getTimeZone($btimezone);
+														 $time_zone = $tzonelist[0]['time_value'];
+														 $date = new DateTime(null, new DateTimeZone($time_zone));
+														$current_time =	 $date->format('h:i:s A');
+														$current_date =  $date->format("Y-m-d");
+													 } else if($btimezone==0) {
+													
+														        $date = new DateTime(null, new DateTimeZone(DEFAULT_TIMEZONE));
+														        $current_time =	 $date->format('h:i:s A');
+													 
+													 }
+												  }
+										   
+										      
+										   ?>
+										 <input type="text" name="date_requested" id="date_requested"  class="wo-dcreate" value="<?php echo $current_date; ?>" placeholder="YYYY-MM-DD" style="width:116px;" readonly/>
+									  </div>   
+								  </div>
+								  <div class="time-requested col-lg-5">
+								  <div class="workorder_errort" id="time_error"></div>
+									  <span>Time Requested</span>
+									   <div class="time-field">
+										  
+										   <input type="text" name="time_requested" id="time_requested" style="width:116px;" value="<?php echo $current_time; ?>" readonly="readonly"/>
+										   <?php /*<select name="hour" id="hour">
+											   <option value="">Hour</option>
+											   <?php 
+												  for($i=1; $i<=12; $i++){
+													  if($i<10)
+													   $i= '0'.$i;
+													 echo '<option value="'.$i.'">'.$i.'</option>';  
+												  }
+											   ?>
+										   </select> :
+										   <select name="minute" id="minute">
+											   <option value="">Minute</option>
+											   <?php 
+												  for($i=0; $i<60; $i+=5){
+													  if($i<10)
+													   $i= '0'.$i;
+													 echo '<option value="'.$i.'">'.$i.'</option>';  
+												  }
+											   ?>
+										   </select>
+										   <select name="am_pm" id="am_pm">
+											   <option value="am">am</option>
+											   <option value="pm">pm</option>
+										   </select>*/ ?>								   
+										</div>   
+									</div>
+									<?php /*<div class="building-priority">
+									   <span>Priority</span>
+									   <div class="priority-field">
+										  <select name="priority" id="priority">
+											  <option value="">Select Priority</option>
+											  <?php foreach($this->priorityDetail as $priorData){
+													echo '<option value="'.$priorData['pid'].'">'.$priorData['priorityName'].'</option>';
+												  }?>
+										  </select>
+									   </div>
+								   </div>*/?>
+								   <div class="col-lg-2"> &nbsp; </div>
+								   <div class="building-category col-lg-12">
+								   <div class="workorder_errort" id="requested_error"></div>
+								   <?php if($this->roleId == 5) { ?>
+								    <span>Requested By</span> <?php } ?>
+								  <div class="category-field"> <?php if($this->roleId == 5) { ?>
+										<select name="create_user" id="create_user">
+										<option value="">Select Requested By</option>
+										<?php 
+										
+										foreach($this->userlistArray as $ulist){?>
+											 <option value="<?php echo $ulist->uid?>"><?php echo stripslashes($ulist->lastName).', '.stripslashes($ulist->firstName);?></option>
+										<?php }?>	
+										</select>
+										<?php } else { ?>
+										<span><?php $ulist = $this->userlistArray[0]; ?> <input type='hidden' name="create_user" id="create_user" value='<?php echo $ulist->uid?>'> <span>
+										<?php } ?>
+								</div></div>
+								
+								   <div class="building-category col-lg-12">
+								   <div class="workorder_errort" id="category_error"></div>
+									   <span>Category</span>
+									   <div class="category-field">
+										  <select name="category" id="category">
+											  <option value="">Select Category</option>
+											  <?php foreach($this->categoryDetail as $catData){
+												     if($catData['visible_status']=='1' && $catData['include_exclude']==''){
+													    echo '<option value="'.$catData['cat_id'].'">'.$catData['categoryName'].'</option>';
+												     }else if ($catData['visible_status']=='1' && $catData['include_exclude']!=''){
+														 $tenant_array = explode(",",$catData['include_exclude']);
+														 if(in_array($this->tenantData['tenantId'],$tenant_array)){
+															echo '<option value="'.$catData['cat_id'].'">'.$catData['categoryName'].'</option>'; 
+														 }
+													 }else{
+														 $tenant_array = explode(",",$catData['include_exclude']);
+														 if(!in_array($this->tenantData['tenantId'],$tenant_array)){
+															echo '<option value="'.$catData['cat_id'].'">'.$catData['categoryName'].'</option>'; 
+														 }
+													 }
+												  }?>
+										  </select>
+									   </div>
+								   </div>
+								   <div class="main-check-internal">
+									   <div class="check-internal">
+											<input type="checkbox" name="internal_work_order" value="1" checked="checked" style="display:none"/>
+									   </div>
+									   <!--<span>Internal work order only</span> -->
+								   </div>
+							</div>
+                            </div>
+                            
+                            <div class="c_w_order">
+							<div class="work-order-request">
+							<div class="workorder_error" id="work_order_error"></div>
+								  <span>Work Order Request</span>
+								  <div>
+									  <textarea type="text" rows="5" cols="5" name="work_order_request" id="work_order_request"  class="workordertestarea"></textarea>
+								  </div>
+							</div>
+							<div class="file_attachment">
+							<div class="workorder_errort" id="file_error"></div>
+							 <span>Attachment</span>
+								<input type="file" name="wo_file" id="wo_file">
+						    </div>
+							<div class="buttons">
+								  <input type="submit" name="save" value="Save" class="confirm"/>
+								  <input type="button" name="cancel" value="Cancel" class="cancel" onclick="cancelUser()"/>
+							</div>
+						</div>	
+
+				</div>
+		</form>
+	</div>
+    </div>
+    </section>
+    
+    <?php }else
+          echo 'You cann\'t accssess this module.';
+    ?>
+</div>
+<div class="loader" style="display:none;" > <img src="<?php echo BASEURL.'public/images/loader.gif';?>"><div>
+<script type="text/javascript">
+	/* $(function() {
+	$( "#date_requested" ).datepicker({
+		 dateFormat:'yy-mm-dd',
+		 changeMonth: true,
+		 changeYear: true,minDate: 0
+		 });
+}); */
+</script> 

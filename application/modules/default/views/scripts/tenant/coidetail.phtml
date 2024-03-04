@@ -1,0 +1,359 @@
+<?php
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/tenant.js');
+?>
+<style>
+    table.coidetail_desc {
+        width: 100%;
+        table-layout: fixed;
+
+    }
+
+    table.coidetail_desc th,
+    table.coidetail_desc td {
+        padding: 0 10px;
+    }
+
+    table.coidetail_desc .wrap {
+        width: auto;
+    }
+
+    .wrap {
+        width: 90%;
+        border: 1px solid;
+        padding: 10px 10px 40px;
+        margin-top: 20px;
+        word-break: break-word;
+        min-height: 100px;
+    }
+
+    td,
+    th {
+        vertical-align: top;
+    }
+
+    .grd_Clr {
+        background: rgb(222, 233, 203);
+        background: linear-gradient(0deg, rgba(222, 233, 203, 1) 0%, rgba(210, 222, 182, 1) 50%, rgba(245, 248, 240, 1) 100%);
+    }
+
+    tr.grd_Clr th {
+        border: solid 1px #000 !important;
+        text-align: center;
+    }
+
+    tr.coi_report_table td:last-child {
+        text-align: right;
+    }
+
+    tr.coi_report_table td {
+        text-align: center;
+    }
+
+    div.content.tenantcoi {
+        padding: 0;
+    }
+
+    .green-btn,
+    .green-btn:hover,
+    .green-btn:focus {
+        cursor: pointer;
+        background: #2ecc71;
+        border: medium none;
+        padding: 7px 24px;
+        color: #444;
+        text-decoration: none;
+    }
+
+    .coi-require {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    div.content.tenantcoi table,
+    div.content.tenantcoi table td {
+        border: none;
+    }
+
+    tr.grd_Clr th:last-child {
+        border-right: 0 !important;
+    }
+
+    tr.grd_Clr th:first-child {
+        border-left: 0 !important;
+    }
+</style>
+<div class="content no-padding active tenantcoi" id="contents">
+    <div class="coi-title">
+        <h3>Certificate of Insurance</h3>
+    </div>
+    <div class="row coi_table_row">
+        <div class="col" style="overflow:auto">
+            <div class="report_table_scroll">
+                <table class="table table-bordered">
+                    <tr class="grd_Clr">
+                        <th>Current Status </th>
+                        <th><strong>Expirtation Date </strong></th>
+                        <th>COI on File</th>
+                        <th>Number of Days untill COI Expires </th>
+                    </tr>
+                    <tr class="coi_report_table">
+                        <?php
+                        if (!empty($this->bsCOI[0]->coi_au_date_to)) {
+                            $date1 = date_create(date('Y-m-d'));
+                            $date2 = date_create($this->bsCOI[0]->coi_au_date_to);
+                            //difference between two dates
+                            $diff = date_diff($date1, $date2);
+                            $cout = $diff->format("%a");
+                            if ($cout >= 0 && $cout <= 30) {
+                                $color = '#ffff00';
+                                $value = 'Expires - ' . $cout . ' day';
+                            }
+                            if ($cout >= 31 && $cout <= 60) {
+                                $color = '#ebf1df';
+                                $value = 'Expires - ' . $cout . ' day';
+                            }
+                            if ($cout >= 61 && $cout <= 90) {
+                                $color = '#92d050';
+                                $value = 'Expires - ' . $cout . ' day';
+                            }
+                            if ($cout > 90) {
+                                $color = '#00b050';
+                                $value = 'Current';
+                            }
+                            $agoCD = $date1 <= $date2;
+                            if ($agoCD != '1') {
+                                $diff = date_diff($date1, $date2);
+                                $cout = $diff->format("%a");
+                                $color = '#ff0000';
+                                $value = 'Expires - ' . $cout . ' day ago';
+                            } ?>
+                            <td><strong><?php echo $value; ?></strong></td>
+                        <?php } else { ?>
+                            <td style="background: #ffc000;">No COI</td>
+                        <?php } ?>
+                        <td> <strong><?php
+                                        if (isset($this->bsCOI[0]->coi_au_date_to)) {
+                                            echo date("m/d/Y", strtotime($this->bsCOI[0]->coi_au_date_to));
+                                        } else {
+                                            echo '--';
+                                        }
+                                        ?> </strong></td>
+                        <td> <strong><?php if (!empty($this->bsCOI[0]->coi_au_pdf_upload)) { ?>
+                                    <a href="<?php echo $this->baseUrl() ?>/public/coi/<?php echo $this->bsCOI[0]->coi_au_pdf_upload ?>" target="_blank">
+
+                                    <?php
+                                            echo $this->bsCOI[0]->coi_au_pdf_upload;
+                                        } else {
+                                            echo '--';
+                                        } ?></strong></td>
+                        <td> <strong><?php
+                                        if (!empty($this->bsCOI[0]->coi_au_date_to)) {
+
+                                            $date1 = date_create(date('Y-m-d'));
+                                            $date2 = date_create($this->bsCOI[0]->coi_au_date_to);
+                                            //difference between two dates
+                                            $diff = date_diff($date1, $date2);
+                                            $cout = $diff->format("%a");
+                                            if ($cout >= 0 && $cout <= 30) {
+                                                $color = '#ffff00';
+                                                $value = '' . $cout . ' day(s)';
+                                            }
+                                            if ($cout >= 31 && $cout <= 60) {
+                                                $color = '#ebf1df';
+                                                $value = '' . $cout . ' day(s)';
+                                            }
+                                            if ($cout >= 61 && $cout <= 90) {
+                                                $color = '#92d050';
+                                                $value = '' . $cout . ' day(s)';
+                                            }
+                                            if ($cout > 90) {
+                                                $color = '#00b050';
+                                                $value = 'Current';
+                                            }
+                                            $agoCD = $date1 <= $date2;
+                                            if ($agoCD != '1') {
+                                                $diff = date_diff($date1, $date2);
+                                                $cout = $diff->format("%a");
+                                                $color = '#ff0000';
+                                                $value = '- ' . $cout . ' day ago';
+                                            }
+                                            echo $value;
+                                        } else {
+                                            echo '--';
+                                        } ?></strong></td>
+                    </tr>
+
+                    <tr>
+                        <td colspan='4'>
+                            <div class="coi-require">
+                                <strong>Requirements</strong>
+                                <?php if (empty($this->bsCOI[0]->coi_au_tenant_id)) { ?>
+                                    <a title="add" href="javascript:void(0);" onclick="showAddCoiTenant('<?php echo $this->bsCOI[0]->id; ?>')" class="green-btn">Add / Upload COI</a>
+                                <?php } else { ?>
+                                    <a title="Edit" href="javascript:void(0);" onclick="showTenantEditCoi('<?php echo $this->bsCOI[0]->coi_au_tenant_id; ?>')" class="green-btn">Edit / Upload COI</a>
+                                <?php } ?>
+                                <!-- <a href="#" type="button" >Add / Upload COI</a> -->
+                            </div>
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="padding:0 15px;">
+                            <table class="inner-rec">
+                                <tr>
+                                    <td>
+                                        <table>
+                                            <tr>
+                                                <th> General Liability</th>
+                                                <th> &nbsp;</th>
+                                            </tr>
+                                            <?php
+                                            if (!empty($this->templatedetails)) {
+                                                foreach ($this->templatedetails as $val) { ?>
+                                                    <tr>
+                                                        <td><?php echo $val->coi_vt_default_description; ?></td>
+                                                        <td style="text-align: right;"><?php echo preg_replace("/(\d+?)(?=(\d\d)+(\d)(?!\d))(\.\d+)?/i", "$1,", $val->coi_au_defaults_Tenant); ?></td>
+                                                    </tr>
+                                            <?php  }
+                                            }
+                                            ?>
+                                          </tr>
+                                        </table>
+                                    </td>
+                                     <td>
+                                     <table>
+                                    <tr>
+                                        <th> Automobile Liability</th>
+                                        <th> &nbsp;</th>
+                                    </tr>
+                                <?php
+                                if (!empty($this->templatedetailsseconnd)) {
+                                    foreach ($this->templatedetailsseconnd as $valst) { ?>
+                                        <tr>
+                                            <td><?php echo $valst->coi_vt_default_description; ?></td>
+                                            <td style="text-align: right;"><?php echo preg_replace("/(\d+?)(?=(\d\d)+(\d)(?!\d))(\.\d+)?/i", "$1,", $valst->coi_au_defaults_Tenant); ?></td>
+                                        </tr>
+                                <?php  }
+                                }
+                                ?>
+                            </tr>
+                        </table>
+                        </td>
+                <td>
+                    <table>
+                        <tr>
+                            <th> Umbrella Liability</th>
+                            <th> &nbsp;</th>
+                        </tr>
+                        <?php
+                        if (!empty($this->templatedetailsseconnd)) {
+                            foreach ($this->templatedetailsseconnd as $valst) { ?>
+                                <tr>
+                                    <td><?php echo $valst->coi_vt_default_description; ?></td>
+                                    <td style="text-align: right;"><?php echo preg_replace("/(\d+?)(?=(\d\d)+(\d)(?!\d))(\.\d+)?/i", "$1,", $valst->coi_au_defaults_Tenant); ?></td>
+                                </tr>
+                        <?php  }
+                        }
+                        ?>
+                        </tr>
+                    </table>
+                </td>
+                <td>
+                    <table>
+                        <tr>
+                            <th>Workers Compensation</th>
+                            <th> &nbsp;</th>
+                        </tr>
+                        <?php
+                        if (!empty($this->templatedetailsthird)) {
+                            foreach ($this->templatedetailsthird as $ute) { ?>
+                                <tr>
+                                    <td><?php echo $ute->coi_vt_default_description; ?></td>
+                                    <td style="text-align: right;"><?php echo preg_replace("/(\d+?)(?=(\d\d)+(\d)(?!\d))(\.\d+)?/i", "$1,", $ute->coi_au_defaults_Tenant); ?></td>
+                                </tr>
+                        <?php  }
+                        }
+                        ?>
+                        </tr>
+                    </table>
+                </td>
+                </tr>
+                </table>
+                </td>
+                </tr>                
+                <tr>
+                    <td colspan="4">
+                        <table class="coidetail_desc">
+                            <tr>
+                                <th>Certificate Holder</th>
+                                <th>DESCRIPTION OF OPERATIONS/LOCATIONS/VEHICLES</th>
+                                <th>Send Certificate To</th>
+                            </tr>
+                            <td>
+                                <div class="wrap">
+                                    <div>
+                                        <?php echo $this->coiDetails[0]->coi_au_details_holder; ?>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="wrap">
+                                    <div>
+                                        <?php echo $this->coiDetails[0]->coi_au_details_specialterms; ?>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="wrap">
+                                    <div>
+                                        <?php echo $this->coiDetails[0]->coi_au_details_send_certificate_to; ?>
+                                    </div>
+                                </div>
+                            </td>
+
+                </tr>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="popup_form" style="display:none" class="service_popup_form">
+    <a href="#add_service_form" id="add_service_form_href" class="modalbox">&nbsp;</a>
+    <div id="add_service_form" class="bd-dft-cls" style="display:none"></div>
+    <a href="#edit_service_form" id="edit_service_form_href" class="modalbox">&nbsp;</a>
+    <div id="edit_service_form" class="bd-dft-cls" style="display:none"></div>
+    <a href="#service_template_form" id="service_template_form_href" class="modalbox">&nbsp;</a>
+    <div id="service_template_form" class="bd-dft-cls" style="display:none"></div>
+</div>
+<a href="#show_Edit_Report_div" id="show_Edit_Report_div_href" class="modalbox"> </a>
+<div id="show_Edit_Report_div" class="show_Edit_Report_div" style="display:none"></div>
+
+<script>
+    function showNewPop(url) {
+        CheckForSessionpop(baseUrl);
+        //$('form#first_form input#tenantName').trigger('click');
+        $('a[href="#showNewPop"]').fancybox({
+            type: 'iframe',
+            href: url,
+            width: 750,
+            height: 600,
+            'beforeClose': function() {
+                $('.loader').hide();
+            },
+            'afterLoad': function() {
+                $.fancybox.hideLoading();
+                $('.loader').show();
+                setInterval(function() {
+                    $('.loader').hide();
+                }, 5000);
+            },
+            afterShow: function() {
+
+            }
+        });
+    }
+</script>

@@ -1,0 +1,34 @@
+
+<div id="edit_labor_div" style='text-decoration:none'>
+	<h1>Edit Module</h1>
+	
+	<div class="message" style='text-align:center;'>
+		<span id="success_msg" class="success_message" style="text-align:center;width:100%;font-weight:bold;color:red;"></span>
+		<span id="error_msg" class="success_message" style="text-align:center;width:100%;font-weight:bold;color:red;"></span>
+	</div>
+	<div class="labor_row">
+		  <label>Description:</label>
+		  <div class="labor_ibox_row">
+			   <span class="field_error" id="lerror_desc"></span>
+			   <input type="text" name="description" id="description" value="<?php  echo $this->moduleDetails['module_name']; ?>" readonly/>
+		  </div>			
+	</div>
+	<div class="labor_row">
+		 <label>Active:</label>
+		  <div class="labor_ibox_row">
+			   <span class="field_error" id="lerror_status"></span>
+			   <select name="status" id="status">
+				   <option value="1" <?php if($this->moduleDetails['status'] == 1){ echo 'selected'; } ?> >Yes</option>
+				   <option value="0" <?php if($this->moduleDetails['status'] == 0){ echo 'selected'; } ?> >No</option>
+			   </select>
+		  </div>
+	</div>
+	
+	
+	
+	<div class="buttons">
+				   <button type="button" name="save_labor" id="save_labor" value="Save" onclick="updateModule('<?php echo $this->moduleDetails['module_id'];  ?>')">Confirm</button>
+				   <button type="button" name="cancel" id="cancel" value="Cancel" onclick="cancelEditModule()">Cancel</button>
+			  </div>
+			  
+</div>

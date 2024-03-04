@@ -1,0 +1,44 @@
+<div class="row">
+<section style="z-index:9999" class="w-48 fr ch-home-form">
+<?php if($this->user_role==1){?>
+<section class="ch-form-header ">
+<h3>Switch Account</h3>
+</section>
+<div class="gridContainer">
+<div class="tableGrid">
+<div id="changeaccount">
+<?php 
+if(sizeof($this->companyUser)>0){?>
+	<div id="account_emulation">
+		<form name="chnage_account" method="post" action="<?php echo BASEURL.'account/changeaccount';?>">
+			<div class="change-account">
+				 <label>Select Your Account Emulation:</label>
+				 <select name="company_account" id="company_account">
+					 <option value="0">Master Account</option>
+					 <?php foreach($this->companyUser as $cmpUser){
+						 echo '<option value="'.$cmpUser->uid.'"';
+						 if($cmpUser->uid==$this->user_id)
+						 echo 'selected';
+						 echo '>'.$cmpUser->companyName.'</option>';
+						 }?>
+				 </select>
+			</div>
+			<div class="changeaccount_btn">
+			<input type="submit" class="confirm" name="confirm" value="Change"/>			 
+		   </div>
+		</form>
+	</div>
+	<?php }else{
+		echo 'No Company User';
+		}?>
+</div>
+	</div>		
+			</div>
+<?php }else
+        echo 'You don\'t have access for this module.';
+?>
+			
+</section>
+
+
+</div>

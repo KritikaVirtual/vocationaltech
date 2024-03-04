@@ -1,0 +1,244 @@
+<?php
+$order = $this->order;
+$dir = ($order != 'default' && $order == 'ASC') ? 'DESC' : 'ASC';
+?>
+<?php
+$status_array = array();
+$length_array = array();
+$wd_array = array();
+foreach ($this->status_list as $sl) {
+    $status_array[$sl['ssID']] = $sl['title'];
+}
+
+foreach ($this->length_list as $ll) {
+    $length_array[$ll['lID']] = $ll['title'];
+}
+
+foreach ($this->wd_list as $wd) {
+    $wd_array[$wd['wdID']] = $wd['title'];
+}
+
+$category_access = $this->acessHelper->checkAccess($this->roleId, $this->category_location);
+/* override access by custom user access if exist */
+$customeAccessmodel = new Model_UserAccess();
+$customeAccessmodeld = $customeAccessmodel->getUserCustomAccess($this->userId, $this->category_location);
+if ($customeAccessmodeld[0]) {
+    $category_access = $customeAccessmodeld[0];
+}
+/* end overriding access */
+$startTime = '08:00 AM';
+$endTime = '06:00 PM';
+?>
+
+
+<table class="schedule-list" width="100%">
+    <tr>
+        <?php /* <th>Schedule No.</th> */ ?>
+        <th><a href="javascript:void(0)" onclick="showPriorityScheduleList('<?php echo $this->priority_id; ?>', 'open', '<?php echo $dir; ?>')">Start<?php if ($order != 'default') { ?> <span class="<?php echo $order ?>">00</span><?php } ?></a></th>
+        <th>End</th>
+        <th>Time</th>
+        <th>Length</th>
+        <th>Day's of the week</th>
+        <th>Active</th>
+        <th>E-Mail Alerts Active</th>
+        <th>Time Active</th>
+        <?php if ($category_access->is_write == 1) { ?> <th>Action</th><?php } ?>
+    </tr>
+    <?php
+    if (!empty($this->scheduleDetail)) {
+        foreach ($this->scheduleDetail as $sch_detail) {
+            ?>
+            <tr id="show_schedule_id_<?php echo $sch_detail['id'] ?>" class="show-schedule">
+                <?php /* <td><?php echo $sch_detail['id']?></td> */ ?>
+                <td><?php echo $status_array[$sch_detail['start_status']] ?></td>
+                <td><?php echo $status_array[$sch_detail['end_status']] ?></td>
+                <td><?php echo $sch_detail['Time'] ?></td>
+                <td><?php echo $length_array[$sch_detail['length']] ?></td>
+                <td><?php echo $wd_array[$sch_detail['access_days']] ?></td>
+                <td><?php
+                    if ($this->priorityStatus == 1) {
+                        echo ($sch_detail['status']) ? 'Yes' : 'No';
+                    } else {
+                        echo 'No';
+                    }
+                    ?></td>
+                <td><?php
+                    if ($this->email_status == 1) {
+                        echo ($sch_detail['email_status']) ? 'Yes' : 'No';
+                    } else {
+                        echo 'No';
+                    }
+                    ?></td>
+                <td><?php
+                if ($sch_detail['all_day_active'] == 1) {
+                    echo 'All Day';
+                } else {
+                    echo $sch_detail['start_time_active'] . '-' . $sch_detail['end_time_active'];
+                }
+                ?></td>
+        <?php if ($category_access->is_write == 1) { ?><td><div class="col02 coladdlastcol lastcol edit_delete_icon"><a href="javascript:void(0);" onclick="showEditSchedule('<?php echo $sch_detail['id'] ?>')"  data-id="<?php echo $sch_detail['id'] ?>" title="Edit"><img src="<?php echo BASEURL . 'public/images/edit.png' ?>" /></a> <a href="javascript:void(0);" onclick="deleteSchedule('<?php echo $sch_detail['id'] ?>')" data-id="<?php echo $sch_detail['id'] ?>" title="Delete"><img src="<?php echo BASEURL . 'public/images/delete.png' ?>" /></a></div></td>
+        <?php } ?>
+            </tr>
+
+        <?php }
+    } else {
+        ?>
+        <tr>
+            <td colspan="10">
+                No Schedule created. Pease create new schedule!!!
+            </td>
+        </tr>
+<?php } ?>
+<?php if ($category_access->is_write == 1) { ?>
+        <!--<a href="#add-schedule-td" id="add-schedule-td_href" class="modalbox">&nbsp;</a>	-->
+        <tr>
+            <td colspan="9" class="add_record"><a href="javascript:void(0)" onclick="showScheduleForm()"><span>Add New Item</span></a></td>
+        </tr>	
+<?php } ?>
+</table>						
+<div id="add-schedule-td" class="bd-dft-cls" style="display:none">
+    <div class="addbuild build-form">									  
+        <div id="schedule-form" class="formBuild" style="margin-top:0%;">
+            <section class="consol_form_head_">
+                <h1>Add Schedual to '<?php echo $this->priorityName; ?>' (ID: <?php echo $this->priority_id; ?>)</h1>
+            </section>
+            <section class="w-48 fr ch-home-form_ add_new_pp_ct" >
+                <form name="addNewSchedule">
+                    <input type="hidden" name="actionType" value="insert">
+                    <input type='hidden' id='parent_sch_status' name='parent_sch_status' value='<?php echo $this->priorityStatus; ?>'>
+                    <input type='hidden' id='parent_sch_email_status' name='parent_sch_email_status' value='<?php echo $this->email_status; ?>'>
+                    <input type="hidden" name="priority_id" id="priority_id" value='<?php echo $this->priority_id; ?>'>
+<?php /* <div class="row">
+  <label>Id* :</label>
+  <span class="prioNumErr" id="priority-number-error"></span>
+  <input type="text" value="<?php echo $this->priorityDetail['id']?>" id="pid"
+  name="data[pid]" readonly="readonly">
+  </div> */ ?>
+                    <div class="row">
+                        <label>Status Start <span class="required">*</span> :</label>
+                        <span class="startStatusErr" id="start-status-error"></span>															
+                        <select name="start_status" id="start_status" class="status">
+<?php foreach ($this->status_list as $sl) { ?>
+                                <option value="<?php echo $sl['ssID'] ?>"><?php echo $sl['title'] ?></option>
+                            <?php } ?>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <label>Status End<span class="required">*</span> :</label> 
+                        <span class="endStatusErr" id="end-status-error"></span>
+                        <select name="end_status" id="end_status" class="status">
+<?php foreach ($this->status_list as $sl) { ?>
+                                <option value="<?php echo $sl['ssID'] ?>"><?php echo $sl['title'] ?></option>
+<?php } ?>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <label>Time (Number)<span class="required">*</span> :</label> 
+                        <span class="timeErr" id="time-error"></span>
+                        <input type="text" id="Time" name="Time"  value="" onkeypress="return isNumberKey(event)" maxlength="2" style="float:left;" />
+                    </div>
+                    <div class="row">
+                        <label>Length<span class="required">*</span> :</label> 
+                        <span class="lengthErr" id="length-error"></span>
+                        <select name="length" id="length" class="status">
+<?php foreach ($this->length_list as $llist) { ?>
+                                <option value="<?php echo $llist['lID'] ?>"><?php echo $llist['title'] ?></option>
+                            <?php } ?>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <label>Day's of the week<span class="required">*</span> :</label> 
+                        <span class="wdErr" id="week-days-error"></span>
+                        <select name="access_days" id="access_days" class="status">
+<?php foreach ($this->wd_list as $wl) { ?>
+                                <option value="<?php echo $wl['wdID'] ?>"><?php echo $wl['title'] ?></option>
+                            <?php } ?>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <label>Active<span class="required">*</span> :</label> 
+                        <span class="endStatusErr" id="sch_status_error"></span>
+                        <select name="sch_status" id="sch_status" class="status" >
+                            <option value="1" <?php
+                            if ($this->priorityStatus == 1) {
+                                echo 'selected';
+                            }
+                            ?>>Yes</option>
+                            <option value="0" <?php
+                            if ($this->priorityStatus == 0) {
+                                echo 'selected';
+                            }
+                            ?> >No</option>
+                        </select>
+                    </div>
+
+                    <div class="row">
+                        <label>E-Mail Alerts Active<span class="required">*</span> :</label>
+                        <span class="endStatusErr" id="sch_email_status_error"></span>														
+                        <select name="sch_email_status" id="sch_email_status" class="status" >
+                            <option value="1" <?php
+                                    if ($this->email_status == 1) {
+                                        echo 'selected';
+                                    }
+                            ?>>Yes</option>
+                            <option value="0" <?php
+                            if ($this->email_status == 0) {
+                                echo 'selected';
+                            }
+                            ?>>No</option>
+                        </select>
+                    </div>
+
+                      <div class="row act_time">
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                <label>Time Active<span class="required">*</span> :</label> 
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 ">
+                            <label style='margin-top:11px; width:84px;'>Start Time</label>
+                            <select name="time_active" id="start_time_active" class="status time_active" style='width:100px;'>
+															<?php for($i=0; $i<=23; $i++) { $fDate=date("h:i A", strtotime($i.':00')); $sDate=date("h:i A", strtotime($i.':30'));?>
+																<option value='<?php echo $fDate; ?>' <?php if($startTime==$fDate) { echo 'selected'; } ?>> <?php echo $fDate; ?> </option>
+																<option value='<?php echo $sDate; ?>' <?php if($startTime==$sDate) { echo 'selected'; } ?>> <?php echo $sDate; ?> </option>
+															<?php } ?>
+														</select>
+                            <!-- end-time -->
+                            
+                            <label style='margin-top:11px; width:84px;'>End Time</label><select name="time_active" id="end_time_active" class="status time_active" style='width:100px;'>
+															<?php for($i=0; $i<=23; $i++) { $fDate=date("h:i A", strtotime($i.':00')); $sDate=date("h:i A", strtotime($i.':30'));?>
+																<option value="<?php echo $fDate; ?>" <?php if($endTime==$fDate) { echo 'selected'; } ?>> <?php echo $fDate; ?> </option>
+																<option value='<?php echo $sDate; ?>' <?php if($endTime==$sDate) { echo 'selected'; } ?>> <?php echo $sDate; ?> </option>
+															<?php } ?>
+														</select>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 day_check">
+                                <input type='checkbox' id='all_day' name="all_day" onclick='selectAllDay()' value='1'> All Day
+                            </div>
+                        </div>
+
+
+                    <div class="confirmBtn">
+                        <input type="reset" value="Reset" name="reset" id='reset' class="cancel"/>
+                        <input type="button" value="Save" name="next" id="save_schedule" class="confirm" onclick="return saveSchedule()"/>
+                        <input type="button" value="Cancel" name="cancel" class="cancel" onclick="hideScheduleForm()"/>
+                    </div>
+                </form>
+            </section>    
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+        $('#reset').click(function () {
+            $('.time_active').prop('disabled', false);
+        });
+
+        $('.all_day').click(function () {
+            if ($(this).is(':checked')) {
+                $('.edit_time_active').prop('disabled', true);
+            } else {
+                $('.edit_time_active').prop("disabled", false);
+                ;
+            }
+        });
+    });
+</script>

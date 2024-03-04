@@ -1,0 +1,328 @@
+<?php
+ $order=$this->order;
+ $dir = ($order!='default' && $order =='ASC')?'DESC':'ASC';
+?>
+<?php
+$status_array = array();
+$length_array=array();
+$wd_array = array();
+foreach($this->status_list as $sl){
+	$status_array[$sl['ssID']] = $sl['title'];
+}
+
+foreach($this->length_list as $ll){
+	$length_array[$ll['lID']] = $ll['title'];
+}
+
+foreach($this->wd_list as $wd){
+	$wd_array[$wd['wdID']] = $wd['title'];
+}
+?>
+
+
+							 <table class="schedule-list" width="100%">
+								 <tr>
+									 <?php /*<th>Schedule No.</th>*/?>
+									 <th><a href="javascript:void(0)" onclick="showPriorityScheduleList('<?php echo $this->priority_id;?>','open','<?php echo $dir;?>')">Start<?php if($order!='default'){?> <span class="<?php echo $order?>">00</span><?php }?></a></th>
+									 <th>End</th>
+									 <th>Time</th>
+									 <th>Length</th>
+									 <th>Day's of the week</th>
+									 <th>Active</th>
+									 <th>Action</th>
+								 </tr>
+								 <?php 
+								      if(!empty($this->scheduleDetail)){
+								        foreach($this->scheduleDetail as $sch_detail){?>
+											<tr id="show_schedule_id_<?php echo $sch_detail['id']?>" class="show-schedule">
+											    <?php /*<td><?php echo $sch_detail['id']?></td>*/?>
+												<td><?php echo $status_array[$sch_detail['start_status']]?></td>
+												<td><?php echo $status_array[$sch_detail['end_status']]?></td>
+												<td><?php echo $sch_detail['Time']?></td>
+												<td><?php echo $length_array[$sch_detail['length']]?></td>
+												<td><?php echo $wd_array[$sch_detail['access_days']]?></td>
+												<td><?php echo ($sch_detail['status'])?'Yes':'No'?></td>
+												<td><div class="col02 coladdlastcol lastcol edit_delete_icon"><a href="javascript:void(0);" onclick="showEditSchedule('<?php echo $sch_detail['id']?>')"  data-id="<?php echo $sch_detail['id']?>" title="Edit"><img src="<?php echo BASEURL . 'public/images/edit.png'?>" /></a> <a href="javascript:void(0);" onclick="deleteSchedule('<?php echo $sch_detail['id']?>')" data-id="<?php echo $sch_detail['id']?>" title="Delete"><img src="<?php echo BASEURL . 'public/images/delete.png'?>" /></a></div></td>
+											</tr>
+											<tr id="edit_schedule_id_<?php echo $sch_detail['id']?>" style="display:none" class="edit-schedule">
+											  <?php /*  <td><?php echo $sch_detail['id']?></td> */?>
+											    <td><select name="start_status" id="start_status_<?php echo $sch_detail['id']?>">
+																<?php foreach($this->status_list as $sl){?>
+																<option value="<?php echo $sl['ssID']?>" <?php if($sch_detail['start_status']==$sl['ssID']) echo 'selected';?>><?php echo $sl['title']?></option>
+																<?php }?>
+															</select>
+													</td>
+												<td>
+													<select name="end_status" id="end_status_<?php echo $sch_detail['id']?>">
+																<?php foreach($this->status_list as $sl){?>
+																<option value="<?php echo $sl['ssID']?>" <?php if($sch_detail['end_status']==$sl['ssID']) echo 'selected';?>><?php echo $sl['title']?></option>
+																<?php }?>
+															</select>
+													</td>
+												<td><input type="text" value="<?php echo $sch_detail['Time']?>" name="Time" id="Time_<?php echo $sch_detail['id']?>" maxlength="2" onkeypress="return isNumberKey(event)"/></td>
+												<td>
+													<select name="length" id="length_<?php echo $sch_detail['id']?>">
+																<?php foreach($this->length_list as $llist){?>
+																<option value="<?php echo $llist['lID']?>" <?php if($sch_detail['length']==$llist['lID']) echo 'selected';?>><?php echo $llist['title']?></option>
+																<?php }?>
+															</select>
+													</td>
+												<td>
+													<select name="access_days" id="access_days_<?php echo $sch_detail['id']?>">
+																<?php foreach($this->wd_list as $wl){?>
+																<option value="<?php echo $wl['wdID']?>" <?php if($sch_detail['access_days']==$llist['lID']) echo 'selected';?>><?php echo $wl['title']?></option>
+																<?php }?>
+															</select>
+													</td>
+												<td>
+													<select name="sch_status" id="sch_status_<?php echo $sch_detail['id']?>">
+												      <option value="1" <?php if($sch_detail['status']==1) echo 'selected';?>>Yes</option>
+												      <option value="0" <?php if($sch_detail['status']==0) echo 'selected';?> >No</option>
+												   </select>
+												</td>
+												<td><div class="col02 coladdlastcol schedule_last yesnotooltips"><a href="javascript:void(0);" onclick="editSchedule('<?php echo $sch_detail['id']?>')" data-id="<?php echo $sch_detail['id']?>" class="editscehd" title="Save"><img src="<?php echo BASEURL . 'public/images/yes_icon.png'?>" /></a><a href="javascript:void(0);" onclick="hideEditSchedule('<?php echo $sch_detail['id']?>')" data-id="<?php echo $sch_detail['id']?>" class="hideeditcmpny" title="Cancel"><img src="<?php echo BASEURL . 'public/images/no_icon.png'?>" /></a></div></td>
+											</tr>											
+								  <?php }}else{ ?>
+									     <tr>
+											 <td colspan="8">
+												 No Schedule created. Pease create new schedule!!!
+											 </td>
+									     </tr>
+									  <?php }?>									  
+									  <!--<a href="#add-schedule-td" id="add-schedule-td_href" class="modalbox">&nbsp;</a>	-->
+									  <!--<tr id="add-schedule-td" class="bd-dft-cls" style="display:none">
+										  <td colspan="7" class="margin_padding_none">
+                                          <div class="addbuild build-form">									  
+									      <div id="schedule-form" class="formBuild" style="margin-top:0%;">
+											  <section class="consol_form_head_">
+													<h1>Add Schedual to '<?php echo $this->priorityName;?>' (ID: <?php echo $this->priority_id;?>)</h1>
+											   </section>
+											   <section class="w-48 fr ch-home-form_ add_new_pp_ct" >
+											      <form name="addNewSchedule">
+													  <input type="hidden" name="actionType" value="insert">
+														<input type="hidden" name="priority_id" id="priority_id" value='<?php echo $this->priority_id;?>'>
+														<?php /*<div class="row">
+															<label>Id* :</label>
+															<span class="prioNumErr" id="priority-number-error"></span> 
+															<input type="text" value="<?php echo $this->priorityDetail['id']?>" id="pid" 
+																   name="data[pid]" readonly="readonly">														  
+														</div>*/?>
+														<div class="row">
+															<label>Status Start <span class="required">*</span> :</label>
+															<span class="startStatusErr" id="start-status-error"></span>															
+															<select name="start_status" id="start_status" class="status">
+																<?php foreach($this->status_list as $sl){?>
+																<option value="<?php echo $sl['ssID']?>"><?php echo $sl['title']?></option>
+																<?php }?>
+															</select>
+														</div>
+														<div class="row">
+														   <label>Status End<span class="required">*</span> :</label> 
+														   <span class="endStatusErr" id="end-status-error"></span>
+														   <select name="end_status" id="end_status" class="status">
+																<?php foreach($this->status_list as $sl){?>
+																<option value="<?php echo $sl['ssID']?>"><?php echo $sl['title']?></option>
+																<?php }?>
+															</select>
+														</div>
+														<div class="row">
+														   <label>Time (Number)<span class="required">*</span> :</label> 
+														   <span class="timeErr" id="time-error"></span>
+														   <input type="text" id="Time" name="Time"  value="" onkeypress="return isNumberKey(event)" maxlength="2" style="float:left;" />
+														</div>
+														<div class="row">
+														   <label>Length<span class="required">*</span> :</label> 
+														   <span class="lengthErr" id="length-error"></span>
+														   <select name="length" id="length" class="status">
+																<?php foreach($this->length_list as $llist){?>
+																<option value="<?php echo $llist['lID']?>"><?php echo $llist['title']?></option>
+																<?php }?>
+															</select>
+														</div>
+														<div class="row">
+														   <label>Day's of the week<span class="required">*</span> :</label> 
+														   <span class="wdErr" id="week-days-error"></span>
+														   <select name="access_days" id="access_days" class="status">
+																<?php foreach($this->wd_list as $wl){?>
+																<option value="<?php echo $wl['wdID']?>"><?php echo $wl['title']?></option>
+																<?php }?>
+															</select>
+														</div>
+														<div class="row">
+														<label>Active<span class="required">*</span> :</label> 
+														<select name="sch_status" id="sch_status" class="status">
+															<option value="1">Yes</option>
+															<option value="0">No</option>
+														</select>
+														</div>
+														
+														
+														 <div class="confirmBtn">
+															<input type="reset" value="Reset" name="reset" class="cancel"/>
+															<input type="button" value="Save" name="next" id="save_schedule" class="confirm" onclick="return saveSchedule()"/>
+															<input type="button" value="Cancel" name="cancel" class="cancel" onclick="hideScheduleForm()"/>
+														</div>
+											      </form>
+											   </section>    
+									      </div>
+                                          </div>
+									      </td>
+									  </tr>-->
+									  <tr>
+										  <td colspan="7" class="add_record"><a href="javascript:void(0)" onclick="showScheduleForm()"><span>Add New Record</span></a></td>
+									  </tr>	
+								 </table>
+									  <div id="add-schedule-td" class="bd-dft-cls" style="display:none">
+                                          <div class="addbuild build-form">									  
+									      <div id="schedule-form" class="formBuild" style="margin-top:0%;">
+											  <section class="consol_form_head_">
+													<h1>Add Schedual to '<?php echo $this->priorityName;?>' (ID: <?php echo $this->priority_id;?>)</h1>
+											   </section>
+											   <section class="w-48 fr ch-home-form_ add_new_pp_ct" >
+											      <form name="addNewSchedule">
+													  <input type="hidden" name="actionType" value="insert">
+														<input type="hidden" name="priority_id" id="priority_id" value='<?php echo $this->priority_id;?>'>
+														<?php /*<div class="row">
+															<label>Id* :</label>
+															<span class="prioNumErr" id="priority-number-error"></span> 
+															<input type="text" value="<?php echo $this->priorityDetail['id']?>" id="pid" 
+																   name="data[pid]" readonly="readonly">														  
+														</div>*/?>
+														<div class="row">
+															<label>Status Start <span class="required">*</span> :</label>
+															<span class="startStatusErr" id="start-status-error"></span>															
+															<select name="start_status" id="start_status" class="status">
+																<?php foreach($this->status_list as $sl){?>
+																<option value="<?php echo $sl['ssID']?>"><?php echo $sl['title']?></option>
+																<?php }?>
+															</select>
+														</div>
+														<div class="row">
+														   <label>Status End<span class="required">*</span> :</label> 
+														   <span class="endStatusErr" id="end-status-error"></span>
+														   <select name="end_status" id="end_status" class="status">
+																<?php foreach($this->status_list as $sl){?>
+																<option value="<?php echo $sl['ssID']?>"><?php echo $sl['title']?></option>
+																<?php }?>
+															</select>
+														</div>
+														<div class="row">
+														   <label>Time (Number)<span class="required">*</span> :</label> 
+														   <span class="timeErr" id="time-error"></span>
+														   <input type="text" id="Time" name="Time"  value="" onkeypress="return isNumberKey(event)" maxlength="2" style="float:left;" />
+														</div>
+														<div class="row">
+														   <label>Length<span class="required">*</span> :</label> 
+														   <span class="lengthErr" id="length-error"></span>
+														   <select name="length" id="length" class="status">
+																<?php foreach($this->length_list as $llist){?>
+																<option value="<?php echo $llist['lID']?>"><?php echo $llist['title']?></option>
+																<?php }?>
+															</select>
+														</div>
+														<div class="row">
+														   <label>Day's of the week<span class="required">*</span> :</label> 
+														   <span class="wdErr" id="week-days-error"></span>
+														   <select name="access_days" id="access_days" class="status">
+																<?php foreach($this->wd_list as $wl){?>
+																<option value="<?php echo $wl['wdID']?>"><?php echo $wl['title']?></option>
+																<?php }?>
+															</select>
+														</div>
+														<div class="row">
+														<label>Active<span class="required">*</span> :</label> 
+														<select name="sch_status" id="sch_status" class="status">
+															<option value="1">Yes</option>
+															<option value="0">No</option>
+														</select>
+														</div>
+														
+														
+														 <div class="confirmBtn">
+															<input type="reset" value="Reset" name="reset" class="cancel"/>
+															<input type="button" value="Save" name="next" id="save_schedule" class="confirm" onclick="return saveSchedule()"/>
+															<input type="button" value="Cancel" name="cancel" class="cancel" onclick="hideScheduleForm()"/>
+														</div>
+											      </form>
+											   </section>    
+									      </div>
+                                          </div>
+									  </div>
+								 
+								<!-- <div id="add-schedule-td" class="showForm" style="display:none">
+									   <div class="schedule_block_main">									  
+									      <div id="schedule-form" class="priority_block ct-ptsdform">
+											  
+											   <section class="w-48 fr ch-home-form">
+												   <section class="consol_form_head">
+														<h3>Add Schedual to '<?php echo $this->priorityName;?>' (ID: <?php echo $this->priority_id;?>)</h3>
+												   </section>
+											      <form name="addNewSchedule">
+													  <input type="hidden" name="actionType" value="insert">
+														<input type="hidden" name="priority_id" id="priority_id" value='<?php echo $this->priority_id;?>'>
+														<?php /*<div class="row">
+															<label>Id* :</label>
+															<span class="prioNumErr" id="priority-number-error"></span> 
+															<input type="text" value="<?php echo $this->priorityDetail['id']?>" id="pid" 
+																   name="data[pid]" readonly="readonly">														  
+														</div>*/?>
+														<div class="row">
+															<label>Status Start <span class="required">*</span> :</label>
+															<span class="startStatusErr" id="start-status-error"></span>															
+															<select name="start_status" id="start_status" class="status">
+																<?php foreach($this->status_list as $sl){?>
+																<option value="<?php echo $sl['ssID']?>"><?php echo $sl['title']?></option>
+																<?php }?>
+															</select>
+														</div>
+														<div class="row">
+														   <label>Status End<span class="required">*</span> :</label> 
+														   <span class="endStatusErr" id="end-status-error"></span>
+														   <select name="end_status" id="end_status" class="status">
+																<?php foreach($this->status_list as $sl){?>
+																<option value="<?php echo $sl['ssID']?>"><?php echo $sl['title']?></option>
+																<?php }?>
+															</select>
+														</div>
+														<div class="row">
+														   <label>Time (Number)<span class="required">*</span> :</label> 
+														   <span class="timeErr" id="time-error"></span>
+														   <input type="text" id="Time" name="Time"  value="" onkeypress="return isNumberKey(event)" maxlength="2" />
+														</div>
+														<div class="row">
+														   <label>Length<span class="required">*</span> :</label> 
+														   <span class="lengthErr" id="length-error"></span>
+														   <select name="length" id="length" class="status">
+																<?php foreach($this->length_list as $llist){?>
+																<option value="<?php echo $llist['lID']?>"><?php echo $llist['title']?></option>
+																<?php }?>
+															</select>
+														</div>
+														<div class="row">
+														   <label>Day's of the week<span class="required">*</span> :</label> 
+														   <span class="wdErr" id="week-days-error"></span>
+														   <select name="access_days" id="access_days" class="status">
+																<?php foreach($this->wd_list as $wl){?>
+																<option value="<?php echo $wl['wdID']?>"><?php echo $wl['title']?></option>
+																<?php }?>
+															</select>
+														</div>
+														<div class="row">
+														<label>Active<span class="required">*</span> :</label> 
+														<select name="sch_status" id="sch_status" class="status">
+															<option value="1">Yes</option>
+															<option value="0">No</option>
+														</select>
+														</div>
+														
+														
+														 <div class="confirmBtn">
+															<input type="reset" value="Reset" name="reset" class="cancel"/>
+															<input type="button" value="Save" name="next" id="save_schedule" class="confirm" onclick="return saveSchedule()"/>
+															<input type="button" value="Cancel" name="cancel" class="cancel" onclick="hideScheduleForm()"/>
+														</div>
+											      </form>
+											   </section>    
+									      </div>
+                                          </div>
+								  </div>	 -->						

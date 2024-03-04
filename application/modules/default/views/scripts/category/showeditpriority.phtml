@@ -1,0 +1,65 @@
+<?php $priorityDetails = $this->priorityDetails;  ?>
+								         <div class="formBuild">			  
+									      <div id="priority-form_" class="priority_block_">
+											  <section class="consol_form_head">
+													<h3>Edit Priority</h3>
+											   </section>
+											   <div class="title_row">
+                       <?php echo $priorityDetails['priorityName'];?><hr>                            
+                        </div>
+											   <section class="w-48 fr ch-home-form_ ">
+											      <form name="addNewPriority">
+													   <input type = 'hidden' id='pid' value='<?php echo $priorityDetails['pid']; ?>' name='pid'>
+														<input type="hidden" name="building_id" id="building_id" value='<?php echo $this->select_build_id;?>'>
+														<?php /*<div class="row">
+															<label>Id* :</label>
+															<span class="prioNumErr" id="priority-number-error"></span> 
+															<input type="text" value="<?php echo $this->priorityDetail['id']?>" id="pid" 
+																   name="data[pid]" readonly="readonly">														  
+														</div>*/?>
+														<div class="row">
+															<label>Priority Name <span class="required">*</span> :</label>
+															<span class="priNameErr" id="priority-name-error"></span> 
+															<input type="text" id="edit_priority_name" name="edit_priorityName"  style="float:left;" value="<?php echo $priorityDetails['priorityName'];?>">
+														</div>
+														<div class="row">
+														   <label>Priority Description<span class="required">*</span> :</label> 
+														   <span class="priDescErr" id="priority-description-error"></span>
+														   <input type="text" id="edit_priority_description" name="edit_priorityDescription" style="float:left;" value='<?php echo $priorityDetails['priorityDescription'];?>'>
+														</div>
+														<div class="row">
+														<label>Active<span class="required">*</span> :</label> 
+														<select name="edit_status" id="edit_status" class="status" >
+															<option value="1" <?php if($priorityDetails['status'] == '1') { echo 'selected'; }?>>Yes</option>
+															<option value="0" <?php if($priorityDetails['status'] == '0') { echo 'selected'; }?>>No</option>
+														</select>
+														</div>
+														
+														<div class="row">
+														<label>E-Mail Alerts Active<span class="required">*</span> :</label> 
+														<select name="edit_email_status" id="edit_email_status" class="status">
+															<option value="1" <?php if($priorityDetails['email_status'] == '1') { echo 'selected'; }?>>Yes</option>
+															<option value="0" <?php if($priorityDetails['email_status'] == '0') { echo 'selected'; }?>>No</option>
+														</select>
+														</div>
+														
+														<div class="row">
+														<label>Save as Global Template<span class="required">*</span> :</label> 
+														<select name="edit_global_template" id="edit_global_template" class="status">
+															<option value="1" <?php if($priorityDetails['global_template'] == '1') { echo 'selected'; }?>>Yes</option>
+															<option value="0" <?php if($priorityDetails['global_template'] == '0') { echo 'selected'; }?>>No</option>
+														</select>
+														</div>
+														
+														
+														
+														 <div class="confirmBtn">
+															<input type="reset" value="Reset" name="reset" class="cancel"/>
+															<input type="button" value="Save" name="next" id="save_priority" class="confirm savePriority" onclick="return editPriority('<?php echo $priorityDetails['pid']; ?>')"/>
+															<input type="button" value="Cancel" name="cancel" class="cancel" onclick="hidePriorityForm()"/>
+														</div>
+											      </form>
+											   </section>    
+									      </div>
+                                          </div>
+								 

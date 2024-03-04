@@ -1,0 +1,115 @@
+<?php 
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/tenant.js');
+$roleMapper = new Model_Role();
+$roleDetail = $roleMapper->getRole();
+$sendMapper = new Model_SendAs();
+$sendDetail = $sendMapper->getSendAs();
+?>
+<div class="container-right" id="add-tenant-data">
+<section class="w-48 fr ch-home-form">
+<section class="ch-form-header">
+	<h3>Add Tenant User</h3>
+    </section>
+			 <div class="tenant-user-data">
+		
+				  <div class="form_head">
+						<span><?php echo $this->tenantData->tenantName;?> </span>
+						<?php if($this->message && $this->message['msg']!=''){?>
+						   <span class="error-msg"><?php echo $this->message['msg'];?></span>
+						<?php }?>
+				   </div>
+				   
+					  <form name="addNewUser" id="addNewUser" action="<?php echo BASEURL.'tenant/addtuser/tId/'.$this->tenantId;?>" method="post">
+						  <input type="hidden" value="<?php echo $this->tenantId;?>" name="tenantId" id="tenantId"/>
+						  <input type="hidden" value="<?php echo $this->tenantData->buildingId;?>" name="building" id="building"/>
+						  <input type="hidden" value="<?php echo $this->roleId;?>" name="role_id" id="role_id"/>						  					  						  					  						  					  
+						  <div class="row">
+							<label>E-mail :<span class="required">*</span></label> <span class="uemailErr" id="email-error"></span>
+							<input type="text" value="" id="email" name="email">
+						   </div>	
+						  <div class="row">	
+							<label>First name :<span class="required">*</span></label><span class="ufirstErr" id="firstname-error"></span> 	
+							<input type="text" required="" id="firstname" class="" name="firstname">
+						 </div>	
+						<div class="row">	
+							
+							<label>Last Name :<span class="required">*</span></label><span class="ulastErr" id="lastname-error"></span> 	
+							<input type="text" required="" id="lastname" class="" name="lastname">
+						</div>	
+						<!--<div class="row">	
+							<label>Title :</label>		
+							<input type="text" required="" id="title" class="" name="title">
+						</div>-->
+						<div class="row">	
+							
+							<label>Suite/Location :<span class="required">*</span></label><span class="usuiteErr" id="suite-error"></span> 	
+							<input type="text" required="" id="suite_location" class="" name="suite_location">
+						</div>
+						<div class="row">	
+							<label>Office Phone :<span class="required">*</span></label>
+							<span class="uofficeErr" id="office-phone-error"></span> 		
+							<input type="text" id="phone" class="" name="phone" >
+						</div>	
+						<div class="row">	
+							<label>Access :</label>
+							<select required id="access" class="status" name="access">
+								<?php 
+								   $selectedRole = array(5, 7);
+									foreach ($roleDetail as $ker => $role) {
+										if(in_array($role['roleID'], $selectedRole)){
+										  echo '<option value="'.$role['roleID'].'">'.$role['title'].'</option>';
+									   }
+									}
+								?>                    
+							</select>
+						</div>	
+						<div class="row">
+							<label>Send As :</label>
+							<select name="send_as" id="send_as">
+								<?php foreach($sendDetail as $sd){ ?>
+									<option value="<?php echo $sd['sid'];?>"><?php echo $sd['title'];?></option>
+								<?php } ?>	
+							</select>
+						</div>
+						<div class="row">
+							<label>Complete Notification :</label>
+							<select name="complete_notification" id="complete_notification">
+								<option value="0">No</option>
+								<option value="1">Yes</option>
+							</select>
+						</div>
+						<div class="row">
+							<label>CC Enable :</label>
+							<select name="cc_enable" id="cc_enable">
+								<option value="0">No</option>
+								<option value="1">Yes</option>
+							</select>
+						</div>
+						<div class="row">
+							<label>Active :</label>
+							<select name="status" id="status">
+								<option value="1">Yes</option>
+								<option value="0">No</option>
+							</select>
+						</div>
+						<div class="row">
+							<label>Send Welcome Letter Now :</label>
+							<select name="welcome_letter" id="welcome_letter">
+								<option value="0">No</option>
+								<option value="1" selected="selected">Yes</option>
+							</select>
+						</div>						
+							<div class="confirmBtn float_none">
+								<input type="reset" value="Reset" name="cancel" class="cancel"/>
+								<input type="button" value="Confirm" name="next" class="confirm next" onclick="checkTUser()"/>
+								<input type="button" value="Cancel" name="cancel" class="cancel" onclick="cancelUser()"/>
+							</div>
+					  </form>
+				      
+			  </div>
+              </section> 
+			  </div>
+			  
+<script type="text/javascript">
+	 $("#phone").mask("999.999.9999")
+</script>

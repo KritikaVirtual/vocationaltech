@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://gmpg.org/xfn/11">
+<title>Administrator</title>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">
+<link href="<?php echo BASEURL . 'public/colorbox/example3/colorbox.css'?>" rel='stylesheet'>
+<script src="<?php echo BASEURL . 'public/jquery/jquery.min.js'?>"></script>
+<script src="//code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
+<script src="<?php echo BASEURL . 'public/colorbox/jquery.colorbox-min.js'?>"></script>
+<script type="text/javascript" src="<?php echo $this->baseUrl() ?>/public/js/jquery.maskedinput.js"></script>
+<script type="text/javascript">
+$(function() {
+	var Accordion = function(el, multiple) {
+		this.el = el || {};
+		this.multiple = multiple || false;
+
+		// Variables privadas
+		var links = this.el.find('.link');
+		// Evento
+		links.on('click', {el: this.el, multiple: this.multiple}, this.dropdown)
+	}
+
+	Accordion.prototype.dropdown = function(e) {
+		var $el = e.data.el;
+			$this = $(this),
+			$next = $this.next();
+
+		$next.slideToggle();
+		$this.parent().toggleClass('open');
+
+		if (!e.data.multiple) {
+			$el.find('.submenu').not($next).slideUp().parent().removeClass('open');
+		};
+	}	
+
+	var accordion = new Accordion($('#accordion'), false);
+	
+});
+</script>
+<script>
+var baseUrl='<?php echo BASEURL ?>';
+</script>
+<?php  $this->headLink()->appendStylesheet(BASEURL . 'public/style.css') ?>	
+<?php  echo $this->headLink()->appendStylesheet(BASEURL . 'public/homestyle.css') ?>	
+
+</head>
+<body>

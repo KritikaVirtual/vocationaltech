@@ -1,0 +1,441 @@
+<?php echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/conference.js'); ?>
+<?php
+    $reportModel = new Model_Report();
+    $reportDetailLinks = '';
+    $dashBoardViewsdetails = '';
+    $dashBoardViews = '';
+    $woNumberAll = '';
+    $invoiceAll = '';
+    $uniqueCostCenterAll = '';
+    $buildIdReportAll = '';
+    $batch_number_report = '';
+    $uniqueCostCenter = '';
+    $batch_number_reportallbuilding = '';
+    $buildIdReport = $this->select_build_id;
+    $woNumberAllbuilding = '';
+    $invoiceAllbuilding = '';
+    $batch_number_reportall = '';
+    $cscheduleDetails = $this->cscheduleDetails;
+    $crDetails = $this->crDetails;
+    $not_permit = array(2, 3, 6);
+
+    $croom_access = $this->acessHelper->checkAccess($this->roleId, $this->croom_location);
+    /* override access by custom user access if exist */
+    $customeAccessmodel = new Model_UserAccess();
+    $customeAccessmodeld = $customeAccessmodel->getUserCustomAccess($this->userId, $this->croom_location);
+    if ($customeAccessmodeld[0]) {
+        $croom_access = $customeAccessmodeld[0];
+    }
+    $moduleMapper = new Model_UserBuildingModule();
+    $moduleAccess = $moduleMapper->getModuleByBuildingId($this->select_build_id, 2);
+    $buildhasAccess = array();
+    if ($moduleAccess) {
+        foreach ($moduleAccess as $moduleAccessVal) {
+            $buildhasAccess[] = $moduleAccessVal->module_id;
+        }
+    }
+    if (in_array(2, $buildhasAccess)) {
+        $reportDetailLinks = $reportModel->getReport($this->custID, 37);
+    } else {
+        $reportDetailLinks = false;
+    }
+
+?>
+
+<?php
+	if ($this->roleId != 1 && $croom_access->is_access == 0) {
+		if ($this->custID != null && $this->custID && $this->companyListing != '' && $this->companyListing != false) {
+
+			if ($reportDetailLinks != '') {
+				$woReport = new Model_Report();
+				$woBatch = new Model_WoBatch();
+				foreach ($this->companyListing as $cb) {
+					$uniqueCostCenterAll = $uniqueCostCenterAll . $cb['uniqueCostCenter'] . ',';
+					$buildIdReportAll = $buildIdReportAll . $cb['build_id'] . ',';
+					$batchDetails = $woBatch->showBatch($cb['build_id']);
+					if ($batchDetails != '') {
+						foreach ($batchDetails as $bd) {
+							$batch_number_reportallbuilding = $batch_number_reportallbuilding . $bd['batch_number'] . ',';
+						}
+					}
+					$order = 'woId';
+					$dir = 'DESC';
+					$wolist = $woReport->getWorkOrderByBuilding($cb['build_id'], $order, $dir);
+					$invoicelist = $woReport->invoiceByBatch($cb['build_id'], $order, $dir);
+					if ($wolist != '') {
+						foreach ($wolist as $woNumber) {
+							$woNumberAllbuilding = $woNumberAllbuilding . $woNumber->wo_number . ',';
+						}
+					}
+					if ($invoicelist != '') {
+						foreach ($invoicelist as $invoiceNumber) {
+							$invoiceAllbuilding = $invoiceAllbuilding . $invoiceNumber->wo_number . ',';
+						}
+					}
+
+					$batchDetails = $woBatch->showBatch($cb['build_id']);
+
+					if ($batchDetails != '') {
+						foreach ($batchDetails as $bd) {
+							$batch_number_reportall = $batch_number_reportall . $bd['batch_number'] . ',';
+						}
+					}
+				}
+			}
+        ?>
+
+        <!-- End all report Link -->
+        <div id="contents">
+            <ol id="toc">
+                <?php
+                $j = 1;
+
+                foreach ($this->companyListing as $cb) {
+                    ?>
+                    <li><a class="<?php if ($cb['build_id'] == $this->select_build_id) echo 'active'; ?>"  href="<?php echo $this->baseUrl() . '/conference/croomsetup/bid/' . $cb['build_id']; ?>" ><span><?php echo $cb['buildingName']; ?></span></a>
+                        <?php
+                        if ($reportDetailLinks != '') {
+                            if ($cb['build_id'] == $this->select_build_id) {
+                                $uniqueCostCenter = $cb['uniqueCostCenter'];
+                                $batchDetails = $woBatch->showBatch($cb['build_id']);
+                                $batch_number_report = '';
+                                if ($batchDetails != '') {
+                                    foreach ($batchDetails as $bd) {
+                                        $batch_number_report = $batch_number_report . $bd['batch_number'] . ',';
+                                    }
+                                }
+                                $order = 'woId';
+                                $dir = 'DESC';
+                                $wolist = $woReport->getWorkOrderByBuilding($cb['build_id'], $order, $dir);
+                                $invoicelist = $woReport->invoiceByBatch($cb['build_id'], $order, $dir);
+                                if ($wolist != '') {
+                                    foreach ($wolist as $woNumber) {
+                                        $woNumberAll = $woNumberAll . $woNumber->wo_number . ',';
+                                    }
+                                }
+                                if ($invoicelist != '') {
+                                    foreach ($invoicelist as $invoiceNumber) {
+                                        $invoiceAll = $invoiceAll . $invoiceNumber->wo_number . ',';
+                                    }
+                                }
+                            }
+                        }
+                        ?> 
+                    </li>
+
+                <?php } ?>
+            </ol>
+            <!-- Report Link -->
+            <?php if ($reportDetailLinks != '') { ?> <div class="clearfix"></div><div class="tabmenu report_tab_menus" ><ul><?php
+                foreach ($reportDetailLinks as $reportvalue) {
+                    $reportOption = explode(',', $reportvalue->report_option);
+                    ?> <li class="report_text" ><a   <?php if ($reportvalue->report_target == 1) { ?> target='_blank' <?php } ?> href="<?php echo BASEURL; ?>reports/VisionReportEngine/index.php?stimulsoft_client_key=ViewerFx&stimulsoft_report_key=<?php echo $reportvalue->report_mrt; ?><?php
+                            if (in_array('[[++user_id]]', $reportOption)) {
+                                echo '&User=' . $this->userId;
+                            }
+                            ?><?php
+                            if ((in_array('[[++CostCenterAllBuildings]]', $reportOption)) && $uniqueCostCenterAll != '') {
+                                echo '&Cost_Center_Number=' . rtrim($uniqueCostCenterAll, ',');
+                            } else if ((in_array('[[++CostCenterNumber]]', $reportOption)) && $uniqueCostCenter != '') {
+                                echo '&Cost_Center_Number=' . $uniqueCostCenter;
+                            }
+                            ?><?php
+                            if ((in_array('[[++KeyBuildingAllBuildings]]', $reportOption)) && $buildIdReportAll != '') {
+                                echo '&buildkey=' . rtrim($buildIdReportAll, ',');
+                            } else if ((in_array('[[++KeyBuildingNumber]]', $reportOption)) && $buildIdReport != '') {
+                                echo '&buildkey=' . $this->select_build_id;
+                            }
+                            ?><?php
+                            if (in_array('[[++BatchNumber]]', $reportOption)) {
+                                if ((in_array('[[++CostCenterAllBuildings]]', $reportOption)) && (in_array('[[++CostCenterAllBuildings]]', $reportOption))) {
+                                    echo '&Batch_Number=' . rtrim($batch_number_reportall, ',');
+                                } else {
+                                    echo '&Batch_Number=' . rtrim($batch_number_report, ',');
+                                }
+                            }
+                            ?><?php
+                            if ((in_array('[[++WONumber]]', $reportOption))) {
+                                if ((in_array('[[++CostCenterAllBuildings]]', $reportOption)) && (in_array('[[++CostCenterAllBuildings]]', $reportOption))) {
+                                    echo "&WO_Number=" . rtrim($woNumberAllbuilding, ',');
+                                } else {
+                                    echo "&WO_Number=" . rtrim($woNumberAll, ',');
+                                }
+                            }
+                            ?><?php
+                            if ((in_array('[[++InvoiceNumber]]', $reportOption))) {
+                                if ((in_array('[[++CostCenterAllBuildings]]', $reportOption)) && (in_array('[[++CostCenterAllBuildings]]', $reportOption))) {
+                                    echo '&Invoice_Number=' . rtrim($invoiceAllbuilding, ',');
+                                } else {
+                                    echo '&Invoice_Number=' . rtrim($invoiceAll, ',');
+                                }
+                            }
+                            ?>" ><?php echo $reportvalue->report_name; ?> </a> </li> <?php } ?> </ul></div>	<?php } ?>		
+              
+
+            <?php if (in_array(2, $buildhasAccess)) { ?>
+                <div class="content" id="page-content">
+                    <div class="message">
+                        <div class="success_message" style="text-align:left;width:100%;font-weight:bold;color:red;"></div>	
+                        <span class="error-txt" style="color:red; text-align:center;"></span>
+                    </div>
+                    <input type="hidden" name="building_id" id="building_id" value="<?php echo $this->select_build_id; ?>"/>
+                    <input type="hidden" name="croom_page" id="croom_page" value=""/>
+
+                    <div id="accordion_conference" class="accordion_conference" >
+                        <h3>Conference Room Console</h3>
+                        <div class="conference-information" id='room_info'>     	 
+                            <div class="conference_search_field">
+                                <div id="search_form_div">
+                                    <div id="search_message"></div>
+                                    <form method="post" id="search_form" name="search_form">
+                                        <div id="form_field">
+                                            <div style="float:left;">
+                                                <label class="labelcenter">Search For</label>
+                                            </div>
+                                            <select onchange="showServiceDropdown(this)" id="search_by" name="search_by">                               
+                                                <option value="room_name">Room Name</option>
+                                                <option value="location">Location</option>
+
+                                            </select>
+                                            <div class="text-select-div">
+                                                <div id="search_txt"><input type="text" value="" id="search_value" name="search_value"></div>
+                                                <div style="display:none" id="service_select">
+                                                    <select id="service_value" name="service_value">
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-button">
+                                            <input type="button" value="Search" id="search" name="search" onclick="searchCRoom()">
+                                            <input type="button" onclick="window.location.href = '<?php echo BASEURL . 'conference/croomsetup/bid/' . $this->select_build_id; ?>'" value="Reset" id="reset" name="reset">
+                                        </div>  
+                                    </form>
+
+                                </div>
+                            </div> 
+                            <div class="category-infromation" id="conference_info">
+
+                                <div id="category_popup" style="display:none;"></div>
+                                <section class="w-48 fr ch-home-form">
+
+                                    <input type="hidden" name="conference_page" id="conference_page" value=""/>
+                                    <input type="hidden" name="cn_order" id="cn_order" value=""/>
+                                    <table class="conference-list" width="100%">
+                                        <tr>
+                                            <th>&nbsp;</th>
+                                            <th>Conference Room Name</th>
+                                            <th>Location</th>
+                                            <th>Active</th>
+                                            <th>Multi Mode</th>
+                                            <?php if (!in_array($this->roleId, $not_permit) && $croom_access->is_write == 1) { ?>
+                                                <th>Action</th>
+                                            <?php } ?>
+                                        </tr>
+                                        <?php
+                                        if ($crDetails) {
+                                            foreach ($crDetails as $crVal) {
+                                                ?>
+                                                <tr class="show-category" id="show_category_id_">
+                                                    <td>
+                                                        <div class="open_plus" id="open_cat_">
+                                                            <?php                                                            
+                                                            
+                                                            if (!in_array($this->roleId, $not_permit) && $croom_access->is_write == 1) { ?>
+                                                                <a href="#editConRoom" class="editCat" href="javascript:void(0);" onclick="editConRoom('<?php
+                                                                if ($crVal->multi_mode == 0) {
+                                                                    echo $this->baseUrl() . '/conference/editconroom/cid/' . $crVal->cid . '/bid/' . $this->select_build_id;
+                                                                } else {
+                                                                    echo $this->baseUrl() . '/conference/editconmultiroom/cid/' . $crVal->cid . '/bid/' . $this->select_build_id;
+                                                                }
+                                                                ?>')"></a>
+                                                            <?php } else { ?>
+                                                                <a href="javascript:void(0);"  >  <?php echo '&nbsp;&nbsp;'; ?></a>    
+                    <?php } ?>
+                                                        </div>
+
+                                                    </td>
+                                                    <td><?php echo $crVal->room_name; ?></td>
+                                                    <td><?php echo $crVal->location; ?> </td>
+                                                    <td><?php echo($crVal->status == 1) ? "Yes" : "No"; ?></td>
+                                                    <td><?php echo($crVal->multi_mode == 1) ? "Yes" : "No"; ?></td>
+                                                        <?php if (!in_array($this->roleId, $not_permit) && $croom_access->is_write == 1) { ?>
+                                                        <td class="yesnotooltips"><a href="#editConRoom" class="editCat" href="javascript:void(0);" onclick="editConRoom('<?php
+                                                            if ($crVal->multi_mode == 0) {
+                                                                echo $this->baseUrl() . '/conference/editconroom/cid/' . $crVal->cid . '/bid/' . $this->select_build_id;
+                                                            } else {
+                                                                echo $this->baseUrl() . '/conference/editconmultiroom/cid/' . $crVal->cid . '/bid/' . $this->select_build_id;
+                                                            }
+                                                            ?>')"><img src="<?php echo BASEURL . 'public/images/edit.png'; ?>"></a>
+                                                            <a href="javascript:void(0);" onclick="deleteCRoom('<?php echo $crVal->cid; ?>')" class="delCat" data-id="" title="Delete"><img src="<?php echo BASEURL . 'public/images/delete.png'; ?>"></a>
+
+                                                        </td>
+                                                <?php } ?>
+                                                </tr>
+                                            <?php
+                                            }
+                                        } else {
+                                            ?>
+                                            <tr>
+                                                <td colspan="9"> No Conference Room Exist..</td>
+                                            </tr>
+                                    <?php } ?>
+                                    </table> 
+                                    <?php if (!in_array($this->roleId, $not_permit) && $croom_access->is_write == 1) { ?>
+                                        <a class="modalbox create_conf " onclick="javascript:createConRoom('<?php echo $this->baseUrl() . '/conference/createconroom/bid/' . $this->select_build_id; ?>');" href="#CreateNewCon"> <button value="Memorize" name="memorize" type="button">Create New <br>Conference Room</button> </a>
+                                        <a class="modalbox create_conf " onclick="javascript:createMultiConRoom('<?php echo $this->baseUrl() . '/conference/createconmultiroom/bid/' . $this->select_build_id; ?>');" href="#CreateNewMultiCon"> <button value="Memorize" name="memorize" type="button">Create Multi Mode <br>Conference Room</button> </a>
+                                <?php } ?>
+                                </section>
+                                <?php
+                                if (count($crDetails) > 0 && !empty($crDetails)) {
+                                    echo '<tr><td colspan="5">';
+                                    echo $this->paginationControl($crDetails, 'Sliding', 'croom_pagination.phtml');
+                                    echo '</td></tr>';
+                                }
+                                ?>
+                            </div>						 
+                        </div>
+
+                        <!-- ******************************************** -->
+                        <!-- 			scheduler Code Section			  -->
+                        <!-- ******************************************** -->
+
+                        <h3>Conference Room Availability Scheduler</h3>
+                        <div>
+                            <div class="conference_search_field">
+                                <div id="search_form_div">
+                                    <div id="search_message"></div>
+                                    <form  method="post" id="search_form" name="search_form">
+                                        <div id="form_field">
+                                            <div style="float:left;">
+                                                <label class="labelcenter">Search For</label>
+                                            </div>
+                                            <select  id="search_by_sch" name="search_by_sch">
+                                                <option value="schedule_name">Schedule Name</option>
+                                            </select>
+                                            <div class="text-select-div">
+                                                <div id="search_txt"><input type="text" value="" id="search_value_sch" name="search_value_sch"></div>
+
+                                            </div>
+                                        </div>
+                                        <div class="form-button">
+                                            <input type="button" value="Search" id="search" name="search" onclick="searchCSchedule()">
+                                            <input type="button" onclick="window.location.href = '<?php echo BASEURL . 'conference/croomsetup/bid/' . $this->select_build_id; ?>'" value="Reset" id="reset" name="reset">
+                                        </div>  
+                                    </form>
+
+                                </div>
+                            </div> 
+
+                            <div class="priority-infromation" id="schedule_info">
+
+                                <div id="priority_popup" style="display:none;"></div>
+                                <section class="w-48 fr ch-home-form">
+                                    <table class="priority-list" width="100%">
+                                        <tr>
+                                            <th>&nbsp;</th>
+                                            <th><a href="javascript:void(0)" class="" onclick="">Scheduler Name</a></th>
+                                            <th>Day's of the Week</th>
+                                            <th>Active <input type="hidden" name="priority_page" id="priority_page" value=""/></th>
+                                            <th>Time Active</th>
+                                            <?php if (!in_array($this->roleId, $not_permit) && $croom_access->is_write == 1) { ?>
+                                                <th>Action</th>
+                                        <?php } ?>
+
+                                        </tr>
+                                        <?php
+                                        if ($cscheduleDetails) {
+                                            foreach ($cscheduleDetails as $schval) {
+                                                ?>
+                                                <tr id="show_priority_id_<?php echo $schval->id; ?>" class="show-priority">
+                                                    <td>
+                                                        <div class="open_plus" id="open_div_cs_<?php echo $schval->id; ?>"> <?php if ($schval->default == 0 && (!in_array($this->roleId, $not_permit)) && $croom_access->is_write == 1) { ?>
+                                                                <a href="#EditCSchedule" onclick="javascript:EditCSchedule('<?php echo $this->baseUrl() . '/conference/editcschedule/bid/' . $this->select_build_id . '/sid/' . $schval->id; ?>');"   title="Edit"></a>
+                                                            <?php } else { ?>                                               
+                                                                <a href="javascript:void(0);" id="" onClick="";></a>
+                    <?php } ?>
+                                                        </div></div>
+                                                    </td>
+
+                                                    <td><?php echo $schval->schedule_name; ?></td>
+                                                    <td><?php echo $schval->schedule_title ?></td>
+                                                    <td><?php echo ($schval->status) ? 'Yes' : 'No'; ?></td>
+                                                    <td><?php
+                                                        if ($schval->all_day == 1) {
+                                                            echo "All Day";
+                                                        } else {
+                                                            echo $schval->start_time . '-' . $schval->end_time;
+                                                        }
+                                                        ?></td>
+                    <?php if (!in_array($this->roleId, $not_permit) && $croom_access->is_write == 1) { ?>
+                                                        <td> 
+                                                            <div class="col02 coladdlastcol lastcol edit_delete_icon"><a href="#EditCSchedule" onclick="javascript:EditCSchedule('<?php echo $this->baseUrl() . '/conference/editcschedule/bid/' . $this->select_build_id . '/sid/' . $schval->id; ?>');"   title="Edit"><img src="<?php echo BASEURL . 'public/images/edit.png'; ?>" /></a> <a href="javascript:void(0);" onclick="deleteCScheduler('<?php echo $schval->id; ?>')" data-id="" title="Delete"><img src="<?php echo BASEURL . 'public/images/delete.png'; ?>" /></a></div>
+
+                                                        </td>
+                                                <?php } ?>
+                                                </tr>
+                                                <?php
+                                            }
+                                        } else {
+                                            ?>
+                                            <tr>
+                                                <td colspan="9">No Scheduler Exist..</td>
+                                            </tr>
+            <?php }
+            ?>
+
+                                        <tr id="tr_schecdule-" class="show-tr-schlist" style="display:none">
+                                            <td>&nbsp;</td>
+                                            <td colspan="6" class="margin_padding_none" id="show_priority_schedule_"></td>
+                                        </tr>
+
+                                    </table>
+                                    <?php if (!in_array($this->roleId, $not_permit) && $croom_access->is_write == 1) { ?>
+                                        <a class="modalbox create_conf " onclick="javascript:addNewSchedule('<?php echo $this->baseUrl() . '/conference/addnewschedule/bid/' . $this->select_build_id; ?>');" href="#AddNewSchedule"> <button value="Memorize" name="memorize" type="button">Add new Schedule</button> </a>
+                                <?php } ?>
+                                </section>
+                                <?php
+                                if (count($cscheduleDetails) > 0 && !empty($cscheduleDetails)) {
+                                    echo '<tr><td colspan="5">';
+                                    echo $this->paginationControl($cscheduleDetails, 'Sliding', 'cschedule_pagination.phtml');
+                                    echo '</td></tr>';
+                                }
+                                ?>
+                            </div>
+                        </div>	
+                    </div>
+                </div>
+                <?php
+            } else {
+                echo '<div class="clearfix"> </div>';
+                echo 'This Building does not have the access of this module.';
+            }
+            ?>
+            <?php
+        } else {
+            echo 'No Building has assign to you.';
+        }
+    } else {
+        ?>
+        You don't have access for this module.
+<?php } ?>
+
+    <div class="fade_default_opt" id="fd_dft_div" style="display:none">	
+        <a href="#show_module" id="show_module_href" class="modalbox">&nbsp;</a>	
+        <div id="show_module" class="bd-dft-cls" style="display:none"></div>
+        <a href="#show_edit_form" id="show_edit_form_href" class="modalbox">&nbsp;</a>	
+        <div id="show_edit_form" class="bd-dft-cls" style="display:none"></div>
+    </div>
+    <div class="loader" style="display:none;" > <img src="<?php echo BASEURL . 'public/images/loader.gif'; ?>"><div>
+
+            <script type="text/javascript">
+                /*activatables('page', [<?php echo $pageStr; ?>]);*/
+                $(function () {
+                    $("#accordion_conference").accordion({
+                        heightStyle: "content",
+                        animate: 1000,
+                        collapsible: true
+                    });
+
+
+                });
+            </script>

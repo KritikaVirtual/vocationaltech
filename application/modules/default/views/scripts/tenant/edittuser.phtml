@@ -1,0 +1,240 @@
+<?php 
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/tenant.js');
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/jquery.form.js');
+$roleMapper = new Model_Role();
+$roleDetail = $roleMapper->getRole();
+$sendMapper = new Model_SendAs();
+$sendDetail = $sendMapper->getSendAs();
+//var_dump($this->tuserDetial);
+
+
+
+?>
+<div class="container-right" id="add-tenant-data">
+	<span id="page_heading" class="tu-heading"><h3>Tenant User (EDIT)</h3></span>
+			 <div class="tenant-user-data">
+		
+				  <div class="form_head">
+						<div class="success_message" style="text-align:center;width:100%;font-weight:bold;color:red;"></div>				  			
+						<span><?php echo stripslashes($this->tenantData->tenantName);?> </span>
+						<?php if($this->message && $this->message['msg']!=''){?>
+						   <span class="error-msg"><?php echo $this->message['msg'];?></span>
+						<?php }?>
+				   </div>
+				   <section class="w-48 fr ch-home-form ch-home-form-edit">
+					  <form name="editUser" id="editUser" action="<?php echo BASEURL.'tenant/edittuser/tuId/'.$this->tuserDetial->uid;?>" enctype="multipart/form-data" method="post">
+						  <input type="hidden" value="<?php echo $this->tenantId;?>" name="tenantId" id="tenantId"/>
+						  <input type="hidden" value="<?php echo $this->tenantData->buildingId;?>" name="building" id="building"/>
+						  <input type="hidden" value="<?php echo $this->tuserDetial->uid;?>" name="uid" id="uid"/>
+						  <input type="hidden" value="<?php echo $this->tuserDetial->id;?>" name="id" id="id"/>		
+						  <input type="hidden" value="<?php echo $this->roleId;?>" name="role_id" id="role_id"/>
+						  <input type="hidden" value="<?php echo (isset($this->locationuser))?$this->locationuser:'';?>" name="locationuser" id="locationuser"/>
+
+						  <div class="left">				  					  						  					  						  					  
+							  <div class="row">
+							  <div class='col-lg-6  '>
+								  <label>User Name :<span class="required">*</span></label> <span class="unameErr" id="uname-error"></span>
+                                  <div class="tte-input-div">
+								  <input type="text"  id="userName" name="userName" value="<?php echo $this->tuserDetial->userName;?>">
+                                  </div>
+							   </div>							   
+							   <div class='col-lg-6 '>
+							   <label class='ttmar'>E-mail :<span class="required">*</span></label> <span class="uemailErr" id="email-error"></span>
+                                <div class="tte-input-div">
+								<input type="text" id="email" name="email" value="<?php echo $this->tuserDetial->email;?>">
+                                </div>
+							   </div>
+							   </div>
+							   
+							  
+								
+							  
+							  <div class="row">	
+							  <div class='col-lg-6  '>
+								<label>First name :<span class="required">*</span></label><span class="ufirstErr" id="firstname-error"></span>
+                                <div class="tte-input-div"> 	
+								<input type="text" required="" id="firstname" class="" name="firstname" value="<?php echo stripslashes($this->tuserDetial->firstName);?>">
+                                </div>
+							 </div>	
+							 <div class='col-lg-6  '>
+							 <label class='ttmar'>Last Name :<span class="required">*</span></label><span class="ulastErr" id="lastname-error"></span>
+                                <div class="tte-input-div"> 	
+								<input type="text" required="" id="lastname" class="" name="lastname" value="<?php echo stripslashes($this->tuserDetial->lastName);?>">
+                                </div>
+							  </div>
+								</div>							  
+							
+							
+							<div class="row">	
+							<div class='col-lg-6 '>
+							<label>Suite/Location :<span class="required">*</span></label><span class="usuiteErr" id="suite-error"></span> 
+                            <div class="tte-input-div">	
+							<input type="text" required="" id="suite_location" class="" name="suite_location" value="<?php echo $this->tuserDetial->suite_location;?>" <?php echo (isset($this->roleId) && $this->roleId ==5)?'readonly':'';?> >
+                            </div></div>
+							<div class='col-lg-6 '>
+							<label class='ttmar'>Office Phone :<span class="required">*</span></label>
+								<span class="uofficeErr" id="office-phone-error"></span> 		
+                                <div class="tte-input-div">
+								<input type="text" id="phone" class="" name="phone" value="<?php echo $this->tuserDetial->phoneNumber;?>" >
+                                </div>
+							</div>
+						</div>
+							
+							<div class="row">
+								<div class='col-lg-6  '>					
+								<label>Access :</label>
+                                <div class="tte-input-div">
+								<select required id="access" class="status" name="access">
+									<?php 
+									  $access_disable = false; 
+									  if((isset($this->roleId) && isset($this->userId) && isset($this->tuserDetial->uid) && $this->roleId == 5)
+									   && ($this->userId==$this->tuserDetial->uid)){
+										$access_disable  = true;
+									  }
+									   $selectedRole = array(5, 7);
+										foreach ($roleDetail as $ker => $role) {
+											if(in_array($role['roleID'], $selectedRole)){
+											  echo '<option value="'.$role['roleID'].'"';
+											  echo  ($role['roleID']==$this->tuserDetial->role_id)?'selected':'';
+											  echo  (isset($this->roleId) && ($this->roleId == 5 && $access_disable==true))?' disabled="disabled"':'';
+											  echo '>'.$role['title'].'</option>';
+										   }
+										}
+									?>                    
+								</select>
+                                </div>
+							</div>	
+							<div class='col-lg-6  '>
+							<label class='ttmar'>Send As :</label>
+                                <div class="tte-input-div">
+								<select name="send_as" id="send_as">
+									<?php foreach($sendDetail as $sd){ ?>
+										<option value="<?php echo $sd['sid'];?>" <?php echo  ($sd['sid']==$this->tuserDetial->send_as)?'selected':'';?>><?php echo $sd['title'];?></option>
+									<?php } ?>	
+								</select>
+                                </div>
+							</div>
+							</div>
+							
+							<div class="row">
+							<div class='col-lg-6  '>
+								<label>Complete Notification : </label>
+                                <div class="tte-input-div">
+								
+								<input type='checkbox' name="complete_notification" id="complete_notification" value='1' <?php echo($this->tuserDetial->complete_notification==1)?'checked':'';?>>
+                                </div>
+							</div>
+							<div class='col-lg-6  '>
+							<label class='ttmar'>Note Notification :</label>
+                                <div class="tte-input-div">
+							
+								<input type='checkbox' name="note_notification" id="note_notification" value='1' <?php echo($this->tuserDetial->note_notification==1)?'checked':'';?>>
+                                </div>
+							</div>
+							</div>
+							
+							<div class="row">
+							<div class='col-lg-6 '>
+								<label>CC Enable :</label>
+                                <div class="tte-input-div">
+							
+								<input type='checkbox' name="cc_enable" id="cc_enable" value='1' <?php echo($this->tuserDetial->cc_enable==1)?'checked':'';?>>
+                                </div>
+							</div>
+							<div class='col-lg-6 '>
+							<label class='ttmar'>Active :</label>
+                                <div class="tte-input-div">
+								
+								<input type='checkbox' name="status" id="status" value='1' <?php echo($this->tuserDetial->status==1)?'checked':'';?>>
+                                </div>
+							</div>
+							</div>
+							
+							<div class="row">
+							<div class='col-lg-6 ' >
+								<label>Resend Welcome Letter Now :</label>
+                                <div class="tte-input-div">
+							
+								<input type='checkbox' name="welcome_letter" id="welcome_letter" value='1' >
+                                </div>
+							</div>	
+							
+							</div>	
+						
+								
+						</div>
+						<!-- <div class="row">
+						<div class='col-lg-6 ' >
+						<label>Tenant's Group :</label>
+									</div>
+						</div>			 -->
+						<?php	
+						$uid = $this->tuserDetial->uid;
+						$tenant = new Model_Tenant();
+						$tenantCompanyList = $tenant->getTenantCompanies($uid);
+						foreach($tenantCompanyList as $tenantCompany){?>
+						<!-- <div class="row">
+						   <div>                            
+							<label><?php echo $tenantCompany->tenantName;?></label>
+							<input type='checkbox' name="tentgroup[]" id="tentgroup[]" value='<?php echo $tenantCompany->id;?>' >
+							
+						</div> -->
+						<?php	
+						} 
+
+						?>
+						
+						<div class="row">
+						<div class='col-lg-12'> 
+						Reset Password
+						</div>
+						</div>
+						<div class="row"> 
+						<div class='col-xs-1'>&nbsp;</div> 
+						<div class='col-xs-6 tt-form'>
+						<div class='hidepassword'>
+									<label>Password</label> <span class="passwordErr" id="password-error"></span>
+                                    <div class="tte-input-div">
+									<input type="password" required="" id="password" class="" name="password" value="">
+                                    </div>
+										
+									<label>Confirm Password</label>
+                                    <div class="tte-input-div">
+									<input type="password" required="" id="confirm_password" class="" name="confirm_password" value="">
+                                    </div>		
+						</div>
+									
+									<label>Auto Generate</label>
+                                <div class="ttauto-input-div">
+								<input style="width:15px" type="checkbox" value="1" id="auto" class="" name="auto" onclick='hidepassword()' >
+                                </div>
+							</div>
+							<div class='col-xs-5 ttimg'><img src="<?php if($this->tuserDetial->user_img != '') { echo BASEURL .'public/user_img/'.$this->tuserDetial->user_img;} else { echo BASEURL .'public/user_img/user_128.png'; }?>" id='show_img'></div> 
+								<div class="upload_file_link_2">
+										<span><a href="javascript:void(0)" class="close_bt_hide_cls" id="open_upload_pic" onclick="openUploadImg()"><span>Upload pic</span></a></span>
+										<input type="file" class="file" id="user_img" name="user_img" style="display: none;" onchange="readImg(this);"/>
+									</div>
+								</div>
+								
+							
+
+						 	
+<?php /*						
+<div class="system_edit_upload34">
+								 <img src="<?php if($this->tuserDetial->user_img != '') { echo BASEURL .'public/user_img/'.$this->tuserDetial->user_img;} else { echo BASEURL .'public/user_img/user_128.png'; }?>" id='show_img' style='width:128px; height:128px;'>
+							<div class="upload_file_link">
+										<span><a href="javascript:void(0)" class="close_bt_hide_cls" id="open_upload_pic" onclick="openUploadImg()"><span>Upload pic</span></a></span>
+										<input type="file" class="file" id="user_img" name="user_img" style="display: none;" onchange="readImg(this);"/>
+									</div></div>	<?php */ ?>					
+                        <div class="confirmBtn">								
+							<input type="button" value="Confirm" name="next" class="confirm next" onclick="checkUserName()"/>
+							<input type="button" value="Cancel" name="cancel" class="cancel" onclick="cancelUser()"/>
+					    </div>
+					  </form>
+				   </section>    
+			  </div>
+			  </div>
+			  
+<script type="text/javascript">
+	 $("#phone").mask("?999.999.9999")
+</script>

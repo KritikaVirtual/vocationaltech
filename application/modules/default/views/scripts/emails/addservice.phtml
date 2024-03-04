@@ -1,0 +1,39 @@
+<?php echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/emails.js'); ?>
+<style>
+.message {margin: 30px 6px 4px;}
+.service_row { margin: 0 0 15px;}
+.service_row > label {width: 35%;}
+
+</style>
+<div id="add_build_serv_div" style='text-decoration:none'>
+	<h1>Default Template List</h1>
+	<div class="message" style='text-align:center;'>
+		<span id="success_msg" class="success_message" style="text-align:center;width:100%;font-weight:bold;color:red;"></span>
+		<span id="error_msg" class="success_message" style="text-align:center;width:100%;font-weight:bold;color:red;"></span>
+	</div>
+	<div class="service_row">
+	    
+	   <form name="emailtemplate" id="template_form" action="<?php echo BASEURL . 'emails/create'; ?>" method="post">
+                            <input type="hidden" value="<?php echo $this->bId; ?>" id="title" class="" name="build_id"> 
+                            <input type="hidden" value="8" id="title" class="" name="email_location"> 
+                            <div class="row">
+                                <label>Template Name<span class="required">*</span></label><span class="ufirstErr" id="title-error"></span>
+                                <div class="email_input">
+                                    <select name= 'templateId' id= 'templateId'  required>
+                            <option value="">Select Template</option>
+                             <?php foreach ($this->eList as $tList){ ?>
+                                <option value="<?php echo $tList->id; ?>"><?php echo $tList->email_title; ?></option>                               
+							<?php } ?>                         
+                </select>
+                                </div> 
+                            </div>
+                            <div class="confirmBtn float_none">
+                                <input type="submit" value="Continue" name="save" class="confirm">
+                                <input type="button" value="Cancel" name="cancel" class="cancel" onclick="window.location.href = '<?php echo BASEURL . 'emails/list' ?>'">
+                            </div>
+                        </form> 
+	
+	</div>
+	
+
+</div>

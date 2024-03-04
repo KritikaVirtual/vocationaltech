@@ -1,0 +1,21 @@
+#sct_main{
+	padding:120px 0 0 146px;
+}
+
+#sct_log_in{
+	width:250px;
+}
+
+#sct_log_in input{
+	width:144px;
+}
+
+#sct_log_in a.cmd_s{
+	float:right;
+}
+
+#sct_log_in .msg{
+	clear:both;
+	text-align:right;
+	color:#03C
+}

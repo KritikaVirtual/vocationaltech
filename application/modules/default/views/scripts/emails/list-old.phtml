@@ -1,0 +1,186 @@
+<?php 
+$etemplateAccess = $this->acessHelper->checkAccess($this->roleId, $this->etemplate_location);
+/* override access by custom user access if exist */
+$customeAccessmodel = new Model_UserAccess();
+$customeAccessmodeld = $customeAccessmodel->getUserCustomAccess($this->userId, $this->etemplate_location);
+if ($customeAccessmodeld[0]) {
+    $etemplateAccess = $customeAccessmodeld[0];
+}
+$reportDetailLinks="";
+/* end overriding access */
+?>
+<div class="container-right">
+     <ol id="toc">
+ <?php
+                $j = 1;
+                if(!empty($this->companyListing))
+                foreach ($this->companyListing as $cb) {
+                    ?>
+                    <li><a class="<?php if ($cb['build_id'] == $this->select_build_id) echo 'active'; ?>"  href="<?php echo $this->baseUrl() . '/emails/list/bid/' . $cb['build_id']; ?>" ><span><?php echo $cb['buildingName']; ?></span></a>
+                        <?php
+                        if ($reportDetailLinks != '') {
+                            if ($cb['build_id'] == $this->select_build_id) {
+                                $uniqueCostCenter = $cb['uniqueCostCenter'];
+                                $batchDetails = $woBatch->showBatch($cb['build_id']);
+                                $batch_number_report = '';
+                                if ($batchDetails != '') {
+                                    foreach ($batchDetails as $bd) {
+                                        $batch_number_report = $batch_number_report . $bd['batch_number'] . ',';
+                                    }
+                                }
+                                $order = 'woId';
+                                $dir = 'DESC';
+                                $wolist = $woReport->getWorkOrderByBuilding($cb['build_id'], $order, $dir);
+                                $invoicelist = $woReport->invoiceByBatch($cb['build_id'], $order, $dir);
+                                if ($wolist != '') {
+                                    foreach ($wolist as $woNumber) {
+                                        $woNumberAll = $woNumberAll . $woNumber->wo_number . ',';
+                                    }
+                                }
+                                if ($invoicelist != '') {
+                                    foreach ($invoicelist as $invoiceNumber) {
+                                        $invoiceAll = $invoiceAll . $invoiceNumber->wo_number . ',';
+                                    }
+                                }
+                            }
+                        }
+                        ?> 
+                    </li>
+
+                <?php } ?>
+            </ol>
+            <!-- Report Link -->
+    <?php if ($this->roleId == 1) { ?>
+        <section style="z-index:9999" class="w-48 fr ch-home-form">
+            <section class="ch-form-header ">
+                <h3>List of Email Template </h3>
+            </section>
+
+
+            <div class="message">
+                <?php
+                $em = new Zend_Session_Namespace('etemp_message');
+                echo $em->msg;
+                $em->setExpirationSeconds(1);
+                ?>
+            </div>
+            <div id="email_list">
+                <?php if ($this->emailData) { ?>
+                    <table width="98%" class="priority-list">
+                        <tr>
+                            <th>Title</th>
+                            <th>Subject</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                        <?php foreach ($this->emailData as $edata) { ?>
+                            <tr>
+                                <td><?php echo $edata['email_title']; ?></td>
+                                <td><?php echo $edata['email_subject']; ?></td>
+                                <td><?php echo ($edata['status']) ? 'Active' : 'Deactive'; ?></td>
+                                <td>
+                                    <div class="col02 coladdlastcol lastcol edit_delete_icon">
+                                        <a href="<?php echo BASEURL . 'emails/editemail/id/' . $edata['id']; ?>"  title="Edit"><img src="<?php echo BASEURL . 'public/images/edit.png' ?>" /></a> 
+                                        <?php if ($edata['system_generated'] == '0') { ?>
+                                            <a href="javascript:void(0);"  title="Delete" onclick="javascript:deleteEmailList('<?php echo BASEURL . 'emails/deleteemail/id/' . $edata['id']; ?>')"><img src="<?php echo BASEURL . 'public/images/delete.png' ?>" /></a>
+                                        <?php } ?>
+                                    </div>
+                                </td>
+
+                            </tr>
+                        <?php } ?>					
+                        <tr><th colspan="4"><div class="addbutton email_head"><a href="<?php echo BASEURL . 'emails/create'; ?>">Add Email Template</a></div></th></tr>
+
+                    </table>
+                    <?php
+                    /*
+                      pagination code.
+                     */
+                    ?>   
+                    <?php
+                    if (count($this->emailData) > 0 && !empty($this->emailData)) {
+                        echo $this->paginationControl($this->emailData, 'Sliding', 'pagination.phtml');
+                    }
+                    ?>
+                    <?php
+                } else
+                    echo 'No email template added.';
+                ?>	
+            </div>
+        </section>
+    <?php }else if ($this->roleId == 4 || $this->roleId == 9) {
+        ?>
+        <section style="z-index:9999" class="w-48 fr ch-home-form">
+            <section class="ch-form-header ">
+                <h3>List of Email Template </h3>
+            </section>
+
+
+            <div class="message">
+                <?php
+                $em = new Zend_Session_Namespace('etemp_message');
+                echo $em->msg;
+                $em->setExpirationSeconds(1);
+                ?>
+            </div>
+            <div id="email_list">
+                <?php if ($this->emailData) { ?>
+                    <table width="98%" class="priority-list">
+                        <tr>
+                            <th>Title</th>
+                            <th>Subject</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                        <?php foreach ($this->emailData as $edata) { ?>
+                            <tr>
+                                <td><?php echo $edata['email_title']; ?></td>
+                                <td><?php echo $edata['email_subject']; ?></td>
+                                <td><?php echo ($edata['status']) ? 'Active' : 'Deactive'; ?></td>
+                                <td>
+                                    <div class="col02 coladdlastcol lastcol edit_delete_icon">
+                                        <a href="<?php echo BASEURL . 'emails/editemail/id/' . $edata['id']; ?>"  title="Edit"><img src="<?php echo BASEURL . 'public/images/edit.png' ?>" /></a> 
+                                        <?php //if($edata['system_generated']=='0'){ ?>
+                                        <a href="javascript:void(0);"  title="Delete" onclick="javascript:deleteEmailList('<?php echo BASEURL . 'emails/deleteemail/id/' . $edata['id']; ?>')"><img src="<?php echo BASEURL . 'public/images/delete.png' ?>" /></a>
+                                        <?php //}?>
+                                    </div>
+                                </td>
+
+                            </tr>
+                        <?php } ?> <?php if ($this->roleId == 1) { ?>					
+                            <tr><th colspan="4"><div class="addbutton email_head"><a href="<?php echo BASEURL . 'emails/create'; ?>">Add Email Template</a></div></th></tr> <?php } ?>
+
+                    </table>
+                    <?php
+                    /*
+                      pagination code.
+                     */
+                    ?>   
+                    <?php
+                    if (count($this->emailData) > 0 && !empty($this->emailData)) {
+                        echo $this->paginationControl($this->emailData, 'Sliding', 'pagination.phtml');
+                    }
+                    ?>
+                    <?php
+                } else {
+                    echo 'No email template added.';
+                    ?>	
+                <?php } ?>
+                <section class="ch-form-header ">
+                    <h3><a class='addnewtemp' href="<?php echo BASEURL . 'emails/create/bid/'.$this->select_build_id; ?>">Add Email Template</a></h3>
+                </section>
+            </div>
+        </section>
+    <?php } else { ?> 
+        You don't have access for this module.
+    <?php } ?>
+</div>
+<script type="text/javascript">
+    function deleteEmailList(url) {
+        jConfirm('Are you sure to delete this email template?', 'Vision Work Orders', function (r) {
+            if (r == true) {
+                window.location.href = url;
+            }
+        });
+    }
+</script>

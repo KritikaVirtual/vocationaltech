@@ -1,0 +1,43 @@
+<div class="tuser-list">
+		<table width="100%" class="building_table_grid">
+			<tr>
+				<th>Work Order#</th>	
+				<th>Batch Number</th>
+				<th>Category</th>
+				<th>Tenant</th>
+				<th>Work Request</th>
+				<th>Building Name</th>
+				<th></th>
+			</tr>
+			<?php  if($this->worklistingbybatch){
+					 foreach($this->worklistingbybatch as $tnumber){ 
+				 ?>
+				 <tr>
+					 <td><?php echo $tnumber->wo_number;?></td>
+					 <?php /*<td><?php echo $tuser->firstName;?></td>*/?>				 
+					 <td>B<?php echo $tnumber->wo_batch;?></td>
+					 <td><?php echo $tnumber->categoryName;?></td>
+					 <td><?php echo $tnumber->tenantName;?></td> 
+					 <td><?php echo $tnumber->work_order_request;?></td> 
+					 <td><?php echo $tnumber->buildingName;?></td>
+					 <td> <a title="Delete" href="javascript:void(0);" onclick="deleteBatchList(<?php echo $tnumber->woId; ?>, <?php echo $tnumber->wo_batch; ?>, <?php echo $tnumber->building;  ?> )"><img src="<?php echo BASEURL . 'public/images/delete.png'?>"  /></a></td>
+					</tr>
+				 
+			<?php    }
+				 }else{
+					echo '<tr><td colspan="8"> No Work order</td></tr>'; 
+				 }
+			?>
+			<tr>
+				<td class="add_record" style="border-right:1px solid #848484;" colspan="8"> 
+					<a  href="#" onclick="showBatchList('<?php echo BASEURL.'complete/batchlistworkorder/bid/'. $this->worklistingbybatch[0]->building.'/tuid/'. $this->worklistingbybatch[0]->tenant.'/batchnumber/'.$tnumber->wo_batch ?>')">Add Work order </a>
+					<a class="modalbox"  href="#show_batch_list_div" id="show_batch_list_div_href" ></a>
+				</td>
+			</tr>		
+		</table>
+	 </div>
+	 
+	 <div id="show_batch_list_div" style="display:none; " class="bd-dft-cls">
+       
+			   
+     </div>

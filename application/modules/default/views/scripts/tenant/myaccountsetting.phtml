@@ -1,0 +1,207 @@
+<?php    
+         //$this->headLink()->appendStylesheet($this->baseUrl() . '/public/tabs.css');
+         $this->headLink()->appendStylesheet($this->baseUrl() . '/public/css/bootstrap.css');
+         $this->headLink()->appendStylesheet($this->baseUrl() . '/public/css/bootstrap-editable.css');
+ ?>
+<?php
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/tenant.js');
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/tenant_Info.js');
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/bootstrap.js');
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/bootstrap-editable.js');
+
+?>
+<?php
+$roleMapper = new Model_Role();
+$roleDetail = $roleMapper->getRole();
+$role_data = array();
+foreach($roleDetail as $rd){
+	$role_data[$rd['roleID']] = $rd['title'];
+}
+
+$sendMapper = new Model_SendAs();
+$sendDetail = $sendMapper->getSendAs();
+$send_data = array();
+foreach($sendDetail as $sd){
+	$send_data[$sd['sid']] = $sd['title'];
+}
+
+?>
+<div class="content no-padding active tenant-panel">
+
+ <div class="container-right" id="userinfo-data">
+    <?php    
+     
+		//$uinfo = $this->tenantuser;
+		
+		//var_dump($uinfo);
+		?>
+		<section id="first" class="w-48 fr ch-home-form tenant" style="z-index:9999">
+   
+		  <div id="contents" class="active tenant-account-setting">
+		        <h3>My Account Info</h3>
+			     <div id="msg">
+					 <span class="message">
+						 <?php $tm = new Zend_Session_Namespace('tenant_message'); 
+							 echo $tm->msg;
+							$tm->setExpirationSeconds(1);
+						 ?>
+					 </span>
+					 <span class="error-txt" style="color:red;"></span>
+				  </div>
+				 <div class="tenatuser_detail">
+				
+ <form>
+                  <fieldset class="fieldset_border">
+
+				  <div class="content-center">
+						  <div class="field_edit_popup">
+							 <label>User Name</label>
+							 <span><?php echo stripslashes($this->tenantuser->userName);?></span>
+							 <input type="hidden" name="role_id" id="role_id" value="<?php echo $uinfo->role_id?>"/>
+						   </div>
+							
+						   <div class="field_edit_popup">
+							 <label>Email </label>
+							 <span><?php echo $this->tenantuser->email;?></span>
+						  </div>
+						  <div class="field_edit_popup">
+							 <label>Name </label>
+							 <span><?php echo $this->tenantuser->firstName.' '.$this->tenantuser->lastName;?></span>
+						  </div> 
+						 
+						  <div class="field_edit_popup">
+							  <label>Office Phone</label>
+							  <span><?php echo $this->tenantuser->userPhoneNumber;?></span>
+						  </div>
+						  <div class="field_edit_popup">
+							  <label>Current Access</label>
+							  <span><?php echo ($this->tenantuser->role_id==5)?"Tenant Admin":'Tenant user';?></span>
+						  </div>
+						
+						  <div class="field_edit_popup">
+							  <label>Email Type</label>
+							  <div class="tu-address">
+							     <?php foreach($sendDetail as $sd){
+										 echo ($sd['sid']==$this->tenantuser->send_as)?$sd['title']:'';?>
+									<?php } ?>
+							</div>
+						  </div>
+						  <div class="field_edit_popup">
+							  <label>Complete Notification</label>
+							  <div class="tu-address">
+							  <input name="complete_notification" id="complete_notification" type="checkbox" <?php echo ($this->tenantuser->complete_notification==1)?'checked':''; ?> class="read" name="complete_notification" value="<?php echo $this->tenantuser->complete_notification; ?>">	
+							 </div>
+						  </div>
+						  <div class="field_edit_popup">
+							  <label>Note Notification</label>
+							  <div class="tu-address">
+							  <input name="note_notification" id="note_notification" type="checkbox" <?php echo ($this->tenantuser->note_notification==1)?'checked':''; ?> class="read" value="<?php echo $this->tenantuser->note_notification; ?>">	
+						  </div>
+						  <?php if($this->roleId==5){?>	
+						  <div class="field_edit_popup">
+							  <label>Cc Enabled</label>
+							  <div class="tu-address">
+							  <input name="cc_enable" id="cc_enable" type="checkbox" <?php echo ($this->tenantuser->cc_enable==1)?'checked':''; ?> class="read" value="<?php echo $this->tenantuser->cc_enable; ?>">	
+						  </div>
+						  <?php }?>							
+						  <div class="field_edit_popup">
+							  <label>Active</label>
+							  <div class="tu-address">
+							  <input name="is_active" id="is_active" type="checkbox" <?php echo ($this->tenantuser->status==1)?'checked':''; ?> class="read"  value="<?php echo $this->tenantuser->status; ?>">	
+						 </div>
+						
+						  </div>
+                          </fieldset>
+
+						
+                          <?php /* ?>
+                         <fieldset class="fieldset_border">
+                                      <legend class="my_legend">User Info:</legend>
+						  
+						   <div class="field_edit_popup">
+							 <label>First Name</label> <span>:</span>
+							 <a href="#" class="firstName" id="firstName-<?php echo $uinfo->uid; ?>" data-type="text" data-pk="<?php echo $uinfo->uid; ?>" data-url="<?php echo $this->baseUrl().'/company/updateuser';?>" data-title="Enter First Name" data-placeholder="Required" data-name="firstName"><?php echo (!empty($uinfo->firstName))?$uinfo->firstName:''; ?></a>										
+						  </div>
+
+						  <div class="field_edit_popup">
+							 <label>Last Name</label> <span>:</span>
+							 <a href="#" class="lastName" id="lastName-<?php echo $uinfo->uid; ?>" data-type="text" data-pk="<?php echo $uinfo->uid; ?>" data-url="<?php echo $this->baseUrl().'/company/updateuser';?>" data-title="Enter address1" data-placeholder="Required" data-name="lastName"><?php echo (!empty($uinfo->lastName))?$uinfo->lastName:''; ?></a>										
+						  </div>
+
+						  <div class="field_edit_popup">
+							 <label>E-mail Address</label> <span>:</span>
+							 <?php echo $uinfo->email;?>										
+						  </div>
+						  
+                          <div class="field_edit_popup">
+							 <label>User Name</label> <span>:</span>
+							 <?php echo $uinfo->userName;?>										
+						  </div>
+						  
+						  <div class="field_edit_popup">
+							 <label>Suite/Location</label> <span>:</span>
+							 <a href="#" class="suite_location" id="suite_location-<?php echo $uinfo->id; ?>" data-type="text" data-pk="<?php echo $uinfo->tuId; ?>" data-url="<?php echo $this->baseUrl().'/tenant/updatetenantuser';?>" data-title="Enter Suite/Location" data-placeholder="Required" data-name="suite_location" data-value="<?php echo $uinfo->suite_location;?>"><?php echo (!empty($uinfo->suite_location))?$uinfo->suite_location:''; ?></a>										
+						  </div>
+						  
+						  <div class="field_edit_popup">
+							 <label>Phone Number</label> <span>:</span>
+							 <a href="#" class="phoneNumber" id="phoneNumber-<?php echo $uinfo->uid; ?>" data-type="text" data-pk="<?php echo $uinfo->uid; ?>" data-url="<?php echo $this->baseUrl().'/company/updateuser';?>" data-title="Enter phoneNumber" data-placeholder="Required" data-name="phoneNumber"><?php echo (!empty($uinfo->userpNumber))?$uinfo->userpNumber:''; ?></a>										
+						  </div>
+
+
+						   <div class="field_edit_popup">
+							 <label>Cc Enabled</label> <span>:</span>
+							 <a href="#" class="cc_enable" id="cc_enable-<?php echo $uinfo->id; ?>" data-type="select" data-pk="<?php echo $uinfo->tuId; ?>" data-url="<?php echo $this->baseUrl().'/tenant/updatetenantuser';?>" data-title="Select Cc Enable" data-placeholder="Required" data-name="cc_enable" data-value="<?php echo $uinfo->cc_enable;?>"><?php echo (!empty($uinfo->cc_enable))?'Yes':'No'; ?></a>										
+						  </div>
+
+						  <div class="field_edit_popup">
+							 <label>Send As</label> <span>:</span>
+							 <a href="#" class="send_as" id="send_as-<?php echo $uinfo->id; ?>" data-type="select" data-pk="<?php echo $uinfo->tuId; ?>" data-url="<?php echo $this->baseUrl().'/tenant/updatetenantuser';?>" data-title="Select Send As" data-placeholder="Required" data-name="send_as" data-value="<?php echo $uinfo->send_as;?>"><?php echo $send_data[$uinfo->send_as]; ?></a>										
+						  </div>
+
+						  <div class="field_edit_popup">
+							 <label>Access</label> <span>:</span>
+							 <?php echo $role_data[$uinfo->role_id];?>	
+						  </div>
+
+						  <div class="field_edit_popup">
+							 <label>Complete Notification</label> <span>:</span>
+							 <a href="#" class="complete_notification" id="complete_notification-<?php echo $uinfo->id; ?>" data-type="select" data-pk="<?php echo $uinfo->tuId; ?>" data-url="<?php echo $this->baseUrl().'/tenant/updatetenantuser';?>" data-title="Select Complete Notification" data-placeholder="Required" data-name="complete_notification" data-value="<?php echo $uinfo->complete_notification;?>"><?php echo (!empty($uinfo->complete_notification))?'Yes':'No'; ?></a>										
+						  </div>	
+						  
+						  <div class="field_edit_popup">
+							<label>Note Notification</label> <span>:</span>
+							<a href="#" class="note_notification" id="note_notification-<?php echo $uinfo->uid; ?>" data-type="select" data-pk="<?php echo $uinfo->uid; ?>" data-url="<?php echo $this->baseUrl().'/company/updateuser';?>" data-title="Select Note Notification" data-placeholder="Required" data-name="note_notification" data-value="<?php echo $uinfo->note_notification;?>"><?php echo (!empty($uinfo->note_notification))?'Yes':'No'; ?></a>										
+						  </div>
+						  						  
+					 </fieldset> <?php */ ?>
+					  
+						  <div class="buttons text-center  mg-50">								 
+								  <a class="modalbox tnt-btn" href="#editTenantAdminSetting" onclick="javascript:editTenantAdminSetting('<?php echo BASEURL.'tenant/edittenantadminaccountinfo/tuId/'.$this->tenantuser->tenantuserId;?>')" ><input type="button" class="confirm2" value="Edit My Account Info" name="tenant_edit"> </a>
+							</div>				
+					
+					</form>
+				
+			</div>   			
+			
+	  </div>
+	  </section>    
+ 
+</div>
+</div>
+<div class="messageBox"></div>
+<div class="loader" style="display:none;"> <img src="<?php echo BASEURL.'public/images/loader.gif';?>"></div>
+<script type="text/javascript">
+$(document).ready(function(){
+	$('.send_as').editable({
+		source: [
+		<?php foreach($send_data as $key=>$value){?>		
+        {value: '<?php echo $key?>', text: '<?php echo $value?>'},       
+        <?php }?>
+       ],
+		validate: function(value) {
+           if($.trim(value) == '') return 'This field is required';
+        }
+	});
+});
+</script>

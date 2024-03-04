@@ -1,0 +1,116 @@
+<?php
+$layoutDetails = $this->layoutDetails;
+//$did=$this->did;
+//print_r($this->crDetails);
+$maxplan=$this->crDetails[0]->plan;
+//echo $maxplan;
+//print_r($this->crDetails);
+
+for($i=0;$i<$maxplan;$i++){
+    $dplan[$this->crDetails[$i]->plan]=$this->crDetails[$i];
+}
+
+//print_r($dplan);
+//die;
+?>
+
+<?php
+
+$check = $this->crRecurrence;
+
+if($check==1){
+    echo '<script>document.getElementById("saveRecurrence").style.display = "inline";document.getElementById("warrningmsg").style.display = "block";</script>';
+}else{
+    echo '<script>document.getElementById("saveRecurrence").style.display = "none";document.getElementById("warrningmsg").style.display = "none";</script>';
+}
+$valid=false;
+foreach($layoutDetails as $roomschedule):
+   // print_r($roomschedule);
+    if($valid)  
+        break;
+  $startDate = strtotime($roomschedule->start_time);
+  $endDate1 = date("H:i A",strtotime("+ ".$dplan[1]->min." hours",  $startDate)); 
+//
+  $startTime=($this->start_time==""?$startDate:$this->start_time);
+  //$endTime=date("H:i A",strtotime("+".$dplan[1]->min." hours",  strtotime($startTime)));
+  
+  $endTime=($this->end_time==""?$endDate1:$this->end_time);
+
+
+?>
+  
+<div class="row">
+<select name="start_time" id="start_time" class="status time_active" onchange="endtimedata()" style='width:100px;'>
+   
+    <?php
+    $last="";
+    if($roomschedule->all_day==1){
+        $startDate = strtotime("12:00 AM");
+        $endDate = strtotime("11:30 PM");   
+    }else{
+        $startDate = strtotime($roomschedule->start_time);
+        $endDate = strtotime($roomschedule->end_time);       
+    }
+   
+        for ($i = 0; $i <= 23; $i++) {
+            $fDate = date("h:i A", strtotime($i . ':00'));
+            $sDate = date("h:i A", strtotime($i . ':30'));
+                
+                
+                $cksDate = strtotime($fDate);
+                $ckeDate = strtotime($sDate);
+                
+            if($cksDate >= $startDate && $cksDate <= $endDate){             
+                echo "<option value='".$fDate."' ".($startTime == $fDate?'selected':"")." >".$fDate."</option>"; 
+                $last=$fDate;
+            }
+            
+            if($ckeDate >= $startDate && $ckeDate <= $endDate){
+                echo "<option value='".$sDate."' ".($startTime == $sDate?'selected':"")." >".$sDate."</option>"; 
+                $last=$sDate;
+            }
+        } ?>
+</select>
+
+<label></label>
+<select name="end_time" id="end_time" class="status time_active" onchange="endtimedata12()" style='width:100px;'>
+    <?php
+    
+        if($roomschedule->all_day==1){
+        $startDate = strtotime("12:00 AM");
+        $endDate = strtotime("11:30 PM"); 
+
+    }else{
+        $startDate = strtotime($roomschedule->start_time);
+        $endDate = strtotime($roomschedule->end_time);       
+    }
+        for ($i = 0; $i <= 23; $i++) {
+            $fDate = date("h:i A", strtotime($i . ':00'));
+            $sDate = date("h:i A", strtotime($i . ':30'));
+                $cksDate = strtotime($fDate);
+                $ckeDate = strtotime($sDate);
+            if($cksDate >= $startDate && $cksDate <= $endDate){             
+                echo "<option value='".$fDate."' ".($endTime == $fDate?'selected':"")." >".$fDate."</option>";  
+                
+            }
+            
+            if($ckeDate >= $startDate && $ckeDate <= $endDate){
+                echo "<option value='".$sDate."' ".($endTime == $sDate?'selected':"")." >".$sDate."</option>";  
+                
+            }
+        }?>
+</select>
+<input type="hidden" name="endlimittime" id="endlimittime" value="<?php echo $last; ?>" >
+ 
+</div>
+
+<?php
+
+$valid=true;
+endforeach; ?>
+
+<?php if(empty($this->start_time)): ?>
+     <script>         
+        $( "#hrday" ).trigger( "click" );
+     </script>
+<?php endif; ?>

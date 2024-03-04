@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title>Vision Work Order</title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="keywords" content="">                  
+<link rel="stylesheet" id="coming-soon-style-css" href="Files/style.css" type="text/css" media="all">
+	<style>
+    #title_style h1{
+        font-size:px;
+        color:;
+    }
+    body{    
+        background-color:#00539a;
+    }
+        .aligment{
+        text-align:center;
+                        vertical-align:middle;    }
+    </style>
+	    
+    </head>
+    <body style="height: 581px;">
+        <div style="height: 581px;  " id="main_inform_div">
+            <span class="aligment">
+                <div class="information">
+                    <center>
+                        <div id="logo">
+                        	<img src="Files/logo.jpg">
+                        </div>
+						                            <div id="title_style">
+                           		<h1>We're Coming Soon</h1>
+                            </div>
+                                                <div id="descrip">
+                        	<span style="font-size: 30px;">We are working very hard on the new version of our site. <br>It will bring a lot of new features. Stay tuned!
+</span>                        </div>
+                    	<div style="clear:both"></div>
+                    
+                        <div class="soc_icon_coneiner">
+							                                                                 
+                                                                       </div>
+                    </center>
+                </div>
+            </span>
+        </div>
+         
+    
+
+        </body></html>

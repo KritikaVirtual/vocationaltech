@@ -1,0 +1,680 @@
+<?php
+/*
+ * add corresponding js and css 
+ * file in the header.
+ */
+$this->headLink()->appendStylesheet($this->baseUrl() . '/public/tabs.css');
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/category.js');
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/moment.js');
+?>	
+<?php
+$this->headLink()->appendStylesheet($this->baseUrl() . '/public/css/bootstrap.css');
+$this->headLink()->appendStylesheet($this->baseUrl() . '/public/css/bootstrap-editable.css');
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/bootstrap.js');
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/bootstrap-editable.js');
+$category_access = $this->acessHelper->checkAccess($this->roleId, $this->category_location);
+/* override access by custom user access if exist */
+$customeAccessmodel = new Model_UserAccess();
+$customeAccessmodeld = $customeAccessmodel->getUserCustomAccess($this->userId, $this->category_location);
+if ($customeAccessmodeld[0]) {
+    $category_access = $customeAccessmodeld[0];
+}
+/* end overriding access */
+$reportModel = new Model_Report();
+$reportDetailLinks = '';
+$dashBoardViewsdetails = '';
+$dashBoardViews = '';
+$woNumberAll = '';
+$invoiceAll = '';
+$uniqueCostCenterAll = '';
+$buildIdReportAll = '';
+$batch_number_report = '';
+$uniqueCostCenter = '';
+$batch_number_reportallbuilding = '';
+$buildIdReport = $this->select_build_id;
+$woNumberAllbuilding = '';
+$invoiceAllbuilding = '';
+$batch_number_reportall = '';
+$reportDetailLinks = $reportModel->getReport($this->custID, 15);
+
+/* Searching section request data*/
+$search_by = '';
+    $service_value = '';
+    if(!empty($this->search) && isset($this->search['search_by'])){
+                    $search_by = $this->search['search_by'];
+                    $service_value=$this->search['search_value']; 
+    }
+
+?>
+<div class="container-right" id="companyListData">
+    <?php
+    /*     * *
+     * building tabs
+     */
+    if ($this->roleId != 1 && $category_access->is_access == 0) {
+        if ($this->custID != null && $this->custID && $this->companyListing != '' && $this->companyListing != false) {
+            ?>	
+            <!-- All Report link -->
+            <?php
+            if ($reportDetailLinks != '') {
+                $woReport = new Model_Report();
+                $woBatch = new Model_WoBatch();
+                foreach ($this->companyListing as $cb) {
+                    $uniqueCostCenterAll = $uniqueCostCenterAll . $cb['uniqueCostCenter'] . ',';
+                    $buildIdReportAll = $buildIdReportAll . $cb['build_id'] . ',';
+                    $batchDetails = $woBatch->showBatch($cb['build_id']);
+                    if ($batchDetails != '') {
+                        foreach ($batchDetails as $bd) {
+                            $batch_number_reportallbuilding = $batch_number_reportallbuilding . $bd['batch_number'] . ',';
+                        }
+                    }
+
+
+                    $order = 'woId';
+                    $dir = 'DESC';
+                    $wolist = $woReport->getWorkOrderByBuilding($cb['build_id'], $order, $dir);
+                    $invoicelist = $woReport->invoiceByBatch($cb['build_id'], $order, $dir);
+                    if ($wolist != '') {
+                        foreach ($wolist as $woNumber) {
+                            $woNumberAllbuilding = $woNumberAllbuilding . $woNumber->wo_number . ',';
+                        }
+                    }
+                    if ($invoicelist != '') {
+                        foreach ($invoicelist as $invoiceNumber) {
+                            $invoiceAllbuilding = $invoiceAllbuilding . $invoiceNumber->wo_number . ',';
+                        }
+                    }
+
+                    $batchDetails = $woBatch->showBatch($cb['build_id']);
+
+                    if ($batchDetails != '') {
+                        foreach ($batchDetails as $bd) {
+                            $batch_number_reportall = $batch_number_reportall . $bd['batch_number'] . ',';
+                        }
+                    }
+                }
+            }
+            ?>
+
+            <!-- End all report Link -->
+            <div id="contents">
+                <ol id="toc">
+                    <?php
+                    $j = 1;
+
+                    foreach ($this->companyListing as $cb) {
+                        ?>
+                        <li><a class="<?php if ($cb['build_id'] == $this->select_build_id) echo 'active'; ?>"  href="<?php echo $this->baseUrl() . '/category/index/bid/' . $cb['build_id']; ?>" ><span><?php echo $cb['buildingName']; ?></span></a>
+                            <?php
+                            if ($reportDetailLinks != '') {
+                                if ($cb['build_id'] == $this->select_build_id) {
+                                    $uniqueCostCenter = $cb['uniqueCostCenter'];
+                                    $batchDetails = $woBatch->showBatch($cb['build_id']);
+                                    $batch_number_report = '';
+                                    if ($batchDetails != '') {
+                                        foreach ($batchDetails as $bd) {
+                                            $batch_number_report = $batch_number_report . $bd['batch_number'] . ',';
+                                        }
+                                    }
+                                    $order = 'woId';
+                                    $dir = 'DESC';
+                                    $wolist = $woReport->getWorkOrderByBuilding($cb['build_id'], $order, $dir);
+                                    $invoicelist = $woReport->invoiceByBatch($cb['build_id'], $order, $dir);
+                                    if ($wolist != '') {
+                                        foreach ($wolist as $woNumber) {
+                                            $woNumberAll = $woNumberAll . $woNumber->wo_number . ',';
+                                        }
+                                    }
+                                    if ($invoicelist != '') {
+                                        foreach ($invoicelist as $invoiceNumber) {
+                                            $invoiceAll = $invoiceAll . $invoiceNumber->wo_number . ',';
+                                        }
+                                    }
+                                }
+                            }
+                            ?> 
+                        </li>
+
+                    <?php } ?>
+                </ol>
+                <!-- Report Link -->
+                <?php if ($reportDetailLinks != '') { ?> <div class="clearfix"></div><div class="tabmenu report_tab_menus" ><ul><?php
+                    foreach ($reportDetailLinks as $reportvalue) {
+                       if ($reportvalue->Report_Type == 'Flash') {
+				            $report_type = 'reports/VisionReportEngine/index.php?stimulsoft_client_key=ViewerFx&stimulsoft_';
+                       }else{
+                            $report_type = 'vnsreports/index.php?';
+                        }
+                        $reportOption = explode(',', $reportvalue->report_option);
+                        ?> <li class="report_text" ><a   <?php if ($reportvalue->report_target == 1) { ?> target='_blank' <?php } ?> href="<?php echo BASEURL; ?><?php echo $report_type; ?>report_key=<?php echo $reportvalue->report_mrt; ?><?php
+                                if (in_array('[[++user_id]]', $reportOption)) {
+                                    echo '&User=' . $this->userId;
+                                }
+                                ?><?php
+                                if ((in_array('[[++CostCenterAllBuildings]]', $reportOption)) && $uniqueCostCenterAll != '') {
+                                    echo '&Cost_Center_Number=' . rtrim($uniqueCostCenterAll, ',');
+                                } else if ((in_array('[[++CostCenterNumber]]', $reportOption)) && $uniqueCostCenter != '') {
+                                    echo '&Cost_Center_Number=' . $uniqueCostCenter;
+                                }
+                                ?><?php
+                                if ((in_array('[[++KeyBuildingAllBuildings]]', $reportOption)) && $buildIdReportAll != '') {
+                                    echo '&buildkey=' . rtrim($buildIdReportAll, ',');
+                                } else if ((in_array('[[++KeyBuildingNumber]]', $reportOption)) && $buildIdReport != '') {
+                                    echo '&buildkey=' . $this->select_build_id;
+                                }
+                                ?><?php
+                                if (in_array('[[++BatchNumber]]', $reportOption)) {
+                                    if ((in_array('[[++CostCenterAllBuildings]]', $reportOption)) && (in_array('[[++CostCenterAllBuildings]]', $reportOption))) {
+                                        echo '&Batch_Number=' . rtrim($batch_number_reportall, ',');
+                                    } else {
+                                        echo '&Batch_Number=' . rtrim($batch_number_report, ',');
+                                    }
+                                }
+                                ?><?php
+                                if ((in_array('[[++WONumber]]', $reportOption))) {
+                                    if ((in_array('[[++CostCenterAllBuildings]]', $reportOption)) && (in_array('[[++CostCenterAllBuildings]]', $reportOption))) {
+                                        echo "&WO_Number=" . rtrim($woNumberAllbuilding, ',');
+                                    } else {
+                                        echo "&WO_Number=" . rtrim($woNumberAll, ',');
+                                    }
+                                }
+                                ?><?php
+                                if ((in_array('[[++InvoiceNumber]]', $reportOption))) {
+                                    if ((in_array('[[++CostCenterAllBuildings]]', $reportOption)) && (in_array('[[++CostCenterAllBuildings]]', $reportOption))) {
+                                        echo '&Invoice_Number=' . rtrim($invoiceAllbuilding, ',');
+                                    } else {
+                                        echo '&Invoice_Number=' . rtrim($invoiceAll, ',');
+                                    }
+                                }
+                                ?>" ><?php echo $reportvalue->report_name; ?> </a> </li> <?php } ?> </ul></div>	<?php } ?>		
+                    <?php
+                    /*                     * *
+                     * page content
+                     * 
+                     */
+                    $cn_order = ($this->cn_order == 'ASC') ? 'DESC' : 'ASC';
+                    ?>
+        <?php //print_r($this->priorityDetail)   ?>
+                <a href="#add-schedule-td" id="add-schedule-td_href" class="modalbox">&nbsp;</a>	
+                <a href="#add-priority-td" id="add-priority-td_href" class="modalbox">&nbsp;</a>
+                <a href="#show_cat_tr" id="show_cat_tr_href" class="modalbox">&nbsp;</a>	
+                <div id="show_cat_tr" class="bd-dft-cls" style="display:none"></div>
+                <div class="content" id="page-content">
+                    <div class="message">
+                        <span class="success-txt" style="color:green; text-align:center;"></span>
+                        <span class="error-txt" style="color:red; text-align:center;"></span>
+                    </div>
+                    <input type="hidden" name="building_id" id="building_id" value="<?php echo $this->select_build_id; ?>"/>
+                    <div id="accordion_category" class="accordion_category" >
+                        <h3>Category Information</h3>
+                        <div class="category-information">     	 
+
+                            <div class="category-infromation" id="category_info">
+                                <div id="category_popup" style="display:none;"></div>
+                                <section class="w-48 fr ch-home-form">
+                                    <?php
+                                    // making array priority list data to show in category section
+                                    $priority_array = array();
+                                    if (!empty($this->priorityDetail_imp)) {
+                                        foreach ($this->priorityDetail_imp as $key => $pridata) {
+                                            $priority_array[$pridata['pid']] = $pridata['priorityName'];
+                                        }
+                                    }
+                                    ?>
+                                    <input type="hidden" name="category_page" id="category_page" value="<?php echo $this->page; ?>"/>
+                                    <input type="hidden" name="cn_order" id="cn_order" value="<?php echo $this->cn_order; ?>"/>
+                                    <table class="category-list" width="100%">
+                                        <tr>
+                                            <td colspan="8"> 
+                                                
+                                                <div class="row-limit" style="float: left;">
+                                                    Show:
+                                                    <select id="show_limit" onchange="showlimit_cat();" dir="rtl">
+                                                        <option value="10" <?php echo ($this->show==10?"selected":"");?> >10</option>
+                                                        <option value="25" <?php echo ($this->show==25?"selected":"");?>>25</option>
+                                                        <option value="50" <?php echo ($this->show==50?"selected":"");?>>50</option>
+                                                        <option value="100" <?php echo ($this->show==100?"selected":"");?>>100</option>
+                                                        <option value="all" <?php echo ($this->show=='all'?"selected":"");?>>All</option>
+                                                    </select>
+                                                </div>
+                                                <div id="vendor_search_div" style="float: none;margin-top: -11px;">
+                                                    <div id="search_form_div">
+                                                        <div id="search_message"></div>
+                                                        <form name="search_form" id="search_form" action="<?php echo BASEURL.'category/index/bid/'.$this->select_build_id;?>" method="post">
+                                                                <div id="form_field"><div style='float:left;'>
+                                                                       <label class='labelcenter' >Search For</label>
+                                                                       </div>
+                                                                       <select name="search_by" id="search_by" onchange="showServiceDropdown(this)">
+                                                                               <option value="categoryName">Category Name</option>
+                                                                        </select>
+                                                                       <div class="text-select-div">
+                                                                       <div id="search_txt" ><input type="text" name="search_value" id="search_value" value="<?php echo  stripslashes(htmlentities($service_value)); ?>"/></div>
+
+                                                                       </div>
+                                                                 </div>
+                                                                 <div class="form-button">
+                                                                          <input type="submit" name="search" id="search" value="Search"/>
+                                                                          <input type="button" name="reset" id="reset" value="Reset" onclick="window.location.href='<?php echo BASEURL.'category/index/bid/'.$this->select_build_id;?>'"/>
+                                                                 </div>  
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="<?php if ($category_access->is_write == 1) { ?> 5<?php } else { ?> 4 <?php } ?>" class="service_head" style='border:1px solid #dddddd; color:#333; padding:5px 3px;'>Categories</td>
+                                            <td colspan="3" class="gt_heading" style='border:1px solid #dddddd; color:#333; padding:5px 3px;'><a onclick="javascript:showPriorityTemplate('<?php echo $this->baseUrl() . '/category/createcategorytemplate/bid/' . $this->select_build_id; ?>');" href="#showPriorityTemplate" class="modalbox">Import Global Template</a> &nbsp;
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <th>&nbsp;</th>
+                                            <th><a href="<?php echo BASEURL . '/category/index/cn_order/' . $cn_order; ?>" class="<?php echo $this->cn_order; ?>">Category Name</a></th>
+                                            <th>Priority Schedule</th>
+                                            <th>Send E-mail To</th>
+                                            <th>Include/Exclude</th>
+                                            <th>Active</th>
+                                            <th>Imported</th>
+                                    <?php if ($category_access->is_write == 1) { ?> <th>Action</th><?php } ?>
+                                        </tr>
+
+                                        <?php
+                                        if (!empty($this->categoryDetail)) {
+                                            foreach ($this->categoryDetail as $cat_detail) {
+                                                $priority_name = '';
+                                                $status = '';
+                                                if (!empty($this->priorityDetail) && $cat_detail['prioritySchedule'] != -1 && $cat_detail['prioritySchedule'] != 0) {
+                                                    $priority_name = $priority_array[$cat_detail['prioritySchedule']];
+                                                } else {
+                                                    $priority_name = 'Not Assigned';
+                                                    /* if($cat_detail['prioritySchedule'] == -1)
+                                                      $priority_name = 'Not Assigned';
+                                                      else
+                                                      $priority_name = 'default'; */
+                                                }
+                                                ?>
+                                                <tr class="show-category" id="show_category_id_<?php echo $cat_detail['cat_id']; ?>">
+                                                    <td>
+                                                        <div class="open_plus" id="open_cat_<?php echo $cat_detail['cat_id']; ?>">
+                                                            <a href="javascript:void(0);" id="<?php echo $cat_detail['cat_id']; ?>" onClick="showEditcategory('<?php echo $cat_detail['cat_id']; ?>')";>
+                                                                <?php echo '&nbsp;&nbsp;'; ?>
+                                                            </a>
+                                                        </div>
+                                                        <div class="open_close" id="close_cat_<?php echo $cat_detail['cat_id']; ?>" style="display:none">
+                                                            <a href="javascript:void(0);" id="<?php echo $cat_detail['cat_id']; ?>" onClick="hideEditcategory('<?php echo $cat_detail['cat_id']; ?>')";>
+                                                                <?php echo '&nbsp;&nbsp;'; ?>
+                                                            </a>
+                                                        </div>
+                                                    </td>
+                                                    <td><?php echo $cat_detail['categoryName'] ?></td>
+                                                    <td> <?php echo $priority_name ?></td>
+                                                    <td>
+                                                        <?php
+                                                        if ($cat_detail['send_email'] == '') {
+                                                            echo 'None Selected';
+                                                        } else {
+                                                            echo 'Selected';
+                                                            //echo $cat_detail['send_email'];
+                                                        }
+                                                        ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php
+                                                        if ($cat_detail['include_exclude'] == '' && $cat_detail['visible_status'] == '1') {
+                                                            echo 'Visible to All Tenants';
+                                                        } else if ($cat_detail['visible_status'] == '1') {
+                                                            echo 'Visible to- Selected Tenant';
+                                                        } else {
+                                                            echo 'Not visible to- Selected Tenant';
+                                                        }
+                                                        ?>
+                                                    </td>
+
+                                                    <td><?php echo ($cat_detail['status'] == '1') ? 'Yes' : 'No'; ?></td> 
+                                                    <td> <?php echo ($cat_detail['import_template'] == '1') ? 'Yes' : 'No'; ?> </td>
+                <?php if ($category_access->is_write == 1) { ?><td class="yesnotooltips"><a class="editCat" href="javascript:void(0);" onclick="showEditcategory('<?php echo $cat_detail['cat_id']; ?>')" title="Edit"><img src="<?php echo BASEURL . 'public/images/edit.png'; ?>"></a>
+
+                                                            <a href="javascript:void(0);" onclick="deleteCategory(<?php echo $cat_detail['cat_id']; ?>)" class="delCat" data-id="<?php echo $cat_detail['cat_id']; ?>" title="Delete"><img src="<?php echo BASEURL . 'public/images/delete.png'; ?>"></a>
+
+                                                        </td><?php } ?>
+                                                </tr>											
+
+                                            <?php
+                                            }
+                                        } else {
+                                            ?>
+
+                                            <tr>
+                                                <td colspan="8">No Category created. Pease create new category!!! </td>
+                                            </tr>
+
+        <?php } ?>
+                                            
+                        <?php
+                            if (count($this->categoryDetail) > 0 && !empty($this->categoryDetail)) {
+                                echo '<tr><td colspan="8">';
+                                echo $this->paginationControl($this->categoryDetail, 'Sliding', 'pagination.phtml');
+                                echo '</td></tr>';                  
+                            }
+                        ?>                                     
+        <?php if ($category_access->is_write == 1) { ?>
+                                            <tr>
+                                                <td colspan="8" class="add_record"><a href="javascript:void(0)" onclick="showCategroyFrom()"><span>Add New Record</span></a></td>
+                                            </tr>	 
+        <?php } ?>
+                                    </table>
+                                </section>
+
+
+                            </div>						 
+                        </div>
+
+                        <!-- ******************************************** -->
+                        <!-- 			Priority Code Section			  -->
+                        <!-- ******************************************** -->
+
+                        <h3>Priority Information</h3>
+                        <div>
+                            <div class="priority-infromation" id="priority_info">
+                                <div id="priority_popup" style="display:none;"></div>
+                                <section class="w-48 fr ch-home-form">
+                                    <table class="priority-list" width="100%">
+                                        <tr>
+                                            <td colspan="8"> 
+                                                
+                                                <div class="row-limit" style="float: left;">
+                                                    Show:
+                                                    <select id="show_limit_pri" onchange="showlimit_pri();" dir="rtl">
+                                                        <option value="10" <?php echo ($this->show==10?"selected":"");?> >10</option>
+                                                        <option value="25" <?php echo ($this->show==25?"selected":"");?>>25</option>
+                                                        <option value="50" <?php echo ($this->show==50?"selected":"");?>>50</option>
+                                                        <option value="100" <?php echo ($this->show==100?"selected":"");?>>100</option>
+                                                        <option value="all" <?php echo ($this->show=='all'?"selected":"");?>>All</option>
+                                                    </select>
+                                                </div>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td colspan="<?php if ($category_access->is_write == 1) { ?> 6<?php } else { ?> 5 <?php } ?>" class="service_head" style='border:1px solid #dddddd; color:#333; padding:5px 3px;'>Priorities</td>
+                                            <td colspan="2" class="gt_heading" style='border:1px solid #dddddd; color:#333; padding:5px 3px;'><a onclick="javascript:showPriorityTemplate('<?php echo $this->baseUrl() . '/category/createprioritytemplate/bid/' . $this->select_build_id; ?>');" href="#showPriorityTemplate" class="modalbox">Import Global Template</a> &nbsp;
+
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>&nbsp;</th>
+                                            <th><a href="javascript:void(0)" class="<?php echo $this->prd_order; ?>" onclick="showPriorityList('<?php echo $this->select_build_id; ?>', 'DESC')">Priority Name</a></th>
+                                            <th>Priority Description</th>
+                                            <th>Active <input type="hidden" name="priority_page" id="priority_page" value="<?php echo $this->page; ?>"/></th>
+                                            <th>E-Mail Alerts Active</th>
+                                            <th>Imported</th>
+                                        <?php if ($category_access->is_write == 1) { ?><th>Action</th><?php } ?>
+                                        </tr>
+                                        <?php
+                                        if (!empty($this->priorityDetail)) {
+                                            foreach ($this->priorityDetail as $pri_detail) {
+                                                ?>
+                                                <tr id="show_priority_id_<?php echo $pri_detail['pid'] ?>" class="show-priority">
+                                                    <td><div class="open_plus" id="open_div_<?php echo $pri_detail['pid']; ?>"><a href="javascript:void(0);" id="<?php echo $pri_detail['pid']; ?>" onClick="return showPriorityScheduleList(<?php echo $pri_detail['pid']; ?>, '')";><?php echo '&nbsp;&nbsp;'; ?></a></div></div></td>
+                                                    <td><?php echo $pri_detail['priorityName'] ?></td>
+                                                    <td><?php echo $pri_detail['priorityDescription'] ?></td>
+                                                    <td><?php echo ($pri_detail['status']) ? 'Yes' : 'No' ?></td>
+                                                    <td><?php echo ($pri_detail['email_status']) ? 'Yes' : 'No' ?></td>
+                                                    <td><?php echo ($pri_detail['import_template']) ? 'Yes' : 'No' ?></td>
+                                                    <?php if ($category_access->is_write == 1) { ?>
+                                                        <td><div class="col02 coladdlastcol lastcol edit_delete_icon"><a href="javascript:void(0);" onclick="showEditPriority('<?php echo $pri_detail['pid'] ?>')"  data-id="<?php echo $pri_detail['pid'] ?>" title="Edit"><img src="<?php echo BASEURL . 'public/images/edit.png' ?>" /></a> <a href="javascript:void(0);" onclick="deletePriority('<?php echo $pri_detail['pid'] ?>')" data-id="<?php echo $pri_detail['pid'] ?>" title="Delete"><img src="<?php echo BASEURL . 'public/images/delete.png' ?>" /></a></div></td>
+                <?php } ?>
+                                                </tr>
+
+                                                <tr id="tr_schecdule-<?php echo $pri_detail['pid'] ?>" class="show-tr-schlist" style="display:none">
+                                                    <td>&nbsp;</td>
+                                                    <td colspan="6" class="margin_padding_none" id="show_priority_schedule_<?php echo $pri_detail['pid'] ?>"></td>
+                                                </tr>
+                                            <?php } ?>                         
+
+
+        <?php } else { ?>
+                                            <tr>
+                                                <td colspan="6">
+                                                    No priority created. Pease create new priority!!!
+                                                </td>
+                                            </tr>
+        <?php } ?>
+        <?php if ($category_access->is_write == 1) { ?>									  
+
+                                            <tr>
+                                                <td colspan="7" class="add_record"><a href="javascript:void(0)" onclick="showPriorityForm()"><span>Add New Priority</span></a></td>
+                                            </tr>	
+        <?php } ?>
+                                    </table>
+                                </section>
+
+                                <?php
+                                if (count($this->priorityDetail) > 0 && !empty($this->priorityDetail)) {
+                                    echo '<tr><td colspan="6">';
+                                    echo $this->paginationControl($this->priorityDetail, 'Sliding', 'priority_pagination.phtml');
+                                    echo '</td></tr>';
+                                }
+                                ?>	 
+                            </div>
+
+                        </div>	
+        <?php if ($category_access->is_write == 1) { ?>
+                            <div class="fade_default_opt" id="fd_dft_div" style="display:none">
+                                <div id="add-priority-td" class="bd-dft-cls" style="display:none">
+                                    <div class="formBuild">			  
+                                        <div id="priority-form_" class="priority_block_">
+                                            <section class="consol_form_head">
+                                                <h3>Add New Priority</h3>
+                                            </section>
+                                            <section class="w-48 fr ch-home-form_ ad-ptform">
+                                                <form name="addNewPriority">
+                                                    <input type="hidden" name="actionType" value="insert">
+                                                    <input type="hidden" name="building_id" id="building_id" value='<?php echo $this->select_build_id; ?>'>
+                                                    <?php /* <div class="row">
+                                                      <label>Id* :</label>
+                                                      <span class="prioNumErr" id="priority-number-error"></span>
+                                                      <input type="text" value="<?php echo $this->priorityDetail['id']?>" id="pid"
+                                                      name="data[pid]" readonly="readonly">
+                                                      </div> */ ?>
+                                                    <div class="row">
+                                                        <label>Priority Name <span class="required">*</span> :</label>
+                                                        <span class="priNameErr" id="priority-name-error"></span> 
+                                                        <input type="text" id="priority_name" name="priorityName" value="" style="float:left;">
+                                                    </div>
+                                                    <div class="row">
+                                                        <label>Priority Description<span class="required">*</span> :</label> 
+                                                        <span class="priDescErr" id="priority-description-error"></span>
+                                                        <input type="text" id="priority_description" name="priorityDescription"  value="" style="float:left;">
+                                                    </div>
+                                                    <div class="row">
+                                                        <label>Active<span class="required">*</span> :</label> 
+                                                        <select name="status" id="status" class="status">
+                                                            <option value="1">Yes</option>
+                                                            <option value="0">No</option>
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <label>E-Mail Alerts Active<span class="required">*</span> :</label> 
+                                                        <select name="email_status" id="email_status" class="status">
+                                                            <option value="1">Yes</option>
+                                                            <option value="0">No</option>
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <label>Save as Global Template<span class="required">*</span> :</label> 
+                                                        <select name="global_template" id="global_template" class="status">
+                                                            <option value="1">Yes</option>
+                                                            <option value="0" selected >No</option>
+                                                        </select>
+                                                    </div>
+
+
+                                                    <div class="confirmBtn">
+                                                        <input type="reset" value="Reset" name="reset" class="cancel"/>
+                                                        <input type="button" value="Save" name="next" id="save_priority" class="confirm savePriority" onclick="return addPriority()"/>
+                                                        <input type="button" value="Cancel" name="cancel" class="cancel" onclick="hidePriorityForm()"/>
+                                                    </div>
+                                                </form>
+                                            </section>    
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="#edit-priority-td" id="edit-priority-td_href" class="modalbox">&nbsp;</a>
+                            <div class="fade_default_opt" id="fd_dft_div" style="display:none">
+                                <div id="edit-priority-td" class="bd-dft-cls" style="display:none">
+                                </div> </div>
+
+                            <!-- <div id="add-schedule-td" class="bd-dft-cls" style="display:none">
+            <div class="addbuild build-form">									  
+                                         <div id="schedule-form" class="formBuild" style="margin-top:0%;">
+                                                     <section class="consol_form_head_">
+                                                                   <h1>Add Schedual to '<?php echo $this->priorityName; ?>' (ID: <?php echo $this->priority_id; ?>)</h1>
+                                                      </section>
+                                                      <section class="w-48 fr ch-home-form_ add_new_pp_ct" >
+                                                         <form name="addNewSchedule">
+                                                                     <input type="hidden" name="actionType" value="insert">
+                                                                           <input type="hidden" name="priority_id" id="priority_id" value='<?php echo $this->priority_id; ?>'>
+                            <?php /* <div class="row">
+                              <label>Id* :</label>
+                              <span class="prioNumErr" id="priority-number-error"></span>
+                              <input type="text" value="<?php echo $this->priorityDetail['id']?>" id="pid"
+                              name="data[pid]" readonly="readonly">
+                              </div> */ ?>
+                                                                           <div class="row">
+                                                                                   <label>Status Start <span class="required">*</span> :</label>
+                                                                                   <span class="startStatusErr" id="start-status-error"></span>															
+                                                                                   <select name="start_status" id="start_status" class="status">
+                            <?php foreach ($this->status_list as $sl) { ?>
+                                                                                                       <option value="<?php echo $sl['ssID'] ?>"><?php echo $sl['title'] ?></option>
+            <?php } ?>
+                                                                                   </select>
+                                                                           </div>
+                                                                           <div class="row">
+                                                                              <label>Status End<span class="required">*</span> :</label> 
+                                                                              <span class="endStatusErr" id="end-status-error"></span>
+                                                                              <select name="end_status" id="end_status" class="status">
+                            <?php foreach ($this->status_list as $sl) { ?>
+                                                                                                       <option value="<?php echo $sl['ssID'] ?>"><?php echo $sl['title'] ?></option>
+            <?php } ?>
+                                                                                   </select>
+                                                                           </div>
+                                                                           <div class="row">
+                                                                              <label>Time (Number)<span class="required">*</span> :</label> 
+                                                                              <span class="timeErr" id="time-error"></span>
+                                                                              <input type="text" id="Time" name="Time"  value="" onkeypress="return isNumberKey(event)" maxlength="2" style="float:left;" />
+                                                                           </div>
+                                                                           <div class="row">
+                                                                              <label>Length<span class="required">*</span> :</label> 
+                                                                              <span class="lengthErr" id="length-error"></span>
+                                                                              <select name="length" id="length" class="status">
+                            <?php foreach ($this->length_list as $llist) { ?>
+                                                                                                       <option value="<?php echo $llist['lID'] ?>"><?php echo $llist['title'] ?></option>
+            <?php } ?>
+                                                                                   </select>
+                                                                           </div>
+                                                                           <div class="row">
+                                                                              <label>Day's of the week<span class="required">*</span> :</label> 
+                                                                              <span class="wdErr" id="week-days-error"></span>
+                                                                              <select name="access_days" id="access_days" class="status">
+                            <?php foreach ($this->wd_list as $wl) { ?>
+                                                                                                       <option value="<?php echo $wl['wdID'] ?>"><?php echo $wl['title'] ?></option>
+            <?php } ?>
+                                                                                   </select>
+                                                                           </div>
+                                                                           <div class="row">
+                                                                           <label>Active<span class="required">*</span> :</label> 
+                                                                           <select name="sch_status" id="sch_status" class="status">
+                                                                                   <option value="1">Yes</option>
+                                                                                   <option value="0">No</option>
+                                                                           </select>
+                                                                           </div>
+                                                                           
+                                                                           
+                                                                            <div class="confirmBtn">
+                                                                                   <input type="reset" value="Reset" name="reset" class="cancel"/>
+                                                                                   <input type="button" value="Save" name="next" id="save_schedule" class="confirm" onclick="return saveSchedule()"/>
+                                                                                   <input type="button" value="Cancel" name="cancel" class="cancel" onclick="hideScheduleForm()"/>
+                                                                           </div>
+                                                         </form>
+                                                      </section>    
+                                         </div>
+            </div>
+                             </div>	 		-->				
+
+        <?php } ?>
+
+                    </div>
+                </div>		
+                <?php
+            } else {
+                echo 'No Building has assign to you.';
+            }
+        } else {
+            ?>
+            You don't have access for this module.
+<?php } ?>
+    </div>
+    <div class="messageBox"></div>
+    <div class="loader" style="display:none;" ><img src="<?php echo BASEURL . 'public/images/loader.gif'; ?>"><div>
+
+            <script type="text/javascript">
+                /*activatables('page', [<?php echo $pageStr; ?>]);*/
+                $(function () {
+                    $("#accordion_category").accordion({
+                        heightStyle: "content",
+                        animate: 1000,
+                        collapsible: true
+                    });
+                    
+                    //$( ".accordion_category" ).accordion({ active: 2 });
+
+                });
+            </script>
+ <script>
+        function showlimit_cat(){
+            //alert(12);
+            var data = $("#show_limit").val();
+            window.location =baseUrl+"category/index/show/"+data+"/type/cat";
+            //return;
+        }
+        
+        function showlimit_pri(){
+            //alert(12);
+            var data = $("#show_limit_pri").val();
+            window.location =baseUrl+"category/index/show/"+data+"/type/pri";
+            //return;
+        }
+        
+        $(document).ready(function() {
+            $("#accordion_category .accord-header").click(function() {
+                if($(this).next("div").is(":visible")){
+                    $(this).next("div").slideUp("slow");
+                } else {
+                    $(".content .accord-content").slideUp("slow");
+                    $(this).next("div").slideToggle("slow");
+                }
+            });
+        $("#accordion_category").next("div").trigger('click');
+        
+
+    });
+    
+  //$("#ui-id-4").attr("style","display:block !important");
+ 
+    
+</script>
+
+<?php
+   if($this->type == "pri"){ ?>`
+   <script>
+            $(document).ready(function() {
+                            $("#ui-id-2").attr("style","display:none !important"); 
+                            $("#ui-id-4").attr("style","display:block");                  
+            
+                        });
+   </script>
+<?php } ?>

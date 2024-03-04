@@ -1,0 +1,39 @@
+<?php
+$wnData = $this->wnData[0];
+?>
+<div id="ct_note_fm_div">
+	<span class="form_title">Edit Note Section</span>	
+	<div class="message">
+		<span id="success_msg" class="success"></span>
+		<span id="error_msg" class="error"></span>
+	</div>
+	<div id="note_form_ data">
+		 <div class="cw_row">
+			 <label>Date</label>
+			 <div class="cw-ibox-row">
+				 <span class="field_error" id="cwerr_date"></span>				 
+					   <input type="text" name="note_date" id="note_date"  value="<?php echo $wnData['note_date'];?>" readonly="readonly">			 
+			  </div>
+		 </div>
+		 <div class="cw_row">
+			 <label>Internal</label>
+			 <div class="cw-ibox-row">				 
+				   <select name="internal" id="internal">
+					   <option value="1" <?php echo ($wnData['internal']=='1')?'selected="selected"':''?>>Yes</option>
+					   <option value="0" <?php echo ($wnData['internal']=='0')?'selected="selected"':''?>>No</option>
+				   </select>
+			 </div>
+		 </div>
+		 <div class="cw_row">
+			 <label>Note</label>
+			 <div class="cw-ibox-row">
+				 <span class="field_error" id="cwerr_note"></span>				 
+				   <textarea name="note" id="note" rows="8" cols="45"><?php echo $wnData['note'];?></textarea>
+			 </div>
+		 </div>
+	 </div>
+	 <div class="buttons">
+				   <button type="button" name="save_note" id="save_note" value="Save" onclick="updateNote('<?php echo $this->wnId?>')">Save</button>
+				   <button type="button" name="cancel" id="cancel" value="Cancel" onclick="cancelNote()">Cancel</button>
+	  </div>
+</div>

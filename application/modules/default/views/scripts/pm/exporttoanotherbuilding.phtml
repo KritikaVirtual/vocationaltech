@@ -1,0 +1,101 @@
+<?php echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/pm.js');
+// This is for sorting building name in Ascending order
+function cmp($a, $b)
+{
+    return strcmp($a["buildingName"], $b["buildingName"]);
+}
+usort($this->companyListing, "cmp");
+?>     
+<div class="container-right task-popup task-section new-container">
+    <div class="message">               
+        <span class="error-txt" style="color:red; text-align:center;"></span>
+    </div>
+    <section style="z-index:9999" class="w-48 fr ch-home-form">
+        <section class="ch-form-header ch-form-header-new">
+            <h3>Export to Another Building </h3>
+        </section>
+        <form class="form-horizontal" onsubmit="return false">
+            <div class="export_templates-to-building">
+                <div class="success-msg-box bg-success text-center" id="success"></div>
+                <h4 class="text-center">This Wizard will clone a Select Buildings Templates to another Building</h4>                
+                    <div class="col-sm-6">
+                        <p><strong>Select building you want to export templates</strong></p>
+                        <div class="export_templates">
+                            <select name="exportbuilding" id="exportbuilding" class="form-control" onchange="showbuildingexceptthis();">
+                                
+                                <?php
+                                foreach($this->companyListing as $buildingList){
+                                    ?>
+                                <option value="<?php echo $buildingList['build_id']; ?>" <?php if($this->select_build_id==$buildingList['build_id']){ echo 'selected=selected'; } ?>><?php echo $buildingList['buildingName']; ?></option>
+                                <?php
+                                    
+                                }
+                                ?>
+                                    
+                                </select>
+                            <p><strong>The Select building complete Template Name(s) and all Type Designation(s) will be exported</strong></p>
+                        </div>
+                        
+                    </div>
+                    <div class="col-sm-6">
+                        <p><strong>Select building you want to import templates into</strong></p>
+                        <div class="import_templates">
+                            <select name="importbuilding" id="importbuilding" class="form-control"></select>
+                            <p><strong>The Select building will have all Template Name(s) and all type Designation(s) imported</strong></p>
+                        </div>
+                        
+                    </div>
+                
+                <div class="col-sm-12 text-center btn-row">
+                    <button class="confirm" onclick="closepopup();">Cancel</button>
+                    <button class="confirm" onclick="exportTemplatesValidate();">Export Templates</button>            
+                </div>
+            </div>        
+    </form>
+    </section>
+</div>
+<div id="add_subsetpopup" class="bd-dft-cls" style="display: none;"></div>
+<div class="loader" style="display:none;" > <img src="<?php echo BASEURL . 'public/images/loader.gif'; ?>">
+</div>
+
+
+<div id="confirmforexport">
+    <div class="messages"></div>
+    <button class="no">Cancel</button>
+    <button class="yes">Confirm Export</button>
+</div>
+<style>
+#confirmforexport {
+    display: none;
+    background-color: #fff;
+    border: 4px solid #000;
+    position: absolute;
+    max-width: 460px;
+    width: 100%;
+    left: 50%;
+    padding: 20px 8px;
+    box-sizing: border-box;
+    text-align: center;
+    top: 50px;
+    transform: translateX(-50%);
+}
+    #confirmforexport button {
+        background-color: #5cb85c;
+        color: #fff;
+        display: inline-block;
+        border: 1px solid #000;
+        padding: 5px;
+        text-align: center;
+        cursor: pointer;
+        margin-top: 20px;
+    }
+    #confirmforexport .messages {
+        text-align: center;
+        color: #000;
+        font-size: 16px;    
+    }
+    .ack{margin-left: 10px;}
+</style>
+
+
+

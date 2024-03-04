@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<StiSerializer application="StiReport" type="Flex" version="1.02">
+  <Dictionary type="Dictionary" Ref="1" isKey="true">
+    <Databases count="1" isList="true">
+      <Con_workorders type="Stimulsoft.Report.Dictionary.StiMySqlDatabase" Ref="2" isKey="true">
+        <Alias>Con_workorders</Alias>
+        <ConnectionStringEncrypted>w9rZ680Ko53wFaWQZghlc9V00WDlTqPBYkax7GpwJV7VdNkCSExjgeJAuezoRHc/0wzNyWJdk0lF
+W6XM4Wxiethc1evFV6Pd4k3dgOpMYkbDaGWJzQ==</ConnectionStringEncrypted>
+        <Name>Con_workorders</Name>
+      </Con_workorders>
+    </Databases>
+    <DataSources count="1" isList="true">
+      <rsMainInfo type="Stimulsoft.Report.Dictionary.StiMySqlSource" Ref="3" isKey="true">
+        <Alias>rsMainInfo</Alias>
+        <Columns count="27" isList="true">
+          <value>Management_Company_Name,System.String</value>
+          <value>Management_Logo,System.String</value>
+          <value>Building_Id,System.String</value>
+          <value>Building_Name,System.String</value>
+          <value>Building_Cost_Center,System.String</value>
+          <value>Building_Address,System.String</value>
+          <value>Building_Address_2,System.String</value>
+          <value>City_State_Zip,System.String</value>
+          <value>Building_Phone_Number,System.String</value>
+          <value>Tenant_Name,System.String</value>
+          <value>Tenant_Address_1,System.String</value>
+          <value>Tenant_Address_2,System.String</value>
+          <value>Tenant_Suite,System.String</value>
+          <value>Tenant_City,System.String</value>
+          <value>Tenant_State,System.String</value>
+          <value>Tenant_PostalCode,System.String</value>
+          <value>Tenant_User_User_Name,System.String</value>
+          <value>Tenant_User_First_Name,System.String</value>
+          <value>Tenant_User_Last_Name,System.String</value>
+          <value>User_Send_Welcome_Letter_To,System.String</value>
+          <value>Tenant_User_Active,System.String</value>
+          <value>Tenant_User_Password,System.String</value>
+          <value>Admin_User_ID,System.String</value>
+          <value>Admin_User_Title,System.String</value>
+          <value>Admin_User_First_Name,System.String</value>
+          <value>Admin_User_Last_Name,System.String</value>
+          <value>Admin_User_Welcome_Letter_From,System.String</value>
+        </Columns>
+        <CommandTimeout>30</CommandTimeout>
+        <Dictionary isRef="1"/>
+        <Name>rsMainInfo</Name>
+        <NameInSource>Con_workorders</NameInSource>
+        <Parameters count="0" isList="true"/>
+        <SqlCommand>Select
+  company.companyName As Management_Company_Name,
+  company.company_logo As Management_Logo,
+  buildings.build_id As Building_Id,
+  buildings.buildingName As Building_Name,
+  buildings.uniqueCostCenter As Building_Cost_Center,
+  buildings.address As Building_Address,
+  buildings.address2 As Building_Address_2,
+  Concat(buildings.city, ', ', buildings.state, ' ', buildings.postalCode) As
+  City_State_Zip,
+  buildings.phoneNumber As Building_Phone_Number,
+  tenant.tenantName As Tenant_Name,
+  tenant.address1 As Tenant_Address_1,
+  tenant.address2 As Tenant_Address_2,
+  tenant.suite As Tenant_Suite,
+  tenant.city As Tenant_City,
+  tenant.state As Tenant_State,
+  tenant.postalCode As Tenant_PostalCode,
+  users.userName As Tenant_User_User_Name,
+  users.firstName As Tenant_User_First_Name,
+  users.lastName As Tenant_User_Last_Name,
+  Concat(users.firstName," ", users.lastName) As User_Send_Welcome_Letter_To,
+  users.status As Tenant_User_Active,
+  users.password As Tenant_User_Password,
+  Admin_User.uid As Admin_User_ID,
+  Admin_User.Title As Admin_User_Title,
+  Admin_User.firstName As Admin_User_First_Name,
+  Admin_User.lastName As Admin_User_Last_Name,
+  Concat(Admin_User.firstName, " ", Admin_User.lastName) As
+  Admin_User_Welcome_Letter_From
+From
+  buildings Right Join
+  company
+    On company.cust_id = buildings.cust_id Right Join
+  tenant
+    On buildings.build_id = tenant.buildingId Left Join
+  tenantUsers
+    On tenant.id = tenantUsers.tenantId Left Join
+  users
+    On tenantUsers.userId = users.uid Right Join
+  user_building_module_access
+    On user_building_module_access.building_id = buildings.build_id Left Join
+  users Admin_User
+    On Admin_User.uid = user_building_module_access.user_id
+Where
+  company.status = 1 And
+  buildings.status = '1' And
+  tenant.status = 1 And
+  tenant.remove_status = 0 And
+  users.status = '1' And 
+  buildings.uniqueCostCenter In ({Cost_Center_Number}) And  
+  Admin_User.uid = ({User}) And
+  buildings.build_id In ({buildkey})
+Order By
+  Tenant_Name,
+  Admin_User_Last_Name</SqlCommand>
+      </rsMainInfo>
+    </DataSources>
+    <Relations count="0" isList="true"/>
+    <Report isRef="0"/>
+    <Variables count="4" isList="true">
+      <value>Search_x0020_BY,AllTenants,List_x0020_All_x0020_Tenants_x0020__x0028_If_x0020_Checked_x0029_,,System.Boolean,true,False,False,True</value>
+      <value>Search_x0020_BY,AllBuildings,List_x0020_All_x0020_Buildings_x0020__x0028_If_x0020_Checked_x0029_,,System.Boolean,true,False,False,True</value>
+      <value>Search_x0020_BY,WOTenant,or_x0020_by_x0020_Tenant_x0020_Name_x0020__x0028_Uncheck_x0020_List_x0020_All_x0020_Tenants_x0029_,,System.String,,False,False,True,False,_x003C__x003F_xml_x0020_version_x003D__x0022_1_x002E_0_x0022__x0020_encoding_x003D__x0022_utf_x002D_8_x0022__x0020_standalone_x003D__x0022_yes_x0022__x003F__x003E__x003C_StiSerializer_x0020_application_x003D__x0022_State_x0022__x0020_type_x003D__x0022_Flex_x0022__x0020_version_x003D__x0022_1_x002E_02_x0022__x003E__x003C_AllowUserValues_x003E_False_x003C__x002F_AllowUserValues_x003E__x003C_ItemsInitializationType_x003E_Columns_x003C__x002F_ItemsInitializationType_x003E__x003C_Keys_x0020_count_x003D__x0022_0_x0022__x0020_isList_x003D__x0022_true_x0022__x002F__x003E__x003C_KeysColumn_x003E_rsMainInfo_x002E_Tenant_Name_x003C__x002F_KeysColumn_x003E__x003C_Values_x0020_count_x003D__x0022_0_x0022__x0020_isList_x003D__x0022_true_x0022__x002F__x003E__x003C__x002F_StiSerializer_x003E_</value>
+      <value>Search_x0020_BY,Building_Name,or_x0020_Select_x0020_Building_x0020_Name_x0020__x0028_Uncheck_x0020_List_x0020_all_x0020_Buildings_x0029_,,System.String,,False,False,True,False,_x003C__x003F_xml_x0020_version_x003D__x0022_1_x002E_0_x0022__x0020_encoding_x003D__x0022_utf_x002D_8_x0022__x0020_standalone_x003D__x0022_yes_x0022__x003F__x003E__x003C_StiSerializer_x0020_application_x003D__x0022_State_x0022__x0020_type_x003D__x0022_Flex_x0022__x0020_version_x003D__x0022_1_x002E_02_x0022__x003E__x003C_AllowUserValues_x003E_False_x003C__x002F_AllowUserValues_x003E__x003C_ItemsInitializationType_x003E_Columns_x003C__x002F_ItemsInitializationType_x003E__x003C_Keys_x0020_count_x003D__x0022_0_x0022__x0020_isList_x003D__x0022_true_x0022__x002F__x003E__x003C_KeysColumn_x003E_rsMainInfo_x002E_Building_Name_x003C__x002F_KeysColumn_x003E__x003C_Values_x0020_count_x003D__x0022_0_x0022__x0020_isList_x003D__x0022_true_x0022__x002F__x003E__x003C__x002F_StiSerializer_x003E_</value>
+    </Variables>
+  </Dictionary>
+  <EngineVersion>EngineV2</EngineVersion>
+  <GlobalizationStrings count="0" isList="true"/>
+  <MetaTags count="0" isList="true"/>
+  <Pages count="1" isList="true">
+    <Page1 type="Page" Ref="4" isKey="true">
+      <Border>None;Black;2;Solid;False;4;Black</Border>
+      <Brush>Transparent</Brush>
+      <Components count="6" isList="true">
+        <PageHeaderBand1 type="PageHeaderBand" Ref="5" isKey="true">
+          <Brush>Transparent</Brush>
+          <ClientRectangle>0,4,195.9,2</ClientRectangle>
+          <Components count="0" isList="true"/>
+          <Conditions count="0" isList="true"/>
+          <Name>PageHeaderBand1</Name>
+          <Page isRef="4"/>
+          <Parent isRef="4"/>
+        </PageHeaderBand1>
+        <PageFooterBand1 type="PageFooterBand" Ref="6" isKey="true">
+          <Brush>Transparent</Brush>
+          <ClientRectangle>0,265.4,195.9,6</ClientRectangle>
+          <Components count="1" isList="true">
+            <Text77 type="Text" Ref="7" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>94,1.58,102,4</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,6</Font>
+              <Guid>ef563554a7d9ec3d04b0e04644b13f91</Guid>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text77</Name>
+              <Page isRef="4"/>
+              <Parent isRef="6"/>
+              <Text>Vocational Technologies, LLC 2000 - {Today.ToString("YYYY")}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Bottom</VertAlignment>
+            </Text77>
+          </Components>
+          <Conditions count="0" isList="true"/>
+          <Name>PageFooterBand1</Name>
+          <Page isRef="4"/>
+          <Parent isRef="4"/>
+        </PageFooterBand1>
+        <GroupHeaderBand2 type="GroupHeaderBand" Ref="8" isKey="true">
+          <Bookmark>{rsMainInfo.Tenant_Name}</Bookmark>
+          <Brush>Transparent</Brush>
+          <ClientRectangle>0,14,195.9,2</ClientRectangle>
+          <Components count="0" isList="true"/>
+          <Condition>{rsMainInfo.Tenant_Name}</Condition>
+          <Conditions count="0" isList="true"/>
+          <Name>GroupHeaderBand2</Name>
+          <Page isRef="4"/>
+          <Parent isRef="4"/>
+          <PrintOnAllPages>True</PrintOnAllPages>
+        </GroupHeaderBand2>
+        <GroupHeaderBand1 type="GroupHeaderBand" Ref="9" isKey="true">
+          <Bookmark>{rsMainInfo.Tenant_User_Last_Name}, {rsMainInfo.Tenant_User_First_Name}</Bookmark>
+          <Brush>Transparent</Brush>
+          <CanBreak>True</CanBreak>
+          <CanShrink>True</CanShrink>
+          <ClientRectangle>0,24,195.9,36.04</ClientRectangle>
+          <Components count="2" isList="true">
+            <Image2 type="Image" Ref="10" isKey="true">
+              <AspectRatio>True</AspectRatio>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,0,50.8,20.32</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <DataColumn isNull="true"/>
+              <Guid>abac99fb7dc1c6fb09f370705fbde99f</Guid>
+              <HorAlignment>Right</HorAlignment>
+              <Image/>
+              <ImageURL>https://www.visionworkorders.com/public/images/clogo/{rsMainInfo.Management_Logo}</ImageURL>
+              <Name>Image2</Name>
+              <Page isRef="4"/>
+              <Parent isRef="9"/>
+              <ProcessingDuplicates>Merge</ProcessingDuplicates>
+              <Stretch>True</Stretch>
+            </Image2>
+            <Text1 type="Text" Ref="11" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,24.04,98,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text1</Name>
+              <Page isRef="4"/>
+              <Parent isRef="9"/>
+              <Text>{Today}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat type="CustomFormat" Ref="12" isKey="true">
+                <StringFormat>MMMM dd, yyyy</StringFormat>
+              </TextFormat>
+            </Text1>
+          </Components>
+          <Condition>{rsMainInfo.Tenant_User_Last_Name}</Condition>
+          <Conditions count="0" isList="true"/>
+          <Name>GroupHeaderBand1</Name>
+          <Page isRef="4"/>
+          <Parent isRef="4"/>
+          <PrintOnAllPages>True</PrintOnAllPages>
+        </GroupHeaderBand1>
+        <DataBand1 type="DataBand" Ref="13" isKey="true">
+          <Brush>Transparent</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,68.04,195.9,178</ClientRectangle>
+          <Components count="1" isList="true">
+            <Text3 type="Text" Ref="14" isKey="true">
+              <Brush>Transparent</Brush>
+              <CanGrow>True</CanGrow>
+              <CanShrink>True</CanShrink>
+              <ClientRectangle>0,4,196,174</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text3</Name>
+              <Page isRef="4"/>
+              <Parent isRef="13"/>
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{rsMainInfo.User_Send_Welcome_Letter_To}
+{rsMainInfo.Tenant_Name}
+{rsMainInfo.Tenant_Address_1}
+{rsMainInfo.City_State_Zip}
+
+Re: Welcome Letter
+
+Dear {rsMainInfo.User_Send_Welcome_Letter_To},
+
+{rsMainInfo.Management_Company_Name} is pleased to introduce you to an exciting new service enhancement being implemented to better serve our tenants' daily operational needs. With the click of your mouse, you can immediately notify us of any building service request you may have. Simply log on to  https://www.visionworkorders.com/, type in the service you require and send. You will receive an immediate confirmation of your service request transmission and our management team will respond accordingly.
+
+Please visit our website at www.visionworkorders.com to view the easy to folow instructions for this new, user friendly, flexible service. Please save this address as one of your favorites for quick access in the future.
+
+Your user name and password are:
+
+	User Name :			{rsMainInfo.Tenant_User_User_Name}
+	User Password :		{rsMainInfo.Tenant_User_Password}
+
+{rsMainInfo.Management_Company_Name} continues to strive to better serve your needs and we are confident that https://www.visionworkorders.com/ will assist us in our goal. Please contact me in the management office at {rsMainInfo.Building_Phone_Number} with any questions you may have regarding this program. This program is simple, fast, accurate and responsive. 
+Welcome to https://www.visionworkorders.com/.
+
+Sincerely,
+
+
+{rsMainInfo.Admin_User_Welcome_Letter_From}
+{rsMainInfo.Admin_User_Title}
+{rsMainInfo.Management_Company_Name}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text3>
+          </Components>
+          <Conditions count="0" isList="true"/>
+          <DataSourceName>rsMainInfo</DataSourceName>
+          <Filters count="2" isList="true">
+            <value>_x007B_rsMainInfo_x002E_Tenant_Name_x0020__x003D__x003D__x0020_WOTenant_x0020__x007C__x007C__x0020_AllTenants_x007D_</value>
+            <value>_x007B_rsMainInfo_x002E_Building_Name_x0020__x003D__x003D__x0020_Building_Name_x0020__x007C__x007C__x0020_AllBuildings_x007D_</value>
+          </Filters>
+          <Interaction type="Stimulsoft.Report.Components.StiBandInteraction" Ref="15" isKey="true">
+            <SortingColumn>DataBand1.Tenant_Tenant_Name</SortingColumn>
+          </Interaction>
+          <Name>DataBand1</Name>
+          <Page isRef="4"/>
+          <Parent isRef="4"/>
+          <Sort count="0" isList="true"/>
+        </DataBand1>
+        <GroupFooterBand1 type="GroupFooterBand" Ref="16" isKey="true">
+          <Border>Left, Bottom;Black;1;Solid;False;4;Black</Border>
+          <Brush>Transparent</Brush>
+          <CanShrink>True</CanShrink>
+          <ClientRectangle>0,254.04,195.9,5.02</ClientRectangle>
+          <Components count="0" isList="true"/>
+          <Conditions count="0" isList="true"/>
+          <KeepGroupFooterTogether>False</KeepGroupFooterTogether>
+          <Name>GroupFooterBand1</Name>
+          <NewPageAfter>True</NewPageAfter>
+          <Page isRef="4"/>
+          <Parent isRef="4"/>
+          <PrintAtBottom>True</PrintAtBottom>
+        </GroupFooterBand1>
+      </Components>
+      <Conditions count="0" isList="true"/>
+      <Guid>bc3ba8f95a23316df9de9fc0defa05fc</Guid>
+      <Margins>10,10,6,2</Margins>
+      <Name>Page1</Name>
+      <PageHeight>279.4</PageHeight>
+      <PageWidth>215.9</PageWidth>
+      <PaperSize>Letter</PaperSize>
+      <Report isRef="0"/>
+      <ReportUnit type="mm" Ref="17" isKey="true"/>
+      <ResetPageNumber>True</ResetPageNumber>
+      <Watermark type="Stimulsoft.Report.Components.StiWatermark" Ref="18" isKey="true">
+        <Font>Arial,100</Font>
+        <TextBrush>[50:0:0:0]</TextBrush>
+      </Watermark>
+    </Page1>
+  </Pages>
+  <PrinterSettings type="Stimulsoft.Report.Print.StiPrinterSettings" Ref="19" isKey="true"/>
+  <ReportAlias>Tenant Welcome Letter</ReportAlias>
+  <ReportChanged>01/02/2016 11:09:49 AM</ReportChanged>
+  <ReportCreated>04/09/2015 03:55:59 PM</ReportCreated>
+  <ReportFile>Tenant Welcome Letter.mrt</ReportFile>
+  <ReportGuid>0f2a262a2b141aa8dfa1031a1d9d94a9</ReportGuid>
+  <ReportName>Tenant Welcome Letter</ReportName>
+  <ReportUnit>Millimeters</ReportUnit>
+  <ReportVersion>2015.3</ReportVersion>
+  <Script>Imports System
+Imports System.Drawing
+Imports System.Windows.Forms
+Imports System.Data
+Imports Stimulsoft.Controls
+Imports Stimulsoft.Base.Drawing
+Imports Stimulsoft.Report
+Imports Stimulsoft.Report.Dialogs
+Imports Stimulsoft.Report.Components
+
+Namespace Reports
+    
+    Public Class Report
+        Inherits Stimulsoft.Report.StiReport
+        
+        Public Sub New()
+            MyBase.New
+            Me.InitializeComponent
+        End Sub
+        #Region "StiReport Designer generated code - do not modify"#End Region 'StiReport Designer generated code - do not modify
+    End Class
+End Namespace</Script>
+  <ScriptLanguage>VB</ScriptLanguage>
+  <Styles count="4" isList="true">
+    <Style1 type="Stimulsoft.Report.StiStyle" Ref="20" isKey="true">
+      <Border>Left, Right;Black;1;Solid;False;4;Black</Border>
+      <Brush>Azure</Brush>
+      <Conditions count="0" isList="true"/>
+      <Font>Arial,8</Font>
+      <Name>Style1</Name>
+      <TextBrush>Black</TextBrush>
+    </Style1>
+    <sBackColor type="Stimulsoft.Report.StiStyle" Ref="21" isKey="true">
+      <Brush>Azure</Brush>
+      <Conditions count="0" isList="true"/>
+      <Font>Arial,8</Font>
+      <Name>sBackColor</Name>
+      <TextBrush>Black</TextBrush>
+    </sBackColor>
+    <OutLine type="Stimulsoft.Report.StiStyle" Ref="22" isKey="true">
+      <Border>All;Black;1;Solid;False;4;Black</Border>
+      <Brush>Transparent</Brush>
+      <Conditions count="0" isList="true"/>
+      <Font>Arial,8</Font>
+      <Name>OutLine</Name>
+      <TextBrush>Black</TextBrush>
+    </OutLine>
+    <Sback_DarkerGreen type="Stimulsoft.Report.StiStyle" Ref="23" isKey="true">
+      <Brush>[213:240:230]</Brush>
+      <Conditions count="0" isList="true"/>
+      <Font>Arial,8</Font>
+      <Name>Sback_DarkerGreen</Name>
+      <TextBrush>Black</TextBrush>
+    </Sback_DarkerGreen>
+  </Styles>
+</StiSerializer>

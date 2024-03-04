@@ -1,0 +1,162 @@
+<?php 
+/*
+ * add corresponding js and css 
+ * file in the header.
+ */
+$this->headLink()->appendStylesheet($this->baseUrl() . '/public/tabs.css');
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/category.js');
+ echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/emails.js');
+ $dist_access = $this->acessHelper->checkAccess($this->roleId,$this->dist_location);  
+ ?>	
+
+
+<div class="container-right" id="companyListData">
+    <?php 
+       /***
+        * building tabs
+        */  
+
+    if($this->roleId!=1 && $dist_access->is_access == 0){   
+	    if($this->custID!=null && $this->custID && $this->companyListing!='' && $this->companyListing!=false)
+	    {?>	
+			<div id="contents">
+				
+				<ol id="toc">
+					<?php 
+						$j = 1;
+
+						foreach($this->companyListing as $cb){  ?>
+						<li><a href="<?php echo $this->baseUrl().'/emails/console/bid/'.$cb['build_id']; ?>" <?php if($cb['build_id']==$this->select_build_id) echo 'class="active"';?>><span><?php echo $cb['buildingName']; ?></span></a>
+						</li>
+			
+					<?php } ?>
+				</ol>
+			
+  <?php }	?>
+
+				<div class="content" id="page-content">
+					<div id="title"> E-Mail Distribution Groups </div>
+					<div id="msg">
+						 <span class="message">
+							 <?php $tm = new Zend_Session_Namespace('email_message'); 
+								 echo $tm->msg;
+								$tm->setExpirationSeconds(1);
+							 ?>
+						 </span>
+				         <span class="error-txt" style="color:red;"></span>
+				       </div>
+					<input type="hidden" name="building_id" id="building_id" value="<?php echo $this->select_build_id;?>"/>
+
+					<div id="category_info" class="category-infromation">
+							 <div style="display:none;" id="category_popup"></div>
+				         <section class="w-48 fr ch-home-form">
+							<input type="hidden" value="1" id="category_page" name="category_page">
+							 <table width="100%" class="category-list">
+								 <tbody>
+									 <tr>
+									 	 <th>&nbsp;</th>
+										 <th>Group Name</th>
+										 <th>Active</th>
+										 <?php if($dist_access->is_write==1){?> <th>Action</th> <?php }?>
+									 </tr>
+									 
+							<?php 	$email_group_user_model = new  Model_EmailGroupUsers(); 
+									if(!empty($this->email_group)) {
+									 	foreach ($this->email_group as $key => $value) { 
+									 		$users='';
+
+											$users = $email_group_user_model->getGroupUsers($value['id']);
+
+									 	?>
+									 	<input type="hidden" value="<?php echo count($users); ?>" name="group_user_count_<?php echo $value['id']; ?>" id="group_user_count_<?php echo $value['id']; ?>" />
+
+									 	<?php 
+									 		if($value['is_default']){ ?>
+									 			<tr>
+												 	<td>
+
+												 		<div class="open_plus" id="open_div_<?php echo $value['id']; ?>">
+															<a href="javascript:void(0);" id="<?php echo $value['id'];?>" onClick="return loadEmailUser(<?php echo $value['id'];?>,<?php echo $this->select_build_id;?>)">&nbsp; &nbsp;</a>
+														</div>
+													    <div class="open_close" id="close_div_<?php echo $value['id'];?>" style="display:none">
+													    	<a href="javascript:void(0);" id="<?php echo $value['id'];?>" onClick="return hideEmailUser(<?php echo $value['id'];?>)";><?php echo '&nbsp;&nbsp;';?></a>
+													    </div>
+
+												 	</td>
+												 	<td><?php echo $value['group_name'].' (Send an E-Mail on Every Work Order)'; ?></td>
+												 	<td><?php if($value['active'] == 1) echo "Yes"; else echo "No"; ?></td>
+												 	<?php if($dist_access->is_write==1){?>
+														<td>
+												 		     <a title="Edit" href="<?php echo BASEURL.'emails/editemailgroup/gid/'.$value['id'].'/buildingId/'.$this->select_build_id;?>" ><img src="<?php echo BASEURL . 'public/images/edit.png'?>" /></a>
+
+												 	    </td>
+												 	<?php }?>
+									 			</tr>
+
+									 			<tr id="trId_<?php echo $value['id']; ?>" class="tremail-class" style="display:none">
+												     <td>&nbsp;</td>
+												     <td colspan="3" id="loademail_<?php echo $value['id']; ?>" class="tdemail-class"></td>
+
+												 </tr>
+
+									 	<?php	}
+									 		else{
+									 	?>
+
+									 	<tr>
+										 	<td>
+
+										 		<div class="open_plus" id="open_div_<?php echo $value['id']; ?>">
+													<a href="javascript:void(0);" id="<?php echo $value['id'];?>" onClick="return loadEmailUser(<?php echo $value['id'];?>,<?php echo $this->select_build_id;?>)">&nbsp; &nbsp;</a>
+												</div>
+											    <div class="open_close" id="close_div_<?php echo $value['id'];?>" style="display:none">
+											    	<a href="javascript:void(0);" id="<?php echo $value['id'];?>" onClick="return hideEmailUser(<?php echo $value['id'];?>)";><?php echo '&nbsp;&nbsp;';?></a>
+											    </div>
+
+										 	</td>
+										 	<td><?php echo $value['group_name']; ?></td>
+										 	<td><?php if($value['active'] == 1) echo "Yes"; else echo "No"; ?></td>
+										 	<?php if($dist_access->is_write==1){?>
+										 	<td>
+
+										 		<a title="Edit" href="<?php echo BASEURL.'emails/editemailgroup/gid/'.$value['id'].'/buildingId/'.$this->select_build_id;?>" ><img src="<?php echo BASEURL . 'public/images/edit.png'?>" /></a>
+												<a href="javascript:void(0);"  title="Delete" onclick="deleteEmailGroup('<?php echo $value['id'];?>','<?php echo $this->select_build_id ?>')"><img src="<?php echo BASEURL . 'public/images/delete.png'?>" /></a> 
+
+										 	</td>
+										 	<?php }?>
+									 	</tr>
+
+									 	<tr id="trId_<?php echo $value['id']; ?>" class="tremail-class" style="display:none">
+										     <td>&nbsp;</td>
+										     <td colspan="3" id="loademail_<?php echo $value['id']; ?>" class="tdemail-class"></td>
+
+										 </tr>
+									 	
+									 <?php } } } ?>
+									 
+									 
+							 	 </tbody>
+							 </table>
+						 </section>
+                        <?php if($dist_access->is_write==1){?>
+							<div class="ad-egroupdv">
+								<a href="<?php echo $this->baseUrl().'/emails/addemailgroup/bid/'.$this->select_build_id; ?>" onclick="javascript:void(0);"> Add New Distribution Group </a>
+							</div>
+						<?php }?>		 						 
+					</div>
+
+				</div>	
+
+			</div>
+	<?php }else{?>
+	    You don't have access for this module.
+	  <?php }?>					
+</div>
+
+<div class="loader" style="display:none;" > <img src="<?php echo BASEURL.'public/images/loader.gif';?>"><div>
+
+<?php if($this->groupid){?>
+<script type="text/javascript">
+	loadEmailUser('<?php echo $this->groupid;?>','<?php echo $this->select_build_id;?>');
+</script>	
+<?php }?>

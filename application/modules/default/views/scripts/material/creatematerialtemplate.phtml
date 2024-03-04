@@ -1,0 +1,164 @@
+<?php 
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/material.js');
+$serviceMapper = new Model_Services();
+$servicelist = $serviceMapper->getServicesByBuilding($this->build_id);
+$vendorMapper = new Model_Vendor();
+$vendorlist = $vendorMapper->getVendorListByBid($this->build_id);
+$materialMapper = new Model_Material();
+$materiallist = $materialMapper->getMaterialByCompany($this->cust_id, $this->build_id); 
+?>
+
+<div class="container-right" id="add-vendor-data">
+<section class="w-48 fr ch-home-form ">
+<section class="ch-form-header">
+<a href="#add_new_service_div" id="add_new_service_div_href" class="modalbox" style="float:left;">&nbsp;</a>
+	<h3>Import Template Material</h3>
+    </section>
+			 <div class="tenant-user-data_" >
+		
+				  <div class="form_head">					
+						<div class="success_message" style="text-align:center;width:100%;font-weight:bold;color:red;"></div>				  
+						<?php if($this->message && $this->message['msg']!=''){?>
+						   <span class="error-msg"><?php echo $this->message['msg'];?></span>
+						<?php }?>
+				   </div>
+				   <?php if($this->build_id!=''){?>
+					  <form name="addNewMaterial" id="addNewMaterial" action="<?php echo BASEURL.'material/creatematerialtemplate/';?>" method="post">
+					       <input type="hidden" name="form_key" value="<?php echo $this->form_key;?>"/>
+					       <input type="hidden" name="buildingId" id="buildingId" value="<?php echo $this->build_id?>"/>
+						   
+						  <div class="row">
+							<label>Material Description :<span class="required">*</span></label> <span class="field_error" id="description-error"></span>
+                           <div class="cv-select-div">
+						   <div id="vendor_dropdown">	
+							<select  name = 'description' id='description' onchange='getMaterial(this.value)'>
+							<option value = '' data-rel='' >Select Template</option>
+							<?php
+							foreach($materiallist as $value) { ?>
+							<option value='<?php echo $value->description; ?>' data-rel='<?php echo $value->mid; ?>'><?php echo $value->description; ?></option>
+							<?php } ?>
+							</select>
+							<!--<input type="text" value="" id="description" name="description"> -->
+							</div>
+                            </div>
+						   </div>
+					      <div class="row">
+							   <label>Date Created :<span class="required">*</span></label> <span class="field_error" id="date-error"></span>
+							   <div class="row_material_input">
+                               <input type="text" id="date_created" name="date_created" value="<?php echo date("F d,Y");?>" readonly="readonly">
+                               </div>
+						   </div> 
+						    <div class="row">
+							   <label>Service :<span class="required">*</span></label>
+                               <div class="cv-select-div">
+                                <span class="field_error" id="services-error"></span>
+							   <div id="service_dropdown">
+								 
+								   <div class="col-xs-10" style="padding:0px;">
+								   <input type='hidden' id='service_type_text' name='service_type_text' value=''>
+								   <input type='hidden' id='vendor_type_text' name='vendor_type_text' value=''>
+								   <select id="services" class="status" name="services">
+									   <option value="">Select Service</option>
+										<?php 
+										   if($servicelist){
+												foreach ($servicelist as  $service) {											
+													  echo '<option value="'.$service['sid'].'">'.stripslashes($service['service']).'</option>';
+												   
+												}
+											}
+										?>
+																			                    
+									</select>
+									</div>
+									<div style="padding:9px 0 0 8px;" class="col-xs-2">
+									<a class="vend_tooltip" onclick="showServiceForm()" href="javascript:void(0)"><img height="24" src="<?php echo BASEURL; ?>public/images/add_vendor.png">
+									<div class="vend_tooltip_content">Add New Service</div>
+									</a>
+									</div>
+								</div>
+                                </div>								
+						   </div>
+						    <div class="row">
+							   <label>Cost :<span class="required">*</span></label> <span class="field_error" id="cost-error"></span>
+							   <div class="row_material_input">
+                               <input type="text" value="" id="cost" name="cost">
+                               </div>
+						   </div>
+						   <div class="row">
+							   <label>Markup (%) :</label> <span class="field_error" id="markup-error"></span>
+							   <div class="row_material_input">
+                               <input type="text" value="" id="markup" name="markup" onkeypress="return isNumberKey(event)" maxlength="4">
+                               </div>
+						   </div>
+						  
+						    <div class="row">
+							    <label>Preferred Vendor :</label> 
+                                <div class="cv-select-div">
+                                <span class="field_error" id="vendor-error"></span>
+							    <div id="vendor_dropdown">									
+									   <select id="vendor" class="status" name="vendor">
+										   <option value="">Select Vendor</option>
+											<?php 
+											  if($vendorlist){
+												foreach ($vendorlist as $vl) {													
+													  echo '<option value="'.$vl['vid'].'">'.stripslashes($vl['company_name']).'</option>';												  
+												}
+											 }
+											?>											                   
+										</select>
+								  </div>
+                                  </div>
+						   </div>
+						   <div class="row">
+							   <label>Vendor Part# :</label> <span class="field_error" id="vendor_part-error"></span>
+							   <div class="row_material_input">
+                               <input type="text" value="" id="vendor_part" name="vendor_part">
+                               </div>
+						   </div>
+						   <div class="row">
+							   <label>Manufacturer:</label> <span class="field_error" id="manufacturer-error"></span>
+							  
+                              <div class="row_material_input">
+                               <input type="text" value="" id="manufacturer" name="manufacturer">
+                               </div>
+						   </div>
+						  <div class="row">
+								<label>Manufacturer Part# :</label> <span class="field_error" id="mfg-error"></span>
+                                <div class="row_material_input">
+								<input type="text" value="" id="mfg" name="mfg"/>
+                                </div>
+						   </div>							  
+							
+							<div class="confirmBtn float_none">								
+								<input type="button" value="Save" name="next" class="confirm next" onclick="validateMaterial()"/>
+								<input type="button" value="Cancel" name="cancel" class="cancel" onclick="cancelMaterial('<?php echo $this->build_id?>')"/>
+							</div>
+					  </form>
+				      <?php }else echo 'No building selected';?>
+			  </div>
+              </section> 
+			  </div>
+<div class="loader" style="display:none;" > <img src="<?php echo BASEURL.'public/images/loader.gif';?>"></div>
+    <div id="add_new_service_div" style="display:none" class="bd-dft-cls">
+          <div class="add_new_service_ formBuild">
+			   <h1>Add New Service</h1>
+			    <div class="form_fields">
+					<form name="service_form" id="service_from">
+						<div class="row">
+							<label>Service<span>*</span></label>
+                            <div class="cv-pselect">
+							<span class="field_error" id="add-service-error"></span>
+							<input type="text" name="service_opt" id="service_opt">
+                            </div>
+						</div>
+						<div class="confirmBtn float_none">
+							<input type="button" value="Add Service" name="next" class="confirm next" onclick="addService()"/>
+							<input type="button" value="Cancel" name="cancel" class="cancel" onclick="cancelAddService()"/>
+						</div>
+					</form>
+				</div>
+          </div>
+     </div>
+     
+    	  
+

@@ -1,0 +1,59 @@
+<?php 
+    $priorityDetail = $this->priorityDetail['priorityDetail'];
+    $building_id = $this->priorityDetail['building_id'];
+    if(!empty($priorityDetail)) {
+        $priorityDetail = $priorityDetail[0];
+        $this->priorityDetail['id'] = $priorityDetail['pid'];
+    }
+?>
+<div class="container-right" id="priority-form">  
+    <section class="ch-form-header ">
+        <h3>Add New Priority</h3>
+    </section>
+    <section class="w-48 fr ch-home-form">
+        <div class="tableGrid catgry">
+            <!--form id="addNewBuilding" action="<?php echo BASEURL.'category/addpriority'; ?>" method="post"-->
+                <input type="hidden" name="actionType" value="<?php echo (!empty($priorityDetail) ? "edit" : "insert")?>">
+                <input type="hidden" name="data[building_id]" value='<?php echo $building_id;?>'>
+                <label>Id* :</label> 
+                <input type="text" value="<?php echo $this->priorityDetail['id']?>" id="pid" 
+                       name="data[pid]" readonly="readonly">
+                <span class="costCenterErr" id="priority-number-error"></span>
+                
+                <label>Name* :</label> 
+                <input type="text" id="priority_name" 
+                       name="data[priorityName]" 
+                       value="<?php echo (isset($priorityDetail['priorityName']) ? $priorityDetail['priorityName'] : "")?>">
+                <span class="costCenterErr" id="priority-name-error"></span>
+                
+                <label>Description* :</label> 
+                <input type="text" id="priority_description" 
+                       name="data[priorityDescription]"
+                       value="<?php echo (isset($priorityDetail['priorityDescription']) ? $priorityDetail['priorityDescription'] : "")?>">
+                <span class="costCenterErr" id="priority-description-error"></span>
+                
+                <label>Active* :</label> 
+                <select name="data[status]" id="status" class="status">
+                    <option value="1" 
+                        <?php echo (isset($priorityDetail['status']) ? 
+                                ($priorityDetail['status']==1 ? "selected" : "") 
+                                : "")
+                           ?> >Yes</option>
+                    <option value="0" 
+                        <?php echo (isset($priorityDetail['status']) ? 
+                                ($priorityDetail['status']==0 ? "selected" : "") 
+                                : "")
+                           ?> >No</option>
+                </select>
+                <span class="costCenterErr" id="priority-status-error"></span>
+                
+                 <div class="confirmBtn">
+                    <input type="reset" value="Reset" name="cancel" class="cancel"/>
+                    <input type="submit" value="Save" name="next" class="confirm savePriority"/>
+                    <a href="<?php echo BASEURL.'category'; ?>" class="cancel" 
+                       style="height:auto;">Cancel</a>
+                </div>
+            <!--/form-->
+        </div>
+    </section>
+</div>

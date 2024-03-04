@@ -1,0 +1,93 @@
+<?php 
+error_reporting(0);
+
+$b_name = get_browser_name($_SERVER['HTTP_USER_AGENT']);
+
+    function get_browser_name($user_agent){
+        if (strpos($user_agent, 'Opera') || strpos($user_agent, 'OPR/')) return 'Opera';
+        elseif (strpos($user_agent, 'Edge')) return 'Edge';
+        elseif (strpos($user_agent, 'Chrome')) return 'Chrome';
+        elseif (strpos($user_agent, 'Safari')) return 'Safari';
+        elseif (strpos($user_agent, 'Firefox')) return 'Firefox';
+        elseif (strpos($user_agent, 'MSIE') || strpos($user_agent, 'Trident/7')) return 'Internet Explorer';
+        return 'Other';
+    }
+	
+	if($b_name == 'Internet Explorer'){ ?>
+	    <h1 style="text-align:center; color:#fff;">Please use another Browser.</h1>
+		<p style="text-align:center; color:#fff;">(chrome,firefox,safari..... etc)</p>
+
+	<?php }else{?>
+<div class="login_form">
+<span class="companyLogo">
+	<img src="<?php echo BASEURL.'public/images/vt_logo.png'?>" width="250">
+</span>
+<div class="index_lform">
+
+<span class="visionText">Vision Work Orders</span>
+
+<h1>Sign into your account</h1>
+	<?php if(!empty($this->message)){ ?>
+				<div class="success"  style="margin-bottom: 21px;width:150px;font-weight:bold" ><?php echo $this->message; ?></div>
+	<?php }
+	
+		 if($this->error){
+			$err=$this->error; 
+			 
+			echo '<div><div class="error">';
+			echo '<div>';
+			
+			if(isset($err['save'])) echo '* Invalid username/password combination <br>';
+			if(isset($err['active'])) echo '* Your account has been deactivated <br>';
+			if(isset($err['remove'])) echo '* Your account has been temporarily disabled <br>';	
+			if(isset($err['company'])) echo '* Your company has been temporarily disabled <br>';			
+			echo '</div></div></div>';
+		  }  
+		 
+	?>		   
+    <form method="post" />
+            <span class="log_er"><?php if(isset($err['email'])) echo 'Please enter username.';?> </span>
+                <div id="username_field"><label>Username:</label><?php echo $this->form->email ?>
+
+                </div>
+            <span class="log_er"><?php if(isset($err['password'])) echo 'Please enter password.';?> </span>
+                <div id="password_field"><label>Password:</label> 
+                    <?php echo $this->form->password ?>
+                    </div>
+                    <?php /*<div class="rem"><input name="" type="checkbox" value="" /> Remember me</div>*/?>
+            <div class="log_btn loginbtn">
+            <span class=""><input name="remember" type="checkbox" value="1" <?php echo ($_COOKIE['remember']==""?"":"CHECKED"); ?> />
+            <label>Remember Me</label>
+            </span>
+
+            <span class="loginSeprator">|</span>
+
+            <a class="forgotPass" href="<?php echo BASEURL.'index/forgetpassword'?>">Forgot your password ?</a>
+
+            <input name="" type="submit" value="Login" />
+            </div>
+    </form>
+           
+</div>
+ </div>
+
+<script>
+$(document).ready(function(){
+    $('input[name="password"]').attr("value",'<?php echo base64_decode($_COOKIE['password']); ?>');
+    $('input[name="email"]').attr("value",'<?php echo $_COOKIE['user_id']; ?>');
+})
+</script>
+<div class="footer">
+	<span class="footerLeft">
+		<img src="<?php echo BASEURL.'public/images/vt_logo.png'?>" width="145" />
+		<p> 1996-2020 Vision System by Vocational Technologies, LLC © Copyright <?php echo date('Y');?>. Vocational Technologies. All Rights Reserved.</p>
+	</span>
+	<span class="footerRight">
+		<ul>
+			<li><a href="<?php echo BASEURL.'index/support'?>">Support</a></li>
+			<span class="footerSeprator">|</span>
+			<li><a href="<?php echo BASEURL.'index/contactus'?>">Contact Us</a></li>
+		</ul>
+	</span>
+</div>
+<?php } ?>	

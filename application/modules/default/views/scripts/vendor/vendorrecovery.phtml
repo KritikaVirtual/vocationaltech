@@ -1,0 +1,205 @@
+<?php    $this->headLink()->appendStylesheet($this->baseUrl() . '/public/tabs.css');
+   echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/vendor.js');      
+ ?>
+<?php
+
+$this->headLink()->appendStylesheet($this->baseUrl() . '/public/css/bootstrap.css');
+$this->headLink()->appendStylesheet($this->baseUrl() . '/public/css/bootstrap-editable.css');
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/bootstrap.js');
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/bootstrap-editable.js');
+
+$reportModel = new Model_Report();
+$reportDetailLinks = ''; $dashBoardViewsdetails=''; $dashBoardViews=''; $woNumberAll=''; $invoiceAll=''; $uniqueCostCenterAll=''; $buildIdReportAll=''; $batch_number_report=''; $uniqueCostCenter=''; $batch_number_reportallbuilding=''; $buildIdReport=$this->select_build_id; $woNumberAllbuilding=''; $invoiceAllbuilding =''; $batch_number_reportall='';
+$reportDetailLinks = $reportModel->getReport($this->custID, 22);
+
+?>
+<?php
+$acesshelper = new Model_Vendor();
+$roleMapper = new Model_Role();
+$roleDetail = $roleMapper->getRole();
+$role_data = array();
+
+foreach($roleDetail as $rd){
+	$role_data[$rd['roleID']] = $rd['title'];
+}
+
+
+$trecoverAccess = $acesshelper->getUserAccessForModule($this->roleId,$this->vrecovery_location
+);
+
+
+/*override access by custom user access if exist */
+$customeAccessmodel = new Model_UserAccess();
+$customeAccessmodeld = $customeAccessmodel->getUserCustomAccess($this->userId,$this->trecovery_location);
+if($customeAccessmodeld[0]) {
+	$trecoverAccess = $customeAccessmodeld[0];
+}
+/* end overriding access */
+
+?>
+<div class="container-right" id="userinfo-data">
+    <?php 
+       if($this->roleId!=1 && $trecoverAccess->is_access == 0){ 
+    if($this->custID!=null && $this->custID && $this->companyListing!='' && $this->companyListing!=false){?>
+	<!-- All Report link -->
+		<?php if($reportDetailLinks!='') { 
+					$woReport = new Model_Report();
+					$woBatch = new Model_WoBatch();
+					foreach($this->companyListing as $cb){ 
+						$uniqueCostCenterAll=$uniqueCostCenterAll.$cb['uniqueCostCenter'].',';
+						$buildIdReportAll=$buildIdReportAll.$cb['build_id'].',';
+						$batchDetails=$woBatch->showBatch($cb['build_id']);
+					    if($batchDetails!='') {
+						    foreach($batchDetails as $bd ) {
+							   $batch_number_reportallbuilding= $batch_number_reportallbuilding.$bd['batch_number'].',';
+						    }
+					    }  
+				
+						
+					        $order='woId';
+							$dir='DESC';
+							$wolist = $woReport->getWorkOrderByBuilding($cb['build_id'],$order,$dir);
+						    $invoicelist = $woReport->invoiceByBatch($cb['build_id'],$order,$dir);
+							if($wolist!='') {
+								foreach($wolist as $woNumber) {
+								   $woNumberAllbuilding=$woNumberAllbuilding.$woNumber->wo_number .',' ;
+								}
+							}
+								if($invoicelist!='') {
+									foreach($invoicelist as $invoiceNumber) {
+									   $invoiceAllbuilding=$invoiceAllbuilding.$invoiceNumber->wo_number .',' ;
+									}
+								}
+								
+						    $batchDetails=$woBatch->showBatch($cb['build_id']);
+						    
+						    if($batchDetails!='') {
+							   foreach($batchDetails as $bd ) {
+								   $batch_number_reportall=$batch_number_reportall.$bd['batch_number'].',';
+							    }
+						    }
+						
+					}  
+				} ?>
+				
+				<!-- End all report Link -->
+			<ol id="toc">
+				<?php 
+					$j = 1;
+					
+					foreach($this->companyListing as $cb){ ?>					
+					<li><a class="<?php if($cb['build_id']==$this->select_build_id) echo 'active';?>"   href="<?php echo $this->baseUrl().'/vendor/vendorrecovery/bid/'.$cb['build_id']; ?>" ><span><?php echo $cb['buildingName']; ?></span></a>
+					<!-- selected report Link -->
+					<?php   
+					if($reportDetailLinks!='') {  
+						if($cb['build_id']==$this->select_build_id) {
+						    $uniqueCostCenter=$cb['uniqueCostCenter'];
+						    $batchDetails=$woBatch->showBatch($cb['build_id']);
+						    $batch_number_report='';
+						    if($batchDetails!='') {
+							   foreach($batchDetails as $bd ) {
+								   $batch_number_report=$batch_number_report.$bd['batch_number'].',';
+							    }
+						    }	
+							$order='woId';
+							$dir='DESC';
+							$wolist = $woReport->getWorkOrderByBuilding($cb['build_id'],$order,$dir);
+							$invoicelist = $woReport->invoiceByBatch($cb['build_id'],$order,$dir);
+							if($wolist!='') {
+								foreach($wolist as $woNumber) {
+								   $woNumberAll=$woNumberAll.$woNumber->wo_number .',' ;
+								}
+							}
+							if($invoicelist!='') {
+								foreach($invoicelist as $invoiceNumber) {
+								   $invoiceAll=$invoiceAll.$invoiceNumber->wo_number .',' ;
+								}
+							}
+						} 
+					}  ?> 
+					</li>
+				<?php $j++; } ?>
+			</ol>	
+
+
+<!-- Report Link -->
+		<?php  if($reportDetailLinks!='') { ?> <div class="clearfix"></div><div class="tabmenu report_tab_menus" ><ul><?php foreach($reportDetailLinks as $reportvalue){ $reportOption=explode(',',$reportvalue->report_option); ?> <li class="report_text" ><a   <?php if($reportvalue->report_target==1) { ?> target='_blank' <?php } ?> href="<?php echo BASEURL; ?>reports/VisionReportEngine/index.php?stimulsoft_client_key=ViewerFx&stimulsoft_report_key=<?php echo $reportvalue->report_mrt; ?><?php if(in_array('[[++user_id]]',$reportOption)) { echo '&User='.$this->userId; } ?><?php if((in_array('[[++CostCenterAllBuildings]]',$reportOption)) && $uniqueCostCenterAll!='' ) { echo '&Cost_Center_Number='.rtrim($uniqueCostCenterAll,','); } else if((in_array('[[++CostCenterNumber]]',$reportOption)) && $uniqueCostCenter!=''){ echo '&Cost_Center_Number='.$uniqueCostCenter;} ?><?php if((in_array('[[++KeyBuildingAllBuildings]]',$reportOption)) && $buildIdReportAll!='' ) { echo '&buildkey='.rtrim($buildIdReportAll,','); } else if((in_array('[[++KeyBuildingNumber]]',$reportOption)) && $buildIdReport!='') { echo '&buildkey='.$this->select_build_id; } ?><?php if(in_array('[[++BatchNumber]]',$reportOption)) { if((in_array('[[++CostCenterAllBuildings]]',$reportOption)) && (in_array('[[++CostCenterAllBuildings]]',$reportOption)) ) { echo '&Batch_Number='.rtrim($batch_number_reportall,','); } else { echo '&Batch_Number='.rtrim($batch_number_report,','); } } ?><?php if((in_array('[[++WONumber]]',$reportOption)) ) { if((in_array('[[++CostCenterAllBuildings]]',$reportOption)) && (in_array('[[++CostCenterAllBuildings]]',$reportOption))) { echo "&WO_Number=".rtrim($woNumberAllbuilding,','); } else {  echo "&WO_Number=".rtrim($woNumberAll,','); } } ?><?php if((in_array('[[++InvoiceNumber]]',$reportOption)) ) { if((in_array('[[++CostCenterAllBuildings]]',$reportOption)) && (in_array('[[++CostCenterAllBuildings]]',$reportOption))) { echo '&Invoice_Number='.rtrim($invoiceAllbuilding,','); }  else { echo '&Invoice_Number='.rtrim($invoiceAll,','); }} ?>" ><?php echo $reportvalue->report_name; ?> </a> </li> <?php } ?> </ul></div>	<?php } ?>	
+
+
+		
+			<div class="content" id="page">
+			 <span id="page_heading"><h3>Vendor Recovery</h3></span>
+			 <div id="msg">
+				 <span class="message">
+					 <?php $tm = new Zend_Session_Namespace('vendor_message'); 
+						 echo $tm->msg;
+						$tm->setExpirationSeconds(1);
+					 ?>
+				 </span>
+		         <span class="error-txt" style="color:red;"></span>
+		       </div>
+			 <div class="vendor-data">
+			 	<form id="vendor_recovery_form" name="vendor_recovery_form" method="POST" action="<?php echo BASEURL.'vendor/activevendoruser';?>">
+				 <table width="100%" border="1">
+					 <tr>
+						<th width="4%">&nbsp;</th>
+						<th>Vendor Name</th> 
+					 </tr>
+					 <?php
+					 
+					
+					      if(!empty($this->vendorList)){									
+							 foreach($this->vendorList as $uinfo){
+								 
+					 ?>
+					 <tr>
+						<td>
+							<div class="open_plus" id="open_div_<?php echo $uinfo['vid'];?>">
+								<a href="javascript:void(0);" id="<?php echo $uinfo['vid'];?>" onClick="return loadTenantInactiveUser(<?php echo $uinfo['vid'];?>,<?php echo $this->select_build_id; ?>)";>&nbsp; &nbsp;</a>
+							</div>
+						    <div class="open_close" id="close_div_<?php echo $uinfo['vid'];?>" style="display:none">
+						    	<a href="javascript:void(0);" id="<?php echo $uinfo['vid'];?>" onClick="return hideTenantInactiveUser(<?php echo $uinfo['vid'];?>)";><?php echo '&nbsp;&nbsp;';?></a>
+						    </div>
+						</td>
+						
+						<td>
+						    <div class="tt_name"><?php echo $uinfo['company_name'];?></div>
+							<?php //  && $trecoverAccess->is_write == 1
+							if($uinfo['remove_status'] == 1){ ?>
+							<div class="recover_vendor recover_button"> <a href="javascript:void(0);" id="recover_vendor_<?php echo $uinfo['vid'];?>" onClick="return activeVendorRecoveryUser(<?php echo $uinfo['vid'];?>,<?php echo $this->select_build_id; ?>)";> Recover Vendor </a></div>
+							<?php } ?>
+						</td> 
+						
+					 </tr>
+					 <tr id="trId_<?php echo $uinfo['vid']; ?>" class="trvendor-class" style="display:none">
+					     <td>&nbsp;</td>
+					     <td id="loadvendor_<?php echo $uinfo['vid']; ?>" class="tdvendor-class"></td>
+
+					 </tr>
+					 <?php }
+					 }else{?>
+						 <tr>
+						<td colspan="2"> No Inactive Vendor Exist</td>
+					 </tr>
+					 <?php }?>	 
+				 </table>
+				</form>
+			 </div>				   
+	  <input type="hidden" name="building_id" id="building_id" value="<?php echo $this->select_build_id;?>"/>   
+   <?php }
+	   else{
+		   echo 'No Building has assign to you.';
+	   }  
+	  }else{?>
+	    You don't have access for this module.
+	  <?php }?>
+</div>
+<?php if($this->vId){?>
+<script type="text/javascript">
+	loadVendorInactiveUser('<?php echo $this->vId;?>','<?php echo $this->select_build_id; ?>');
+</script>	
+<?php }?>
+<div class="messageBox"></div>
+<div class="loader" style="display:none;" > <img src="<?php echo BASEURL.'public/images/loader.gif';?>"><div>
+
+

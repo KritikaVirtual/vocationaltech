@@ -1,0 +1,1990 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<StiSerializer version="1.02" type="Flex" application="StiReport">
+  <Dictionary Ref="1" isKey="true" type="Dictionary">
+    <Databases count="1" isList="true">
+      <Con_workorders Ref="2" isKey="true" type="Stimulsoft.Report.Dictionary.StiMySqlDatabase">
+        <Alias>Con_workorders</Alias>
+        <ConnectionStringEncrypted>w9rP680MS91vFTHc6kwhD9V00YjmDKmZYmixhE1c8RfZeP8Cx0+rhWl37ZDqXOJj71LPwmJdo5l0
+S83MZQTjZ8JW2cJIBWPF7FrR3GEcpUbGes3LRldDgeE=</ConnectionStringEncrypted>
+        <Name>Con_workorders</Name>
+      </Con_workorders>
+    </Databases>
+    <DataSources count="5" isList="true">
+      <rsMainInfo Ref="3" isKey="true" type="Stimulsoft.Report.Dictionary.StiMySqlSource">
+        <Alias>rsMainInfo</Alias>
+        <Columns count="26" isList="true">
+          <value>Management_Company,System.String</value>
+          <value>Management_Account_Number,System.String</value>
+          <value>Building_Name,System.String</value>
+          <value>Building_Cost_Center,System.String</value>
+          <value>Building_Address_1,System.String</value>
+          <value>Building_Address_2,System.String</value>
+          <value>Building_Suite_Location,System.String</value>
+          <value>Building_City,System.String</value>
+          <value>Building_State,System.String</value>
+          <value>Building_PostalCode,System.String</value>
+          <value>Building_Phone_Number,System.String</value>
+          <value>build_id,System.Int32</value>
+          <value>company_logo,System.String</value>
+          <value>City_State_Zip,System.String</value>
+          <value>Tenant_Name,System.String</value>
+          <value>WO_Request_Description,System.String</value>
+          <value>WO_Number,System.String</value>
+          <value>WO_Complate_Description,System.String</value>
+          <value>WO_Status,System.String</value>
+          <value>WO_Billable,System.String</value>
+          <value>Tenant_Bill_To_Address,System.String</value>
+          <value>Remitt_To_Address,System.String</value>
+          <value>WO_ID_Link,System.String</value>
+          <value>WO_Date_Requested,System.String</value>
+          <value>WO_Date_Completed,System.String</value>
+          <value>WO_Include_Tenants_Request,System.String</value>
+        </Columns>
+        <CommandTimeout>30</CommandTimeout>
+        <Dictionary isRef="1"/>
+        <Name>rsMainInfo</Name>
+        <NameInSource>Con_workorders</NameInSource>
+        <Parameters count="0" isList="true"/>
+        <SqlCommand>Select
+  company.companyName As Management_Company,
+  company.corp_account_number As Management_Account_Number,
+  buildings.buildingName As Building_Name,
+  buildings.uniqueCostCenter As Building_Cost_Center,
+  buildings.address As Building_Address_1,
+  buildings.address2 As Building_Address_2,
+  buildings.suite As Building_Suite_Location,
+  buildings.city As Building_City,
+  buildings.state As Building_State,
+  buildings.postalCode As Building_PostalCode,
+  buildings.phoneNumber As Building_Phone_Number,
+  buildings.build_id,
+  company.company_logo,
+  Concat(buildings.city, ', ', buildings.state, ' ', buildings.postalCode) As
+  City_State_Zip,
+  tenant.tenantName As Tenant_Name,
+  work_order.work_order_request As WO_Request_Description,
+  work_order.wo_number As WO_Number,
+  work_description.description As WO_Complate_Description,
+  schedule_status.title As WO_Status,
+  work_order_update.billable_opt As WO_Billable,
+  tenant.billtoAddress As Tenant_Bill_To_Address,
+  buildings.remit_address As Remitt_To_Address,
+  work_order.woId As WO_ID_Link,
+  Date_Format(work_order.date_requested, '%M %d, %Y') As WO_Date_Requested,
+  Date_Format(wo_complete.date_cp_in, '%M %d, %Y') As WO_Date_Completed,
+  wo_parameter.inc_tnt_rqt As WO_Include_Tenants_Request
+From
+  work_order Left Join
+  work_description On work_order.woId = work_description.woId Left Join
+  tenant On work_order.tenant = tenant.id Right Join
+  buildings On buildings.build_id = work_order.building Left Join
+  company On company.cust_id = buildings.cust_id Left Join
+  work_order_update On work_order.woId = work_order_update.wo_id Left Join
+  schedule_status On work_order_update.wo_status = schedule_status.ssID
+  Left Join
+  wo_complete On work_order.woId = wo_complete.woId Left Join
+  wo_parameter On buildings.build_id = wo_parameter.building
+Where
+  buildings.uniqueCostCenter in ({Cost_Center_Number}) And
+  buildings.build_id = ({buildkey}) And
+  work_order.wo_number in  ({Invoice_Number}) And
+  work_order_update.current_update = 1 And
+  company.status = 1 And
+  tenant.status = 1 And
+  buildings.status = '1'</SqlCommand>
+      </rsMainInfo>
+      <rsLabor Ref="4" isKey="true" type="Stimulsoft.Report.Dictionary.StiMySqlSource">
+        <Alias>rsLabor</Alias>
+        <Columns count="12" isList="true">
+          <value>WO_ID_Link,System.String</value>
+          <value>EMP_First_Name,System.String</value>
+          <value>EMP_Last_Name,System.String</value>
+          <value>EMP_Bill_Hours,System.String</value>
+          <value>Job_Total_Hours,System.String</value>
+          <value>EMP_Total_Cost,System.String</value>
+          <value>Cost_Per_Hour,System.String</value>
+          <value>EMP_Rate_Charge_per_hour,System.String</value>
+          <value>EMP_Labor_Charge_Description,System.String</value>
+          <value>EMP_Rate_Name,System.String</value>
+          <value>EMP_Rate_Description,System.String</value>
+          <value>EMP_Rate_Multiplyer,System.String</value>
+        </Columns>
+        <CommandTimeout>30</CommandTimeout>
+        <Dictionary isRef="1"/>
+        <Name>rsLabor</Name>
+        <NameInSource>Con_workorders</NameInSource>
+        <Parameters count="0" isList="true"/>
+        <SqlCommand>Select
+  labor.woId As WO_ID_Link,
+  users.firstName As EMP_First_Name,
+  users.lastName As EMP_Last_Name,
+  labor.job_time As EMP_Bill_Hours,
+  (Minute(labor.job_time) / 60) + Hour(labor.job_time) As Job_Total_Hours,
+  ((Minute(labor.job_time) / 60) + Hour(labor.job_time)) *
+  labor.charge_hour * bill_rate.multiplier As EMP_Total_Cost,
+  labor.charge_hour As Cost_Per_Hour,
+  labor.charge_hour * bill_rate.multiplier As EMP_Rate_Charge_per_hour,
+  bill_labor.description As EMP_Labor_Charge_Description,
+  bill_rate.rate_name As EMP_Rate_Name,
+  bill_rate.description As EMP_Rate_Description,
+  bill_rate.multiplier As EMP_Rate_Multiplyer
+From
+  labor Left Join
+  users On labor.emp_id = users.uid Left Join
+  bill_labor On labor.bl_id = bill_labor.blid Left Join
+  bill_rate On labor.rate_charge = bill_rate.brid</SqlCommand>
+      </rsLabor>
+      <rsBuildingSVS Ref="5" isKey="true" type="Stimulsoft.Report.Dictionary.StiMySqlSource">
+        <Alias>rsBuildingSVS</Alias>
+        <Columns count="7" isList="true">
+          <value>WO_ID_Link,System.String</value>
+          <value>BuildingSVS_Charge,System.String</value>
+          <value>BuildingSVS_Amount_Requested,System.String</value>
+          <value>BuildingSVS_Amount_Billed,System.String</value>
+          <value>BuildingSVS_Comments,System.String</value>
+          <value>BuildingSVS_Service_Name,System.String</value>
+          <value>BuildingSVS_Unit_of_Measure,System.String</value>
+        </Columns>
+        <CommandTimeout>30</CommandTimeout>
+        <Dictionary isRef="1"/>
+        <Name>rsBuildingSVS</Name>
+        <NameInSource>Con_workorders</NameInSource>
+        <Parameters count="0" isList="true"/>
+        <SqlCommand>Select
+  building_service.woId As WO_ID_Link,
+  building_service.charge As BuildingSVS_Charge,
+  building_service.amount_requested As BuildingSVS_Amount_Requested,
+  building_service.amount_requested * building_service.charge As BuildingSVS_Amount_Billed,
+  building_service.comment As BuildingSVS_Comments,
+  build_service.service_name As BuildingSVS_Service_Name,
+  build_service.unit_measure As BuildingSVS_Unit_of_Measure
+From
+  building_service Left Join
+  build_service On building_service.service = build_service.bsid</SqlCommand>
+      </rsBuildingSVS>
+      <rsMaterials Ref="6" isKey="true" type="Stimulsoft.Report.Dictionary.StiMySqlSource">
+        <Alias>rsMaterials</Alias>
+        <Columns count="10" isList="true">
+          <value>WO_ID_Link,System.String</value>
+          <value>MAT_Discription,System.String</value>
+          <value>Mat_Cost,System.String</value>
+          <value>MAT_Quantity,System.String</value>
+          <value>MAT_Markup,System.String</value>
+          <value>MAT_Total_Cost,System.String</value>
+          <value>MAT_Total_Sales_Tax,System.String</value>
+          <value>MAT_Billable,System.String</value>
+          <value>MAT_Sales_Tax,System.String</value>
+          <value>MAT_Chage_Tax,System.String</value>
+        </Columns>
+        <CommandTimeout>30</CommandTimeout>
+        <Dictionary isRef="1"/>
+        <Name>rsMaterials</Name>
+        <NameInSource>Con_workorders</NameInSource>
+        <Parameters count="0" isList="true"/>
+        <SqlCommand>Select
+  material_charge.woId As WO_ID_Link,
+  material.description As MAT_Discription,
+  Format(material_charge.cost, 2) As Mat_Cost,
+  Format(material_charge.quantity, 2) As MAT_Quantity,
+  material_charge.markup As MAT_Markup,
+  (material_charge.cost * (1 + material_charge.markup / 100)) *
+  material_charge.quantity As MAT_Total_Cost,
+  (material_charge.cost * (1 + material_charge.markup / 100)) *
+  material_charge.quantity * (wo_parameter.sale_tax / 100) * material_charge.tax
+  As MAT_Total_Sales_Tax,
+  wo_parameter.billable As MAT_Billable,
+  wo_parameter.sale_tax As MAT_Sales_Tax,
+  material_charge.tax As MAT_Chage_Tax
+From
+  material_charge Left Join
+  material On material_charge.material_id = material.mid Left Join
+  work_order On material_charge.woId = work_order.woId Left Join
+  wo_parameter On work_order.building = wo_parameter.building</SqlCommand>
+      </rsMaterials>
+      <rsOutSideSVS Ref="7" isKey="true" type="Stimulsoft.Report.Dictionary.StiMySqlSource">
+        <Alias>rsOutSideSVS</Alias>
+        <Columns count="10" isList="true">
+          <value>WO_ID_Link,System.String</value>
+          <value>OSS_Company_name,System.String</value>
+          <value>OSS_Job_Description,System.String</value>
+          <value>OSS_Job_Cost,System.String</value>
+          <value>OSS_Total_Job_Cost,System.String</value>
+          <value>OSS_Job_MarkUp,System.String</value>
+          <value>OSS_Total_Sales_Tax,System.String</value>
+          <value>OSS_Tax_Job,System.String</value>
+          <value>OSS_Billable,System.String</value>
+          <value>OSS_Tax_Percent,System.String</value>
+        </Columns>
+        <CommandTimeout>30</CommandTimeout>
+        <Dictionary isRef="1"/>
+        <Name>rsOutSideSVS</Name>
+        <NameInSource>Con_workorders</NameInSource>
+        <Parameters count="0" isList="true"/>
+        <SqlCommand>Select
+  outside_service.woId As WO_ID_Link,
+  vendor.company_name As OSS_Company_name,
+  outside_service.job_description As OSS_Job_Description,
+  outside_service.job_cost As OSS_Job_Cost,
+  outside_service.job_cost * (1 + outside_service.markup / 100) As OSS_Total_Job_Cost,
+  outside_service.markup As OSS_Job_MarkUp,
+  (outside_service.job_cost * (1 + outside_service.markup / 100)) *
+  (wo_parameter.sale_tax / 100) * outside_service.tax As OSS_Total_Sales_Tax,
+  outside_service.tax As OSS_Tax_Job,
+  wo_parameter.billable As OSS_Billable,
+  wo_parameter.sale_tax As OSS_Tax_Percent
+From
+  outside_service Left Join
+  vendor On outside_service.vendor = vendor.vid Left Join
+  work_order On outside_service.woId = work_order.woId Left Join
+  wo_parameter On work_order.building = wo_parameter.building</SqlCommand>
+      </rsOutSideSVS>
+    </DataSources>
+    <Relations count="4" isList="true">
+      <Employee Ref="8" isKey="true" type="DataRelation">
+        <Alias>Employee</Alias>
+        <ChildColumns count="1" isList="true">
+          <value>WO_ID_Link</value>
+        </ChildColumns>
+        <ChildSource isRef="4"/>
+        <Dictionary isRef="1"/>
+        <Name>Employee</Name>
+        <NameInSource>relLabor</NameInSource>
+        <ParentColumns count="1" isList="true">
+          <value>WO_ID_Link</value>
+        </ParentColumns>
+        <ParentSource isRef="3"/>
+      </Employee>
+      <BuildingSVS Ref="9" isKey="true" type="DataRelation">
+        <Alias>BuildingSVS</Alias>
+        <ChildColumns count="1" isList="true">
+          <value>WO_ID_Link</value>
+        </ChildColumns>
+        <ChildSource isRef="5"/>
+        <Dictionary isRef="1"/>
+        <Name>BuildingSVS</Name>
+        <NameInSource>relBuildingSVS</NameInSource>
+        <ParentColumns count="1" isList="true">
+          <value>WO_ID_Link</value>
+        </ParentColumns>
+        <ParentSource isRef="3"/>
+      </BuildingSVS>
+      <Materials Ref="10" isKey="true" type="DataRelation">
+        <Alias>Materials</Alias>
+        <ChildColumns count="1" isList="true">
+          <value>WO_ID_Link</value>
+        </ChildColumns>
+        <ChildSource isRef="6"/>
+        <Dictionary isRef="1"/>
+        <Name>Materials</Name>
+        <NameInSource>relMaterials</NameInSource>
+        <ParentColumns count="1" isList="true">
+          <value>WO_ID_Link</value>
+        </ParentColumns>
+        <ParentSource isRef="3"/>
+      </Materials>
+      <OutSideSVS Ref="11" isKey="true" type="DataRelation">
+        <Alias>OutSideSVS</Alias>
+        <ChildColumns count="1" isList="true">
+          <value>WO_ID_Link</value>
+        </ChildColumns>
+        <ChildSource isRef="7"/>
+        <Dictionary isRef="1"/>
+        <Name>OutSideSVS</Name>
+        <NameInSource>RelOutSideSVS</NameInSource>
+        <ParentColumns count="1" isList="true">
+          <value>WO_ID_Link</value>
+        </ParentColumns>
+        <ParentSource isRef="3"/>
+      </OutSideSVS>
+    </Relations>
+    <Report isRef="0"/>
+    <Variables count="6" isList="true">
+      <value>,Total_Labor,Total_Labor,Total_x0020_Labor_x0020_for_x0020_work_x0020_order_x0020_number,System.Double,_x0030_,False,False,False</value>
+      <value>,Total_BuildingSVS,Total_BuildingSVS,Total_x0020_Cost_x0020_of_x0020_Building_x0020_Services,System.Double,_x0030_,False,False,False</value>
+      <value>,Total_Materials,Total_Materials,Total_x0020_amount_x0020_of_x0020_materials_x0020_used_x0020_on_x0020_a_x0020_work_x0020_order,System.Double,_x0030_,False,False,False</value>
+      <value>,Total_Tax,Total_Tax,System.Double,_x0030_,False,False</value>
+      <value>,Total_OutSideSvs,Total_OutSideSvs,System.Double,_x0030_,False,False</value>
+      <value>,Total_Tax_OutSideSVS,Total_Tax_OutSideSVS,System.Double,_x0030_,False,False</value>
+    </Variables>
+  </Dictionary>
+  <EngineVersion>EngineV2</EngineVersion>
+  <GlobalizationStrings count="0" isList="true"/>
+  <MetaTags count="0" isList="true"/>
+  <Pages count="5" isList="true">
+    <Page1 Ref="12" isKey="true" type="Page">
+      <Border>None;Black;2;Solid;False;4;Black</Border>
+      <Brush>Transparent</Brush>
+      <Components count="8" isList="true">
+        <PageHeaderBand1 Ref="13" isKey="true" type="PageHeaderBand">
+          <Brush>Transparent</Brush>
+          <ClientRectangle>0,4,200.66,2</ClientRectangle>
+          <Components count="0" isList="true"/>
+          <Conditions count="0" isList="true"/>
+          <Name>PageHeaderBand1</Name>
+          <Page isRef="12"/>
+          <Parent isRef="12"/>
+        </PageHeaderBand1>
+        <PageFooterBand1 Ref="14" isKey="true" type="PageFooterBand">
+          <Brush>Transparent</Brush>
+          <ClientRectangle>0,265.78,200.66,6</ClientRectangle>
+          <Components count="1" isList="true">
+            <Text77 Ref="15" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>94,1.58,106,4</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Arial,6</Font>
+              <Guid>ef563554a7d9ec3d04b0e04644b13f91</Guid>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text77</Name>
+              <Page isRef="12"/>
+              <Parent isRef="14"/>
+              <Text>Vocational Technologies, LLC 2000 - {Today.ToString("YYYY")}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Bottom</VertAlignment>
+            </Text77>
+          </Components>
+          <Conditions count="0" isList="true"/>
+          <Name>PageFooterBand1</Name>
+          <Page isRef="12"/>
+          <Parent isRef="12"/>
+        </PageFooterBand1>
+        <GroupHeaderBand1 Ref="16" isKey="true" type="GroupHeaderBand">
+          <Brush>Transparent</Brush>
+          <CanBreak>True</CanBreak>
+          <CanShrink>True</CanShrink>
+          <ClientRectangle>0,14,200.66,66.04</ClientRectangle>
+          <Components count="15" isList="true">
+            <Text34 Ref="17" isKey="true" type="Text">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>Black</Brush>
+              <ClientRectangle>165.1,0,35.56,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text34</Name>
+              <Page isRef="12"/>
+              <Parent isRef="16"/>
+              <Text>Invoice Number</Text>
+              <TextBrush>EmptyBrush</TextBrush>
+              <Type>Expression</Type>
+            </Text34>
+            <Text48 Ref="18" isKey="true" type="Text">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>165.1,5.08,35.56,10.16</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,20</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text48</Name>
+              <Page isRef="12"/>
+              <Parent isRef="16"/>
+              <Text>{rsMainInfo.WO_Number}</Text>
+              <TextBrush>Red</TextBrush>
+              <VertAlignment>Center</VertAlignment>
+            </Text48>
+            <Text1 Ref="19" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,10.16,200.66,10.16</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,36,Bold</Font>
+              <Guid>25971f6a0f90ad998568131664d11538</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text1</Name>
+              <Page isRef="12"/>
+              <Parent isRef="16"/>
+              <Text>{IIF(rsMainInfo.WO_Billable!="1","Work Sheet","Invoice")}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text1>
+            <Image2 Ref="20" isKey="true" type="Image">
+              <AspectRatio>True</AspectRatio>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,0,50.8,20.32</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <DataColumn isNull="true"/>
+              <Guid>abac99fb7dc1c6fb09f370705fbde99f</Guid>
+              <HorAlignment>Right</HorAlignment>
+              <Image/>
+              <ImageURL>https://www.visionworkorders.com/public/images/clogo/{rsMainInfo.company_logo}</ImageURL>
+              <Name>Image2</Name>
+              <Page isRef="12"/>
+              <Parent isRef="16"/>
+              <ProcessingDuplicates>Merge</ProcessingDuplicates>
+              <Stretch>True</Stretch>
+            </Image2>
+            <Text7 Ref="21" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>0,20.83,96.52,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <Guid>2a679883398bdb50c55513169f2629fd</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text7</Name>
+              <Page isRef="12"/>
+              <Parent isRef="16"/>
+              <Text>{rsMainInfo.Management_Company}
+{IIF(rsMainInfo.Building_Name != "", rsMainInfo.Building_Name,"" )}
+{IIF(rsMainInfo.Building_Name!=rsMainInfo.Building_Address_1,rsMainInfo.Building_Address_1, rsMainInfo.City_State_Zip)}
+{IIF(rsMainInfo.Building_Name!=rsMainInfo.Building_Address_1, rsMainInfo.City_State_Zip,NULL)}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text7>
+            <Text2 Ref="22" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>152.4,16.32,48.26,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text2</Name>
+              <Page isRef="12"/>
+              <Parent isRef="16"/>
+              <Text>Phone : {rsMainInfo.Building_Phone_Number}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text2>
+            <Text4 Ref="23" isKey="true" type="Text">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>Black</Brush>
+              <ClientRectangle>0,30.48,73.66,7.62</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <Guid>50e7964f9afbb570628ed4dcaa6cbf73</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text4</Name>
+              <Page isRef="12"/>
+              <Parent isRef="16"/>
+              <Text>Bill To</Text>
+              <TextBrush>EmptyBrush</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text4>
+            <Text3 Ref="24" isKey="true" type="Text">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,38.1,73.66,20.32</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text3</Name>
+              <Page isRef="12"/>
+              <Parent isRef="16"/>
+              <Text>{rsMainInfo.Tenant_Bill_To_Address}</Text>
+              <TextBrush>Black</TextBrush>
+            </Text3>
+            <Text6 Ref="25" isKey="true" type="Text">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>Black</Brush>
+              <ClientRectangle>165.1,30.48,35.56,7.62</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <Guid>be7654ce07b503ef628dda23d0a10a94</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text6</Name>
+              <Page isRef="12"/>
+              <Parent isRef="16"/>
+              <Text>Invoice Date</Text>
+              <TextBrush>EmptyBrush</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text6>
+            <Text5 Ref="26" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>165.1,38.1,35.56,7.62</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text5</Name>
+              <Page isRef="12"/>
+              <Parent isRef="16"/>
+              <Text>{Today.ToString("MMMM dd, YYYY")}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text5>
+            <Text8 Ref="27" isKey="true" type="Text">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>124,58,38,8</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text8</Name>
+              <Page isRef="12"/>
+              <Parent isRef="16"/>
+              <Text>{rsMainInfo.WO_Date_Requested}</Text>
+              <TextBrush>Black</TextBrush>
+              <VertAlignment>Center</VertAlignment>
+            </Text8>
+            <Text9 Ref="28" isKey="true" type="Text">
+              <Border>All;Black;1;Solid;False;1;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>124,50,38,8</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text9</Name>
+              <Page isRef="12"/>
+              <Parent isRef="16"/>
+              <Text>Date Requested</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text9>
+            <Text10 Ref="29" isKey="true" type="Text">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>162,58,38,8</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text10</Name>
+              <Page isRef="12"/>
+              <Parent isRef="16"/>
+              <Text>{rsMainInfo.WO_Date_Completed}</Text>
+              <TextBrush>Black</TextBrush>
+              <VertAlignment>Center</VertAlignment>
+            </Text10>
+            <Text11 Ref="30" isKey="true" type="Text">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>162,50,38,8</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text11</Name>
+              <Page isRef="12"/>
+              <Parent isRef="16"/>
+              <Text>Date Completed</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text11>
+            <StartPointPrimitive2 Ref="31" isKey="true" type="Stimulsoft.Report.Components.StiStartPointPrimitive">
+              <ClientRectangle>0,66,0,0</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Name>StartPointPrimitive2</Name>
+              <Page isRef="12"/>
+              <Parent isRef="16"/>
+              <ReferenceToGuid>3f91246ddedf4a09393ee8851e332a86</ReferenceToGuid>
+            </StartPointPrimitive2>
+          </Components>
+          <Condition>{rsMainInfo.WO_Number}</Condition>
+          <Conditions count="0" isList="true"/>
+          <Name>GroupHeaderBand1</Name>
+          <Page isRef="12"/>
+          <Parent isRef="12"/>
+        </GroupHeaderBand1>
+        <DataBand1 Ref="32" isKey="true" type="DataBand">
+          <Brush>Transparent</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,88.04,200.66,29.32</ClientRectangle>
+          <Components count="8" isList="true">
+            <SubReport1 Ref="33" isKey="true" type="SubReport">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,25.4,200.66,2.54</ClientRectangle>
+              <Components count="0" isList="true"/>
+              <Conditions count="0" isList="true"/>
+              <Name>SubReport1</Name>
+              <Page isRef="12"/>
+              <Parent isRef="32"/>
+              <SubReportPageGuid>59ef549a14d4e1c4c4e5dfe7d84b43d5</SubReportPageGuid>
+            </SubReport1>
+            <Text60 Ref="34" isKey="true" type="Text">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,0,200,8</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12,Bold</Font>
+              <Guid>51e7c2f4ff715190811ce0324fdbeffc</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text60</Name>
+              <Page isRef="12"/>
+              <Parent isRef="32"/>
+              <Text>Description of Work</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text60>
+            <Text12 Ref="35" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <CanGrow>True</CanGrow>
+              <CanShrink>True</CanShrink>
+              <ClientRectangle>2.54,12.7,195.58,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <Guid>3df6ca887b8c4b1a5d99e0324fdb53a6</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text12</Name>
+              <Page isRef="12"/>
+              <Parent isRef="32"/>
+              <Text>{rsMainInfo.WO_Complate_Description}</Text>
+              <TextBrush>Black</TextBrush>
+            </Text12>
+            <Text24 Ref="36" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>27.94,7.62,172.72,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12,Italic</Font>
+              <Guid>26060b9871c51963eafae0324fdbfbe3</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text24</Name>
+              <Page isRef="12"/>
+              <Parent isRef="32"/>
+              <Text>{IIF(rsMainInfo.WO_Include_Tenants_Request != 0,rsMainInfo.WO_Request_Description, NULL )}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text24>
+            <Text55 Ref="37" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>0,7.62,27.94,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12,Bold|Italic</Font>
+              <Guid>8addd3a3ff0d0527e979e032759bf212</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text55</Name>
+              <Page isRef="12"/>
+              <Parent isRef="32"/>
+              <Text>{IIF(rsMainInfo.WO_Include_Tenants_Request != 0, "Tenant Request :", NULL )}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text55>
+            <SubReport2 Ref="38" isKey="true" type="SubReport">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,17.78,200.66,2.54</ClientRectangle>
+              <Components count="0" isList="true"/>
+              <Conditions count="0" isList="true"/>
+              <Guid>d5bcee6b572e1c54b5f7e032c98fe1d4</Guid>
+              <Name>SubReport2</Name>
+              <Page isRef="12"/>
+              <Parent isRef="32"/>
+              <SubReportPageGuid>b0b49ab33476fa387176dcac523869a4</SubReportPageGuid>
+            </SubReport2>
+            <SubReport3 Ref="39" isKey="true" type="SubReport">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,20.32,200.66,2.54</ClientRectangle>
+              <Components count="0" isList="true"/>
+              <Conditions count="0" isList="true"/>
+              <Guid>e85f091d1c745ca2da4ae032c98fbfee</Guid>
+              <Name>SubReport3</Name>
+              <Page isRef="12"/>
+              <Parent isRef="32"/>
+              <SubReportPageGuid>2df77f6150abc421926ede35e64a3215</SubReportPageGuid>
+            </SubReport3>
+            <SubReport4 Ref="40" isKey="true" type="SubReport">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,22.86,200.66,2.54</ClientRectangle>
+              <Components count="0" isList="true"/>
+              <Conditions count="0" isList="true"/>
+              <Guid>bbe4773bac37f78f6bdde032c98fb180</Guid>
+              <Name>SubReport4</Name>
+              <Page isRef="12"/>
+              <Parent isRef="32"/>
+              <SubReportPageGuid>b62fa9421dd6118d44abde6fe7468954</SubReportPageGuid>
+            </SubReport4>
+          </Components>
+          <Conditions count="0" isList="true"/>
+          <DataSourceName>rsMainInfo</DataSourceName>
+          <Filters count="0" isList="true"/>
+          <Interaction Ref="41" isKey="true" type="Stimulsoft.Report.Components.StiBandInteraction">
+            <SortingColumn>DataBand1.Tenant_Tenant_Name</SortingColumn>
+          </Interaction>
+          <Name>DataBand1</Name>
+          <Page isRef="12"/>
+          <Parent isRef="12"/>
+          <Sort count="2" isList="true">
+            <value>ASC</value>
+            <value>{rsMainInfo.WO_Number}</value>
+          </Sort>
+        </DataBand1>
+        <GroupFooterBand1 Ref="42" isKey="true" type="GroupFooterBand">
+          <Brush>Transparent</Brush>
+          <CanShrink>True</CanShrink>
+          <ClientRectangle>0,125.36,200.66,49.02</ClientRectangle>
+          <Components count="19" isList="true">
+            <Text29 Ref="43" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <CanShrink>True</CanShrink>
+              <ClientRectangle>160,2,38,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <HideZeros>True</HideZeros>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text29</Name>
+              <Page isRef="12"/>
+              <Parent isRef="42"/>
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Total_Labor}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="44" isKey="true" type="CurrencyFormat">
+                <GroupSeparator>,</GroupSeparator>
+                <NegativePattern>0</NegativePattern>
+                <PositivePattern>2</PositivePattern>
+                <UseLocalSetting>False</UseLocalSetting>
+              </TextFormat>
+              <VertAlignment>Center</VertAlignment>
+            </Text29>
+            <Text30 Ref="45" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <CanShrink>True</CanShrink>
+              <ClientRectangle>130,2,28,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <HideZeros>True</HideZeros>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text30</Name>
+              <Page isRef="12"/>
+              <Parent isRef="42"/>
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{IIF(Total_Labor&gt;0,"Labor",NULL)}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text30>
+            <Text40 Ref="46" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <CanGrow>True</CanGrow>
+              <CanShrink>True</CanShrink>
+              <ClientRectangle>160,8,38,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <HideZeros>True</HideZeros>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text40</Name>
+              <Page isRef="12"/>
+              <Parent isRef="42"/>
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Total_BuildingSVS}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="47" isKey="true" type="CurrencyFormat">
+                <GroupSeparator>,</GroupSeparator>
+                <NegativePattern>14</NegativePattern>
+                <PositivePattern>2</PositivePattern>
+                <UseLocalSetting>False</UseLocalSetting>
+              </TextFormat>
+            </Text40>
+            <Text42 Ref="48" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <CanShrink>True</CanShrink>
+              <ClientRectangle>130,8,28,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <HideZeros>True</HideZeros>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text42</Name>
+              <Page isRef="12"/>
+              <Parent isRef="42"/>
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{IIF(Total_BuildingSVS&gt;0,"Building Services",NULL)}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text42>
+            <Text52 Ref="49" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>160,14,38,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <HideZeros>True</HideZeros>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text52</Name>
+              <Page isRef="12"/>
+              <Parent isRef="42"/>
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Total_Materials}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="50" isKey="true" type="CurrencyFormat">
+                <GroupSeparator>,</GroupSeparator>
+                <NegativePattern>14</NegativePattern>
+                <PositivePattern>2</PositivePattern>
+                <UseLocalSetting>False</UseLocalSetting>
+              </TextFormat>
+              <VertAlignment>Center</VertAlignment>
+            </Text52>
+            <Text53 Ref="51" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <CanGrow>True</CanGrow>
+              <CanShrink>True</CanShrink>
+              <ClientRectangle>130,14,28,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <HideZeros>True</HideZeros>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text53</Name>
+              <Page isRef="12"/>
+              <Parent isRef="42"/>
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{IIF(Total_Materials&gt;0,"Materials",NULL)}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text53>
+            <Text59 Ref="52" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <CanShrink>True</CanShrink>
+              <ClientRectangle>130,26,28,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <HideZeros>True</HideZeros>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text59</Name>
+              <Page isRef="12"/>
+              <Parent isRef="42"/>
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{IIF(Total_Tax+Total_Tax_OutSideSVS&gt;0,"Tax","")}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text59>
+            <Text61 Ref="53" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <CanShrink>True</CanShrink>
+              <ClientRectangle>160,26,38,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <Guid>e5f6234e19216b9e8fd2dead0d02620b</Guid>
+              <HideZeros>True</HideZeros>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text61</Name>
+              <Page isRef="12"/>
+              <Parent isRef="42"/>
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Total_Tax+Total_Tax_OutSideSVS}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="54" isKey="true" type="CurrencyFormat">
+                <GroupSeparator>,</GroupSeparator>
+                <NegativePattern>14</NegativePattern>
+                <PositivePattern>2</PositivePattern>
+                <UseLocalSetting>False</UseLocalSetting>
+              </TextFormat>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text61>
+            <Text73 Ref="55" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <CanGrow>True</CanGrow>
+              <CanShrink>True</CanShrink>
+              <ClientRectangle>160,20,38,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <HideZeros>True</HideZeros>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text73</Name>
+              <Page isRef="12"/>
+              <Parent isRef="42"/>
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Total_OutSideSvs}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="56" isKey="true" type="CurrencyFormat">
+                <GroupSeparator>,</GroupSeparator>
+                <NegativePattern>14</NegativePattern>
+                <PositivePattern>2</PositivePattern>
+                <UseLocalSetting>False</UseLocalSetting>
+              </TextFormat>
+            </Text73>
+            <Text74 Ref="57" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <CanShrink>True</CanShrink>
+              <ClientRectangle>130,20,28,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <HideZeros>True</HideZeros>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text74</Name>
+              <Page isRef="12"/>
+              <Parent isRef="42"/>
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{IIF(Total_OutSideSvs&gt;0,"Out Side Services",NULL)}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text74>
+            <Text63 Ref="58" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <CanShrink>True</CanShrink>
+              <ClientRectangle>160,34,38,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12,Bold</Font>
+              <Guid>b9b435fe661e1622e53be024912e040e</Guid>
+              <HideZeros>True</HideZeros>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text63</Name>
+              <Page isRef="12"/>
+              <Parent isRef="42"/>
+              <Text>{Total_Tax+Total_Tax_OutSideSVS+Total_Labor+Total_BuildingSVS+Total_Materials+Total_OutSideSvs}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="59" isKey="true" type="CurrencyFormat">
+                <GroupSeparator>,</GroupSeparator>
+                <NegativePattern>14</NegativePattern>
+                <PositivePattern>2</PositivePattern>
+                <UseLocalSetting>False</UseLocalSetting>
+              </TextFormat>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text63>
+            <Text70 Ref="60" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <CanShrink>True</CanShrink>
+              <ClientRectangle>130,34,28,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12,Bold</Font>
+              <Guid>4a5fddf2c91a263ab0bae0258e4e5fea</Guid>
+              <HideZeros>True</HideZeros>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text70</Name>
+              <Page isRef="12"/>
+              <Parent isRef="42"/>
+              <Text>Total Charges</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text70>
+            <Text13 Ref="61" isKey="true" type="Text">
+              <AutoWidth>True</AutoWidth>
+              <Brush>Transparent</Brush>
+              <CanGrow>True</CanGrow>
+              <CanShrink>True</CanShrink>
+              <ClientRectangle>16,6.64,62,22</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text13</Name>
+              <Page isRef="12"/>
+              <Parent isRef="42"/>
+              <Text>{rsMainInfo.Remitt_To_Address}</Text>
+              <TextBrush>Black</TextBrush>
+            </Text13>
+            <Text71 Ref="62" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>4,0.64,30,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,10</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text71</Name>
+              <Page isRef="12"/>
+              <Parent isRef="42"/>
+              <Text>Please remit to:</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text71>
+            <StartPointPrimitive1 Ref="63" isKey="true" type="Stimulsoft.Report.Components.StiStartPointPrimitive">
+              <ClientRectangle>128,0.64,0,0</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Name>StartPointPrimitive1</Name>
+              <Page isRef="12"/>
+              <Parent isRef="42"/>
+              <ReferenceToGuid>e75b89df8c8cd0722177e033de045f40</ReferenceToGuid>
+            </StartPointPrimitive1>
+            <EndPointPrimitive1 Ref="64" isKey="true" type="Stimulsoft.Report.Components.StiEndPointPrimitive">
+              <ClientRectangle>200,32.64,0,0</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Name>EndPointPrimitive1</Name>
+              <Page isRef="12"/>
+              <Parent isRef="42"/>
+              <ReferenceToGuid>e75b89df8c8cd0722177e033de045f40</ReferenceToGuid>
+            </EndPointPrimitive1>
+            <EndPointPrimitive2 Ref="65" isKey="true" type="Stimulsoft.Report.Components.StiEndPointPrimitive">
+              <ClientRectangle>200,0.64,0,0</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Name>EndPointPrimitive2</Name>
+              <Page isRef="12"/>
+              <Parent isRef="42"/>
+              <ReferenceToGuid>3f91246ddedf4a09393ee8851e332a86</ReferenceToGuid>
+            </EndPointPrimitive2>
+            <StartPointPrimitive3 Ref="66" isKey="true" type="Stimulsoft.Report.Components.StiStartPointPrimitive">
+              <ClientRectangle>128,32.64,0,0</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Name>StartPointPrimitive3</Name>
+              <Page isRef="12"/>
+              <Parent isRef="42"/>
+              <ReferenceToGuid>23c715be0cffd947e4b4e8886f7d5a51</ReferenceToGuid>
+            </StartPointPrimitive3>
+            <EndPointPrimitive3 Ref="67" isKey="true" type="Stimulsoft.Report.Components.StiEndPointPrimitive">
+              <ClientRectangle>200,40.64,0,0</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Name>EndPointPrimitive3</Name>
+              <Page isRef="12"/>
+              <Parent isRef="42"/>
+              <ReferenceToGuid>23c715be0cffd947e4b4e8886f7d5a51</ReferenceToGuid>
+            </EndPointPrimitive3>
+          </Components>
+          <Conditions count="0" isList="true"/>
+          <KeepGroupFooterTogether>False</KeepGroupFooterTogether>
+          <Name>GroupFooterBand1</Name>
+          <NewPageAfter>True</NewPageAfter>
+          <Page isRef="12"/>
+          <Parent isRef="12"/>
+          <PrintAtBottom>True</PrintAtBottom>
+        </GroupFooterBand1>
+        <RectanglePrimitive1 Ref="68" isKey="true" type="RectanglePrimitive">
+          <ClientRectangle>128,126,72,32</ClientRectangle>
+          <Color>Black</Color>
+          <Conditions count="0" isList="true"/>
+          <Guid>e75b89df8c8cd0722177e033de045f40</Guid>
+          <Name>RectanglePrimitive1</Name>
+          <Page isRef="12"/>
+          <Parent isRef="12"/>
+          <ShiftMode>IncreasingSize, DecreasingSize, OnlyInWidthOfComponent</ShiftMode>
+        </RectanglePrimitive1>
+        <RectanglePrimitive2 Ref="69" isKey="true" type="RectanglePrimitive">
+          <ClientRectangle>0,80,200,46</ClientRectangle>
+          <Color>Black</Color>
+          <Conditions count="0" isList="true"/>
+          <Guid>3f91246ddedf4a09393ee8851e332a86</Guid>
+          <Name>RectanglePrimitive2</Name>
+          <Page isRef="12"/>
+          <Parent isRef="12"/>
+        </RectanglePrimitive2>
+        <RectanglePrimitive3 Ref="70" isKey="true" type="RectanglePrimitive">
+          <ClientRectangle>128,158,72,8</ClientRectangle>
+          <Color>Black</Color>
+          <Conditions count="0" isList="true"/>
+          <Guid>23c715be0cffd947e4b4e8886f7d5a51</Guid>
+          <Name>RectanglePrimitive3</Name>
+          <Page isRef="12"/>
+          <Parent isRef="12"/>
+        </RectanglePrimitive3>
+      </Components>
+      <Conditions count="0" isList="true"/>
+      <Guid>bc3ba8f95a23316df9de9fc0defa05fc</Guid>
+      <Margins>8.89,6.35,5.08,2.54</Margins>
+      <Name>Page1</Name>
+      <PageHeight>279.4</PageHeight>
+      <PageWidth>215.9</PageWidth>
+      <PaperSize>Letter</PaperSize>
+      <Report isRef="0"/>
+      <ReportUnit Ref="71" isKey="true" type="hi"/>
+      <ResetPageNumber>True</ResetPageNumber>
+      <Watermark Ref="72" isKey="true" type="Stimulsoft.Report.Components.StiWatermark">
+        <Font>Arial,100</Font>
+        <TextBrush>[50:0:0:0]</TextBrush>
+      </Watermark>
+    </Page1>
+    <Labor_Report Ref="73" isKey="true" type="Page">
+      <Border>None;Black;2;Solid;False;4;Black</Border>
+      <Brush>Transparent</Brush>
+      <Components count="3" isList="true">
+        <Text23 Ref="74" isKey="true" type="Text">
+          <Brush>Transparent</Brush>
+          <ClientRectangle>200.66,30.48,45.72,5.08</ClientRectangle>
+          <Conditions count="0" isList="true"/>
+          <Font>Times New Roman,12</Font>
+          <Margins>0,0,0,0</Margins>
+          <Name>Text23</Name>
+          <Page isRef="73"/>
+          <Parent isRef="73"/>
+          <Text>{Total_Labor=Sum(DataBand2,rsLabor.EMP_Total_Cost)}</Text>
+          <TextBrush>Black</TextBrush>
+          <Type>Expression</Type>
+        </Text23>
+        <HeaderBand1 Ref="75" isKey="true" type="HeaderBand">
+          <Brush>Transparent</Brush>
+          <ClientRectangle>0,4,200.47,15.24</ClientRectangle>
+          <Components count="5" isList="true">
+            <Text14 Ref="76" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,0,43.18,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12,Bold</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text14</Name>
+              <Page isRef="73"/>
+              <Parent isRef="75"/>
+              <Text>Details - Labor</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text14>
+            <Text17 Ref="77" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>7.62,7.62,43.18,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12,Bold|Underline</Font>
+              <Guid>dabfc07210dbb006ee5bdd2eee3e3801</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text17</Name>
+              <Page isRef="73"/>
+              <Parent isRef="75"/>
+              <Text>Work Performed By:</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text17>
+            <Text18 Ref="78" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>83.82,7.62,20.32,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12,Bold|Underline</Font>
+              <Guid>05bc83d4fd97b9423603dd2f67ed90eb</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text18</Name>
+              <Page isRef="73"/>
+              <Parent isRef="75"/>
+              <Text>Hour(s)</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text18>
+            <Text19 Ref="79" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>127,7.62,15.24,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12,Bold|Underline</Font>
+              <Guid>5eee43ccab55cf10c86add2fba78e46f</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text19</Name>
+              <Page isRef="73"/>
+              <Parent isRef="75"/>
+              <Text>Rate</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text19>
+            <Text20 Ref="80" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>177.8,7.62,20.32,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12,Bold|Underline</Font>
+              <Guid>208ba88979290f766dfcdd30136d2778</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text20</Name>
+              <Page isRef="73"/>
+              <Parent isRef="75"/>
+              <Text>Amount</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text20>
+          </Components>
+          <Conditions count="0" isList="true"/>
+          <Name>HeaderBand1</Name>
+          <Page isRef="73"/>
+          <Parent isRef="73"/>
+        </HeaderBand1>
+        <DataBand2 Ref="81" isKey="true" type="DataBand">
+          <Brush>Transparent</Brush>
+          <ClientRectangle>0,27.24,200.47,5.08</ClientRectangle>
+          <Components count="5" isList="true">
+            <Text15 Ref="82" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>7.62,0,55.88,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text15</Name>
+              <Page isRef="73"/>
+              <Parent isRef="81"/>
+              <Text>{rsLabor.EMP_Last_Name}, {rsLabor.EMP_First_Name}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text15>
+            <Text21 Ref="83" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>83.82,0,15.24,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text21</Name>
+              <Page isRef="73"/>
+              <Parent isRef="81"/>
+              <Text>{rsLabor.EMP_Bill_Hours}</Text>
+              <TextBrush>Black</TextBrush>
+            </Text21>
+            <Text22 Ref="84" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>124.46,0,15.24,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text22</Name>
+              <Page isRef="73"/>
+              <Parent isRef="81"/>
+              <Text>{rsLabor.EMP_Rate_Charge_per_hour}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="85" isKey="true" type="CurrencyFormat">
+                <GroupSeparator>,</GroupSeparator>
+                <NegativePattern>0</NegativePattern>
+                <PositivePattern>2</PositivePattern>
+                <UseLocalSetting>False</UseLocalSetting>
+              </TextFormat>
+            </Text22>
+            <Text26 Ref="86" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>139.7,0,15.24,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text26</Name>
+              <Page isRef="73"/>
+              <Parent isRef="81"/>
+              <Text>{rsLabor.EMP_Rate_Name}</Text>
+              <TextBrush>Black</TextBrush>
+            </Text26>
+            <Text25 Ref="87" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>154.94,0,40.64,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text25</Name>
+              <Page isRef="73"/>
+              <Parent isRef="81"/>
+              <Text>{rsLabor.EMP_Total_Cost}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="88" isKey="true" type="CurrencyFormat">
+                <GroupSeparator>,</GroupSeparator>
+                <NegativePattern>14</NegativePattern>
+                <PositivePattern>2</PositivePattern>
+                <UseLocalSetting>False</UseLocalSetting>
+              </TextFormat>
+            </Text25>
+          </Components>
+          <Conditions count="0" isList="true"/>
+          <DataRelationName>relLabor</DataRelationName>
+          <DataSourceName>rsLabor</DataSourceName>
+          <Filters count="0" isList="true"/>
+          <MasterComponent isRef="32"/>
+          <Name>DataBand2</Name>
+          <OddStyle>Sback_DarkerGreen</OddStyle>
+          <Page isRef="73"/>
+          <Parent isRef="73"/>
+          <Sort count="0" isList="true"/>
+        </DataBand2>
+      </Components>
+      <Conditions count="0" isList="true"/>
+      <Guid>b0b49ab33476fa387176dcac523869a4</Guid>
+      <Margins>10,10,10,10</Margins>
+      <Name>Labor_Report</Name>
+      <PageHeight>297</PageHeight>
+      <PageWidth>220.47</PageWidth>
+      <Report isRef="0"/>
+      <ReportUnit Ref="89" isKey="true" type="hi"/>
+      <Watermark Ref="90" isKey="true" type="Stimulsoft.Report.Components.StiWatermark">
+        <Font>Arial,100</Font>
+        <TextBrush>[50:0:0:0]</TextBrush>
+      </Watermark>
+    </Labor_Report>
+    <Building_Services Ref="91" isKey="true" type="Page">
+      <Border>None;Black;2;Solid;False;4;Black</Border>
+      <Brush>Transparent</Brush>
+      <Components count="3" isList="true">
+        <Text32 Ref="92" isKey="true" type="Text">
+          <Brush>Transparent</Brush>
+          <ClientRectangle>200.66,33.02,58.42,5.08</ClientRectangle>
+          <Conditions count="0" isList="true"/>
+          <Font>Arial,10</Font>
+          <Margins>0,0,0,0</Margins>
+          <Name>Text32</Name>
+          <Page isRef="91"/>
+          <Parent isRef="91"/>
+          <Text>{Total_BuildingSVS=Sum(DataBand3,rsBuildingSVS.BuildingSVS_Amount_Billed)}</Text>
+          <TextBrush>Black</TextBrush>
+          <Type>Expression</Type>
+        </Text32>
+        <HeaderBand3 Ref="93" isKey="true" type="HeaderBand">
+          <Brush>Transparent</Brush>
+          <ClientRectangle>0,4,200.66,17.78</ClientRectangle>
+          <Components count="5" isList="true">
+            <Text36 Ref="94" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,2.54,43.18,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12,Bold</Font>
+              <Guid>acb140b20600d7834e3bde37906122ec</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text36</Name>
+              <Page isRef="91"/>
+              <Parent isRef="93"/>
+              <Text>Building Services</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text36>
+            <Text27 Ref="95" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>7.62,10.16,43.18,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12,Bold|Underline</Font>
+              <Guid>d5b00985f80a27a10680de3790614b5d</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text27</Name>
+              <Page isRef="91"/>
+              <Parent isRef="93"/>
+              <Text>Service</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text27>
+            <Text28 Ref="96" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>83.82,10.16,20.32,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12,Bold|Underline</Font>
+              <Guid>604c427d0487759397ddde37906132db</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text28</Name>
+              <Page isRef="91"/>
+              <Parent isRef="93"/>
+              <Text>Charge</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text28>
+            <Text31 Ref="97" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>127,10.16,15.24,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12,Bold|Underline</Font>
+              <Guid>6bd7fa141ea7c665b8d2de3790610e2d</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text31</Name>
+              <Page isRef="91"/>
+              <Parent isRef="93"/>
+              <Text>Rate</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text31>
+            <Text41 Ref="98" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>177.8,10.16,20.32,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12,Bold|Underline</Font>
+              <Guid>66ac6cf4f38acfc94723de572d767ce2</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text41</Name>
+              <Page isRef="91"/>
+              <Parent isRef="93"/>
+              <Text>Amount</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text41>
+          </Components>
+          <Conditions count="0" isList="true"/>
+          <Guid>add4d2ca92239f5d74f6de37906190ce</Guid>
+          <Name>HeaderBand3</Name>
+          <Page isRef="91"/>
+          <Parent isRef="91"/>
+        </HeaderBand3>
+        <DataBand3 Ref="99" isKey="true" type="DataBand">
+          <Brush>Transparent</Brush>
+          <ClientRectangle>0,29.78,200.66,5.08</ClientRectangle>
+          <Components count="6" isList="true">
+            <Text35 Ref="100" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>7.62,0,21.72,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text35</Name>
+              <Page isRef="91"/>
+              <Parent isRef="99"/>
+              <Text>{rsBuildingSVS.BuildingSVS_Service_Name}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>HotkeyPrefix=None, LineLimit=False, RightToLeft=False, Trimming=None, WordWrap=True, Angle=0, FirstTabOffset=40, DistanceBetweenTabs=20,</TextOptions>
+            </Text35>
+            <Text37 Ref="101" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>118.46,0,21.24,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text37</Name>
+              <Page isRef="91"/>
+              <Parent isRef="99"/>
+              <Text>{rsBuildingSVS.BuildingSVS_Charge}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="102" isKey="true" type="CurrencyFormat">
+                <GroupSeparator>,</GroupSeparator>
+                <NegativePattern>0</NegativePattern>
+                <PositivePattern>2</PositivePattern>
+                <UseLocalSetting>False</UseLocalSetting>
+              </TextFormat>
+              <Type>Expression</Type>
+            </Text37>
+            <Text38 Ref="103" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>71.12,0,15.24,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text38</Name>
+              <Page isRef="91"/>
+              <Parent isRef="99"/>
+              <Text>{rsBuildingSVS.BuildingSVS_Amount_Requested}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="104" isKey="true" type="NumberFormat">
+                <GroupSeparator>,</GroupSeparator>
+                <NegativePattern>0</NegativePattern>
+                <UseLocalSetting>False</UseLocalSetting>
+              </TextFormat>
+              <Type>Expression</Type>
+            </Text38>
+            <Text39 Ref="105" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>154.94,0,40.64,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text39</Name>
+              <Page isRef="91"/>
+              <Parent isRef="99"/>
+              <Text>{rsBuildingSVS.BuildingSVS_Amount_Billed}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="106" isKey="true" type="CurrencyFormat">
+                <GroupSeparator>,</GroupSeparator>
+                <NegativePattern>14</NegativePattern>
+                <PositivePattern>2</PositivePattern>
+                <UseLocalSetting>False</UseLocalSetting>
+              </TextFormat>
+            </Text39>
+            <Text44 Ref="107" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>86.36,0,15.24,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text44</Name>
+              <Page isRef="91"/>
+              <Parent isRef="99"/>
+              <Text>{rsBuildingSVS.BuildingSVS_Unit_of_Measure}</Text>
+              <TextBrush>Black</TextBrush>
+            </Text44>
+            <Text72 Ref="108" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>30,0.22,40,6</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text72</Name>
+              <Page isRef="91"/>
+              <Parent isRef="99"/>
+              <Text>{rsBuildingSVS.BuildingSVS_Comments}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>HotkeyPrefix=None, LineLimit=False, RightToLeft=False, Trimming=None, WordWrap=True, Angle=0, FirstTabOffset=40, DistanceBetweenTabs=20,</TextOptions>
+            </Text72>
+          </Components>
+          <Conditions count="0" isList="true"/>
+          <DataRelationName>relBuildingSVS</DataRelationName>
+          <DataSourceName>rsBuildingSVS</DataSourceName>
+          <Filters count="0" isList="true"/>
+          <MasterComponent isRef="32"/>
+          <Name>DataBand3</Name>
+          <OddStyle>Sback_DarkerGreen</OddStyle>
+          <Page isRef="91"/>
+          <Parent isRef="91"/>
+          <Sort count="0" isList="true"/>
+        </DataBand3>
+      </Components>
+      <Conditions count="0" isList="true"/>
+      <Guid>2df77f6150abc421926ede35e64a3215</Guid>
+      <Margins>10,10,10,10</Margins>
+      <Name>Building_Services</Name>
+      <PageHeight>297</PageHeight>
+      <PageWidth>220.66</PageWidth>
+      <Report isRef="0"/>
+      <ReportUnit Ref="109" isKey="true" type="hi"/>
+      <Watermark Ref="110" isKey="true" type="Stimulsoft.Report.Components.StiWatermark">
+        <Font>Arial,100</Font>
+        <TextBrush>[50:0:0:0]</TextBrush>
+      </Watermark>
+    </Building_Services>
+    <Materials Ref="111" isKey="true" type="Page">
+      <Border>None;Black;2;Solid;False;4;Black</Border>
+      <Brush>Transparent</Brush>
+      <Components count="4" isList="true">
+        <Text50 Ref="112" isKey="true" type="Text">
+          <Brush>Transparent</Brush>
+          <ClientRectangle>200.66,25.4,35.56,5.08</ClientRectangle>
+          <Conditions count="0" isList="true"/>
+          <Font>Arial,10</Font>
+          <Margins>0,0,0,0</Margins>
+          <Name>Text50</Name>
+          <Page isRef="111"/>
+          <Parent isRef="111"/>
+          <Text>{Total_Tax=Sum(DataBand4,rsMaterials.MAT_Total_Sales_Tax)}</Text>
+          <TextBrush>Black</TextBrush>
+          <Type>Expression</Type>
+        </Text50>
+        <Text51 Ref="113" isKey="true" type="Text">
+          <Brush>Transparent</Brush>
+          <ClientRectangle>200.66,30.48,43.18,5.08</ClientRectangle>
+          <Conditions count="0" isList="true"/>
+          <Font>Arial,10</Font>
+          <Margins>0,0,0,0</Margins>
+          <Name>Text51</Name>
+          <Page isRef="111"/>
+          <Parent isRef="111"/>
+          <Text>{Total_Materials=Sum(DataBand4,rsMaterials.MAT_Total_Cost)}</Text>
+          <TextBrush>Black</TextBrush>
+          <Type>Expression</Type>
+        </Text51>
+        <HeaderBand4 Ref="114" isKey="true" type="HeaderBand">
+          <Brush>Transparent</Brush>
+          <ClientRectangle>0,4,200.47,17.78</ClientRectangle>
+          <Components count="5" isList="true">
+            <Text49 Ref="115" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,2.54,43.18,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12,Bold</Font>
+              <Guid>2261f8f6df97465dfa79de7170b5c51c</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text49</Name>
+              <Page isRef="111"/>
+              <Parent isRef="114"/>
+              <Text>Details - Materials</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text49>
+            <Text33 Ref="116" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>7.62,10.16,43.18,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12,Bold|Underline</Font>
+              <Guid>82e162ef756e27b87737de7170b6b0d6</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text33</Name>
+              <Page isRef="111"/>
+              <Parent isRef="114"/>
+              <Text>Materials / Description</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text33>
+            <Text43 Ref="117" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>83.82,10.16,20.32,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12,Bold|Underline</Font>
+              <Guid>83bdc70f2d9f7a7e5fcdde7170b617a3</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text43</Name>
+              <Page isRef="111"/>
+              <Parent isRef="114"/>
+              <Text>Quantity</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text43>
+            <Text45 Ref="118" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>124.46,10.16,17.78,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12,Bold|Underline</Font>
+              <Guid>961fa891ee294e8db2fdde7170b6e8c8</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text45</Name>
+              <Page isRef="111"/>
+              <Parent isRef="114"/>
+              <Text>Unit Cost</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text45>
+            <Text46 Ref="119" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>177.8,10.16,20.32,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12,Bold|Underline</Font>
+              <Guid>d402eaddf23ffb5fef68de7170b6a9ae</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text46</Name>
+              <Page isRef="111"/>
+              <Parent isRef="114"/>
+              <Text>Amount</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text46>
+          </Components>
+          <Conditions count="0" isList="true"/>
+          <Guid>69a3c9e05951c10d5285de7170b58610</Guid>
+          <Name>HeaderBand4</Name>
+          <Page isRef="111"/>
+          <Parent isRef="111"/>
+        </HeaderBand4>
+        <DataBand4 Ref="120" isKey="true" type="DataBand">
+          <Brush>Transparent</Brush>
+          <ClientRectangle>0,29.78,200.47,5.08</ClientRectangle>
+          <Components count="5" isList="true">
+            <Text47 Ref="121" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>10.16,0,63.5,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text47</Name>
+              <Page isRef="111"/>
+              <Parent isRef="120"/>
+              <Text>{rsMaterials.MAT_Discription}</Text>
+              <TextBrush>Black</TextBrush>
+            </Text47>
+            <Text54 Ref="122" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>83.82,0,15.24,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text54</Name>
+              <Page isRef="111"/>
+              <Parent isRef="120"/>
+              <Text>{rsMaterials.MAT_Quantity}</Text>
+              <TextBrush>Black</TextBrush>
+              <VertAlignment>Center</VertAlignment>
+            </Text54>
+            <Text56 Ref="123" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>124.46,0,15.24,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text56</Name>
+              <Page isRef="111"/>
+              <Parent isRef="120"/>
+              <Text>{rsMaterials.Mat_Cost}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="124" isKey="true" type="CurrencyFormat">
+                <GroupSeparator>,</GroupSeparator>
+                <NegativePattern>14</NegativePattern>
+                <PositivePattern>2</PositivePattern>
+                <UseLocalSetting>False</UseLocalSetting>
+              </TextFormat>
+              <VertAlignment>Center</VertAlignment>
+            </Text56>
+            <Text57 Ref="125" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>167.64,0,27.94,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text57</Name>
+              <Page isRef="111"/>
+              <Parent isRef="120"/>
+              <Text>{rsMaterials.MAT_Total_Cost}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="126" isKey="true" type="CurrencyFormat">
+                <GroupSeparator>,</GroupSeparator>
+                <NegativePattern>14</NegativePattern>
+                <PositivePattern>2</PositivePattern>
+                <UseLocalSetting>False</UseLocalSetting>
+              </TextFormat>
+              <VertAlignment>Center</VertAlignment>
+            </Text57>
+            <Text58 Ref="127" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>195.58,0,5.08,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text58</Name>
+              <Page isRef="111"/>
+              <Parent isRef="120"/>
+              <Text>{IIF(rsMaterials.MAT_Chage_Tax=="1", "T",NULL)}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text58>
+          </Components>
+          <Conditions count="0" isList="true"/>
+          <DataRelationName>relMaterials</DataRelationName>
+          <DataSourceName>rsMaterials</DataSourceName>
+          <Filters count="0" isList="true"/>
+          <MasterComponent isRef="32"/>
+          <Name>DataBand4</Name>
+          <OddStyle>Sback_DarkerGreen</OddStyle>
+          <Page isRef="111"/>
+          <Parent isRef="111"/>
+          <Sort count="0" isList="true"/>
+        </DataBand4>
+      </Components>
+      <Conditions count="0" isList="true"/>
+      <Guid>b62fa9421dd6118d44abde6fe7468954</Guid>
+      <Margins>10,10,10,10</Margins>
+      <Name>Materials</Name>
+      <PageHeight>297</PageHeight>
+      <PageWidth>220.47</PageWidth>
+      <Report isRef="0"/>
+      <ReportUnit Ref="128" isKey="true" type="hi"/>
+      <Watermark Ref="129" isKey="true" type="Stimulsoft.Report.Components.StiWatermark">
+        <Font>Arial,100</Font>
+        <TextBrush>[50:0:0:0]</TextBrush>
+      </Watermark>
+    </Materials>
+    <OutSideSvs Ref="130" isKey="true" type="Page">
+      <Border>None;Black;2;Solid;False;4;Black</Border>
+      <Brush>Transparent</Brush>
+      <Components count="4" isList="true">
+        <Text69 Ref="131" isKey="true" type="Text">
+          <Brush>Transparent</Brush>
+          <ClientRectangle>200.66,27.94,15.24,5.08</ClientRectangle>
+          <Conditions count="0" isList="true"/>
+          <Font>Times New Roman,12</Font>
+          <Margins>0,0,0,0</Margins>
+          <Name>Text69</Name>
+          <Page isRef="130"/>
+          <Parent isRef="130"/>
+          <Text>{Total_OutSideSvs=Sum(DataBand5,rsOutSideSVS.OSS_Total_Job_Cost)}</Text>
+          <TextBrush>Black</TextBrush>
+          <Type>Expression</Type>
+        </Text69>
+        <Text75 Ref="132" isKey="true" type="Text">
+          <Brush>Transparent</Brush>
+          <ClientRectangle>200.66,33.02,35.56,5.08</ClientRectangle>
+          <Conditions count="0" isList="true"/>
+          <Font>Times New Roman,12</Font>
+          <Guid>8c60922d9d115abc7220dfedea8757a8</Guid>
+          <Margins>0,0,0,0</Margins>
+          <Name>Text75</Name>
+          <Page isRef="130"/>
+          <Parent isRef="130"/>
+          <Text>{Total_Tax_OutSideSVS=Sum(DataBand5,rsOutSideSVS.OSS_Total_Sales_Tax)}</Text>
+          <TextBrush>Black</TextBrush>
+          <Type>Expression</Type>
+        </Text75>
+        <HeaderBand5 Ref="133" isKey="true" type="HeaderBand">
+          <Brush>Transparent</Brush>
+          <ClientRectangle>0,4,200.47,17.78</ClientRectangle>
+          <Components count="4" isList="true">
+            <Text66 Ref="134" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,2.54,43.18,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12,Bold</Font>
+              <Guid>a8baf87ecabffadea914dfe84a579d4d</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text66</Name>
+              <Page isRef="130"/>
+              <Parent isRef="133"/>
+              <Text>Details - Outside Services</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text66>
+            <Text16 Ref="135" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>7.62,10.16,43.18,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12,Bold|Underline</Font>
+              <Guid>1bd46eed964dc6a4e863dfe84a570f0e</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text16</Name>
+              <Page isRef="130"/>
+              <Parent isRef="133"/>
+              <Text>Comapny Name</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text16>
+            <Text62 Ref="136" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>83.82,10.16,71.12,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12,Bold|Underline</Font>
+              <Guid>37e3f7044f2947811352dfe84a57c0b3</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text62</Name>
+              <Page isRef="130"/>
+              <Parent isRef="133"/>
+              <Text>Description of Work Performed</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text62>
+            <Text64 Ref="137" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>177.8,10.16,20.32,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12,Bold|Underline</Font>
+              <Guid>66fad4b31ab682df1ba3dfe84a578cea</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text64</Name>
+              <Page isRef="130"/>
+              <Parent isRef="133"/>
+              <Text>Amount</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text64>
+          </Components>
+          <Conditions count="0" isList="true"/>
+          <Guid>401f680a5052fd69afa1dfe84a575e78</Guid>
+          <Name>HeaderBand5</Name>
+          <Page isRef="130"/>
+          <Parent isRef="130"/>
+        </HeaderBand5>
+        <DataBand5 Ref="138" isKey="true" type="DataBand">
+          <Brush>Transparent</Brush>
+          <ClientRectangle>0,29.78,200.47,5.08</ClientRectangle>
+          <Components count="4" isList="true">
+            <Text65 Ref="139" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>7.62,0,74.26,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text65</Name>
+              <Page isRef="130"/>
+              <Parent isRef="138"/>
+              <Text>{rsOutSideSVS.OSS_Company_name}</Text>
+              <TextBrush>Black</TextBrush>
+              <VertAlignment>Center</VertAlignment>
+            </Text65>
+            <Text67 Ref="140" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>83.82,0,75.88,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text67</Name>
+              <Page isRef="130"/>
+              <Parent isRef="138"/>
+              <Text>{rsOutSideSVS.OSS_Job_Description}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>HotkeyPrefix=None, LineLimit=False, RightToLeft=False, Trimming=None, WordWrap=True, Angle=0, FirstTabOffset=40, DistanceBetweenTabs=20,</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Text67>
+            <Text68 Ref="141" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>161.64,0,33.94,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text68</Name>
+              <Page isRef="130"/>
+              <Parent isRef="138"/>
+              <Text>{rsOutSideSVS.OSS_Total_Job_Cost}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="142" isKey="true" type="CurrencyFormat">
+                <GroupSeparator>,</GroupSeparator>
+                <NegativePattern>14</NegativePattern>
+                <PositivePattern>2</PositivePattern>
+                <UseLocalSetting>False</UseLocalSetting>
+              </TextFormat>
+              <VertAlignment>Center</VertAlignment>
+            </Text68>
+            <Text76 Ref="143" isKey="true" type="Text">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>195.58,0,5.08,5.08</ClientRectangle>
+              <Conditions count="0" isList="true"/>
+              <Font>Times New Roman,12</Font>
+              <Guid>4e9e5811820126181cc5dfefc6a33156</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text76</Name>
+              <Page isRef="130"/>
+              <Parent isRef="138"/>
+              <Text>{IIF(rsOutSideSVS.OSS_Tax_Job=="1", "T",NULL)}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text76>
+          </Components>
+          <Conditions count="0" isList="true"/>
+          <DataRelationName>RelOutSideSVS</DataRelationName>
+          <DataSourceName>rsOutSideSVS</DataSourceName>
+          <Filters count="0" isList="true"/>
+          <MasterComponent isRef="32"/>
+          <Name>DataBand5</Name>
+          <OddStyle>Sback_DarkerGreen</OddStyle>
+          <Page isRef="130"/>
+          <Parent isRef="130"/>
+          <Sort count="0" isList="true"/>
+        </DataBand5>
+      </Components>
+      <Conditions count="0" isList="true"/>
+      <Guid>59ef549a14d4e1c4c4e5dfe7d84b43d5</Guid>
+      <Margins>10,10,10,10</Margins>
+      <Name>OutSideSvs</Name>
+      <PageHeight>297</PageHeight>
+      <PageWidth>220.47</PageWidth>
+      <Report isRef="0"/>
+      <ReportUnit Ref="144" isKey="true" type="hi"/>
+      <Watermark Ref="145" isKey="true" type="Stimulsoft.Report.Components.StiWatermark">
+        <Font>Arial,100</Font>
+        <TextBrush>[50:0:0:0]</TextBrush>
+      </Watermark>
+    </OutSideSvs>
+  </Pages>
+  <PrinterSettings Ref="146" isKey="true" type="Stimulsoft.Report.Print.StiPrinterSettings"/>
+  <ReportAlias>Invoice Single Sheet</ReportAlias>
+  <ReportChanged>02/09/2020 10:47:04 AM</ReportChanged>
+  <ReportCreated>04/09/2015 03:55:59 PM</ReportCreated>
+  <ReportFile>C:\Users\robpalermo\Documents\Deramweaver\visionworkorders\www\visionworkorders.com\reports\reports\Tenant_List_R1.mrt</ReportFile>
+  <ReportGuid>4e10600eb68573fb81522aa20068b86c</ReportGuid>
+  <ReportName>Invoice Single Sheet</ReportName>
+  <ReportUnit>Millimeters</ReportUnit>
+  <ReportVersion>2016.1</ReportVersion>
+  <Script>Imports System
+Imports System.Drawing
+Imports System.Windows.Forms
+Imports System.Data
+Imports Stimulsoft.Controls
+Imports Stimulsoft.Base.Drawing
+Imports Stimulsoft.Report
+Imports Stimulsoft.Report.Dialogs
+Imports Stimulsoft.Report.Components
+
+Namespace Reports
+    
+    Public Class Report
+        Inherits Stimulsoft.Report.StiReport
+        
+        Public Sub New()
+            MyBase.New
+            Me.InitializeComponent
+        End Sub
+        #Region "StiReport Designer generated code - do not modify"#End Region 'StiReport Designer generated code - do not modify
+    End Class
+End Namespace</Script>
+  <ScriptLanguage>VB</ScriptLanguage>
+  <Styles count="4" isList="true">
+    <Style1 Ref="147" isKey="true" type="Stimulsoft.Report.StiStyle">
+      <Border>Left, Right;Black;1;Solid;False;4;Black</Border>
+      <Brush>Azure</Brush>
+      <Conditions count="0" isList="true"/>
+      <Font>Arial,8</Font>
+      <Name>Style1</Name>
+      <TextBrush>Black</TextBrush>
+    </Style1>
+    <sBackColor Ref="148" isKey="true" type="Stimulsoft.Report.StiStyle">
+      <Brush>Azure</Brush>
+      <Conditions count="0" isList="true"/>
+      <Font>Arial,8</Font>
+      <Name>sBackColor</Name>
+      <TextBrush>Black</TextBrush>
+    </sBackColor>
+    <OutLine Ref="149" isKey="true" type="Stimulsoft.Report.StiStyle">
+      <Border>All;Black;1;Solid;False;4;Black</Border>
+      <Brush>Transparent</Brush>
+      <Conditions count="0" isList="true"/>
+      <Font>Arial,8</Font>
+      <Name>OutLine</Name>
+      <TextBrush>Black</TextBrush>
+    </OutLine>
+    <Sback_DarkerGreen Ref="150" isKey="true" type="Stimulsoft.Report.StiStyle">
+      <Brush>[213:240:230]</Brush>
+      <Conditions count="0" isList="true"/>
+      <Font>Arial,8</Font>
+      <Name>Sback_DarkerGreen</Name>
+      <TextBrush>Black</TextBrush>
+    </Sback_DarkerGreen>
+  </Styles>
+</StiSerializer>

@@ -1,0 +1,67 @@
+<div id="edit_build_serv_div" style='text-decoration:none'>
+	<h1>Edit Building Service</h1>
+	<?php if($this->serviceData) { 
+		  $bservice = $this->serviceData[0];		  
+		?>
+	<div class="message" style='text-align:center;'>
+		<span id="success_msg" class="success_message" style="text-align:center;width:100%;font-weight:bold;color:red;"></span>
+		<span id="error_msg" class="success_message" style="text-align:center;width:100%;font-weight:bold;color:red;"></span>
+	</div>
+	<div class="service_row">
+		  <label>Service Name:</label>
+		  <div class="serv_ibox_row">
+			   <span class="field_error" id="serror_name"></span>
+			   <input type="text" name="service_name" id="service_name" value="<?php echo stripslashes($bservice['service_name']);?>" />
+		  </div>			
+	</div>
+	<div class="service_row">
+		  <label>Unit of Measure:</label>
+		  <div class="serv_ibox_row">
+			   <span class="field_error" id="serror_unit"></span>
+			   <input type="text" name="unit_measure" id="unit_measure" value="<?php echo $bservice['unit_measure']?>"/>
+		  </div>			
+	</div>	
+	<div class="service_row">
+		  <label>Cost $:</label>
+		  <div class="serv_ibox_row">
+			   <span class="field_error" id="serror_cost"></span>
+			   <input type="text" name="cost" id="cost" onkeypress="return isNumber(event)" maxlength="6" value="<?php echo $bservice['cost']?>"/>
+		  </div>			
+	</div>	
+	<div class="service_row">
+		  <label>Minimum Required:</label>
+		  <div class="serv_ibox_row">
+			   <span class="field_error" id="serror_minimum"></span>
+			   <input type="text" name="minimum" id="minimum" onkeypress="return isNumber(event)" maxlength="6" value="<?php echo $bservice['minimum']?>"/>
+		  </div>			
+	</div>	
+	<div class="service_row">
+		 <label>Active:</label>
+		  <div class="serv_ibox_row">
+			   <span class="field_error" id="serror_status"></span>
+			   <select name="status" id="status">
+				   <option value="1" <?php echo ($bservice['status']==1)?'selected="selected"':'';?>>Yes</option>
+				   <option value="0" <?php echo ($bservice['status']==0)?'selected="selected"':'';?>>No</option>
+			   </select>
+		  </div>
+	</div>
+	<div class="service_row">
+		 <label>Save as Global Template:</label>
+		  <div class="serv_ibox_row">
+			   <span class="field_error" id="serror_status"></span>
+			   <select name="global_template" id="global_template">
+				   <option value="1" <?php echo ($bservice['global_template']==1)?'selected="selected"':'';?>>Yes</option>
+				   <option value="0" <?php echo ($bservice['global_template']==0)?'selected="selected"':'';?>>No</option>
+			   </select>
+		  </div>
+	</div>
+	<div class="buttons">
+				   <button type="button" name="save_rate" id="save_rate" value="Save" onclick="updateBuildService('<?php echo $bservice['bsid']?>','<?php echo $this->bId;?>')">Confirm</button>
+				   <button type="button" name="cancel" id="cancel" value="Cancel" onclick="cancelEditService()">Cancel</button>
+			  </div>
+	 <?php 
+   }else{
+	   echo 'Invalid URL';
+   }
+	 ?>				  
+</div>

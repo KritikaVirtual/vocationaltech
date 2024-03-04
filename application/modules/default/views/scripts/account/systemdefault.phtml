@@ -1,0 +1,152 @@
+<style>
+.sdefault_row {
+display: inline-block;
+float:right;
+}
+</style>
+
+<?php 
+    echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/ckeditor/ckeditor.js');
+    echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/ckeditor/adapters/jquery.js');
+     echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/account.js');
+     ?>    
+
+<?php 
+   $sd_id =''; 
+  $from = '';
+  $support_email = '';
+  $subject = '';
+  $voc_logo = '';
+  $footer_info = '';
+  $mail_data='';
+  if($this->sdData){
+	 $setData = $this->sdData[0];
+	 $from = $setData['from'];
+	 $support_email = $setData['support_email'];
+	 $subject = $setData['subject'];
+	 $voc_logo = $setData['voc_logo'];
+	 $footer_info = $setData['footer_info'];
+	 $mail_data = $setData['mail_data'];
+	 $sd_id = $setData['sd_id'];
+  }
+$tooltip_html="";
+$tooltip_html=$tooltip_html.'<div class="pop_title">Header Section</div>';
+$tooltip_html=$tooltip_html.'<div class="temp_var_wid_first">Management Company Logo:</div><div class="temp_var_wid_sec">[[++companyLogo]]</div>';
+$tooltip_html=$tooltip_html.'<div class="temp_var_wid_first">Voc-Tech Logo:</div><div class="temp_var_wid_sec">[[++voctechLogo]]</div>';
+$tooltip_html=$tooltip_html.'<div class="temp_var_wid_first">Date:</div><div class="temp_var_wid_sec">[[++dateTime]]</div>';
+$tooltip_html=$tooltip_html.'<div class="temp_var_wid_first">Cost Center Number:</div><div class="temp_var_wid_sec">[[++costNumber]]</div>';
+$tooltip_html=$tooltip_html.'<div class="pop_title">Building Information</div>';
+$tooltip_html=$tooltip_html.'<div class="temp_var_wid_first">Company Name:</div><div class="temp_var_wid_sec">[[++companyName]]</div>';
+$tooltip_html=$tooltip_html.'<div class="temp_var_wid_first">Building:</div><div class="temp_var_wid_sec">[[++buildingName]]</div>';
+$tooltip_html=$tooltip_html.'<div class="temp_var_wid_first">Address:</div><div class="temp_var_wid_sec">[[++address1]]</div>';
+$tooltip_html=$tooltip_html.'<div class="temp_var_wid_first">City:</div><div class="temp_var_wid_sec">[[++city]]</div>';
+$tooltip_html=$tooltip_html.'<div class="temp_var_wid_first">State:</div><div class="temp_var_wid_sec">[[++state]]</div>';
+$tooltip_html=$tooltip_html.'<div class="temp_var_wid_first">Postal Code:</div><div class="temp_var_wid_sec">[[++postalCode]]</div>';
+$tooltip_html=$tooltip_html.'<div class="temp_var_wid_first">Phone Number:</div><div class="temp_var_wid_sec">[[++phone]]</div>';
+$tooltip_html=$tooltip_html.'<div class="temp_var_wid_first">E-mail Address:</div><div class="temp_var_wid_sec">[[++userEmail]]</div>';
+$tooltip_html=$tooltip_html.'<div class="pop_title">Billing Information</div>';
+$tooltip_html=$tooltip_html.'<div class="temp_var_wid_first">Company Name:</div><div class="temp_var_wid_sec">[[++billCompanyName]]</div>';
+$tooltip_html=$tooltip_html.'<div class="temp_var_wid_first">Billing Address:</div><div class="temp_var_wid_sec">[[++billAddress1]]</div>';
+$tooltip_html=$tooltip_html.'<div class="temp_var_wid_first">Billing City:</div><div class="temp_var_wid_sec">[[++billCity]]</div>';
+$tooltip_html=$tooltip_html.'<div class="temp_var_wid_first">Billing State:</div><div class="temp_var_wid_sec">[[++billState]]</div>';
+$tooltip_html=$tooltip_html.'<div class="temp_var_wid_first">Billing Postal Code:</div><div class="temp_var_wid_sec">[[++billpostalCode]]</div>';
+$tooltip_html=$tooltip_html.'<div class="temp_var_wid_first">Billing Attention:</div><div class="temp_var_wid_sec">[[++attention]]</div>';
+$tooltip_html=$tooltip_html.'<div class="pop_title">Web Site Information</div>';
+$tooltip_html=$tooltip_html.'<div class="temp_var_wid_first">User Name:</div><div class="temp_var_wid_sec">[[++username]]</div>';
+$tooltip_html=$tooltip_html.'<div class="temp_var_wid_first">Password:</div><div class="temp_var_wid_sec">[[++password]]</div>';
+$tooltip_html=$tooltip_html.'<div class="temp_var_wid_first">Web Page URL:</div><div class="temp_var_wid_sec">[[++siteURL]]</div>';
+$tooltip_html=$tooltip_html.'<div class="pop_title">Footer Section</div>';
+$tooltip_html=$tooltip_html.'<div class="temp_var_wid_first">Footer Info:</div><div class="temp_var_wid_sec">[[++footerInfo]]</div>';
+						 ?>
+<div class="container-right">
+   <section style="z-index:9999" class="w-48 fr ch-home-form">
+		<section class="ch-form-header ">
+		     <h3>System Default</h3>
+		</section>
+		<div class="gridContainer">
+			<div class="tableGrid">
+				<div id="system-default-area">
+					<form method="post" name="sdefault_form" id="sdefault_form" action="<?php echo BASEURL.'account/systemdefault';?>" enctype ="multipart/form-data">
+					
+                            <?php if($this->msg1 ||$this->msg2|| $this->msg3 )
+								{ ?>
+								<div id="msg" class="welcome_text"><?php echo $this->msg1; echo $this->msg2; echo $this->msg3; ?></div>
+							<?php } else { 
+							?>	
+							
+							<div id="msg" class="welcome_text"><?php echo $this->msg;?></div> 
+							<?php } ?>
+                             <input type="hidden" name="sd_id" id="sd_id" value="<?php echo $sd_id;?>"/>
+							<div class="default-field">                
+								<div id="from_div" class="sdefault_fd_row">
+									<label>From :</label>
+									<div class="new-sd-box"> 
+										<span id="fnErr"  class="field_error"></span>
+										<input name="from" id="from" type="text" value="<?php echo $from;?>"/> 
+										
+									</div>
+									
+							    </div>
+								<div id="se_div" class="sdefault_fd_row">
+								    <label>Support Email Address:</label>
+								    <div class="new-sd-box">
+										<span id="feErr" class="field_error"></span>
+								        <input name="support_email" id="support_email" type="text" value="<?php echo $support_email;?>">
+									</div>
+								</div>
+								<div id="sub_div" class="sdefault_fd_row">
+								    <label>Subject :</label>
+								    <div class="new-sd-box">
+										<span id="subErr" class="field_error"></span>
+								        <input name="subject" id="subject" type="text" value="<?php echo $subject;?>">
+									</div>
+								</div>
+								<div id="vl_div" class="sdefault_fd_row">
+								    <label class="voc-tech">Voc-Tech Logo :</label>
+								    <div class="voc-tech-des-cont" >
+										
+										<span id="vlErr" class="field_error"></span>
+										<?php if($voc_logo!=''){?>
+										<a href="javascript:void(0)" id="a_logo_<?php echo $sd_id;?>" onclick='window.open("<?php echo BASEURL.'public/images/uploads/'.$voc_logo;?>", "Voc Logo", "width=250, height=200, left=200, top=100");' class="sys_voc_logo">										
+											<img id="img_logo_<?php echo $sd_id;?>" src="<?php echo BASEURL.'public/images/uploads/'.$voc_logo;?>" width="30" style="float:left;"/>
+										 </a>
+										<div width="30" style="float:left; cursor: pointer;" id="delete_divlogo_<?php echo $sd_id;?>" onclick="javascript:deleteSystemLogo('<?php echo $sd_id;?>');">
+											<img src="<?php echo BASEURL.'public/images/delete.png';?>" width="15" title="Delete Logo">
+										</div>
+										 <?php }?>
+								        <input name="voc_logo" id="voc_logo" type="file" value="<?php echo $voc_logo;?>">
+									</div>
+								</div>
+								<div id="fi_div" class="sdefault_fd_row">
+								    <label>Footer Info :</label>
+								    <div class="new-sd-box">
+										<span id="fiErr" class="field_error"></span>
+								        <input name="footer_info" id="footer_info" type="text" value="<?php echo $footer_info;?>">
+									</div>
+								</div>
+								<div id="md_div" class="sdefault_fd_row">
+								    <label>New-Building Data <a href="#" class="btn btn-default btn-circle" data-toggle="popover" data-placement="right" data-html=true title="Template Variable" data-content='<?php echo $tooltip_html; ?>'>?</a>:</label>
+								    <div class="row_editor">
+										<span id="mdErr" class="field_error"></span>
+								        <div class="et_editor" ><textarea id="mail_data" name="mail_data"><?php echo $mail_data;?></textarea></div> 
+									</div>
+								</div>
+							</div> 
+							<div class="add-comp-but">
+								<input type="button" class="confirm" name="confirm" value="Save" onclick="systemValidation()">								 	
+							</div>
+					</form>
+				</div>
+			</div>		
+		</div>
+   </section>
+</div>
+<script type="text/javascript">
+CKEDITOR.disableAutoInline = true;
+
+$( document ).ready( function() {
+    $( '#mail_data' ).ckeditor(); // Use CKEDITOR.replace() if element is <textarea>.
+} );
+
+
+</script>

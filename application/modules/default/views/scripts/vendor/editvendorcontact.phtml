@@ -1,0 +1,85 @@
+<?php 
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/vendor.js');
+
+?>
+<div class="container-right" id="add-tenant-data">
+<section class="w-48 fr ch-home-form">
+<section class="ch-form-header">
+	<h3>Edit Alternate Vendor Contact</h3>
+    </section>
+			 <div class="vendor-user-data">
+		        <?php if(!empty($this->vcId)){
+					   if($this->vcData){
+						   $vcData = $this->vcData[0];
+						   $vData = $this->vendorData[0];						   
+					?>
+				  <div class="form_head">
+						<div class="success_message" style="text-align:center;width:100%;font-weight:bold;color:red;"></div>				  			
+						<span><?php echo stripslashes($vData['company_name']);?> </span>
+						<?php if($this->message && $this->message['msg']!=''){?>
+						   <span class="error-msg"><?php echo $this->message['msg'];?></span>
+						<?php }?>
+				   </div>
+				   
+					  <form name="addNewVContact" id="addNewVContact" action="<?php echo BASEURL.'vendor/editvendorcontact/vid/'.$vData['vid'];?>" method="post">
+						  <input type="hidden" value="<?php echo $vcData['vcId'];?>" name="vcId" id="vcId"/>
+						  <input type="hidden" value="<?php echo $vData['buildingId']?>" name="building" id="building"/>
+						  <input type="hidden" value="<?php echo $vData['vid']?>" name="vid" id="vid"/>
+						  <input type="hidden" value="<?php echo $vcData['email'];?>" name="current_email" id="current_email"/>						  						  					  						  					  						  					  
+						 
+						  <div class="row">	
+							<label>First name :<span class="required">*</span></label><span class="field_error" id="first_name-error"></span> 	
+							<div class="row_vender_input">
+                            <input type="text" required="" id="first_name" class="" name="first_name" value="<?php echo $vcData['first_name'];?>">
+                            </div>
+						 </div>	
+						<div class="row">	
+							
+							<label>Last Name :<span class="required">*</span></label><span class="field_error" id="last_name-error"></span> 
+                            <div class="row_vender_input">	
+							<input type="text" required="" id="last_name" class="" name="last_name" value="<?php echo $vcData['last_name'];?>">
+                            </div>
+						</div>	
+						 <div class="row">
+							<label>E-mail :</label> <span class="field_error" id="email-error"></span>
+                            <div class="row_vender_input">
+							<input type="text" id="email" name="email" value="<?php echo $vcData['email'];?>">
+                            </div>
+						   </div>	
+						<div class="row">	
+							
+							<label>Phone Number :<span class="required">*</span></label><span class="field_error" id="phone_number-error"></span>
+                            <div class="row_vender_input"> 	
+							<input type="text" id="phone_number"  name="phone_number" value="<?php echo $vcData['phone_number'];?>">
+                            </div>
+						</div>
+						<div class="row">	
+							<label>Cell Number :</label><span class="field_error" id="cell_number-error"></span>
+                            <div class="row_vender_input">						 		
+							<input type="text" id="cell_number" class="" name="cell_number"  value="<?php echo $vcData['cell_number'];?>">
+                            </div>
+						</div>	
+						
+						<div class="row">
+							<label>Emergency Contact :</label>
+                            <div class="row_vender_input">
+							<select name="emergency_contact" id="emergency_contact">
+								<option value="1" <?php echo ($vcData['emergency_contact'])?'selected':''?>>Yes</option>
+								<option value="0" <?php echo ($vcData['emergency_contact']=='0')?'selected':''?>>No</option>
+							</select>
+                            </div>
+						</div>											
+							<div class="confirmBtn float_none">
+								<input type="reset" value="Reset" name="cancel" class="cancel"/>
+								<input type="button" value="Confirm" name="next" class="confirm next" onclick="editVendorContact()"/>
+								<input type="button" value="Cancel" name="cancel" class="cancel" onclick="cancelVendorContact()"/>
+							</div>
+					  </form>
+				     <?php }else
+				           echo 'Invalid Page URL';
+				     } else echo 'Invalid Page URL';?> 
+			  </div>
+              </section> 
+			  </div>
+			  
+

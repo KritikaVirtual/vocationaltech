@@ -1,0 +1,24 @@
+<?php
+$serviceMapper = new Model_Services();
+$servicelist = $serviceMapper->getServicesByBuilding($this->build_id);
+?>
+<div class="col-xs-10" style="padding:0px;">
+<select required id="services" class="status" name="services">
+	   <option value="">Select Service</option>
+		<?php 
+		   if($servicelist){
+				foreach ($servicelist as  $service) {											
+					  echo '<option value="'.$service['sid'].'">'.stripslashes($service['service']).'</option>';				   
+				}
+			}
+		?>
+										                    
+</select>
+</div>
+									<div class="col-xs-2" style="padding:6px 0 0 8px;">
+								   <a href="javascript:void(0)" onclick="showServiceForm()" class="vend_tooltip"><img height="24" src="<?php echo BASEURL; ?>public/images/add_vendor.png">
+									<div class="vend_tooltip_content">Add New Service</div>
+								   </a>
+								   </div>
+								   <div class="clearfix"></div>
+								    <span class="field_error" id="services-error"></span>

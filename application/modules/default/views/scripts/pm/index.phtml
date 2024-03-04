@@ -1,0 +1,222 @@
+<?php
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/pm.js');
+$reportModel = new Model_Report();
+$reportDetailLinks = '';
+$dashboard_menu = array(50);
+$reportDetailLinks = $reportModel->getReport($this->custID, $dashboard_menu);
+
+$dashboard_menu2 = array(52);
+$vTTemplateNameLinks = $reportModel->getReport($this->custID, $dashboard_menu2);
+
+$dashboard_menu3 = array(53);
+$vTTypeDesignationNameLinks = $reportModel->getReport($this->custID, $dashboard_menu3);
+?>
+<div class="container-right mgt" id="access-matrix">
+    <!-- Report Link -->
+    <?php if ($reportDetailLinks != '') { ?> <div class="tabmenu" ><ul style="padding:0px;list-style: none;"><?php
+        foreach ($reportDetailLinks as $reportvalue) {
+            if ($reportvalue->Report_Type == 'Flash') {
+                $report_type = 'reports/VisionReportEngine/index.php?stimulsoft_client_key=ViewerFx&stimulsoft_';
+            } else {
+                $report_type = 'vnsreports/index.php?';
+            }
+            $reportOption = explode(',', $reportvalue->report_option);
+            ?> <li class="report_text" ><a   <?php if ($reportvalue->report_target == 1) { ?> target='_blank' <?php } ?> href="<?php echo BASEURL; ?><?php echo $report_type; ?>report_key=<?php echo $reportvalue->report_mrt; ?>" ><?php echo $reportvalue->report_name; ?> </a> </li> <?php } ?> </ul></div>	<?php } ?>
+
+    <section>
+
+        <a class="modalbox create_conf " onclick="javascript:addnewtemplete('<?php echo $this->baseUrl() . '/pm/createtemplate'; ?>');" href="#CreateNewMultiCon"> 
+            <button class="confirm"  >Create Template Name</button>
+        </a>
+        <a class="modalbox create_conf " onclick="javascript:addnewtemplete('<?php echo $this->baseUrl() . '/pm/createdesignation'; ?>');" href="#CreateNewMultiCon"> 
+            <button class="confirm"  >Add Type designation</button>
+        </a>
+        <div id="vendor_search_div">
+            <div id="search_form_div">
+                <div id="search_message"></div>
+                 
+                <form name="search_form" id="search_form" class="vt-temp" action="<?php echo $this->baseUrl(); ?>/pm/" method="post">
+                   
+                    <div id="form_field">
+                        <span class="ser_sp">Show</span>
+                            <select id="show_limit" onchange="showlimit();" name="show_limit" style="width:100px !important;" >
+                                <option value="5" <?php echo ($this->show == 5 ? "selected" : ""); ?> >5</option>
+                                <option value="10" <?php echo ($this->show == 10 ? "selected" : ""); ?> >10</option>                                
+                                <option value="25" <?php echo ($this->show == 25 ? "selected" : ""); ?>>25</option>
+                                <option value="50" <?php echo ($this->show == 50 ? "selected" : ""); ?>>50</option>
+                                <option value="100" <?php echo ($this->show == 100 ? "selected" : ""); ?>>100</option>
+                                <!--<option value="all" <?php //echo ($this->show == 1000 ? "selected" : "");    ?>>All</option>-->
+                            </select>
+                        <div style="float:left;">
+                            <label class="labelcenter">Search For</label>
+                        </div>
+                        <input id="pmsearch_by" type="text" name="templatename" placeholder="Template Name" value="<?php echo $this->templateName; ?>">
+
+                        <div class="text-select-div" style="float: right;">
+                            <div id="search_txt"><input type="text" name="designationname" placeholder="Designation Name" value="<?php echo $this->designationName; ?>"></div>
+                        </div>
+                    </div>
+                    <div class="form-button">
+                        <input type="submit" name="search" id="search" value="Search">
+                        <input type="button" name="reset" id="reset" value="Reset" onclick="window.location.href = '<?php echo BASEURL; ?>pm/'">
+                    </div>  
+                         
+                </form>
+              
+            </div>
+        </div>
+    </section>
+    <section style="z-index:9999" class="w-48 fr ch-home-form" id="first">
+        <section class="ch-form-header">
+            <h3>Existing PM templates</h3>
+        </section>
+        <div class="gridContainer-1">
+            <div class="tableGrid">
+                <table border="1" width="100%">
+                    <tr class="table-title"><td colspan="4">Template Name </td></tr>
+
+                    <?php foreach ($this->templatedetails as $val): ?>
+
+                        <tr>
+                            <td colspan="3" Class="border-top"><?php echo $val['VT_Template_Name']; ?></td>
+                            <td>
+                                <?php
+                                foreach ($vTTemplateNameLinks as $reportvalue) {
+                                    $reportOptions = explode(',', $reportvalue->report_option);
+                                    if ($reportvalue->Report_Type == 'Flash') {
+
+
+                                        if ((in_array('[[++user_id]]', $reportOptions)) && $this->userId != '') {
+                                            $key = array_search('[[++user_id]]', $reportOptions);
+                                            $userID = str_replace('[[++user_id]]', $this->userId, $reportOptions[$key]);
+                                        }
+
+                                        if ((in_array('[[++VT_Template_Name_ID]]', $reportOptions)) && $val['VT_Template_Name_ID'] != '') {
+                                            $key = array_search('[[++VT_Template_Name_ID]]', $reportOptions);
+                                            $vtTemplatenameID = str_replace('[[++VT_Template_Name_ID]]', $val['VT_Template_Name_ID'], $reportOptions[$key]);
+                                        }
+
+                                        $print_url = $this->baseUrl() . '/reports/VisionReportEngine/index.php?stimulsoft_client_key=ViewerFx&stimulsoft_report_key=' . $reportvalue->report_mrt . '&VT_Template_Name_ID=' . $vtTemplatenameID;
+                                    } else {
+
+                                        if ((in_array('[[++user_id]]', $reportOptions)) && $this->userId != '') {
+                                            $key = array_search('[[++user_id]]', $reportOptions);
+                                            $userID = str_replace('[[++user_id]]', $this->userId, $reportOptions[$key]);
+                                        }
+
+                                        if ((in_array('[[++VT_Template_Name_ID]]', $reportOptions)) && $val['VT_Template_Name_ID'] != '') {
+                                            $key = array_search('[[++VT_Template_Name_ID]]', $reportOptions);
+                                            $vtTemplatenameID = str_replace('[[++VT_Template_Name_ID]]', $val['VT_Template_Name_ID'], $reportOptions[$key]);
+                                        }
+
+                                        $print_url = $this->baseUrl() . '/vnsreports/index.php?report_key=' . $reportvalue->report_mrt . '&VT_Template_Name_ID=' . $vtTemplatenameID;
+                                    }
+                                }
+                                ?>
+                                <a <?php if ($reportvalue->report_target == 1) { ?> target='_blank' <?php } ?> href="<?php echo $print_url ?>"><img src="<?php echo $this->baseUrl(); ?>/public/images/printer.png" style="width:18px;"></a>
+                                <a onclick="javascript:edittemplete('<?php echo $this->baseUrl() . '/pm/edittemplate/template_id/' . $val['VT_Template_Name_ID']; ?>');" href="#CreateNewMultiCon"><img src="<?php echo $this->baseUrl(); ?>/public/images/edit.png" ></a> 
+                                <a  onclick="deletetemplate(<?php echo $val['VT_Template_Name_ID']; ?>)"><img src="<?php echo $this->baseUrl(); ?>/public/images/delete.png"></a>
+                            </td>
+                        </tr>
+                        <?php if (!empty($val['VT_TypeDesignation'])) { ?>
+                            <tr class="table-title">
+                                <td width="10%"  style="border-bottom-color: transparent;background: #fff;"></td>
+                                <td>Type Designation</td>
+                                <td>Type Description</td>
+                                <td></td>
+                            </tr>
+                            <?php foreach ($val['VT_TypeDesignation'] as $temptype): ?>
+                                <tr>
+                                    <td width="10%" style="border-bottom-color: transparent; background: #fff;"></td>
+                                    <td><a  title="Click To Go Task section" href="<?php echo BASEURL . 'pm/createtask/desig_id/' . $temptype->VT_Template_Designation_ID; ?>"><?php echo $temptype->VT_TypeDesignation; ?></a></td>
+                                    <td><a title="Click To Go Task section" href="<?php echo BASEURL . 'pm/createtask/desig_id/' . $temptype->VT_Template_Designation_ID; ?>"><?php echo $temptype->VT_TypeDescritpion; ?></a></td>
+                                    <td>
+                                        <?php
+                                        foreach ($vTTypeDesignationNameLinks as $reportvalue) {
+                                            $reportOptions = explode(',', $reportvalue->report_option);
+                                            if ($reportvalue->Report_Type == 'Flash') {
+
+
+                                                if ((in_array('[[++user_id]]', $reportOptions)) && $this->userId != '') {
+                                                    $key = array_search('[[++user_id]]', $reportOptions);
+                                                    $userID = str_replace('[[++user_id]]', $this->userId, $reportOptions[$key]);
+                                                }
+
+                                                if ((in_array('[[++VT_Designation_ID]]', $reportOptions)) && $temptype->VT_Template_Designation_ID != '') {
+                                                    $key = array_search('[[++VT_Designation_ID]]', $reportOptions);
+                                                    $vtTemplateDesignationID = str_replace('[[++VT_Designation_ID]]', $temptype->VT_Template_Designation_ID, $reportOptions[$key]);
+                                                }
+
+                                                $print_url = $this->baseUrl() . '/reports/VisionReportEngine/index.php?stimulsoft_client_key=ViewerFx&stimulsoft_report_key=' . $reportvalue->report_mrt . '&VT_Designation_ID=' . $vtTemplateDesignationID;
+                                            } else {
+
+                                                if ((in_array('[[++user_id]]', $reportOptions)) && $this->userId != '') {
+                                                    $key = array_search('[[++user_id]]', $reportOptions);
+                                                    $userID = str_replace('[[++user_id]]', $this->userId, $reportOptions[$key]);
+                                                }
+
+                                                if ((in_array('[[++VT_Designation_ID]]', $reportOptions)) && $temptype->VT_Template_Designation_ID != '') {
+                                                    $key = array_search('[[++VT_Designation_ID]]', $reportOptions);
+                                                    $vtTemplateDesignationID = str_replace('[[++VT_Designation_ID]]', $temptype->VT_Template_Designation_ID, $reportOptions[$key]);
+                                                }
+
+                                                $print_url = $this->baseUrl() . '/vnsreports/index.php?report_key=' . $reportvalue->report_mrt . '&VT_Designation_ID=' . $vtTemplateDesignationID;
+                                            }
+                                        }
+                                        ?>
+                                        <a <?php if ($reportvalue->report_target == 1) { ?> target='_blank' <?php } ?> href="<?php echo $print_url ?>"><img src="<?php echo $this->baseUrl(); ?>/public/images/printer.png" style="width:18px;"></a>
+                                        <a  onclick="javascript:editdesignation('<?php echo $this->baseUrl() . '/pm/editdesignation/desig_id/' . $temptype->VT_Template_Designation_ID; ?>');" href="#CreateNewMultiCon"><img src="<?php echo $this->baseUrl(); ?>/public/images/edit.png" ></a> 
+                                        <a  onclick="deletedesignation(<?php echo $temptype->VT_Template_Designation_ID; ?>)"><img src="<?php echo $this->baseUrl(); ?>/public/images/delete.png"></a>
+                                    </td>
+                                </tr>
+        <?php endforeach; ?>
+                        <?php } ?>                   
+
+                    <?php endforeach; ?>
+                </table>
+            </div>
+            
+        </div>
+    </section> 
+    <?php
+if (isset($this->templatedetails) && !empty($this->templatedetails)) {
+    echo $this->paginationControl($this->templatedetails, 'Sliding', 'pagination.phtml');
+}
+?> 
+ 
+</div>
+
+<div class="loader" style="display:none;" > <img src="<?php echo BASEURL . 'public/images/loader.gif'; ?>">
+
+    <style>
+        #search_txt > input {
+            width: 200px;
+            padding: 4px 9px !important;
+        }
+        input#pmsearch_by {
+            margin-left: 32px;
+            /* padding-left: 38px; */
+            height: 30px;
+            width: 184px;
+        }
+        .gridContainer-1 .tableGrid {
+            display: block;
+            margin: 0px auto;
+            width: 100%;
+            padding: 0;
+        }
+        .border-top{ border-top: 1px solid #dddddd; }
+        .tableGrid table td{ padding: 5px 3px; }
+        .tableGrid table{ border-color: #dddddd;}
+        .table-title{
+            background-color: #2a6496;
+            color: #fff;
+        }
+
+    </style>
+    <script>
+        function showlimit() {        
+        var limit = $("#show_limit").val();
+        window.location = baseUrl + 'pm/index/show/' + limit;
+    }
+    </script>

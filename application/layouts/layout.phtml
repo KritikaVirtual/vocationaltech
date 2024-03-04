@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<title>Vocational Technologies</title>
+<?php  //echo $this->partial('header.phtml'); 
+$controller=Zend_Controller_Front::getInstance()->getRequest()->getControllerName();
+?>
+<link rel="stylesheet" href="<?php echo $this->baseUrl() ?>/public/css/jquery-ui.css"/>
+<script src="<?php echo BASEURL.'/public'?>/js/jquery-1.9.1.min.js"></script>
+<link href="<?php echo BASEURL.'/public'?>/css/mediaqueries.css" rel="stylesheet"/>
+<link href="<?php echo BASEURL.'/public'?>/css/custom-login.css" rel="stylesheet"/>
+</head>
+<body class="layout-backgorund">
+
+<div class="main_log">
+<!---<div class="my_logo"><a href="<?php //echo BASEURL;?>"><img src="<?php //echo BASEURL.'public/images/logo.jpg'?>"  class="logo"/></a> </div>--->
+<div class="content">
+<?php echo $this->layout()->content ?>
+</div>
+<!--<div class="footer">
+	<span class="footerLeft">
+		<img src="<?php //echo BASEURL.'public/images/vt_logo.png'?>" width="145" />
+		-<p> 1996-2017 Vision System by Vocational Technologies, LLC © Copyright <?php //echo date('Y');?>. Vocational Technologies. All Rights Reserved.</p>-
+		<p> 1996-2017 Vision Work Orders by Vocational Technologies, LLC </p>
+	</span>
+	<span class="footerRight">
+		<ul>
+			<li><a href="<?php //echo BASEURL.'index/support'?>">Support</a></li>
+			<span class="footerSeprator">|</span>
+			<li><a href="<?php //echo BASEURL.'index/contactus'?>">Contact Us</a></li>
+		</ul>
+	</span>
+</div>-->
+</div>
+<?php echo $this->partial('new_footer.phtml');?>
+</body>
+</html>

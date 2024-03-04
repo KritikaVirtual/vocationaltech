@@ -1,0 +1,438 @@
+<?php
+$eqpManual = $this->eqpManual;
+$eqpDetail = $this->eqpDetail;
+if (empty($eqpDetail->Equipment_Inservice_Date)) {
+    $inserviceDate = '';
+} else {
+    $inserviceDate = date('m/d/Y', strtotime($eqpDetail->Equipment_Inservice_Date));
+}
+?>
+<div class="container-right task-popup task-section">
+    <div class="message">               
+        <span class="error-txt" style="color:red; text-align:center;"></span>
+    </div>
+    <section style="z-index:9999" class="w-48 fr ch-home-form form-inline" id="first">
+        <section class="ch-form-header ">
+            <h3>Edit Equipment </h3>
+        </section>
+
+        <div class="col-md-6 col-sm-6 col-xs-6">
+            <div class="form-group">
+                <label class="control-label col-sm-6 col-md-6 col-xs-6">Equipment Name<span class="required">*</span></label>
+
+            </div>
+            <span class="ugroupErr" id="equipmentname_error"></span>
+        </div>
+        <div class="col-md-6 col-sm-6 col-xs-6">
+            <div class="form-group">
+                <label class="control-label col-sm-6 col-md-6 col-xs-6">Attach Template<span class="required">*</span></label>
+
+            </div>
+            <span class="ugroupErr" id="attachtemplate_error"></span>
+        </div>
+        <div class="col-md-6 col-sm-6 col-xs-6">
+            <div class="form-group">
+                <input class="input-box-cstm" list="browsers" id="equipmentname" disabled="disabled"  value="<?php echo $eqpDetail->AU_Equipment_Name; ?>">
+                <input type="hidden" name="equipmentnameid" id="equipmentnameid"  value="<?php echo $eqpDetail->AU_Equipment_Name_ID; ?>">
+                <input type="hidden" name="equipmentdetailid" id="equipmentdetailid"  value="<?php echo $eqpDetail->AU_Equipment_Detail_ID; ?>">
+
+            </div>
+        </div>
+        <div class="col-md-6 col-sm-6 col-xs-6">
+            <div class="form-group">
+                <select name="level" class="form-control select-custom" id="attach_template" name="attach_template" disabled="disabled">                                    
+                    <option  value="<?php echo $eqpDetail->AU_Template_Designation_ID; ?>"><?php echo $eqpDetail->template_name . '&nbsp;|&nbsp;' . $eqpDetail->AU_TypeDesignation . '&nbsp;&nbsp;' . substr($eqpDetail->AU_TypeDescritpion, 0, 20); ?> </option>                    
+                </select>
+
+            </div>
+
+        </div>
+
+         <div class="col-md-6 col-sm-6 col-xs-6">
+        <input type="hidden" name="taskId" id="taskId" value="<?php echo $eqpDetail->AU_Equipment_Task_ID; ?>">
+        <div class="form-group">
+			<label class="control-label col-sm-6 col-md-6 col-xs-6">Default all Start Dates to:</label>
+            <input type="text" class="date-picker" name="startdate" id="startdate" value="<?php echo date('m/d/Y', strtotime($eqpDetail->Startdate_month .' ' .$eqpDetail->Start_Date)); ?>
+			">
+            <span class="ugroupErr" id="startdate_error"></span>
+        </div>
+</div>
+		<div class="col-md-6 col-sm-6 col-xs-6">
+		
+            <div class="form-group">
+			<label class="control-label col-sm-6 col-md-6 col-xs-6">
+			<input type="radio" name="assignto" id="assignto1" checked="checked" onclick="disableEnableAssign()">
+			Assig all Task(s) and Reading(s) To: </label>
+            <select name="group_id" id="assignto" onchange="changeGroupEmailId();">
+                <?php 	foreach ($this->EmailGroup as $Emails): ?>
+                    <option value="<?php echo $Emails['id']; ?>"><?php echo $Emails['group_name']; ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+		</div>
+        <div class="col-md-6 col-sm-6 col-xs-6">
+            <div class="form-group">
+                <label class="control-label col-sm-6 col-md-6 col-xs-6">Unit<span class="required">*</span></label>
+                <input type="text" name="unit" id="unit" maxlength="20" value="<?php echo $eqpDetail->Equipment_Unit; ?>">
+                <input type="hidden" name="old_unit" id="old_unit" maxlength="20" value="<?php echo $eqpDetail->Equipment_Unit; ?>">
+
+            </div>
+            <span class="ugroupErr" id="unit_error" ></span>
+            <div class="form-group">
+                <label class="control-label col-sm-6 col-md-6 col-xs-6">Floor<span class="required">*</span></label>
+                <input type="text" name="floor" id="floor" maxlength="20" value="<?php echo $eqpDetail->Equipment_Floor; ?>">
+                <input type="hidden" name="old_floor" id="old_floor" maxlength="20" value="<?php echo $eqpDetail->Equipment_Floor; ?>">
+                <span class="ugroupErr" id="floor_error" ></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-6 col-md-6 col-xs-6">Location<span class="required">*</span></label>
+                <input type="text" name="location" id="location" value="<?php echo $eqpDetail->Equipment_Location; ?>">
+                <span class="ugroupErr" id="location_error" ></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-6 col-md-6 col-xs-6">Serial number</label>
+                <input type="text" name="serialnumber" id="serialnumber" maxlength="50" value="<?php echo $eqpDetail->Equipment_Serial_Number; ?>">
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-6 col-md-6 col-xs-6">Make / Model</label>
+                <input type="text" name="makemodel" id="makemodel" maxlength="50" value="<?php echo $eqpDetail->Equipment_Make_Model; ?>">
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-6 col-md-6 col-xs-6">In Service Date</label>
+                <input type="text" class="date-picker-with-old" name="inservicedate" id="inservicedate" value="<?php echo $inserviceDate; ?>">
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-6 col-md-6 col-xs-6">Note:</label>
+                <!--<input type="text" name="note" id="note">-->
+                <textarea name="note" id="note" rows="4"><?php echo $eqpDetail->Equipment_Notes; ?></textarea>
+            </div>
+        </div>
+        <div class="col-md-6 col-sm-6 col-xs-6">
+            <div class="form-group">
+                <label class="control-label col-sm-6 col-md-6 col-xs-6">Status</label>
+                <select name="status" id="status">
+                    <option value="1" <?php if ($eqpDetail->Equipment_Status == 1) {
+    echo 'selected=selected';
+} ?> >Active</option>
+                    <option value="0" <?php if ($eqpDetail->Equipment_Status == 0) {
+    echo 'selected=selected';
+} ?>>Inactive</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <div class="viewimage">
+                    <?php
+                    if (!empty($eqpDetail->Equipment_Image)) {
+                        $img = $eqpDetail->Equipment_Image;
+                    } else {
+                        $img = 'blank.jpg';
+                    }
+                    ?>
+                    <img style="width: 175px;height: 175px;margin-bottom: 6px;" src="<?php echo $this->baseUrl() . '/public/pm/' . $img; ?>">
+                </div>
+                <form id="image1"  action="" method="post"  enctype="multipart/form-data">
+                    <input type="file" name="file" id="file">
+                    <span class="ugroupErr" id="file_error" ></span>
+                    <input type="submit" value="Upload" class="submit" style="display:none;"  />
+                </form>
+                <input type="hidden" name="imagename" id="imagename" value="<?php echo $eqpDetail->Equipment_Image; ?>">
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-6 col-md-6 col-xs-6">Equipment Manual</label>
+                <input type="file" name="equipmentmenual" id="equipmentmenual" value="<?php echo $eqpDetail->Equipment_Manual; ?>">
+                <div class="manual-pdf">
+                    <ul>
+                        <?php
+                        if (!empty($eqpDetail->Equipment_Manual)) {
+                            ?>
+                        <li><?php echo $eqpDetail->Equipment_Manual; ?><span><a onclick="deletemanualpdf('',<?php echo $eqpDetail->AU_Equipment_Detail_ID; ?>)"><img src="<?php echo $this->baseUrl(); ?>/public/images/delete.png"></a></span></li>
+
+
+                            <?php
+                            // Listing the multiple of pdf file
+                            foreach ($eqpManual as $val) {
+                                ?> 
+
+                        <li><?php echo $val->Equipment_Manual; ?><span><a onclick="deletemanualpdf(<?php echo $val->AU_Equipment_Manual_ID; ?>, <?php echo $val->AU_Equipment_Detail_ID; ?>)"><img src="<?php echo $this->baseUrl(); ?>/public/images/delete.png"></a></span></li> 
+                                <?php
+                            }
+                        } else if (count($eqpManual) > 0) {
+                            // Listing the multiple of pdf file
+                            foreach ($eqpManual as $val) {
+                                ?>
+                                <li><?php echo $val->Equipment_Manual; ?><span><a onclick="deletemanualpdf(<?php echo $val->AU_Equipment_Manual_ID; ?>, <?php echo $val->AU_Equipment_Detail_ID; ?>)"><img src="<?php echo $this->baseUrl(); ?>/public/images/delete.png"></a></span></li> 
+                                <?php
+                            }
+                        }
+                        ?>
+                    </ul>
+                </div>
+                <span class="ugroupErr" id="equipmentmenual_error" ></span>
+            </div>
+        </div>        
+
+        <div class="col-md-12 col-sm-12 col-xs-12 height_20" style="text-align: center;">
+            <input type="hidden" name="action" id="action" value="add">
+            <button class="confirm" onclick="validateeditequipment('add');">Save</button>
+            <button class="confirm" onclick="closepopup();">Cancel</button>           
+
+        </div> 
+    </section>
+
+</div>
+<!-- Loader section -->
+<div class="loader" style="display:none;" > 
+    <img src="<?php //echo BASEURL . 'public/images/loader.gif'; ?>">
+</div>
+
+<style>
+
+    .vdata{
+        float: left;
+        position: inherit;
+        margin-right: 35px;
+    }
+    label.control-label.col-sm-6.col-md-6.col-xs-6 {
+        padding-left: 1px;
+    }
+    span.left {    width: 39%;
+    }
+    input#begDate {
+        width: 100% !important;
+    }
+    .ch-home-form .form-group{
+        width:100%;
+        margin: 8px 0;
+    }
+    .ch-home-form .form-group #startDate{
+        width: 130px !important;
+    }
+    .ch-home-form .form-group #endDate{
+        width: 130px !important;
+    }
+    .ch-home-form .form-group .form-control{
+        width: 100%!important;
+        display: inline-block;
+    }
+    .ch-home-form .left{
+        float: left;
+        margin: 0;
+    }
+    .ch-home-form .right{
+        float: right;
+        margin: 0;
+    }
+    .ch-home-form .left label, .ch-home-form .right label{
+        width: 100%
+    }
+
+    /* table.ui-datepicker-calendar {
+         display: none;
+    }*/
+    button.confirm.active {
+        background-color: #45e4a8;
+    }
+
+    #startDate[readonly]{
+        cursor: auto !important; 
+        background-color: white !important; 
+        opacity: 1 !important; 
+    }
+
+    #endDate[readonly]{
+        cursor: auto !important; 
+        background-color: white !important; 
+        opacity: 1 !important; 
+    }
+    #begDate[readonly]{
+        cursor: auto !important; 
+        background-color: white !important; 
+        opacity: 1 !important; 
+    }
+
+    #stopDate[readonly]{
+        cursor: auto !important; 
+        background-color: white !important; 
+        opacity: 1 !important; 
+    }
+    #custome_hours[readonly]{
+        cursor: auto !important; 
+        background-color: white !important; 
+        opacity: 1 !important; 
+    }
+
+    #freq_num[readonly]{
+        cursor: auto !important; 
+        background-color: white !important; 
+        opacity: 1 !important; 
+    }
+    .resetenddate{
+        margin-left: 273px;
+        border: 1px solid green;
+        background: green;
+        color: white;
+        padding: 1px 7px 2px 6px;
+    }
+    .viewimage{
+        border: 1px solid gray;
+        padding: 1px 1px 0px 6px;
+        margin: 2px 153px 7px 1px;
+        clear: both; 
+    }
+
+    .left_box{
+        padding-left: 0%;
+        padding-top: 10%;
+        padding-bottom: 10%;
+    }
+
+    .left_box table{
+        width: 100%;
+        overflow-y: scroll;
+    }
+
+    .left_box table tbody{
+        height: 200px;
+        display: inline-block;
+        width: 80%;
+        overflow-x: hidden;
+        border: 1px solid #c1c1c1;
+        overflow-y: scroll;
+    }
+
+    .left_box table tbody td{
+        width: 100%;
+    }
+
+
+    .right_box
+    {
+        padding-top: 10%;
+        padding-bottom: 10%;  
+    }
+
+
+    .task-reading-butttn
+    {
+        margin-top: 2%;
+    }
+
+    .details-view table td
+    {
+        padding:5px;
+        text-align: center;
+    }
+
+    .details-view table th
+    {
+
+        text-align: center;
+    }
+
+    .td-left-text
+    {
+        text-align: left !important;
+    }
+
+    .details-view
+    {
+        margin-top:0px;
+        margin-bottom:20px;
+
+    }
+
+    .heading-text {
+        background-color: #ccc;
+        color: #000;
+        font-weight: 500;
+    }
+
+    .sub-task-text {
+        background-color: lightblue;
+    }
+
+    .color-text-blue {
+        background-color:#F0F8FF;
+    }
+
+    .subset-table-td{
+        padding-top: 0px !important; 
+        padding-bottom: 0px !important;
+    }
+
+
+    .border-bottom-cusstm
+    {
+        border-bottom: 1px solid #ccc;
+    }
+
+    .border-left-cusstm
+    {
+        border-left: 1px solid #ccc;
+    }
+
+    .fa-minus-circle-custm
+    {
+        float: right;
+        padding-top: 4px;
+    }
+
+    .fa-pluse-circle-custm
+    {
+        float: right;
+        padding-top: 4px;
+    }
+    .tempalte-detail-view{
+        overflow-x: hidden;   
+    }
+    #second{
+        display:none;
+    }
+    .form-wrap { border: 1px solid #ccc; }
+    .input-wrap { width: 100% !important; }
+    .outside-detail { padding-top: 20px; }
+    #first .select-custom{
+        border-radius: 0px !important;
+        box-shadow:none !important;
+        width:100% !important;
+        height:29px;
+        padding-top: 3px !important;
+        color:#757575 !important;
+
+    }
+    .input-box-cstm
+    {
+        width:100% !important;
+    }
+
+    .height_20
+    {
+        margin-bottom: 20px;
+        margin-top: 20px;
+    }
+
+    .main-form-box
+    {
+        margin:8px 0px;
+    }
+
+    .form-grup-csttm
+    {
+        margin:4px 0px;
+    }
+    .scroll-y{
+        border: 1px solid #ccc;
+        margin-right:13px;
+        float: right;
+        width: 740px;
+        height:199px;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+    .spacer-30
+    {
+        margin-top: 20px !important;
+    }
+</style>
+<?php echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/pm-equipment.js'); ?> 

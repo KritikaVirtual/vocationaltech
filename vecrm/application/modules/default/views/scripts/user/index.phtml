@@ -1,0 +1,447 @@
+<?php $userWizardAccess = $this->acesshelper->checkAccess($this->role,$this->user_wizard_location);  ?>
+
+<div class="container-right" id="user-Complete">
+	<?php if($this->role!=1 && $userWizardAccess->is_access == 0 && $userWizardAccess->is_write == 1){?>
+    <?php        
+        $roles = $this->companyListing['roles'];
+        $modules = $this->companyListing['modules'];
+        $buildings = $this->companyListing['buildings'];
+    ?>
+<section style="z-index:9999" class="w-48 fr ch-home-form" id="first">
+    <section class="ch-form-header ">
+        <h3>New User Setup Wizard</h3>
+    </section>
+    <div class="gridContainer">
+        <div class="tableGrid">
+          <form id="addNewBuilding">
+              <input type="hidden" value="<?php echo $this->cust_id;?>" name="cust_id" id="cust_id">
+              <input type="hidden" value="" name="uid" id="uid">
+              
+              <div class="new_user_wiz_main">
+                <label>E-mail :<span class="required">*</span></label> 
+                <div class="new_user_wiz">
+                <span class="uemailErr" id="email-error"></span>
+                <input type="text" value="" id="email" name="email">
+                </div>
+                </div>
+                
+                <div class="new_user_wiz_main">
+                <label>First name :<span class="required">*</span></label>
+                <div class="new_user_wiz">
+                <span class="ufirstErr" id="firstname-error"></span> 	
+                <input type="text" required="" id="firstname" class="" name="firstname">
+                </div>
+                </div>
+                
+                <div class="new_user_wiz_main">
+                <label>Last Name :<span class="required">*</span></label>
+                <div class="new_user_wiz">
+                <span class="ulastErr" id="lastname-error"></span> 	
+                <input type="text" required="" id="lastname" class="" name="lastname">
+                </div>
+                </div>
+                
+                <div class="new_user_wiz_main">
+                <label>Title :</label>		
+                <div class="new_user_wiz">
+                <input type="text" required="" id="title" class="" name="title">
+                </div>
+                </div>
+                
+                <div class="new_user_wiz_main">
+                <label>Office Phone :<span class="required">*</span></label>
+                <div class="new_user_wiz">
+                <span class="uofficeErr" id="office-phone-error"></span> 		
+                <input type="text" id="office-phone" class="" name="office_phone" onkeypress="return isNumberKey(event)">
+                </div>
+                </div>
+                
+                <div class="new_user_wiz_main">
+                <label>Select access :</label>
+                 <div class="new_user_wiz">
+                <select required id="status" class="status" name="access">
+                    <?php 
+                        $notallow = array(1,5,7,9);
+                        foreach ($roles as $ker => $role) {
+							if(!in_array($role['roleID'],$notallow)){
+                              echo '<option value="'.$role['roleID'].'">'.$role['title'].'</option>';
+						   }
+                        }
+                    ?>                    
+                </select>
+                </div>
+                </div>
+                <div class="confirmBtn user-save-bt">
+                    <input type="reset" value="Reset" name="cancel" class="cancel"/>
+                    <input type="button" value="Next" name="next" class="confirm nextFirst"/>
+                    <input type="button" value="Cancel" name="cancel" class="cancel" onclick="cancelUser()"/>
+                </div>
+          </form>
+        </div>
+    </div>
+</section>
+    
+<section style="z-index:9999;display:none;" class="w-48 fr ch-home-form" id="second" >
+    <section class="ch-form-header ">
+        <h3>New User Setup Wizard</h3>
+    </section>
+    <div class="gridContainer">
+        <div class="tableGrid user_add_wiz">
+			
+          <form id="addNewBuilding">              
+                <div>
+					<span id="error_msg"class="required"></span>
+                </div>
+                <table class="select_module" width="100%">
+                <tr><th>Select Modules : </th></tr>
+                    <?php 
+                    $index = 0;
+                        foreach ($modules as $ker => $module) {
+                           
+                            echo '<tr>
+                                    <td>
+                                        <input id="module_'.$module['module_id'].'" type="checkbox" value="'.$module['module_id'].'" class="module" name="module[]" style="float:left"/>
+                                        <label>'.$module['module_name'].'</label> 
+                                    </td>
+                                </tr>';
+                            $index++;
+                        }
+                    ?> 
+                </table>
+                <br style="clear:both">
+                <?php if($this->role!=1){ ?>
+             
+                <table class="select_module" width="100%">
+                <tr><th>Select Building(s) :</th></tr>
+                    <?php 
+                        foreach ($buildings as $ker => $building) {
+                            echo '<tr>
+                                    <td>
+                                        <input id="building_'.$building['build_id'].'" class="buildings" type="checkbox" value="'.$building['build_id'].'" name="building[]" style="float:left"/>
+                                        <label>'.$building['buildingName'].'</label> 
+                                    </td>
+                                </tr>';
+                            $index++;
+                        }
+                    ?> 
+                </table>
+               <?php }else { ?>
+					<div class="user-name">Web admin user can't assign any building. </div>
+					<?php }?>
+                <br style="clear:both">
+                <label></label>
+                <div class="confirmBtn user-save-bt">                    
+                    <input type="button" value="Next" name="next" id="nextSecond" class="confirm nextSecond"/>
+                    <input type="button" value="Cancel" name="cancel" class="cancel" onclick="cancelUser()"/>
+                </div>
+          </form>
+           
+        </div>
+    </div>
+</section>
+<?php }else{?>
+	    You don't have access for this module.
+	  <?php }?>     
+</div>
+<div class="loader" style="display:none;" > <img src="<?php echo BASEURL.'public/images/loader.gif';?>"><div>
+<script type="text/javascript">
+    $(function(){
+
+        $('.module').on('click',function(){
+            var checkedIds = $(".module:checkbox:checked").map(function() {
+                return this.id;
+            }).get();
+            if(checkedIds.length==0){
+                $('.buildings').attr('checked',false);
+                $('#nextSecond').attr('disabled',true);
+                $('#error_msg').html('At least One module & One building must be selected.');
+            }
+            else{
+                $('#nextSecond').attr('disabled',false);
+                $('#error_msg').html('');
+            }
+        });
+
+        $('.buildings').on('click',function(){
+            var checkedIds = $(".buildings:checkbox:checked").map(function() {
+                return this.id;
+            }).get();
+            if(checkedIds.length==0){
+                $('.module').attr('checked',false);
+                $('#nextSecond').attr('disabled',true);
+                $('#error_msg').html('At least One module & One building must be selected.');
+            }
+            else{				
+				$('.module').prop('checked',true);
+                $('#nextSecond').attr('disabled',false);
+                $('#error_msg').html('');
+            }
+        });
+        
+
+        $("#office-phone").mask("999.999.9999");
+        $(".nextFirst").on("click", function(){
+            
+            var emailaddress = $("#email").val();
+            var firstname = $("#firstname").val();
+            var lastname = $("#lastname").val();
+            var office_phone = $("#office-phone").val();
+            
+            var isError = false;
+            if(emailaddress.length == 0) {
+                $("#email-error").html("Please enter E-mail address");
+                isError = true;
+            } else if( !isValidEmailAddress( emailaddress ) ) {
+                $("#email-error").html("Please enter valid E-mail address");
+                isError = true;
+            } else {
+                 $("#email-error").html("");
+            }
+            
+            
+            if(firstname.length == 0) {
+                $("#firstname-error").html("Please enter first name");
+                isError = true;
+            } else {
+                $("#firstname-error").html("");
+            }
+            
+            if(lastname.length == 0) {
+                $("#lastname-error").html("Please enter last name");
+                isError = true;
+            } else {
+                $("#lastname-error").html("");
+            }
+            
+            if(office_phone.length == 0) {
+                $("#office-phone-error").html("Please enter office phone number");
+                isError = true;
+            } else {
+                $("#office-phone-error").html("");
+            }
+            
+            if(!isError) {
+			  $.ajax({
+                url         : baseUrl+"user/checkuser",
+                type        : "post",
+                datatype    : 'json',
+                data        : {email:emailaddress},
+                success     : function( data ) {					
+                   if(data=='true'){					   
+					   $("#email-error").html("This email-id is already existed.");
+				   }else{	
+                    var userdata;
+                    var buildingId;
+                    var moduleId;
+                    userdata = JSON.parse(data);
+                       for(var i=0; i<userdata.length; i++){
+
+                            buildingId = '#building_'+userdata[i].building_id;
+                            moduleId = '#module_'+userdata[i].modules_id;
+                            $(buildingId).attr('checked','true');
+                            $(moduleId).attr('checked','true');
+                        }
+					  $("#first").css({"display" : "none"});
+                      $("#second").css({"display" : "block"});
+				   }
+                },
+                error       : function(){
+                    alert('There was an error');
+                }  
+                
+             });
+				
+            } 
+        });
+        
+        
+        
+        //Auto complete
+         $( "#email" ).autocomplete({
+            source: function( request, response ) {
+                $.ajax({
+                    url: baseUrl+"user/getcompanyuserdetail",
+                    dataType: "jsonp",
+                    data: {
+                        q: request.term
+                    },
+                    success: function( data ) {
+						if (data== false) {
+							//alert('not found');
+							resetUserForm();
+						}else
+                        response( data );
+                    }
+                });
+            },
+            minLength: 1,
+            select: function( event, ui ) {
+                $("#uid").val(ui.item.uid);
+                                
+                $("#email").val(ui.item.email);
+                //$("#email").attr('readonly','readonly');
+                            
+                $("#firstname").val(ui.item.firstName);
+                $("#firstname").attr('readonly','readonly');
+                
+                $("#lastname").val(ui.item.lastName);                
+                $("#lastname").attr('readonly','readonly');
+                
+                $("#office-phone").val(ui.item.phoneNumber);                
+                $("#office-phone").attr('readonly','readonly');
+                
+                $("#title").val(ui.item.Title);
+                $("#title").attr('readonly','readonly');
+                                
+                $("#status").val(ui.item.role_id);
+                $("#status").attr('disabled',true);
+            },
+            open: function() {
+                $( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+            },
+            close: function() {
+                $( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+            }
+         });
+         
+         $(".nextSecond").on("click", function(){
+			 $('.loader').show();             
+            $("#confirm").attr('disabled',true); 
+            var modules = $('input[name="module\[\]"]:checked').map(function() {
+                return this.value;
+            }).get();
+            
+            var buildings = $('input[name="building[\]"]:checked').map(function() {
+                return this.value;
+            }).get();
+             if(modules=='' || buildings ==''){
+				 $('#error_msg').html('At least One module & One building must be selected.');
+				 $('.loader').hide();
+				$("#confirm").attr('disabled',false); 
+			 }else{           
+				 var data = {
+					uid          :   $("#uid").val(),
+					userName     :   $("#email").val(),
+					email        :   $("#email").val(),
+					firstname    :   $("#firstname").val(),
+					lastname     :   $("#lastname").val(),
+					phoneNumber  :   $("#office-phone").val(),
+					title        :   $("#title").val(),
+					role_id      :   $("#status").val(),
+					module       :   modules,
+					building     :   buildings,
+				 }
+			 
+				 $.ajax({
+					url         : baseUrl+"user/saveuserdetail",
+					type        : "post",
+					datatype    : 'json',
+					data        : data,
+					success     : function( data ) {					
+						var detail = jQuery.parseJSON(data);
+						console.log(detail)
+						createUserComplete(detail);
+					},
+					error       : function(){
+						$('.loader').hide();
+						$("#confirm").attr('disabled',false); 
+						alert('There was an error updating the settings');
+					},  
+					complete    : function( ) {
+						$('.loader').hide();
+					  $("#confirm").attr('disabled',false);
+					}
+				 });
+		 }
+             
+         });
+    });
+   function resetUserForm(){
+		 if($("#uid").val()!=''){
+		 $("#uid").val('');
+		 $("#firstname").val('');
+		 $("#lastname").val('');
+		 $("#title").val('');
+		 $("#office-phone").val('');
+		 $("#status").val('');		 
+		  
+	  }
+	  $("#firstname").attr("readonly", false);
+	  $("#lastname").attr("readonly", false);
+	  $("#title").attr("readonly", false);  
+	  $("#office-phone").attr("readonly", false);
+
+	  //$("#status").attr("readonly", false);	  
+	  $("#status").prop("disabled", false);
+
+		 
+	 } 
+	 
+	function cancelUser(){
+		window.location.href = baseUrl+'company/users';
+	} 
+   function isNumberKey(evt)
+	{
+		var charCode = (evt.which) ? evt.which : event.keyCode;
+		if (charCode != 46 && charCode > 31
+		&& (charCode < 48 || charCode > 57))
+		return false;
+		 
+		return true;
+	}
+    function isValidEmailAddress(emailAddress) {
+        var pattern = new RegExp(/^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i);
+        return pattern.test(emailAddress);
+    }
+    
+    function createUserComplete(data){
+        var str = '<section style="z-index:9999" class="w-48 fr ch-home-form" id="first">\n\
+                    <section class="ch-form-header ">\n\
+                        <h3>New User Setup Complete</h3>\n\
+                    </section>\n\
+                <table class="newuser_setup my_table_user">\n\
+                    <tr>\n\
+                        <td colspan="2" class="grayhead">Setup Complete!</td>\n\
+                    </tr>\n\
+                        <tr style="display:none;">\n\
+                        <td colspan="2"><br></td>\n\
+                    </tr>\n\
+                    <tr>\n\
+                        <th align="right">Name : </th>\n\
+                        <td align="left">'+data.name+'</td>\n\
+                    </tr>\n\
+                    <tr>\n\
+                        <th align="right">Title : </th>\n\
+                        <td align="left">'+data.title+'</td>\n\
+                    </tr>\n\
+                    <tr>\n\
+                        <th align="right">Office phone : </th>\n\
+                        <td align="left">'+data.office_phone+'</td>\n\
+                    </tr>\n\
+                   <tr>\n\
+                        <th align="right">E-mail : </th>\n\
+                        <td align="left">'+data.email+'</td>\n\
+                    </tr>\n\
+                   <tr>\n\
+                        <th align="right">Username : </th>\n\
+                        <td align="left">'+data.username+'</td>\n\
+                    </tr>\n\
+                   <tr>\n\
+                        <th align="right">User password : </th>\n\
+                        <td align="left">'+data.userPassowd+'</td>\n\
+                    </tr>\n\
+                   <tr>\n\
+                        <th align="right">User access : </th>\n\
+                        <td align="left">'+data.access+'</td>\n\
+                    </tr>\n\
+                   <tr>\n\
+                        <td class="grayhead" colspan="2">Access of the following building(s) has been granted</td>\n\
+                    </tr>\n\
+                    <tr>\n\<th>Building Name(s)</th>\n\<th>Module(s)</th>\n\</tr>';
+                        $.each(data.building, function(key, item){
+                            str += '<tr><td>'+item.building+'</td><td>'+item.module+'</td></tr>';
+                        });
+            str += '</table></section><div class="finish_btn"><div><a href="<?php echo BASEURL."/company/users"?>">Finish</a></div></div>';
+            $("#user-Complete").html(str);
+    }
+</script>

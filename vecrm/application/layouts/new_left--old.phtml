@@ -1,0 +1,155 @@
+<?php 
+$controller=Zend_Controller_Front::getInstance()->getRequest()->getControllerName();
+$actionnm=Zend_Controller_Front::getInstance()->getRequest()->getActionName();
+$userRoleID=Zend_Auth::getInstance()->getStorage()->read()->role_id;
+// getting the object of access helper
+$actionnHelper=Zend_Controller_Action_HelperBroker::getStaticHelper('Access'); 
+
+//this is for building information
+$buildingAccess = $actionnHelper->checkAccess($userRoleID,4); 
+
+//this is for billing information
+$billingAccess = $actionnHelper->checkAccess($userRoleID,5); 
+
+//this is for remit information
+$remitAccess = $actionnHelper->checkAccess($userRoleID,6);
+
+//this is for User information
+$userInfoAccess = $actionnHelper->checkAccess($userRoleID,7); 
+
+//this is for New user wizard access
+$userAccess = $actionnHelper->checkAccess($userRoleID,8); 
+
+//this is for Category access
+$categoryAccess = $actionnHelper->checkAccess($userRoleID,10);
+
+//this is for Priority access
+$ip = $_SERVER['REMOTE_ADDR'];
+$priorityAccess = $actionnHelper->checkAccess($userRoleID,11);
+/************* list of controller array ***********/
+$acontr = array('account','building','access','emails');
+$aaction = array('index','registration','matrix','log');
+
+
+$wcontr = array('dashboard');
+$waction = array('workorder');
+
+$bcontr = array('company','user');
+$baction = array('index','users');
+
+$ccontr = array('category','tenant','vendor','emails');
+$caction = array('index','users','console','send');
+
+$tcontr = array('tenant','workorder');
+$taction = array('index','tenantuser','createworkorder');
+
+$ucontr = array('tenant','category','emails');
+$uaction = array('index','tenantrecovery','recovercategory','send');
+
+?>
+<h1><a href="<?php echo BASEURL;?>"><span class="glyphicon glyphicon-th-large" aria-hidden="true"></span> Dashboard</a></h1>
+<ul class="nav" id="side-menu">
+	   <?php 
+	      // administrator user menu
+	   if($userRoleID==1){ ?>
+          <li <?php if(in_array($controller,$acontr) && in_array($actionnm,$aaction)){?> class="active"<?php }?>>
+          <a href="javascript:void(0)" <?php if(in_array($controller,$acontr) && in_array($actionnm,$aaction)){?> class="head_select_nav" <?php }?>>Administrator<span class="fa arrow whitefont_color"></span></a>
+               <ul class="nav nav-second-level">
+                  <li><a href="<?php echo BASEURL.'account';?>" <?php if($controller=='account' && $actionnm=='index'){?> class="menuselected"<?php }?>>Accounts</a></li>
+				  <li><a href="<?php echo BASEURL.'building';?>" <?php if($controller=='building' && $actionnm=='index'){?> class="menuselected"<?php }?>>Buildings</a></li>
+				  <li><a href="<?php echo BASEURL.'building/registration'?>" <?php if($controller=='building' && $actionnm=='registration'){?> class="menuselected"<?php }?>>New Building setup Wizard</a></li>
+
+				  <li><a href="<?php echo BASEURL.'access/matrix'?>"  <?php if($controller=='access' && $actionnm=='matrix'){?> class="menuselected"<?php }?>>Access User Matrix</a></li> 
+				  <?php if($ip == '115.112.129.194'){ ?>
+				  <li><a href="<?php echo BASEURL.'emails/log'?>" <?php if($controller=='emails' && $actionnm=='log'){?> class="menuselected"<?php }?>>Email Log</a></li> 
+				  <?php } ?>
+              </ul>
+          </li>
+        <?php }
+          // account user menu
+          $not_account = array(1,5,7);
+         if(!in_array($userRoleID,$not_account)){?>
+			  <?php if($buildingAccess->is_access == 0 || $billingAccess->is_access == 0 || $remitAccess->is_access == 0 || $userInfoAccess->is_access == 0 || $userAccess->is_access==0){ ?> 
+				  <li <?php if($controller=='dashboard'){?> class="active"<?php }?>>
+				      <a href="javascript:void(0)" <?php if(in_array($controller,$wcontr) && in_array($actionnm,$waction)){?> class="head_select_nav"<?php }?>>Work Orders<span class="fa arrow whitefont_color"></span></a>
+				      <ul class="nav nav-second-level">
+						  <li><a href="<?php echo BASEURL.'dashboard/workorder/'?>" <?php if($controller=='dashboard' && $actionnm=='workorder'){?>class="menuselected"<?php }?>>Dash Board-Line View  </a></li>
+						  <li><a href="<?php echo BASEURL.'dashboard/workorder/view_type/detail'?>" <?php if($controller=='dashboard' && $actionnm=='workorder' && ()){?>class="df"<?php }?>>Dash Board-Detail View</a></li>
+						  <li><a href="<?php echo BASEURL.'dashboard/createworkorder'?>" <?php if($controller=='dashboard' && $actionnm=='createworkorder'){?>class="df"<?php }?>>Create New Work Order</a></li>
+						  <li><a href="#">Close Existing Work Order</a></li>
+						  <li><a href="#">Memorize Work Order</a></li>
+				      </ul>
+				  </li>
+                   <li <?php if(in_array($controller,$bcontr) && in_array($actionnm,$baction)){?> class="active"<?php }?>>
+                   <a href="javascript:void(0)" <?php if(in_array($controller,$bcontr) && in_array($actionnm,$baction)){?> class="head_select_nav"<?php }?>>Building Administration<span class="fa arrow whitefont_color"></span></a>
+                   <ul class="nav nav-second-level">
+
+					<?php if($buildingAccess->is_access == 0 || $billingAccess->is_access == 0 || $remitAccess->is_access == 0){ ?>
+					  <li><a href="<?php echo BASEURL.'company'?>" <?php if($controller=='company' && $actionnm=='index'){?>class="menuselected"<?php }?>>Company Information</a></li>
+					<?php } 
+					 if($userInfoAccess->is_access == 0 || $userRoleID==9){ ?>
+					  <li><a href="<?php echo BASEURL.'company/users'?>" <?php if($controller=='company' && $actionnm=='users'){?>class="menuselected"<?php }?>>User Information</a></li>
+					  <?php } 
+
+					   if($userAccess->is_access==0 || $userRoleID==9){ ?>
+					  <li><a href="<?php echo BASEURL.'user'?>" <?php if($controller=='user' && $actionnm=='index'){?>class="menuselected"<?php }?>>Add New User wizard</a></li>
+
+					   <?php } ?>
+
+					</ul>
+					</li>
+				<?php }?>
+				<li><a href="javascript:void(0)">Reports<span class="fa arrow whitefont_color"></span></a></li>
+				 
+					<li <?php if(in_array($controller,$ccontr) && in_array($actionnm,$caction)){?> class="active"<?php }?>>
+						<a href="javascript:void(0)" <?php if(in_array($controller,$ccontr) && in_array($actionnm,$caction)){?> class="head_select_nav"<?php }?>>Company Console<span class="fa arrow whitefont_color"></span></a>
+					    <ul class="nav nav-second-level">
+						  <li><a href="<?php echo BASEURL.'tenant/users/'?>">Tenant Console  </a></li>
+						  <li><a href="<?php echo BASEURL.'category'?>" <?php if($controller=='category' && $actionnm=='index'){?>class="menuselected"<?php }?>>Category Console</a></li>
+						  <li><a href="<?php echo BASEURL.'emails/console'?>" <?php if($controller=='emails' && $actionnm=='console'){?>class="menuselected"<?php }?>>Email Distribution Console</a></li>						  
+						  <li><a href="<?php echo BASEURL.'vendor'?>">Vendor Console  </a></li>
+						  <li><a href="#">Material Console</a></li>
+						  <li><a href="#">Bill Back(rate) Console </a></li>				     
+				      </ul>
+					
+					</li>
+					
+					<li>
+						<a href="javascript:void(0)" <?php if(in_array($controller,$ucontr) && in_array($actionnm,$uaction)){?> class="head_select_nav"<?php }?>>Utility<span class="fa arrow whitefont_color"></span></a>
+					    <ul class="nav nav-second-level">
+						  <li><a href="<?php echo BASEURL.'tenant/tenantrecovery/'?>">Tenant Recovery  </a></li>
+						  <li><a href="<?php echo BASEURL.'category/recovercategory'?>" <?php if($controller=='category' && $actionnm=='recovercategory'){?>class="menuselected"<?php }?>>Category Recovery</a></li>
+						  <li><a href="<?php echo BASEURL.'emails'?>" <?php if($controller=='emails' && $actionnm=='index'){?>class="menuselected"<?php }?>>Email Templates</a></li>						  
+						  <li><a href="<?php echo BASEURL.'emails/send'?>" <?php if(($controller=='emails') && ($actionnm=='send' || $actionnm=='sendemail' || $actionnm=='editemail')){?>class="menuselected"<?php }?>>Email – Send Notification </a></li>
+						  <li><a href="#">Notes – Predefined</a></li>						  				     
+				      </ul>
+					
+					</li>
+					<?php }
+					   // tenant user menu
+					 if($userRoleID==5 || $userRoleID==7){?>
+							   <li <?php if(in_array($controller,$tcontr) && in_array($actionnm,$taction)){?> class="head_select_nav"<?php }?>> 
+							       <a href="javascript:void(0)" <?php if(in_array($controller,$tcontr) && in_array($actionnm,$taction)){?> class="head_select_nav"<?php }?>>Tenant Administration<span class="fa arrow whitefont_color"></span></a>
+							   <ul class="nav nav-second-level" >	  
+								 <li><a href="<?php echo BASEURL.'tenant/tenantuser'?>" <?php if($controller=='tenant' && $actionnm=='tenantuser'){?>class="menuselected"<?php }?>>Tenant Information</a></li>
+								 <li><a href="<?php echo BASEURL.'workorder/index'?>" <?php if($controller=='workorder' && $actionnm=='index'){?>class="menuselected"<?php }?>>Work Orders</a></li>
+								 <li><a href="<?php echo BASEURL.'workorder/createworkorder'?>" <?php if($controller=='workorder' && $actionnm=='createworkorder'){?>class="menuselected"<?php }?>>Create Work Order</a></li>
+								 
+								 
+								 </ul>
+						  </li>
+				  <?php }
+			?>
+						
+		<?php 
+		$adminNamespace = new Zend_Session_Namespace('Admin_User');
+        if($adminNamespace->role_id==1){?>
+	     <li> 
+		     <a href="<?php echo BASEURL.'account/changeaccount'?>">Switch Account</a>		
+	     </li>
+	  <?php }?>
+          <li><a href="<?php echo BASEURL.'accountsetting'?>">Change Password</a></li>
+          <li><a href="<?php echo BASEURL.'index/logout'?>">Logout</a></li>
+        </ul>
+
+

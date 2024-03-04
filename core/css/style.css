@@ -1,0 +1,194 @@
+body{
+	margin:0;
+	padding:0;
+	font-family:arial;
+	font-size:12px;
+	color:#3a3a3a;
+	background:#fff;
+}
+
+img{border:0;}
+
+a{
+	text-decoration:none;
+	font-family:arial;
+	font-size:12px;
+}
+
+a:hover{text-decoration:underline;}
+
+a.cmd_b{
+	width:108px;
+	height:37px;
+	line-height:37px;
+	text-align:center;
+	color:#fff;
+	display:block;
+}
+
+a.cmd_b.bl{background:url(../img/cmd/bl-b.png);}
+a.cmd_b.or{background:url(../img/cmd/or-b.png);}
+
+a.cmd_s{
+	width:72px;
+	height:25px;
+	line-height:25px;
+	text-align:center;
+	color:#fff;
+	display:block;
+	font-size:10px;
+}
+
+a.cmd_s.bl{background:url(../img/cmd/bl-s.png);}
+a.cmd_s.or{background:url(../img/cmd/or-s.png);}
+
+ul{
+	margin:0;
+	padding:0;
+	list-style:none;
+}
+
+ul li{list-style:none;}
+
+p{
+	line-height:20px;
+	margin:0;
+	padding:0;
+}
+
+
+
+
+
+.fl{float:left;}
+.clear{clear: both !important;}
+
+.wrap{
+	width:1260px;
+	margin:0px auto;
+}
+
+
+
+
+.mgr_act{
+	padding:0 0 4px 0
+}
+
+
+
+
+
+div.frm .row{
+	min-height:20px;
+	margin-bottom:2px;
+}
+
+div.frm .row.last{margin-bottom:0px;}
+
+div.frm label{
+	float:left;
+	width:100px;
+	height:18px;
+	line-height:18px;
+	display:block;
+}
+
+div.frm input.txt{
+	float:left;
+	width:100px;
+	height:17px;
+	line-height:18px;
+	display:block;
+	border:1px solid #999;
+	padding:1px 2px 0 2px;
+	font-family:arial;
+	font-size:12px
+}
+
+div.frm .txa{
+	font-family:arial;
+	float:left;
+	width:244px;
+	font-size:12px;
+	height:75px;
+	line-height:18px;
+	display:block;
+	border:1px solid #999;
+	padding:2px;
+}
+
+
+
+
+table{
+	border:1px solid #cacaca
+}
+
+table td{
+	border:1px solid #cacaca;
+	font-size:12px
+}
+
+
+
+
+
+.msg{
+	padding:3px 4px;
+	margin:0 0 3px 0
+}
+
+.msg.err{
+	border:1px solid #cacaca;
+	color:#ff0000
+}
+
+.msg.ifo{
+	border:1px solid #cacaca;
+	color:#0000ff
+}
+
+
+
+
+
+.t{
+	height:9px;
+	background:url(../img/bg-body/t.jpg);
+}
+
+.m{
+	min-height:30px;
+	background:url(../img/bg-body/m.jpg);
+	padding:0px 10px;
+}
+
+.b{
+	min-height:10px;
+	background:url(../img/bg-body/b.jpg);
+}
+
+
+
+
+
+#sct_head{margin-top:40px;}
+
+#sct_head .m{
+	font-size:25px;
+	font-family:"arial narrow";
+}
+
+#sct_head .m a{
+	font-size:25px;
+	font-family:"arial narrow";
+}
+
+
+
+
+
+#sct_body{margin-top:5px;}
+
+#sct_body .m{min-height:380px;}

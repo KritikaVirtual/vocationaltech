@@ -1,0 +1,59 @@
+<?php
+$dist_access = $this->acessHelper->checkAccess($this->roleId,$this->dist_location);  
+ ?>	
+<div>
+   
+	<div class="tuser-list">
+		<table width="100%" class="building_table_grid">
+			<tr>
+				<th>Last Name</th>
+				<th>First Name</th>			
+				<th>E-mail Address</th>
+				<th>Send As</th>
+				<th>Day's of the week</th>
+				<th>Complete Notification</th>
+				<?php if($dist_access->is_write==1){?><th style="border:none;">Action</th><?php }?>
+			</tr>
+			<?php if($this->groupusers){ 
+					 foreach($this->groupusers as $user){
+						 //var_dump($tuser);
+				 ?>
+				 <input type="hidden" value="<?php echo count($this->groupusers); ?>" name="user_count" id="user_count" />
+				 <tr>
+					 <td><?php echo $user->lastname;?></td>
+					 <td><?php echo $user->firstname;?></td>				 
+					 <td><?php echo $user->email;?></td>
+					 <td><?php echo $user->send_as_title;?></td>
+					 <td><?php echo $user->week_days;?></td>
+					 <td><?php echo ($user->complete_notification)?'Yes':'No';?></td>
+					<?php if($dist_access->is_write==1){?> <td>
+						<a title="Edit" href="<?php echo BASEURL.'emails/editemailuser/uid/'.base64_encode($user->id).'/buildingId/'.$this->buildingId;?>" ><img src="<?php echo BASEURL . 'public/images/edit.png'?>" /></a>
+						 <a href="javascript:void(0);"  title="Delete" onclick="deleteEmailUser('<?php echo $user->user_id;?>','<?php echo $this->group_id ?>','<?php echo $this->buildingId ?>')"><img src="<?php echo BASEURL . 'public/images/delete.png'?>" /></a> 
+					 </td>
+					 <?php }?>
+				 </tr>
+
+				 
+			<?php    }
+				 }else{
+					echo '<tr><td colspan="8"> No Email Group User </td></tr>'; 
+				 }
+			?>
+					
+		</table>
+		 
+	 </div>
+</div>
+
+<script type="text/javascript">
+
+$(function(){
+   var countUsers = $('#user_count').val();
+   var g_id = <?php echo $this->group_id; ?>;
+   $('#group_user_count_'+g_id).val(countUsers);
+});
+
+
+
+
+</script>

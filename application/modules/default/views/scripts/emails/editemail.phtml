@@ -1,0 +1,326 @@
+<?php
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/ckeditor/ckeditor.js');
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/ckeditor/adapters/jquery.js');
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/emails.js');
+
+
+$roles = $this->companyListing['roles'];
+$etemplateAccess = $this->acessHelper->checkAccess($this->roleId, $this->etemplate_location); 
+/* override access by custom user access if exist */
+$customeAccessmodel = new Model_UserAccess();
+$customeAccessmodeld = $customeAccessmodel->getUserCustomAccess($this->userId, $this->etemplate_location);
+if ($customeAccessmodeld[0]) {
+    $etemplateAccess = $customeAccessmodeld[0];
+}
+//print_r($etemplateAccess);
+/* end overriding access */
+?>
+<div class="container-right">
+    <?php if ($this->roleId == 1 || $this->roleId == 4 ||  $this->roleId == 5 || $this->roleId == 2 || $this->roleId == 3 || $this->roleId == 6 || $this->roleId == 9) { ?>
+        <section style="z-index:9999" class="w-48 fr ch-home-form">
+            <section class="ch-form-header ">
+                <h3>Edit Email Template </h3>
+            </section>
+            <div class="gridContainer">
+                <div class="tableGrid">
+                    <div class="message">
+                        <span id="success_msg"></span>
+                        <span id="error_msg"></span>
+                    </div>             
+                    <div id="email_template_div">
+                        <form name="emailtemplate" id="template_form" action="<?php echo BASEURL . 'emails/updateemail'; ?>" method="post">
+                            <input type='hidden' name="role_id" value="<?php echo $this->roleId; ?>" >
+                            <input type="hidden" id="email_id" name="email_id" value="<?php echo $this->emailData['id']; ?>"/>
+                                
+                            <input type='hidden' name="email_location" value="<?php echo $this->emailData['email_location']; ?>" >
+
+                            <div class="row"> 
+                                <label>Title<span class="required">*</span></label><span class="ufirstErr" id="title-error"></span> <div class="email_input"> <input type="text" id="title" class="" name="title" value="<?php echo $this->emailData['email_title']; ?>"/>  
+                                </div> 
+                            </div>
+                            <div class="row">
+                                <label>Subject<span class="required">*</span></label> <span class="ufirstErr" id="subject-error"></span>  
+                                <div class="email_input"><input type="text"  id="subject" class="" name="subject" value="<?php echo $this->emailData['email_subject']; ?>"></div> 
+                            </div>
+                            <?php if ($this->roleId == 4 || $this->roleId == 5 || $this->roleId == 9 ) { ?>
+                                <div class="row">
+                                    <label>Status<span class="required">*</span></label> 
+                                    <span class="ufirstErr" id="subject-error"></span>  
+                                    <div class="email_input"><select name='status'>
+                                            <option value='1' <?php
+                                                if ($this->emailData['status'] == 1) {
+                                                    echo 'selected';
+                                                }
+                                            ?>> Active </option><option value='0' <?php
+                                                                                                                                                                                                    if ($this->emailData['status'] == 0) {
+                                                                                                                                                                                                        echo 'selected';
+                                                                                                                                                                                                    }
+                                                                                                                                                                                                    ?>> Deactive </option> </select>  
+                                    </div> 
+                                </div>
+                                <input type='hidden' name="role_id" value="<?php echo $this->roleId; ?>" >
+                            <?php } ?>
+                            <?php
+                            /* 
+                            <div class="row">
+                              <label >Role<span class="required">*</span></label>
+                              <div class="email_input">
+                              <select  name="user_role" id="user_role">
+                              <?php foreach ($this->roleDetails as $key => $value) { if($value['roleID'] != 1){?>
+                              <option value="<?php echo $value['roleID']; ?>" <?php if($value['roleID']==$this->emailData['role']) echo 'selected';?>>
+                              <?php echo $value['title']; ?>
+                              </option>
+                              <?php }} ?>
+                              </select>
+                              </div>
+                              </div>
+                             */
+                            //if($this->emailData['id']==1){
+                            //}
+                            
+                            $tooltip_html = "";
+                            $tooltip_html = $tooltip_html . '<div class="pop_main_div">';
+                            $tooltip_html = $tooltip_html . '<div class="pop_title">Header Section</div>';
+                            $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Management Company Logo:</div><div class="temp_var_wid_sec">[[++companyLogo]]</div>';
+                            $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Voc-Tech Logo:</div><div class="temp_var_wid_sec">[[++voctechLogo]]</div>';
+                            $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Date:</div><div class="temp_var_wid_sec">[[++dateTime]]</div>';
+                            if ($this->emailData['id'] != 11 && $this->emailData['id'] != 21 && $this->emailData['id'] != 22 && $this->emailData['id'] != 23)
+                                $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Cost Center Number:</div><div class="temp_var_wid_sec">[[++costNumber]]</div>';
+                                $tooltip_html = $tooltip_html . '</div>';
+
+                            $tooltip_html = $tooltip_html . '<div class="pop_main_div">';
+                            $tooltip_html = $tooltip_html . '<div class="pop_title">Body Section</div>';
+                            if ($this->emailData['id'] != 5 && $this->emailData['id'] != 54 && $this->emailData['id'] != 53){
+                                if ($this->emailData['id'] != 11 && $this->emailData['id'] != 21 && $this->emailData['id'] != 22 && $this->emailData['id'] != 23 && $this->emailData['id'] != 14 && $this->emailData['email_location'] != 9)
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Acknowledgement:</div><div class="temp_var_wid_sec">[[++acknowledge]]</div>';
+                                $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Company Name:</div><div class="temp_var_wid_sec">[[++companyName]]</div>';
+                                $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Building:</div><div class="temp_var_wid_sec">[[++buildingName]]</div>';
+                                if ($this->emailData['id'] == 11 || $this->emailData['id'] == 21 || $this->emailData['id'] == 22 || $this->emailData['id'] == 23)
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Cost Center Number:</div><div class="temp_var_wid_sec">[[++costNumber]]</div>';
+                                if ($this->emailData['id'] != 11 && $this->emailData['id'] != 21 && $this->emailData['id'] != 22 && $this->emailData['id'] != 23 && $this->emailData['id'] != 61 && $this->emailData['email_location'] != 9)
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Date of Request:</div><div class="temp_var_wid_sec">[[++requestDate]]</div>';
+                                if ($this->emailData['id'] == 14)
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Work Order Number:</div><div class="temp_var_wid_sec">[[++workOrderId]]</div>';
+                                if ($this->emailData['id'] == 14)
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Work Order Status:</div><div class="temp_var_wid_sec">[[++workOrderStatus]]</div>';
+                                if ($this->emailData['id'] != 11 && $this->emailData['id'] != 21 && $this->emailData['id'] != 22 && $this->emailData['id'] != 23 && $this->emailData['id'] != 61)
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Address:</div><div class="temp_var_wid_sec">[[++address1]]</div>';
+                                if ($this->emailData['id'] != 11 && $this->emailData['id'] != 21 && $this->emailData['id'] != 22 && $this->emailData['id'] != 23 && $this->emailData['id'] != 61)
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">City:</div><div class="temp_var_wid_sec">[[++city]]</div>';
+                                if ($this->emailData['id'] != 11 && $this->emailData['id'] != 21 && $this->emailData['id'] != 22 && $this->emailData['id'] != 23 && $this->emailData['id'] != 61)
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">State:</div><div class="temp_var_wid_sec">[[++state]]</div>';
+                                if ($this->emailData['id'] != 11 && $this->emailData['id'] != 21 && $this->emailData['id'] != 22 && $this->emailData['id'] != 23 && $this->emailData['id'] != 61)
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Postal Code:</div><div class="temp_var_wid_sec">[[++postalCode]]</div>';
+                                if ($this->emailData['id'] != 11 && $this->emailData['id'] != 21 && $this->emailData['id'] != 22 && $this->emailData['id'] != 23 && $this->emailData['id'] != 61)
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Phone Number:</div><div class="temp_var_wid_sec">[[++phone]]</div>';
+                                if ($this->emailData['id'] != 11 && $this->emailData['id'] != 21 && $this->emailData['id'] != 22 && $this->emailData['id'] != 23 && $this->emailData['id'] != 61 && $this->emailData['email_location'] != 9)
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Tenant Name:</div><div class="temp_var_wid_sec">[[++tenantName]]</div>';
+                                if ($this->emailData['id'] != 11 && $this->emailData['id'] != 21 && $this->emailData['id'] != 22 && $this->emailData['id'] != 23 &&  $this->emailData['id'] != 61 && $this->emailData['email_location'] != 9)
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Requested By:</div><div class="temp_var_wid_sec">[[++requestedBy]]</div>';
+                                if ($this->emailData['id'] != 11 && $this->emailData['id'] != 21 && $this->emailData['id'] != 22 && $this->emailData['id'] != 23 && $this->emailData['id'] != 61 && $this->emailData['email_location'] != 9)
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Suite/Location:</div><div class="temp_var_wid_sec">[[++suite]]</div>';
+                                if ($this->emailData['id'] != 10 && $this->emailData['id'] != 11 && $this->emailData['id'] != 21 && $this->emailData['id'] != 22 && $this->emailData['id'] != 23 && $this->emailData['id'] != 61)
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Billing State:</div><div class="temp_var_wid_sec">[[++billState]]</div>';
+                                if ($this->emailData['id'] != 10 && $this->emailData['id'] != 11 && $this->emailData['id'] != 21 && $this->emailData['id'] != 22 && $this->emailData['id'] != 23 && $this->emailData['id'] != 61)
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Billing Postal Code:</div><div class="temp_var_wid_sec">[[++billPostalCode]]</div>';
+                                if ($this->emailData['id'] != 10 && $this->emailData['id'] != 11 && $this->emailData['id'] != 21 && $this->emailData['id'] != 22 && $this->emailData['id'] != 23 && $this->emailData['id'] != 61)
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Work Phone:</div><div class="temp_var_wid_sec">[[++phoneNumber]]</div>';
+                                if ($this->emailData['id'] != 10 && $this->emailData['id'] != 11 && $this->emailData['id'] != 21 && $this->emailData['id'] != 22 && $this->emailData['id'] != 23 && $this->emailData['id'] != 61)
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Phone Ext:</div><div class="temp_var_wid_sec">[[++phoneExt]]</div>';
+                                if ($this->emailData['id'] != 11 && $this->emailData['id'] != 21 && $this->emailData['id'] != 22 && $this->emailData['id'] != 23 && $this->emailData['id'] != 61 && $this->emailData['email_location'] != 9)
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">E-mail:</div><div class="temp_var_wid_sec">[[++email]]</div>';
+                                if ($this->emailData['id'] != 11 && $this->emailData['id'] != 21 && $this->emailData['id'] != 22 && $this->emailData['id'] != 23 && $this->emailData['id'] != 61 && $this->emailData['email_location'] != 9)
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Category:</div><div class="temp_var_wid_sec">[[++category]]</div>';
+                                if ($this->emailData['id'] != 11 && $this->emailData['id'] != 21 && $this->emailData['id'] != 22 && $this->emailData['id'] != 23 && $this->emailData['id'] != 61 && $this->emailData['email_location'] != 9)
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Work Order Number:</div><div class="temp_var_wid_sec">[[++wo_number]]</div>';
+                                if ($this->emailData['id'] != 11 && $this->emailData['id'] != 21 && $this->emailData['id'] != 22 && $this->emailData['id'] != 23 && $this->emailData['id'] != 61 && $this->emailData['email_location'] != 9)
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Work Order Description:</div><div class="temp_var_wid_sec">[[++woDescription]]</div>';
+                                if ($this->emailData['id'] == 11 || $this->emailData['id'] == 21 || $this->emailData['id'] == 22 || $this->emailData['id'] == 23)
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">First Name:</div><div class="temp_var_wid_sec">[[++firstName]]</div>';
+                                if ($this->emailData['id'] == 11 || $this->emailData['id'] == 21 || $this->emailData['id'] == 22 || $this->emailData['id'] == 23)
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Last Name:</div><div class="temp_var_wid_sec">[[++lastName]]</div>';
+                                if ($this->emailData['id'] == 11 || $this->emailData['id'] == 21 || $this->emailData['id'] == 22 || $this->emailData['id'] == 23)
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Suite/Location:</div><div class="temp_var_wid_sec">[[++suite]]</div>';
+                                if ($this->emailData['id'] == 11 || $this->emailData['id'] == 21 || $this->emailData['id'] == 22 || $this->emailData['id'] == 23)
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">User Name:</div><div class="temp_var_wid_sec">[[++username]]</div>';
+                                if ($this->emailData['id'] == 11 || $this->emailData['id'] == 21 || $this->emailData['id'] == 22 || $this->emailData['id'] == 23)
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">User Password:</div><div class="temp_var_wid_sec">[[++password]]</div>';
+                                if ($this->emailData['id'] == 11 || $this->emailData['id'] == 21 || $this->emailData['id'] == 22 || $this->emailData['id'] == 23)
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">User Access:</div><div class="temp_var_wid_sec">[[++role]]</div>';
+                                if ($this->emailData['id'] == 11 || $this->emailData['id'] == 21 || $this->emailData['id'] == 22 || $this->emailData['id'] == 23)
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">E-mail Address:</div><div class="temp_var_wid_sec">[[++userEmail]]</div>';
+                                if ($this->emailData['id'] == 11 || $this->emailData['id'] == 21 || $this->emailData['id'] == 22 || $this->emailData['id'] == 23)
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Site URL:</div><div class="temp_var_wid_sec">[[++siteURL]]</div>';
+                                if ($this->emailData['id'] == 12)
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Start Status:</div><div class="temp_var_wid_sec">[[++startStatus]]</div>';
+                                if ($this->emailData['id'] == 12)
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">End Status:</div><div class="temp_var_wid_sec">[[++endStatus]]</div>';
+                                if ($this->emailData['id'] == 12)
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Status:</div><div class="temp_var_wid_sec">[[++wo_status]]</div>';
+                                if ($this->emailData['id'] == 14)
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Work Order Closed Description:</div><div class="temp_var_wid_sec">[[++workOrderCloseDesc]]</div>';
+                                if ($this->emailData['id'] != 5 && $this->emailData['id'] != 6 && $this->emailData['id'] != 8 && $this->emailData['id'] != 9 && $this->emailData['id'] != 10 && $this->emailData['id'] != 11 && $this->emailData['id'] != 12 && $this->emailData['id'] != 13 && $this->emailData['id'] != 15 && $this->emailData['id'] != 21 && $this->emailData['id'] != 22 && $this->emailData['id'] != 23 && $this->emailData['id'] != 24 && $this->emailData['id'] != 61 && $this->emailData['email_location'] != 9 ) {
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Note Date:</div><div class="temp_var_wid_sec">[[++noteDate]]</div>';
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Note:</div><div class="temp_var_wid_sec">[[++noteNote]]</div>';
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Entered By:</div><div class="temp_var_wid_sec">[[++noteAuther]]</div>';
+                                }
+                                if($this->emailData['id'] == 22 || $this->emailData['id'] == 23){
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Building Phone:</div><div class="temp_var_wid_sec">[[++buildingPhoneNumber]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Building Address1:</div><div class="temp_var_wid_sec">[[++buildingAddress1]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Building Address2:</div><div class="temp_var_wid_sec">[[++buildingAddress2]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Building City:</div><div class="temp_var_wid_sec">[[++buildingCity]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Building State:</div><div class="temp_var_wid_sec">[[++buildingState]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Building Postal Code:</div><div class="temp_var_wid_sec">[[++buildingPostalCode]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">User Fullname:</div><div class="temp_var_wid_sec">[[++userFullName]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">User Roll:</div><div class="temp_var_wid_sec">[[++userRole]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">User E-mail Address:</div><div class="temp_var_wid_sec">[[++userEmail]]</div>';
+                                }
+                                
+
+                                if ($this->emailData['email_location'] == 9) {
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Conference Room Name:</div><div class="temp_var_wid_sec">[[++conferenceRoomName]]</div>';
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Date And Time:</div><div class="temp_var_wid_sec">[[++roomDateAndTime]]</div>';
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Titles:</div><div class="temp_var_wid_sec">[[++roomTitle]]</div>';
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Who Requested Room:</div><div class="temp_var_wid_sec">[[++whoRequestedRoom]]</div>';
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Conference Room TenantName:</div><div class="temp_var_wid_sec">[[++conferenceRoomTenantname]]</div>';
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Conference Room Requested By:</div><div class="temp_var_wid_sec">[[++conferenceRoomRequestBy]]</div>';
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Conference Room Meeting Title:</div><div class="temp_var_wid_sec">[[++conferenceRoomMeetingTitle]]</div>';
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Conference Room Phone Number:</div><div class="temp_var_wid_sec">[[++conferenceRoomPhoneNumber]]</div>';
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Conference Room Email:</div><div class="temp_var_wid_sec">[[++conferenceRoomEmail]]</div>';
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Conference Room Selected Room:</div><div class="temp_var_wid_sec">[[++conferenceRoomSelectedRoom]]</div>';
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Conference Room PDF Name:</div><div class="temp_var_wid_sec">[[++conferenceRoomPDFName]]</div>';
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Conference Room Time Start:</div><div class="temp_var_wid_sec">[[++conferenceRoomTimeStart]]</div>';
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Conference Room Time End:</div><div class="temp_var_wid_sec">[[++conferenceRoomTimeEnd]]</div>';
+                                    $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Conference Room Booking Date:</div><div class="temp_var_wid_sec">[[++conferenceBookingDate]]</div>';
+                                }
+                                if($this->emailData['id'] == 21){
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Company Name:</div><div class="temp_var_wid_sec">[[++companyName]]</div>'; 
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Building:</div><div class="temp_var_wid_sec">[[++buildingName]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Building Phone:</div><div class="temp_var_wid_sec">[[++buildingPhoneNumber]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Building Address1:</div><div class="temp_var_wid_sec">[[++buildingAddress1]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Building Address2:</div><div class="temp_var_wid_sec">[[++buildingAddress2]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Building City:</div><div class="temp_var_wid_sec">[[++buildingCity]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Building State:</div><div class="temp_var_wid_sec">[[++buildingState]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Building Postal Code:</div><div class="temp_var_wid_sec">[[++buildingPostalCode]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Cost Center Number:</div><div class="temp_var_wid_sec">[[++costNumber]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">User First Name:</div><div class="temp_var_wid_sec">[[++firstName]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">User Last Name:</div><div class="temp_var_wid_sec">[[++lastName]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">User Title:</div><div class="temp_var_wid_sec">[[++Title]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">User Phone:</div><div class="temp_var_wid_sec">[[++phone]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Username:</div><div class="temp_var_wid_sec">[[++username]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">User E-mail Address:</div><div class="temp_var_wid_sec">[[++userEmail]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Password:</div><div class="temp_var_wid_sec">[[++password]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">User Fullname:</div><div class="temp_var_wid_sec">[[++userFullName]]</div>';                          
+                                }
+                            } 
+                            
+                            if($this->emailData['id'] != 61){
+                            if($this->emailData['id'] == 53 || $this->emailData['id'] == 54){
+                                
+                                $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Customer Name:</div><div class="temp_var_wid_sec">[[++custName]]</div>';
+                                $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Customer Company:</div><div class="temp_var_wid_sec">[[++custCompany]]</div>';
+                                $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Customer Email:</div><div class="temp_var_wid_sec">[[++custEmail]]</div>';
+                                $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Customer Telephone:</div><div class="temp_var_wid_sec">[[++custTelephone]]</div>';
+                                $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Customer Comments:</div><div class="temp_var_wid_sec">[[++custComments]]</div>';
+                            }else {
+                                $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Current Date:</div><div class="temp_var_wid_sec">[[++currDate]]</div>';
+                                $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Tenant Username:</div><div class="temp_var_wid_sec">[[++tenantUserName]]</div>';
+                                $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Address1:</div><div class="temp_var_wid_sec">[[++address1]]</div>';
+                                $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Address2:</div><div class="temp_var_wid_sec">[[++address2]]</div>';
+                                $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">City:</div><div class="temp_var_wid_sec">[[++city]]</div>';
+                                $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">State:</div><div class="temp_var_wid_sec">[[++state]]</div>';
+                                $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Postal Code:</div><div class="temp_var_wid_sec">[[++postalCode]]</div>';
+                                $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Company Name:</div><div class="temp_var_wid_sec">[[++acCompanyName]]</div>';
+                                $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Username:</div><div class="temp_var_wid_sec">[[++username]]</div>';
+                                $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Password:</div><div class="temp_var_wid_sec">[[++password]]</div>';
+                                $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Phone Number:</div><div class="temp_var_wid_sec">[[++phoneNumber]]</div>';
+                                $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">User Fullname:</div><div class="temp_var_wid_sec">[[++userFullName]]</div>';
+                                $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">User Roll:</div><div class="temp_var_wid_sec">[[++userRole]]</div>';
+                                $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Site URL:</div><div class="temp_var_wid_sec">[[++siteURL]]</div>';
+                                
+                                
+                            }
+                            }
+                            if($this->emailData['id'] == 61){
+                                   
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Building Phone:</div><div class="temp_var_wid_sec">[[++buildingPhoneNumber]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Building Address1:</div><div class="temp_var_wid_sec">[[++buildingAddress1]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Building Address2:</div><div class="temp_var_wid_sec">[[++buildingAddress2]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Building City:</div><div class="temp_var_wid_sec">[[++buildingCity]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Building State:</div><div class="temp_var_wid_sec">[[++buildingState]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Building Postal Code:</div><div class="temp_var_wid_sec">[[++buildingPostalCode]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Tenant Name:</div><div class="temp_var_wid_sec">[[++tenantName]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Address1:</div><div class="temp_var_wid_sec">[[++TenAddress1]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Address2:</div><div class="temp_var_wid_sec">[[++TenAddress2]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">City:</div><div class="temp_var_wid_sec">[[++TenCity]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">State:</div><div class="temp_var_wid_sec">[[++TenState]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Postal Code:</div><div class="temp_var_wid_sec">[[++TenPostalCode]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Suite/Location:</div><div class="temp_var_wid_sec">[[++TenSuite]]</div>';
+                                
+                                                           
+                                }
+                            if($this->emailData['id'] == 61){
+								   $tooltip_html = $tooltip_html . '<div class="pop_title">COI Information</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Status:</div><div class="temp_var_wid_sec">[[++Status]]</div>'; 
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Expiration Date:</div><div class="temp_var_wid_sec">[[++ExpDate]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">GL-Each Occurrence</div><div class="temp_var_wid_sec">[[++GLEachOcc]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">GL-Damage Rented Premises:</div><div class="temp_var_wid_sec">[[++GLDRP]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">GL-MedExp:</div><div class="temp_var_wid_sec">[[++GLMedExp]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">GL-Personal & ADV Injury:</div><div class="temp_var_wid_sec">[[++GLPersonal]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">GL-General Aggregate:</div><div class="temp_var_wid_sec">[[++GLGeneral]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">GL-Products - Comp/OP AGG:</div><div class="temp_var_wid_sec">[[++GLProducts]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">GL-Employee Benefits:</div><div class="temp_var_wid_sec">[[++GLEmployeeBen]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">AL-Combined Single Limit:</div><div class="temp_var_wid_sec">[[++ALComSingleLimit]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">AL-Bodily Injury (Per person):</div><div class="temp_var_wid_sec">[[++ALBodilyPerPerson]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">AL-Bodily Injury (Per accident):</div><div class="temp_var_wid_sec">[[++ALBodilyPerAccident]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">AL-Property Damage (Per accident):</div><div class="temp_var_wid_sec">[[++ALPropPerAccident]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">AL-Underinsured motorist BI split:</div><div class="temp_var_wid_sec">[[++ALUnderinsuredMot]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">UL-Each Occurrence:</div><div class="temp_var_wid_sec">[[++ULEachOccurance]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">UL-Aggregate:</div><div class="temp_var_wid_sec">[[++ULAggregate]]</div>';
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">WC-E.L. Each Accident:</div><div class="temp_var_wid_sec">[[++WCEachAccident]]</div>';                          
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">WC-E.L. Disease - EA Employee:</div><div class="temp_var_wid_sec">[[++WCEachEmployee]]</div>';                          
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">WC-E.L. Disease – Policy Limit:</div><div class="temp_var_wid_sec">[[++WCPolocyLimit]]</div>';                          
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Certificate Holder:</div><div class="temp_var_wid_sec">[[++CertificateHolder]]</div>';                          
+                                   $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Description of Special Terms:</div><div class="temp_var_wid_sec">[[++SpecialTerms]]</div>';                          
+                             }
+                             
+                            $tooltip_html = $tooltip_html . '</div>';
+
+                            $tooltip_html = $tooltip_html . '<div class="pop_main_div">';
+                            $tooltip_html = $tooltip_html . '<div class="pop_title">Footer Section</div>';
+                            $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Footer Info:</div><div class="temp_var_wid_sec">[[++footerInfo]]</div>';
+                            if ($this->emailData['id'] != 5 && $this->emailData['id'] != 10 && $this->emailData['id'] != 11 && $this->emailData['id'] != 21 && $this->emailData['id'] != 22 && $this->emailData['id'] != 23 && $this->emailData['id'] != 12 && $this->emailData['id'] != 14)
+                                $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Subject:</div><div class="temp_var_wid_sec">[[++footerSubject]]</div>';
+                            if ($this->emailData['id'] != 5 && $this->emailData['id'] != 10 && $this->emailData['id'] != 11 && $this->emailData['id'] != 21 && $this->emailData['id'] != 22 && $this->emailData['id'] != 23 && $this->emailData['id'] != 12 && $this->emailData['id'] != 14)
+                                $tooltip_html = $tooltip_html . '<div class="temp_var_wid_first">Short Description:</div><div class="temp_var_wid_sec">[[++shortDescription]]</div>';
+                            $tooltip_html = $tooltip_html . '</div>';
+                            ?>
+                            <div class="row_editor">
+                                <label style="clear:left;">Content<span class="required">*</span></label><a href="#" class="btn btn-default btn-circle" data-toggle="popover" data-placement="right" data-html=true title="Template Variable" data-content='<?php echo $tooltip_html; ?>'>?</a><span class="ufirstErr" id="content-error"></span>   
+                                <div class="et_editor"><textarea id="email_content" name="email_content"><?php echo $this->emailData['email_content']; ?></textarea></div> 
+                            </div>           
+                            <div class="confirmBtn float_none">
+                                <input type="button" value="Update" name="save" class="confirm" id="saveEmailData">
+<!--                                <input type="button" value="Cancel" name="cancel" class="cancel" onclick="window.location.href = '<?php //echo BASEURL . 'emails/list' ?>'">-->
+                                   <input type="button" value="Cancel" name="cancel" class="cancel" onclick="window.history.back();">
+                            </div>
+                        </form>  
+                    </div>   
+                </div>
+            </div>
+        </section>
+    <?php }else {
+        ?>
+        You don't have access for this module.
+    <?php } ?> 
+</div>
+
+<script type="text/javascript">
+
+    CKEDITOR.disableAutoInline = true;
+
+    $(document).ready(function () {
+        $('#email_content').ckeditor(); // Use CKEDITOR.replace() if element is <textarea>.
+    });
+
+</script>

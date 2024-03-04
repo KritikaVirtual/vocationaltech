@@ -1,0 +1,133 @@
+ <?php
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/category.js');
+$priorityMapper = new Model_Priority();
+$prioritylist = $priorityMapper->getPriorityByCompany($this->cust_id, $this->build_id); 
+$buildingPrioritylist = $priorityMapper->getBuildingPriorityList($this->build_id);
+ ?>
+ <div class="container-right" >
+ <div class="gridContainer">  
+
+
+<section class="ch-form-header">
+
+	<h3>Import Priority Codes</h3>
+    </section> <section class="w-48 fr ch-home-form_ ad-ptform">
+<input type='hidden' id='building_id' value='<?php echo $this->build_id;  ?>' >
+											      <form name="addNewPriority">
+													  <input type="hidden" name="actionType" value="insert">
+														<input type="hidden" name="building_id" id="building_id" value=''>
+														<?php /*<div class="row">
+															<label>Id* :</label>
+															<span class="prioNumErr" id="priority-number-error"></span> 
+															<input type="text" value="<?php echo $this->priorityDetail['id']?>" id="pid" 
+																   name="data[pid]" readonly="readonly">														  
+														</div>*/?>
+														<div class="row">
+															<label>Select Template From List <span class="required">*</span> :</label>
+															<span class="priNameErr" id="priority-name-error"></span> 
+															<select id="priority_name" name="priorityName" style="float:left;">
+															<option>Select Template</option>
+															<?php foreach($prioritylist as $value) { ?>
+															<option data-rel="<?php echo $value->pid; ?>" value='<?php echo $value->priorityName; ?>'><?php echo $value->priorityName; ?></option>
+															<?php  } ?>
+															</select>
+														</div>
+														<div class="row">
+														   <label>Over Write Existing Priority<span class="required">*</span> :</label> 
+														   <span class="priDescErr" id="priority-description-error"></span>
+														   <select name="over_write_priority" id="over_write_priority" class="status" onchange='changeOverwrite(this.value)'>
+															<option value="1">Yes</option>
+															<option value="0" selected >No</option>
+														</select>
+														</div>
+														<div class="row">
+														<label>Select Existing Priority From <br>List<span class="required">*</span> :</label> 
+														<select name="existing_priority" id="existing_priority" class="status" disabled>
+														<option value=''>Select Existing Priority</option>
+														<?php foreach($buildingPrioritylist as $value) { ?>
+														<option value='<?php echo $value['pid']; ?>'> <?php echo $value['priorityName']; ?> </option>
+														<?php } ?>
+														</select>
+														</div>
+														
+														<div class="row">
+														<label>Priority Name<span class="required">*</span> :</label> 
+														<input type="text" id="new_priority_name" name="new_priority_name"  value="" style="float:left;">
+														</div>
+														
+														
+														 <div class="confirmBtn">
+															<input type="button" value="Save" name="next" id="save_priority" class="confirm savePriority" onclick="return addPriorityTemplate()"/>
+															<input type="button" value="Cancel" name="cancel" class="cancel" onclick="cancelPriority()"/>
+														</div>
+											      </form>
+											   
+  </section>
+<!--
+ <div class="fade_default_opt" id="fd_dft_div" >
+								 <div id="add-priority-td" class="bd-dft-cls" >
+								         <div class="formBuild">			  
+									      <div id="priority-form_" class="priority_block_">
+											  <section class="consol_form_head">
+													<h3>Add New Priority</h3>
+											   </section>
+											   <section class="w-48 fr ch-home-form_ ad-ptform">
+											      <form name="addNewPriority">
+													  <input type="hidden" name="actionType" value="insert">
+														<input type="hidden" name="building_id" id="building_id" value=''>
+														<?php /*<div class="row">
+															<label>Id* :</label>
+															<span class="prioNumErr" id="priority-number-error"></span> 
+															<input type="text" value="<?php echo $this->priorityDetail['id']?>" id="pid" 
+																   name="data[pid]" readonly="readonly">														  
+														</div>*/?>
+														<div class="row">
+															<label>Priority Name <span class="required">*</span> :</label>
+															<span class="priNameErr" id="priority-name-error"></span> 
+															<input type="text" id="priority_name" name="priorityName" value="" style="float:left;">
+														</div>
+														<div class="row">
+														   <label>Priority Description<span class="required">*</span> :</label> 
+														   <span class="priDescErr" id="priority-description-error"></span>
+														   <input type="text" id="priority_description" name="priorityDescription"  value="" style="float:left;">
+														</div>
+														<div class="row">
+														<label>Active<span class="required">*</span> :</label> 
+														<select name="status" id="status" class="status">
+															<option value="1">Yes</option>
+															<option value="0">No</option>
+														</select>
+														</div>
+														
+														<div class="row">
+														<label>E-Mail Alerts Active<span class="required">*</span> :</label> 
+														<select name="email_status" id="email_status" class="status">
+															<option value="1">Yes</option>
+															<option value="0">No</option>
+														</select>
+														</div>
+														
+														
+														 <div class="confirmBtn">
+															<input type="reset" value="Reset" name="reset" class="cancel"/>
+															<input type="button" value="Save" name="next" id="save_priority" class="confirm savePriority" onclick="return addPriority()"/>
+															<input type="button" value="Cancel" name="cancel" class="cancel" onclick="hidePriorityForm()"/>
+														</div>
+											      </form>
+											   </section>    
+									      </div>
+                                          </div>
+								 </div>  -->
+								  </div>  </div>
+								  
+	<script>
+	function changeOverwrite(overwrite) {
+		if(overwrite==1) {
+			$('#existing_priority').prop('disabled', false);
+			$('#new_priority_name').prop('disabled', true);
+		} else {
+			$('#existing_priority').prop('disabled', true);
+			$('#new_priority_name').prop('disabled', false);
+		}
+	}
+	</script>

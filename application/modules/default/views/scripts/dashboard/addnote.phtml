@@ -1,0 +1,62 @@
+<div id="ct_note_fm_div">
+	<h1>Add New Note</h1>	
+	<div class="message" style='text-align:center;width:96%;font-weight:bold;color:red;'>
+		<span id="success_msg"  class="success"></span>
+		<span id="error_msg" class="error"></span>
+	</div>
+	<div id="note_form_ data">
+		 <div class="cw_row">
+			 <label>Date</label>
+			 <div class="cw-ibox-row">
+				 <span class="field_error" id="cwerr_date"></span>				 
+					   <input type="text" name="note_date" id="note_date"  value="<?php echo date('m/d/Y');?>" readonly="readonly">			 
+			  </div>
+		 </div>
+		 <div class="cw_row">
+			 <label>Internal</label>
+			 <div class="cw-ibox-row">				 
+				   <select name="internal" id="internal" >
+					   <option value="1" >Yes</option>
+					   <option value="0" selected="selected">No</option>
+				   </select>
+			 </div>
+		 </div>
+		 
+		  <div class="cw_row">
+			 <label>Predefined Notes</label>
+			 <div class="cw-ibox-row">
+				 <select class='all_select' onchange='FillPredefinedNotes(this)' > 
+							<option value=''> Select From Predefined Notes </option>
+							<?php  $noteModel = new Model_Notes();
+								$noteList = $noteModel->getNotesByCustId($this->cust_id); 
+								
+								foreach($noteList as $noteValue) { 
+							?>
+							<option value='<?php echo $noteValue['nid']; ?>'> <?php echo $noteValue['notes']; ?>  </option>   
+							<?php } ?>
+							</select>
+			 </div>
+		 </div>
+		 
+		 
+		 <div class="cw_row">
+			 <label>Note</label>
+			 <div class="cw-ibox-row">
+				 <span class="field_error" id="cwerr_note"></span>				 
+				   <textarea name="note" id="note" rows="8" cols="45"></textarea>
+			 </div>
+		 </div>
+		 <div class="cw_row"> <label> &nbsp; </label>
+			 <div class="cw-ibox-row">
+			 <input type='checkbox' name='notify_tenant' id='notify_tenant' class='notify_users' checked> Notify Tenant Users
+			 <input type='checkbox' name='notify_account_user' id='notify_account_user' class='notify_users' checked> Notify Accounts Users
+			  </div>
+		 </div>
+		
+	 </div>
+	 <div class="buttons">
+	               <input type="hidden" id="addtempnotes" value="">
+				   <button type="button" name="save_note" id="save_note" value="Save" onclick="saveNote('<?php echo $this->woId?>')">Save</button>
+				   <button type="button" name="cancel" id="cancel" value="Cancel" onclick="cancelNote()">Cancel</button>
+	  </div>
+</div>

@@ -1,0 +1,1453 @@
+	@media only screen 
+and (min-width : 320px) and (max-width : 480px) and (orientation : portrait) {
+	
+#add_labor_form > div{width:100%;}
+#edit_labor_form > div{width:100%;}	
+#popup_form > div{width:95%;}
+#category-div input[type="text"] {float: left; width: 100%;}
+.tenant-info-div .field_edit_popup > label {padding: 0; width: 38%;}
+.email-egu { float: left;  width:100%;}
+.avtar img {height: 57px; margin: 0;}
+.avtar {height: 50px;}
+.tt-input-div {float: left; width: 100%;}
+form#addNewBuilding select{width:100%;}
+	
+#priority-form {width: 100%;}
+#page-wrapper > div {margin: 22px 0 0;}
+	
+.edit-wo-class{width:286px;}
+.fade_edit_wo{height:5000px; position:absolute!important;}
+.charge_field > input {width: 21%;}
+
+.bd-dft-cls{width:300px;}
+.fade_default_opt{height:5000px; position:absolute!important;}
+	
+.view-column {width: 100%;}
+.detail-column {width: 100%;}
+.right-column {float: left; width: 100%;}
+.history-sectionn{width:95%; overflow:auto;}
+.date-out-div {width: 100%;}
+.time > span {width: 50%;}
+.wd-status {width:100%;}
+.wd-status > span {float: left; width: 50%;}
+.wd-status > select {float: left; width: 46%;}
+.time {margin: 0 0 8px;}
+.date-in-div {width: 100%;}
+.order-details {width:95%!important;} 
+.contact_info_tab {float: left; width: 100%;}
+.building_block_main {left: 1px; top: 155px; width: 99.5%; z-index: 9;}
+.cotentadmin {width: 90%!important;}
+.header{width: 100%!important;}
+.footer{width: 90%!important;}
+.detial-div{width:100%!important;}
+.order-info-tabb {width: 94%;}
+
+#addcompanyform > select { margin: 6px 0; width: 100%;}	
+/*.order-details {width:41%;}*/
+.contact_info_tab {float: left; width: 100%;}
+.building_block_main {left: 1px; top: 155px; width: 99.5%; z-index: 9;}
+.cotentadmin {width: 90%!important;}
+.header{width: 100%!important;}
+.footer{width: 90%!important;}
+
+.adminright {margin-left: 0!important; margin-top: 0!important; width: 100%!important;}
+.adminright h2 {font-size: 20px!important; width:80%!important;}
+.adminleft > img {width: 17px!important;}
+.loginfrm {width: 100%!important;}
+.leftcol {float: left; width: 26%!important;}
+.rightcol {float: left; width: 70%!important;}
+.admintxt {width: 93%!important;}
+.rightlogo {width: 100%!important;}
+.rightmenu {height: auto!important; margin-right: 0!important; padding-left: 0!important; width: 100%!important;}
+.adminsec {margin:10px auto!important;}
+.leftlink{width:100%!important;}
+.leftlogo{width: 100%!important;}
+.leftlogo img {width: 100%;}
+
+.tableGrid select { padding: 4px 0; width:98%!important;}
+form#forgetpassword td {display: block;}
+
+/*.row select {width:95%!important;}*/
+/*.row input {margin: 0 0 10px; width: 95%!important;}*/
+.row label {width: 95%px!important;}
+.row label {width: 100%!important;}
+.row label {width: 100%!important;}
+.row input#phone {width:100%!important;}
+.tenant-user-data {width:100%!important;}
+.step{width:95%!important;}
+.row textarea{width:97%!important;}
+
+.container-right {margin: 65px 0 0;}
+
+
+.my_form {height: auto; margin: 0; width: 83%;}
+#search_show_form .serach_row input[type="text"] {margin:0 9px 3px 0; width:56%;}
+.searchform_leftpart {float: right; margin:3px 0; text-align: right;}
+#search_show_form { right:-282px; top:35%; width: 88%;}
+.searchform_leftpart > label{width:38%;}
+.searchform_leftpart .selectbox {width: 57%; margin: 0 5px 0 0;}
+.row select.selectbox { width: 74%;}
+.hasDatepicker {margin: 0 5px 8px 2px !important;padding: 6px 3px;width:21.5% !important;}
+
+.login_form{padding: 13px 3%!important; width: 94%!important;}
+
+.row input[type="text"]{width:100%;}
+.row select{width:97%!important; padding:4px;}
+input.form_btn{margin:5px 0 0px 0;}
+#auto_generate .row > input{width:100%!important;}
+.tt-input-div > input { margin: 0 0 8px;  width: 97%!important;}
+.tt-input-div > input[type="checkbox"]{width:auto!important;}
+section.ch-home-form form .row input[type="text"] {width:97% !important;}
+.row input#phone {width: 97% !important;}
+.tt-input-div > input[type="text"]{width:95%!important;}
+
+.tableGrid > div{width:100%;}
+.bd_form_row > label {margin: 0 0 0 8px; width: 97%;}
+.bd_form_inputs > input {margin: 0 2.5%; width: 95%;}
+.bd_form_inputs input#phoneNumber {width:36% !important;}
+.bd_form_inputs input.ext { width: 41% !important;}
+.phone_eror {margin: 0 9px; width: 100%;}
+input#billphoneNumber{width: 40% !important;}
+input#billphoneNumber {width: 40% !important;}
+.bd_form_inputs > input#phone {float: left; width: 40%;}
+
+.add_new_contact {left: 2.5%!important; width: 90%!important;}
+.add_new_service{left: 2.5%!important; width: 90%!important;}
+#search_txt > input { width: 100%;}
+#form_field > select{width:100%;  margin:0 0 8px!important;}
+.form-button > input{margin:0 0 5px;}
+#search_form > div#form_field {float: left; margin: 0 0 7px; width: 100%;}
+
+/***************** 20-03-15 ****************/
+.avtar{margin: 0 0 0 0px;}
+.sidebar-collapse{width:100%!important;}
+.my_mid_nav {margin: 0px 0 0 0px !important;}
+.navbar-default.navbar-static-side {margin-top:0px;}
+ul.my_mid_nav li {padding: 0 10px!important;}
+.sec_sp {left: 42px;}
+.my_mid_nav {float: none!important; text-align: center; width:100%;}
+
+.panel-body {padding: 0!important;}
+#page-wrapper {padding:1px 13px 0 5px!important;}
+
+.ac-form-row > label {width: 100%;}
+.ac-form-row {width: 100%;}
+.ac-form-ibox > input { width: 100%;}
+.ac-form-ibox{width: 100%;}
+.passwordErr, .moduleErr, .ccenterErr, .uemailErr, .ufirstErr, .ulastErr, .uofficeErr, .newpwdErr, .repwdErr, .fnameErr, .postalCodeErr, .buildingNameErr, .cityErr, .cname-err, .building-err, .address-err, .address2-err, .city-err, .state-err, .postal-err, .phone-err, .fax-err, .billCName-Err, .billaddress-Err, .billaddress2-Err, .billsuite-Err, .billcity-Err, .billstate-Err, .billpostalCode-Err, .billphoneNumber-Err, .billfaxNumber-Err, .attention-Err, .adminEmailAddressErr, .fnameErr, .lnameErr, .unameErr, .uPassErr, .uConfErr, .phoneErr, .accesslevelErr, .moduleeErr, .phoneNumberErr, .faxNumberErr, .stateErr, .addressErr, .priNameErr, .priDescErr, .timeErr, .endStatusErr, .lengthErr, .wdErr, .cNameErr2
+{
+    margin:0px 0 0 8px;
+}
+
+.phone_eror {width: 100%;}
+
+form#addNewBuilding {width: 95%;}
+#addNewBuilding > input{width:100%;}
+form#addNewBuilding label{width:90%;}
+input#phoneNumber{width:43%;}
+input.ext { width: 40% !important;}
+.user-inputbox {display: inline-block; float: left; width: 94%;}
+.user-ffield {padding: 0;}
+.user-inputbox input {width: 100%;}
+.middle_btn ul li > a{margin-left:50px;}
+.work_update_select select.all_select {float: left; width: 100%!important;}
+
+table.newuser_setup {margin: 15px auto; width: 95%;}
+.new_user_wiz {float: left; width:100%;}
+
+.avtar{margin-left:0!important;}
+.navbar-default{width:100%!important; float:left!important;}
+
+/******************* 25-03-15 **********************/
+
+.avtar {width:100%; margin:0 0 0 0!important;}
+.navbar-default{width:100%!important; float:left!important;}
+.ac-form-ibox{width:100%!important;}
+.ac-form-ibox > input[type="text"]{width:100%!important;}	
+ul.my_mid_nav li {padding: 0 10px!important;}
+.my_mid_nav {margin:0px 0 0!important;}
+.panel-body {padding: 15px; margin: 40px 0 0;}
+.tableGrid > div {margin: 0 auto;width: 99%;}
+.bd_form_row > label{width:100%;}
+/*.bd_form_inputs > input{width:100%;}*/
+/*.bd_form_inputs input#phoneNumber {float: left; width: 24%!important;}*/
+/*.bd_form_inputs input.ext {width: 25% !important;}*/
+section.cate_edit_section {left: 15%; padding: 20px 0; width: 50%;}
+.add_cate_main_block {left: 0; width: 52%;}
+.consol_form_head > h3 { font-size: 12px;}
+#category-div {float: left; margin: 0; width: 100%;}
+.add_ct_name {float: left; width: 100%; margin:0 0 10px;}
+form#addNewCategory label {width: 100%;}
+.span{width:100%;}
+#send-email-user-div select { width:100% !important;}
+.catgry .confirmBtn input, .catgry .confirmBtn a {width:100% !important;}
+#editCategory > div {width: 100%!important;}
+#category_popup{width:77%;}
+
+
+#add_note form {margin: 60% auto 0;}
+#add_note > div{width:100%;}
+.ed-build-ibox {float: left; width: 100%;}
+
+.field_edit_popup label{width:35%;font-size: 12px;}
+.field_edit_popup {float: left;  font-size: 12px;}
+
+.new_user_wiz input[type="text"] {margin: 0 0 10px; width: 100%;}
+
+.showcal.hasDatepicker {width: 100% !important;}
+
+#building-info{width:100%;}
+#company-info{width:100%;}
+#order-info{width:100%;}
+.heading{width:100%;}
+ul.token-input-list-facebook{width:100%}
+
+.wo-dcreate { width: 100% !important;}
+.right-order input[type="text"]{width:100%!important;}
+.right-order select{width:100%!important;}
+.right-order span{line-height:normal;}
+	
+ul.ui-autocomplete{width:100px;}
+
+.download-report {clear: both; margin: 16px 0 0;}
+#select-visible-div > div {clear: both;}
+label.form-cat-label {width: 100% !important;}
+.row_vender_input {width: 98%;}
+.cv-select-div > div {width: 100%;}
+
+.vendor_detail_row > label {width: 35%;}
+
+/*.form_group {width:50%;}*/
+
+#add_new_div {width: 99%;}
+.add_new_ {right: 10px; top: 170px; width: 94%;}
+.field_edit_popup label{width:35%;}
+#remove-user-div > label{width:85px; font-size:12px;}
+#fdw {margin: 34px 0 0;}
+
+.time_len_my_div {float: left; width: 100%;}
+#page-wrapper {min-height:1328px;}
+
+.category_block .ch-home-form {left:0%; width:50%;}
+.woreport-section {margin: 18px 0 0!important;}
+.cate_table td {width: 100%;}
+
+input#phone { float: left; width: 40%;}	
+.ui-autocomplete { width: 80%!important; font-size:12px;}
+
+.workorder-info h1{width:100%;}
+.search-row{width:100%;}
+.wo-search > input{width:94%;}
+.view-column label{width:100%;}
+.view-info-div li{width:100%;}
+.view-info-div ul li span {float: left; width: 50%;}
+.wrequest-div{width:95%;}
+.detail-column{width:100%;}
+.detail-column label {width: 100%;}
+.detial-div{width:100%;}
+.time-status {width: 100%;}
+.date-in-div{width:100%;}
+.date-comp{width:100%;}
+.date-comp > span {width: 50%;}
+.date-comp > input {width: 44%;}
+.time > select {width: 44%;}	
+
+
+
+/***************************new device mention here*********************************/
+.avtar {width:100%;}
+.avtar h1 {float: none; margin: 0 0 0 87px; width: 95px;}
+.right_btn_icon { margin: -44px 0 0;  text-align: right;  width: auto;}
+.middle_btn {margin: 20px; padding: 0; width: 80%;}
+.middle_btn ul li {display:block; float:none; margin:0 0 10px; width:100%;}
+.lbl_div {width:100%; float:none;}
+.form_field_div {width:100%; float:none;}
+.updatestatus_select {width:85%;}
+.contact_info_tab {float:left;}
+.contact_info_tab ul li a {font-size: 12px;}
+.contact_info_tab ul li a:hover {font-size: 12px;}
+.request_span {width:auto;}
+.work_request_div {margin:0;}
+
+
+/*************** ACCONT PAGE **************************/
+#companyListData{margin:25px 0 0 0;}
+#acc_company_block > div {margin:35px 0 0 0;}
+.add_company_form > form{padding:0px 10px;}
+#addcompanyform > input{width: 100%;}
+
+/*************** BUILDING PAGE **************************/
+
+#addNewBuilding > input {width: 100%;}
+.edit_heading{width: 100%;}
+.showForm {width: 90%;}
+
+#regBuildingPInfo > input{width:100%;}
+#regBuildingPInfo > select{width:100%;}
+#regBuildingPInfo > label{width:100%;}
+#regBuildingBillInfo > input, #regBuildingAdminInfo > input {width: 100%;}
+#regBuildingBillInfo > label, #regBuildingAdminInfo > label {width: 100%;}
+#password_section > input {width:100%;}
+#regBuildingBillInfo > input, #regBuildingAdminInfo > input {width: 100%;}
+#accesslevel { width: 100%;}
+#password_section > input { width: 100%;}
+.ed-build-ibox {float: left; width: 100%;}
+.ch-home-form {margin:20px 0 0; overflow:auto;}
+/*==============Added by uttam (11-01-2015)===================*/
+
+.searchform_leftpart .inputbox {width:100%;}
+.searchform_rightpart .inputbox {width:100%;}
+.hasDatepicker {width:100%;}
+.searchform_rightpart > span{padding:0px!important;}
+.searchform_rightpart {width:100%;}
+.all_select {width:230px;}
+.form_field_div textarea {width:230px;}
+/*.form_btn {float:left;}*/
+.padd_order {padding:0 !important;}
+
+/******************* TABS **********************/
+
+.ui-accordion .ui-accordion-content {padding: 1em 0.5em;}
+
+/************** 25-02-15 *******************/
+.all_select {width: 100%;}
+.form_field_div textarea {width: 100%;}
+.nav > li > a {padding: 10px 4px;}
+#my_span{top:30px;}
+
+#regBuildingPInfo > input{width:100%!important;}
+#regBuildingPInfo > select{width:100%!important;}
+#regBuildingPInfo > label{width:100%!important;}
+#regBuildingBillInfo > label, #regBuildingAdminInfo > label {width: 100%;}
+#regBuildingBillInfo > input, #regBuildingAdminInfo > input {width: 100%;}
+#password_section > input {width:100%!important;}
+#accesslevel {width:100%;}
+.ui-accordion .ui-accordion-content {padding: 1em 0.5em;}
+
+
+/************** 25-02-15 *******************/
+.all_select {width: 100%;}
+.form_field_div textarea {width: 100%;}
+.nav > li > a {padding: 10px 4px!important;}
+#my_span{top:30px!important; height:auto;}
+
+#category-div > label {width: 50%!important;}
+#active-div > label {width: 50%!important;}
+
+}
+ 
+@media only screen and (min-width : 320px) and (max-width : 480px) and (orientation : landscape) { 
+#first .row label{width: 28%;}
+#first input#phoneNumber {width: 21%;}
+#first input#phoneExt {width: 21%!important;}
+
+#add_labor_form > div{width:100%;}
+.hasDatepicker {width: 21.2% !important;;}
+#edit_labor_form > div{width:100%;}
+#page-wrapper > div {margin: 52px 0 0;}
+#popup_form > div{width:100%;}
+.tenant-info-div .field_edit_popup > label { padding: 0;}
+.email-egu { float: left;  width:100%!important;}
+form#addNewBuilding select{width:100%;}
+.charge_field > input {width: 22%!important;}
+.edit-wo-class{width:400px;}
+.fade_edit_wo{height:5000px;}
+.tt-input-div {float: left; width: 50%;}
+
+#category-div > label {width: 50%!important;}
+#active-div > label {width: 50%!important;}
+form#addNewCategory label {width: 50%;}
+
+.bd-dft-cls{width:460px!important;}
+.fade_default_opt{height:5000px;}
+.bd_form_row > label { width: 100%!important;}
+.bd_form_inputs {float: left; width: 96%!important;}
+.ac-form-ibox {width: 50% !important;}
+
+.view-column {width: 100%;}
+.detail-column {width: 100%;}
+.right-column {float: left; width: 100%;}
+.history-sectionn{width:95%; overflow:auto;}
+.date-out-div {width: 100%;}
+.time > span {width: 50%;}
+.wd-status {width:100%;}
+.wd-status > span {float: left; width: 50%;}
+.wd-status > select {float: left; width: 46%;}
+.time {margin: 0 0 8px;}
+.date-in-div {width: 100%;}
+.order-details {width:95%!important;} 
+.contact_info_tab {float: left; width: 100%;}
+.building_block_main {left: 1px; top: 155px; width: 99.5%; z-index: 9;}
+.cotentadmin {width: 90%!important;}
+.header{width: 100%!important;}
+.footer{width: 90%!important;}
+.detial-div{width:100%!important;}
+.order-info-tabb {width: 94%;}
+.date-comp > span {width: 50%;}
+.time > select {width: 41%;}
+
+#companyListData {margin:65px 0 0 0!important;}
+.acc_company_block_main {margin: 40px 0 0;}
+.order-details {width:67%!important;} 
+.contact_info_tab {float: left; width: 100%;}
+.building_block_main {left: 1px; top: 155px; width: 99.5%; z-index: 9;}
+.cotentadmin {width: 90%!important;}
+.header{width: 100%!important;}
+.footer{width: 90%!important;}
+.adminleft {width:98%!important; margin-left: 0!important;}
+.adminleft > img {width: 20px!important;}
+.adminright {margin-left: 0!important; margin-top: 0!important; width: 100%!important;}
+.adminright h2 {font-size: 22px!important; width: 100%!important;}
+.loginfrm {width: 100%!important;}
+.leftcol {float: left; width: 26%!important;}
+.rightcol {float: left; width: 70%!important;}
+.admintxt {width: 93%!important;}
+.rightlogo {width: 100%!important;}
+.rightmenu {height: auto!important; margin-right: 0!important; padding-left: 0!important; width: 100%!important;}
+.adminsec {margin:10px auto!important;}
+.leftlink{width:100%!important;}
+.leftlogo{width: 100%!important;}
+.leftlogo img {width: 100%!important;}
+
+.tableGrid select { padding: 4px 0; width: 100%!important;}
+
+#addcompanyform > select { margin: 6px 0; width: 100%;}	
+form#forgetpassword td {display: block;}
+
+.row select {width:95%!important;}
+/*.row input {margin: 0 0 10px; width: 95%!important;}*/
+.row label {width: 95%px!important;}
+/*.row label {width: 100%!important;}
+.row label {width: 100%!important;}*/
+.row input#phone {width:100%!important;}
+.tenant-user-data {width:100%!important;}
+.step{width:95%!important;}
+.row textarea{width:100%!important;}
+
+.container-right {margin: 65px 0 0;}
+
+.my_form {height: auto; margin: 0; width: 83%!important;}
+.row input#wo_request {margin: 0 0 10px; width: 70%;}
+.row select.selectbox { width:80%;}
+#search_show_form {right: -422px; top: 45%!important; width: 88%; padding: 2px 0 0!important;}
+.login_form{padding: 13px 3%; width: 94%;}
+.row input[type="text"]{width:100%;}
+.row select{width:73%!important;}
+.form_field_div select{width:100%!important;}
+#auto_generate .row > input{width:100%!important;}
+.tableGrid > div{width:100%;}
+.bd_form_row > label {margin: 0 0 0 8px; width: 97%;}
+.bd_form_inputs > input {margin: 0 2.5%; width: 95%;}
+.bd_form_inputs input#phoneNumber {width: 40% !important;}
+.bd_form_inputs input.ext { width: 41% !important;}
+.phone_eror { margin: 0 9px; width: 100%;}
+input#billphoneNumber{width: 40% !important;}
+input#billphoneNumber { width: 40% !important;}
+.bd_form_inputs > input#phone {float: left; width: 40%;}
+.add_new_contact {left: 2.5%!important; width: 90%!important;}
+.add_new_service{left: 2.5%!important; width: 90%!important;}
+#search_txt > input { width: 100%;}
+#form_field > select{width:100%;  margin:0 0 8px!important;}
+.form-button > input{margin:0 0 5px;}
+#search_form > div#form_field {float: left;margin: 0 0 7px; width: 100%;}
+
+
+/***************** 20-03-15 ****************/
+.avtar{margin: 0 0 0 0px;}
+.sidebar-collapse{width:100%!important;}
+.my_mid_nav {margin: 12px 0 0 0px !important;}
+/*.navbar-default.navbar-static-side {margin-top:78px!important;}*/
+ul.my_mid_nav li {padding: 0 16px;}
+.sec_sp {left: 42px;}
+.my_mid_nav {float: none; text-align: center; width:100%;}
+
+.panel-body {padding: 0!important;}
+#page-wrapper {padding:20px 13px 0 5px!important;}
+
+.ac-form-row > label {width: 100%;}
+.ac-form-row {width: 100%;}
+.ac-form-ibox > input { width: 100%;}
+.ac-form-ibox{width: 100%;}
+
+.passwordErr, .moduleErr, .ccenterErr, .uemailErr, .ufirstErr, .ulastErr, .uofficeErr, .newpwdErr, .repwdErr, .fnameErr, .postalCodeErr, .buildingNameErr, .cityErr, .cname-err, .building-err, .address-err, .address2-err, .city-err, .state-err, .postal-err, .phone-err, .fax-err, .billCName-Err, .billaddress-Err, .billaddress2-Err, .billsuite-Err, .billcity-Err, .billstate-Err, .billpostalCode-Err, .billphoneNumber-Err, .billfaxNumber-Err, .attention-Err, .adminEmailAddressErr, .fnameErr, .lnameErr, .unameErr, .uPassErr, .uConfErr, .phoneErr, .accesslevelErr, .moduleeErr, .phoneNumberErr, .faxNumberErr, .stateErr, .addressErr, .priNameErr, .priDescErr, .timeErr, .endStatusErr, .lengthErr, .wdErr, .cNameErr2
+{margin:0px 0 0 8px;}
+
+.phone_eror {width: 100%;}
+form#addNewBuilding {width: 95%;}
+#addNewBuilding > input{width:100%;}
+form#addNewBuilding label{width:100%;}
+input#phoneNumber{width:35%!important;}
+input.ext { width: 40% !important;}
+.user-inputbox {display: inline-block; float: left; width: 94%;}
+.user-ffield {padding: 0;}
+.user-inputbox input {width: 100%;}
+.work_update_select select.all_select {float: left; width: 100%!important;}
+
+table.newuser_setup {margin: 15px auto; width: 95%;}
+.new_user_wiz {float: left; width: 96%;}
+
+.avtar{margin-left:0!important;}
+.navbar-default{width:100%!important; float:left!important;}
+
+/******************* 25-03-15 **********************/
+
+.avtar {width:100%; margin:0 0 0 0!important;}
+.navbar-default{width:100%!important; float:left!important;}
+.ac-form-ibox{width:100%!important;}
+.ac-form-ibox > input[type="text"]{width:100%!important;}	
+ul.my_mid_nav li {padding: 0 10px!important;}
+.my_mid_nav {margin:0px 0 0!important;}
+.panel-body {padding: 15px; margin: 40px 0 0;}
+.tableGrid > div {margin: 0 auto;width: 99%;}
+.bd_form_row > label{width:100%;}
+.bd_form_inputs > input{width:100%;}
+.bd_form_inputs input#phoneNumber {float: left; width: 24%!important;}
+.bd_form_inputs input.ext {width: 25% !important;}
+
+.ch-home-form {margin: 40px 0 0!important;}
+
+#add_note form {margin:30% auto 0;}
+#add_note > div{width:100%;}
+.ed-build-ibox {float: left; width: 100%;}
+
+.field_edit_popup label{width:35%;font-size: 12px;}
+.field_edit_popup {float: left;  font-size: 12px;}
+.new_user_wiz input[type="text"] {margin: 0 0 10px; width: 100%;}	
+.showcal.hasDatepicker {width: 100% !important;}
+
+#building-info{width:100%;}
+#company-info{width:100%;}
+#order-info{width:100%;}
+.heading{width:100%;}
+ul.token-input-list-facebook{width:100%}
+.wo-dcreate { width: 100% !important;}
+.right-order input[type="text"]{width:100%!important;}
+.right-order select{width:100%!important;}
+.right-order span{line-height:normal;}
+
+.download-report {clear: both; margin: 16px 0 0;}
+#select-visible-div > div {clear: both;}
+label.form-cat-label {width: 100% !important;}
+.row_vender_input {width: 98%;}
+.cv-select-div > div {width: 100%;}
+.vendor_detail_row > label {width: 35%;}
+
+.searchform_leftpart > label {width:32%; line-height:normal!important;}
+.searchform_leftpart .inputbox {width:56%; margin:0 14px 0px!important; padding: 3px 4px!important; font-size:12px;}
+.search_btn {padding: 1px 20px; text-decoration: none;}
+.searchform_rightpart .inputbox {width:100%; margin: 0 15px 0px!important; padding:2px 5px!important;font-size:12px;}
+.searchform_rightpart > label {width:29.8%!important; line-height:normal;}
+.hasDatepicker { margin: 0 5px 0 2px !important; padding: 3px 4px; width:25%!important;}
+.searchform_leftpart .selectbox {font-size: 12px; margin: 0 12px 0 0 !important; padding: 3px 0 !important; width: 56.1%;}
+.searchform_leftpart {width:100%; margin: 3px 0 2px!important;}
+
+.form_group {width:50%;}
+#add_new_div {width:100%;}
+.add_new_ {right: 0; top: 170px; width: 100%;}
+#remove-user-div > label{width:85px; font-size:12px;}
+#fdw {margin: 34px 0 0;}
+
+.time_len_my_div {float: left; width: 100%;}
+
+section.cate_edit_section {left: 2%;  padding: 20px 2%; width:80% !important;}
+
+section.cate_edit_section {left: 2%; padding: 20px 2%; width: 79%;}
+.category_block .ch-home-form {left:2%;}
+ul.my_mid_nav li {margin: 0 0 10px !important;  padding: 0 10px !important;}
+.woreport-section {margin: 18px 0 0!important;}
+
+.notes-list-div {margin: 28px 0 0!important;}
+.notes-list-div {overflow: auto; width: 100%;}
+input#phone { float: left; width:36%!important;}	
+
+.add_cate_main_block {left: 1%; width: 80%;}
+#category-div {width: 100%;}
+/*.tableGrid select {width: 43% !important;}*/
+
+section.ch-home-form form .row input[type="text"] { width:100%!important;}
+section.ch-home-form form .row select { width:100%;}
+section.ch-home-form form .row select {width:100%!important;}
+#companyListData{margin:0px 0 0 0;}
+.row input#phone {width:100%!important;}
+
+.container-right {margin: 53px 0 0!important;}
+
+.searchform_leftpart .selectbox{font-size: 12px; margin: 0 0 0 30px !important; padding: 3px 0 !important; width: 55.1%;}
+
+}
+
+
+@media only screen 
+and (min-width : 360px) and (max-width : 640px) and (orientation : portrait) {
+
+#add_labor_form > div{width:100%;}	
+#edit_labor_form > div{width:100%;}
+#popup_form > div{width:95%;}
+
+	
+.edit-wo-class{width:320px;}	
+.fade_edit_wo{height:2037px;}	
+
+.bd-dft-cls{width:340px;}
+.fade_default_opt{height:2037px;}
+
+.ac-form-row {width: 100%;}
+.ac-form-row > label {float: left; width: 50%;}
+.ac-form-ibox {width: 50% !important;}
+
+.category_block .ch-home-form {left:0%; width:55%;}
+
+.view-column {width: 100%;}
+.detail-column {width: 100%;}
+.right-column {float: left; width: 100%;}
+.history-sectionn{width:95%; overflow:auto;}
+.date-out-div {width: 100%;}
+.time > span {width: 50%;}
+.wd-status {width:100%;}
+.wd-status > span {float: left; width: 50%;}
+.wd-status > select {float: left; width: 46%;}
+.time {margin: 0 0 8px;}
+.date-in-div {width: 100%;}
+.order-details {width:95%!important;} 
+.contact_info_tab {float: left; width: 100%;}
+.building_block_main {left: 1px; top: 155px; width: 99.5%; z-index: 9;}
+.cotentadmin {width: 90%!important;}
+.header{width: 100%!important;}
+.footer{width: 90%!important;}
+.detial-div{width:100%!important;}
+.order-info-tabb {width: 94%;}
+
+/*.order-details {width:48%;}*/
+.contact_info_tab {float: left; width: 100%;}
+.building_block_main {left: 1px; top: 155px; width: 99.5%; z-index: 9;}
+.cotentadmin {width: 90%!important;}
+.header{width: 100%!important;}
+.footer{width: 90%!important;}
+.adminleft {width: 98%!important;}
+.adminright h2{padding:5px 0 0 30px!important;}
+.adminright {margin-left: 0!important; margin-top: 0!important; width: 100%!important;}
+.adminright h2 {font-size: 22px!important; text-align: center!important;  width: 100%!important;}
+.loginfrm {width: 100%!important;}
+.leftcol {float: left; width: 26%!important;}
+.rightcol {float: left; width: 70%!important;}
+.admintxt {width: 93%!important;}
+.rightlogo {width: 100%!important;}
+.rightmenu {height: auto!important; margin-right: 0!important; padding-left: 0!important; width: 100%!important;}
+.adminsec {margin:10px auto!important;}
+.leftlogo{width:100%!important;}
+.leftlink{width:100%!important;}
+
+.tableGrid select { padding: 4px 0; width: 100%!important;}
+.add_new_contact {left: 2.5%!important; width: 90%!important;}
+
+
+#addcompanyform > select { margin: 6px 0; width: 100%;}	
+form#forgetpassword td {display: block;}
+
+/*.row select {width:95%!important;}*/
+/*.row input {margin: 0 0 10px; width: 95%!important;}*/
+.row label {width: 95%px!important;}
+.row label {width: 100%!important;}
+.row label {width: 100%!important;}
+.row input#phone {width:97%!important;}
+.tenant-user-data {width:100%!important;}
+.step{width:95%!important;}
+.row textarea{width:100%!important;}
+
+.container-right {margin: 65px 0 0;}
+.row select.selectbox { width: 74%;}
+#search_show_form {right: -320px; top: 45%; width: 88%;}
+
+.login_form{padding: 13px 3%; width: 94%;}
+
+.row input[type="text"]{width:89%!important;}
+.row select{width:100%!important;}
+#auto_generate .row > input{width:94%!important;}
+
+.tableGrid > div{width:100%;}
+.bd_form_row > label {margin: 0 0 0 8px; width: 97%;}
+.bd_form_inputs > input {margin: 0 2.5%; width: 95%;}
+.bd_form_inputs input#phoneNumber {width: 40% !important;}
+.bd_form_inputs input.ext { width: 41% !important;}
+.phone_eror {margin: 0 9px; width: 100%;}
+input#billphoneNumber{width: 40% !important;}
+input#billphoneNumber {width: 40% !important;}
+.bd_form_inputs > input#phone {float: left; width: 40%;}
+.add_new_contact {left: 2.5%!important; width: 90%!important;}
+.add_new_service{left: 2.5%!important; width: 90%!important;}
+#search_txt > input { width: 100%;}
+#form_field > select{width:100%;  margin:0 0 8px!important;}
+.form-button > input{margin:0 0 5px;}
+
+#search_txt > input { width: 100%;}
+#form_field > select{width:100%;  margin:0 0 8px!important;}
+.form-button > input{margin:0 0 5px;}
+#search_form > div#form_field {float: left;margin: 0 0 7px; width: 100%;}
+
+/***************** 20-03-15 ****************/
+.avtar{margin: 0 0 0 0px;}
+.sidebar-collapse{width:100%!important;}
+.my_mid_nav {margin: 12px 0 0 0px !important;}
+.navbar-default.navbar-static-side {margin-top: 0px;}
+ul.my_mid_nav li {padding: 0 16px;}
+.sec_sp {left: 42px;}
+.my_mid_nav {float: none; text-align: center; width:100%;}
+
+.panel-body {padding: 0!important;}
+#page-wrapper {padding:1px 13px 0 5px!important;}
+
+.ac-form-row > label {width: 100%;}
+.ac-form-row {width: 100%;}
+.ac-form-ibox > input { width: 100%;}
+.ac-form-ibox{width: 100%;}
+
+.passwordErr, .moduleErr, .ccenterErr, .uemailErr, .ufirstErr, .ulastErr, .uofficeErr, .newpwdErr, .repwdErr, .fnameErr, .postalCodeErr, .buildingNameErr, .cityErr, .cname-err, .building-err, .address-err, .address2-err, .city-err, .state-err, .postal-err, .phone-err, .fax-err, .billCName-Err, .billaddress-Err, .billaddress2-Err, .billsuite-Err, .billcity-Err, .billstate-Err, .billpostalCode-Err, .billphoneNumber-Err, .billfaxNumber-Err, .attention-Err, .adminEmailAddressErr, .fnameErr, .lnameErr, .unameErr, .uPassErr, .uConfErr, .phoneErr, .accesslevelErr, .moduleeErr, .phoneNumberErr, .faxNumberErr, .stateErr, .addressErr, .priNameErr, .priDescErr, .timeErr, .endStatusErr, .lengthErr, .wdErr, .cNameErr2
+{
+    margin:0px 0 0 8px;
+}
+
+.phone_eror {width: 100%;}
+form#addNewBuilding {width: 95%;}
+#addNewBuilding > input{width:100%;}
+form#addNewBuilding label{width:80%;}
+input#phoneNumber {width: 45%;}
+input.ext { width: 40% !important;}
+.user-inputbox {display: inline-block; float: left; width: 94%;}
+.user-ffield {padding: 0;}
+.user-inputbox input {width: 100%;}
+
+.work_update_select select.all_select {float: left; width: 100%!important;}
+table.newuser_setup {margin: 15px auto; width: 95%;}
+.new_user_wiz {float: left; width: 96%;}
+
+.avtar{margin-left:0!important;}
+.navbar-default{width:100%!important; float:left!important;}
+
+/******************* 25-03-15 **********************/
+
+.avtar {width:100%; margin:0 0 0 0!important;}
+.navbar-default{width:100%!important; float:left!important;}
+.ac-form-ibox{width:100%!important;}
+.ac-form-ibox > input[type="text"]{width:100%!important;}	
+ul.my_mid_nav li {padding: 0 10px!important;}
+.my_mid_nav {margin:0px 0 0!important;}
+.panel-body {padding: 15px; margin: 40px 0 0;}
+.tableGrid > div {margin: 0 auto;width: 99%;}
+.bd_form_row > label{width:100%;}
+.bd_form_inputs > input{width:97%;}
+.ed-build-ibox {float: left; width: 100%;}
+.field_edit_popup label{width:35%;font-size: 12px;}
+.field_edit_popup {float: left;  font-size: 12px;}
+.new_user_wiz input[type="text"] {margin: 0 0 10px; width: 100%;}
+.showcal.hasDatepicker {width: 100% !important;}
+/*.bd_form_inputs input#phoneNumber {float: left; width: 24%!important;}
+.bd_form_inputs input.ext {width: 25% !important;}*/
+
+#building-info{width:100%;}
+#company-info{width:100%;}
+#order-info{width:100%;}
+.heading{width:100%;}
+ul.token-input-list-facebook{width:100%}
+.wo-dcreate { width: 100% !important;}
+.right-order input[type="text"]{width:100%!important;}
+.right-order select{width:100%!important;}
+.right-order span{line-height:normal;}
+
+.download-report {clear: both; margin: 16px 0 0;}
+.row_vender_input {width: 98%;}
+.cv-select-div > div {width: 100%;}
+.vendor_detail_row > label {width: 35%;}
+
+#search_show_form{top:26%; width:88%;}
+.hasDatepicker{width:24.5% !important; margin:0px!important;}
+/*.form_group {width:50%;}*/
+
+#add_new_div {width: 99%;}
+.add_new_ {right: 0; top: 170px; width: 100%;}
+#remove-user-div > label{width:100px; font-size:12px;}
+#fdw {margin: 34px 0 0;}
+.time_len_my_div {float: left; width: 100%;}
+
+
+label.ext_label {width: 10%;}
+input.ext[type="text"] {width: 28%;}
+#page-wrapper {min-height: 1379px!important;}
+.category_block .ch-home-form {left:2%;}
+
+.notes-list-div {margin: 28px 0 0;}
+
+input#phone {float: left; width:40%!important;}
+.row textarea{width:100%!important;}
+.cv-select-div { float: left; width: 97%!important;}
+
+/*************** ACCONT PAGE **************************/
+#companyListData{margin:25px 0 0 0;}
+#acc_company_block > div {margin: 35px auto 0;}
+
+/*************** BUILDING PAGE **************************/
+
+#addNewBuilding > input {width: 100%;}
+.edit_heading{width: 90%;}
+.showForm {width: 90%;}
+
+
+
+#regBuildingPInfo > input{width:100%!important;}
+#regBuildingPInfo > select{width:100%!important;}
+#regBuildingPInfo > label{width:100%!important;}
+#regBuildingBillInfo > label, #regBuildingAdminInfo > label {width: 100%!important;}
+#regBuildingBillInfo > input, #regBuildingAdminInfo > input {width: 100%!important;}
+#password_section > input {width:100%!important;}
+#accesslevel {width:100%!important;}
+	
+
+#accesslevel {width: 100%;}
+
+#password_section > input {width: 100%;}
+
+/*input#phoneNumber {width: 130px;}*/
+.ch-home-form {margin:24px 0 0; overflow:inherit;}
+/*.ch-home-form {margin:24px 0 0; overflow:auto!important;}*/
+	
+.avtar h1 {float: none; margin: 0 0 0 87px; width: 95px;}
+.right_btn_icon {
+    margin: -44px 0 0;
+    text-align: right;
+    width: auto;
+}
+.avtar {width:100%; margin:0 0 0 0!important;}
+.middle_btn {margin: 20px; padding: 0; width: 80%;}
+.middle_btn ul li {display:block; float:none; margin:0 0 10px; width:100%;}
+
+/*************** NEW BUILDING PAGE **************************/
+#regBuildingPInfo > input{width:295px;}
+
+/*==============Added by uttam (11-01-2015)===================*/
+/*.searchform_leftpart > label {width:100%;}*/
+
+/*.searchform_rightpart > label {width:100%;}*/
+
+.search_box {margin:55px 0 0;}
+
+/*.searchform_leftpart .selectbox {width:100%;}*/
+.searchform_leftpart {width:100%;}
+.searchform_rightpart {width:100%;}
+.all_select {width:230px;}
+.form_field_div textarea {width:230px;}
+/*.form_btn {float:left;}*/
+.padd_order {padding:0 !important;}
+
+/****************** tabs *******************/
+.field_edit_popup label{width:40%;}
+.ui-accordion .ui-accordion-content {padding: 1em 0.5em;}
+
+/************** 25-02-15 *******************/
+
+.all_select {width: 100%;}
+.form_field_div textarea {width: 100%;}
+.nav > li > a {padding: 10px 4px!important;}
+#my_span{top:30px!important;}
+.navbar-default{width:100%!important; float:left!important;}
+/*.ac-form-ibox{width:100%!important;}*/
+.ac-form-ibox > input[type="text"]{width:100%!important;}
+/*.cv-select-div > div {float: right; width: 231px!important;}*/
+/*.cv-select-div > div {float: right; width: 231px!important;}*/
+.row input#phone {width:100%!important;}
+
+
+}
+
+ @media only screen 
+and (min-width : 360px) and (max-width : 640px) and (orientation : landscape) { 
+
+/*#add_labor_form > div{width:80%;}*/
+/*#edit_labor_form > div{width:80%;}*/
+#first input[type="text"] { width: 50%;}
+#first input#phoneNumber {width: 21%;}
+#first input#phoneExt {width:20%!important;}
+form#addNewUser .row input {width: 50%;}
+
+select#timezone {width: 100%; margin:0 2.5%;}
+.bd_form_inputs select#status {width: 100%; margin:0 2.5%;}
+#page-wrapper > div {margin: 52px 0 0;}
+#popup_form > div{width:80%;}
+.charge_field > input {width: 22%!important;}
+.email-egu {float: left; width: 50%;}
+.row_material_input {float: left; width: 50%;}
+
+.fade_edit_wo{height:2037px; position:absolute!important;}
+.cv-select-div { float: left; width:50%;}
+.tt-input-div {float: left; width: 50%;}
+
+.ac-form-row {width: 100%;}
+.ac-form-row > label {float: left; width: 50%;}
+.ac-form-ibox {width: 50% !important;}
+
+.bd-dft-cls{width:590px;}
+.fade_default_opt{height:2037px; position:absolute!important;}
+
+.ch-home-form {margin: 40px 0 0;}
+
+.view-column {width: 100%;}
+.detail-column {width: 100%;}
+.right-column {float: left; width: 100%;}
+.history-sectionn{width:95%; overflow:auto;}
+.date-out-div {width: 100%;}
+.time > span {width: 50%;}
+.wd-status {width:100%;}
+.wd-status > span {float: left; width: 50%;}
+.wd-status > select {float: left; width: 41%;}
+.time {margin: 0 0 8px;}
+.date-in-div {width: 100%;}
+.order-details {width:95%!important;} 
+.contact_info_tab {float: left; width: 100%;}
+.building_block_main {left: 1px; top: 155px; width: 99.5%; z-index: 9;}
+.cotentadmin {width: 90%!important;}
+.header{width: 100%!important;}
+.footer{width: 90%!important;}
+.detial-div{width:100%!important;}
+.order-info-tabb {width: 94%; margin:10px 0 0;}
+.date-comp > span {width: 50%;}
+.time > select {width: 41%;}
+
+.adminright {margin-left: 0!important; margin-top: 0!important; width: 100%!important;}
+.adminright h2 {font-size: 22px!important; width:89%!important;}
+.adminleft > img {width: 20px!important;}
+.adminright h2{padding:5px 0 0 133px!important;}
+.loginfrm {width:96%!important;}
+.leftcol {float: left; width: 26%!important;}
+.rightcol {float: left; width: 70%!important;}
+.admintxt {width: 93%!important;}
+.rightlogo {width: 100%!important;}
+.rightmenu {height: auto!important; margin-right: 0!important; padding-left: 0!important; width: 100%!important;}
+.adminsec {margin:10px auto!important;}
+
+/*.tableGrid select { padding: 4px 0; width:100%!important;}*/
+form#forgetpassword td {display: block;}
+
+/*.row select {width:95%!important;}*/
+/*.row input {margin: 0 0 10px; width: 95%!important;}
+.row label {width: 95%px!important;}
+.row label {width: 100%!important;}
+.row label {width: 100%!important;}*/
+#priority-form {width: 100%;}
+#priority-form section .row label {width: 48%;}
+section.ch-home-form form .row input[type="text"] {width:100%;}
+#addNewUser input[type="text"] { width:100%;}
+section.ch-home-form form .row select { width:50%;}
+
+.row input#phone {width:50%;}
+.tenant-user-data {width:100%!important;}
+.step{width:95%!important;}
+.row textarea{width:50%;}
+
+.container-right {margin:42px 0 0;}
+
+/*.row input[type="text"]{width:100% !important;}*/
+.middle_btn ul li input[type="text"]{width: 63% !important;}
+#search_mini_form li:nth-child(3) { width: 100%;}
+.tt-input-div input[type="text"] {width:100% !important;}
+.tt-input-div > input {margin: 0 0 8px; width: 100%!important;}
+.tt-input-div > input[type="checkbox"] {width:auto !important;}
+/*.row select{width:62%!important;}*/
+#auto_generate .row > input{width:94%!important;}
+
+.tableGrid > div{width:100%;}
+.bd_form_row > label {margin: 0 0 0 8px; width: 97%;}
+.bd_form_inputs > input {margin: 0 2.5%; width: 95%;}
+.bd_form_inputs input#phoneNumber {width:40% !important;}
+/*.bd_form_inputs input.ext { width: 49% !important;}*/
+.bd_form_inputs input.ext { width:43.1% !important;}
+#accesslevel {width: 100%!important;}
+input#phone {float: left; width: 40%!important;}
+.phone_eror {margin: 0 7px; width: 100%;}
+input#billphoneNumber{width: 40% !important;}
+input#billphoneNumber {width: 39% !important;}
+.bd_form_inputs > input#phone {float: left; width: 40%;}
+.add_new_contact {left: 2.5%!important; width: 90%!important;}
+.add_new_service{left: 2.5%!important; width: 90%!important;}
+
+#search_txt > input { width: 100%;}
+#form_field > select{width:100%;  margin:0 0 8px!important;}
+.form-button > input{margin:0 0 5px;}
+#search_form > div#form_field {float: left;margin: 0 0 7px; width: 100%;}
+
+.change-account > label {width:50%!important;}
+.change-account select{width:50%!important;}
+
+/***************** 20-03-15 ****************/
+.avtar{margin: 0 0 0 0px;}
+.sidebar-collapse{width:100%!important;}
+.my_mid_nav {margin: 12px 0 0 0px !important;}
+/*.navbar-default.navbar-static-side {margin-top:78px!important;}*/
+ul.my_mid_nav li {padding: 0 16px;}
+.sec_sp {left: 42px;}
+.my_mid_nav {float: none; text-align: center; width:100%;}
+
+.panel-body {padding: 0!important;}
+#page-wrapper {padding:1px 15px 0 10px !important;}
+
+.passwordErr, .moduleErr, .ccenterErr, .uemailErr, .ufirstErr, .ulastErr, .uofficeErr, .newpwdErr, .repwdErr, .fnameErr, .postalCodeErr, .buildingNameErr, .cityErr, .cname-err, .building-err, .address-err, .address2-err, .city-err, .state-err, .postal-err, .phone-err, .fax-err, .billCName-Err, .billaddress-Err, .billaddress2-Err, .billsuite-Err, .billcity-Err, .billstate-Err, .billpostalCode-Err, .billphoneNumber-Err, .billfaxNumber-Err, .attention-Err, .adminEmailAddressErr, .fnameErr, .lnameErr, .unameErr, .uPassErr, .uConfErr, .phoneErr, .accesslevelErr, .moduleeErr, .phoneNumberErr, .faxNumberErr, .stateErr, .addressErr, .priNameErr, .priDescErr, .timeErr, .endStatusErr, .lengthErr, .wdErr, .cNameErr2
+{
+    margin:0px 0 0 8px;
+}
+
+.phone_eror {width: 100%;}
+
+form#addNewBuilding {width: 95%;}
+#addNewBuilding > input{width:100%;}
+form#addNewBuilding label{width:50%;}
+input#phoneNumber{width:40%;}
+input.ext { width:42% !important;}
+.user-inputbox {display: inline-block; float: left; width: 94%;}
+.user-ffield {padding: 0;}
+.user-inputbox input {width: 100%;}
+.work_update_select select.all_select {float: left; width: 100%!important;}
+table.newuser_setup {margin: 15px auto; width: 95%;}
+form#addNewBuilding select {width: 100%;}
+.new_user_wiz input[type="text"] {margin: 0 0 10px; width: 100%;}
+.new_user_wiz { float: left; width: 100%!important;}
+.new_user_wiz {float: left; width: 96%;}
+
+.avtar{margin:0 0 0 0!important;}
+.navbar-default{width:100%!important; float:left!important;}
+
+
+/******************* 25-03-15 **********************/
+
+.avtar {width:100%; margin:0 0 0 0!important;}
+.navbar-default{width:100%!important; float:left!important;}
+.ac-form-ibox{width:50%!important;}
+.ac-form-ibox > input[type="text"]{width:100%!important;}	
+ul.my_mid_nav li {padding: 0 10px !important;}
+.my_mid_nav {margin: 0 0 11px !important;}
+.panel-body {padding: 15px; margin: 40px 0 0;}
+.tableGrid > div {margin: 0 auto;width: 99%;}
+/*.bd_form_row > label{width:100%;}*/
+.bd_form_row > label { width: 48%;}
+.bd_form_inputs {float: left; width: 50%;}
+.bd_form_inputs > input { padding: 4px 0; width: 100%;}
+.confirmBtn.float_none {clear: both;}
+.eg-user-div table {width: 100%;}
+.email-egu select {width:100% !important;}
+/*.bd_form_inputs input#phoneNumber {float: left; width: 24%!important;}
+.bd_form_inputs input.ext {width: 25% !important;}*/
+
+/*.row input[type="text"] { width: 60% !important;}*/
+
+#add_note form {margin:30% auto 0;}
+#add_note > div{width:100%;}
+.ed-build-ibox {float: left; width:50%;}
+
+.field_edit_popup label{width:35%;font-size: 12px;}
+.field_edit_popup {float: left;  font-size: 12px;}
+
+.new_user_wiz input[type="text"] {margin: 0 0 10px; width: 100%;}
+.showcal.hasDatepicker {width: 100% !important;}
+.download-report {clear: both; margin: 16px 0 0;}
+#select-visible-div > div {clear: both;}
+label.form-cat-label {width: 100% !important;}
+.row_vender_input {width:50%;}
+.cv-select-div > div {width: 100%;}
+
+
+#search_show_form {top: 40%;}
+.searchform_leftpart > label {width:32%; line-height:normal!important;}
+.searchform_leftpart .inputbox {width:56%; margin:0 14px 0px!important; padding: 3px 4px!important; font-size:12px;}
+.search_btn {padding: 1px 20px; text-decoration: none;}
+.searchform_rightpart .inputbox {width:100%; margin: 0 15px 0px!important; padding:2px 5px!important;font-size:12px;}
+.searchform_rightpart > label {width:29.8%!important; line-height:normal;}
+.hasDatepicker { margin: 0 5px 0 2px !important; padding: 3px 4px; width:24.5% !important;}
+/*.searchform_leftpart .selectbox {font-size: 12px; margin: 0 12px 0 0 !important; padding: 3px 0 !important; width: 56.1%;}*/
+.searchform_leftpart .selectbox{font-size: 12px; margin: 0 0 0 30px !important; padding: 3px 0 !important; width: 55.1%;}
+.searchform_leftpart {width:100%; margin: 3px 0 2px!important;}
+
+#add_new_div {width:100%;}
+.add_new_ {right: 0; top: 170px; width: 100%;}
+#remove-user-div > label{width:210px; font-size:12px;}
+#fdw {margin: 40px 0 0;}
+.time_len_my_div {float: left; width: 100%;}
+
+.cv-select-div select { width: 100% !important;}
+.row_vender_input select {width: 100% !important;}
+
+.add_new_ {right: 105px; top: 163px; width: 60%;}
+#new_user_form div input[type="text"] {margin: 0 0 3px; width: 100%;}
+#page-wrapper {min-height: 1379px!important;}
+
+.cate_table td {float:none;}
+.span {height: 35px; padding:6px 5%;}
+section.cate_edit_section {left: 2%;  padding: 20px 2%; width: 96%;}
+.category_block .ch-home-form {left: 3%; padding: 20px 2%; width: 94%;}
+
+.woreport-section {margin: 22px 0 0;}
+
+.notes-list-div {margin: 28px 0 0;}
+
+section.ch-home-form form .row label { width: 50%;}
+#editUser label {width: 50%;}
+
+}
+/* iPads (portrait) --  --  --  --  -- - */
+@media only screen
+and (min-width : 768px) and (max-width : 1024px) and (orientation : portrait) {
+#first input[type="text"] { width: 50%;}
+#first select { width: 50%;}
+#first input#phoneNumber {width: 21%;}
+.email-egu { float: left;  width:50%;}	
+/* #page-wrapper > div {margin: 52px 0 0;}
+#page-wrapper > div.welcome_text{ margin: 0; } */
+.email-egu select { width: 100% !important;}
+.charge_field > input {width: 22%!important;}	
+.ch-home-form{margin:45px 0 0 0; overflow:auto;}	
+#priority-form {width: 437px;}
+.add_cate_main_block { left: 2%;  width: 90%;}
+section.ch-home-form form .row label {width: 48%;}	
+.ui-autocomplete {width: 33%!important; font-size:12px;}
+.cotentadmin {width: 90%!important;}
+.header{width: 100%!important;}
+.footer{width: 90%!important;}
+.adminright {width: 70%!important;}
+.adminleft {width: 20%!important; margin-left:56px!important;}
+.leftlink{width:100%!important;}
+.view-column {width: 100%;}
+.detail-column{width:100%;}
+.detail-column {width: 100%;}
+.date-in-div {width: 100%;}
+.detial-div {width: 100%;}
+.date-out-div {float: left; width: 100%;}
+.wd-status {float: left; width: 100%; margin: 8px 0;}
+.time > select { width: 41%;}
+.wd-status > select { width: 41%;}
+.wd-status > span {display: inline-block; width: 54.5%;}
+#addNewUser .row select {width: 50%;}
+#email_group .row > select {width: 50%;}
+#email_group .row > input {width: 50%;}
+
+.hasDatepicker {width:81.5px !important;}
+
+.right-column {float: left; width: 100%;}
+.hasDatepicker {padding:6px 2px; width: 100%;}
+#addNewUser input[type="text"] { width: 50% !important;}
+
+/*.tableGrid select { padding: 4px 0; width: 100%!important;}*/
+.building_block_main {left: 33.5%;top: 83px; width: 65%; z-index: 9;}
+/*input#phoneNumber {width: 100%!important;}*/
+/*.showForm form#addNewBuilding label{width: 170px!important;}*/
+.row textarea {width:300px;}
+/*.tableGrid select {padding: 4px 0; width: 63% !important;}*/
+.confirmBtn {width:100%;}
+.step {margin: 0 auto; width: 487px;}
+
+#search_show_form { right: -380px; top: 15%; width: 50%;}
+select.selectbox {width: 56% !important;}
+.searchform_leftpart > label{width:35%;}
+/*.hasDatepicker{width:21.5%;}*/
+
+#editUser label {width: 152px;}
+
+.tableGrid > div {margin: 0 auto; width: 100%; overflow:auto;}
+.bd_form_row > label {float: left; width:50%;}
+.bd_form_inputs {float: left; width: 50%;}
+.bd_form_inputs input {width:100%;}
+#accesslevel {width: 100%;}
+
+.bd_form_inputs input#phoneNumber {float: left; width: 44% !important;}
+.bd_form_inputs input.ext {width:35.2% !important;}
+/*.tableGrid select {padding: 4px 0; width: 55% !important;}
+section.ch-home-form form .row label{width:160px;}*/
+#priority-form section .row label {float: left; width: 48%;}
+/*section.ch-home-form form .row input[type="text"]{width:100%;}*/
+.bd_form_inputs > input#phone {width: 21%;}
+.bd_form_inputs input#billphoneNumber { width:44.2% !important;}
+.add_new_service {left: 4%; top: 27%;}
+.add_new_contact{left: 4%; top: 27%;}
+.row label {width: 133px;}
+
+.vendor-user-data .row label {width: 187px;}
+#search_txt > input {width: 150px;}
+#service_select > select { width:150px;}
+#form_field > select{width:150px;}
+#form_field > div#search_txt {margin: 0 0 5px;}
+.form-button {float: left; margin: 6px 0 13px; width: 100%;}
+
+
+/***************** 20-03-15 ****************/
+.my_mid_nav {margin: 0 0 12px !important;}
+#page-wrapper { padding: 90px 10px 0 5px !important;}
+.panel-body {padding: 0!important;}
+#page-wrapper {padding: 5px 10px 0 5px!important;}
+.phone_eror {float: none; width:100%;}
+#fdw .tabmenu select{width:90%;}
+#fdw { margin: 40px 0 0;}
+.middle_btn ul li{width:100%;}
+
+.work_update_select select.all_select {float: left; width: 100%!important;}
+
+form#addNewBuilding {width: 100%;}
+.addbuild {margin: 54px 0 0;}
+.showForm form#addNewBuilding label {width:203px !important;}
+#addNewBuilding > input {width: 284px;}
+/*form#addNewBuilding select {width:100%;}*/
+.tt-input-div > input[type="checkbox"] {width: auto !important;}
+.tt-input-div > input[type="text"] {width: 225px !important;}
+/*section.ch-home-form form .row select {width:100%;}*/
+.tt-input-div > input {width: 225px!important;}
+.container-right {margin: 49px 0 0;}
+
+.ed-build-ibox {float: left; width: 280px!important;}
+table.newuser_setup { width: 85%;}
+form#addNewBuilding label {width: 185px;}
+#changepasswordform > div {width: 100%;}
+
+/*.ui-widget-content {  width: 265px !important;}*/
+.ui-autocomplete {width: 100% !important;}
+.ui-widget-content ul li a{font-size:14px!important;}
+label.form-cat-label {width: 100%!important;}
+#select-visible-div > div {clear: both!important;}
+
+#add_new_div {width:66% !important}
+.add_new_ {right: 26px; top: 170px; width: 90%;}
+/*.ui-widget-content {width: 35% !important; font-size:12px!important;}*/
+
+#left_section {width: 50%; float:left;}
+#vendor_info_div .field_edit_popup {pading: 3px 0 2px;}
+.field_edit_popup label {width:37%;}
+.vendor_details { margin: 0 0 0 20px;}
+.vendor_detail_row > label {width: 45%;}
+
+/*.row_vender_input {float: left; width: 220px;}*/
+.row_vender_input { float: left; width: 57%;}
+
+.cv-select-div {width:57%; float:left;}
+.cv-select-div > div {float: right; width:100%;}
+
+select.my_assign_div {margin: 0 10px 6px 0; padding: 6px 0 4px; width: 100%;}
+.form_field_div.my_text_area > select { padding: 5px;  width: 100%;}
+.request_span {width: 60%;}
+#addNewUser input[type="text"] {width: 50%!important;}
+section.ch-home-form form .row select {width:100%;}
+.row input#phone { width: 232px;}
+
+.download-report {clear: both; margin: 20px 0 0;}
+
+.cate_table td {float:none;}
+.span {height: 35px; padding: 2px 6%;}
+section.cate_edit_section {left: 2%; padding: 20px 2%; width: 94% !important;}
+.category_block .ch-home-form {left:2%;}
+
+table.building_table_grid td select{width:50px;}
+#edit_note_1 select { width: 50px;}
+.change-account > label {width:50%!important;}
+.change-account select{width:50%!important;}
+
+select#timezone {width:100%;}
+.bd_form_inputs select#status {width: 100%;}
+input#phoneNumber {width:21%;}
+.row_textarea textarea {width: 50%;}
+
+input#phone {width:106px;}
+
+.fade_edit_wo {height: 2037px; position:absolute!important;}
+.edit-wo-class{width:620px;}
+
+.bd-dft-cls{width:470px;}
+.fade_default_opt{height:2037px; position:absolute!important;}
+
+section.ch-home-form form .row input[type="text"] {float: left;  padding: 4px 5px; width:100%;}
+/*input#phoneNumber {width: 101px !important;}*/
+/*section.ch-home-form form .row select {width:100%;}*/
+
+/*============== IPAD =========================*/
+
+.right_btn_icon {margin: 15px 0 0; text-align: right;}
+.middle_btn {margin: 20px; padding: 0; width: 80%;}
+.middle_btn ul li {display:block; float:none; margin:0 0 10px;}
+.contact_info_tab { float: left; width: 100%;}
+.lbl_div {width:100%; /*float:none;*/}
+.form_field_div {width:100%; float:none;}
+.updatestatus_select {width:85%;}
+.table-responsive {border: 1px solid #ddd; margin-bottom: 15px;s overflow-x: scroll; overflow-y: hidden; width: 100%;}
+#acc_company_block > div {margin: 22px auto 0;}
+.row label {width: 150px;}
+.row input[type="text"] {width: 267px;}
+/*.row select {float: left; padding: 7px 0; width: 213px;}*/
+.my_agn_div {margin: 10px 0 0;}
+.tenant-user-data {width: 420px;}
+/*form#addNewUser {width: 420px;}*/
+
+
+
+/*.row input#phone {width: 268px;}*/
+
+/*==============Added by uttam (11-01-2015)===================*/
+/*.searchform_leftpart > label {width:100%;}*/
+.searchform_leftpart .inputbox {width:100%;}
+/*.searchform_rightpart > label {width:100%;}*/
+.searchform_rightpart .inputbox {width:100%;}
+.search_box {margin:15px 0 0;}
+/*.hasDatepicker {width:47%;}*/
+/*.searchform_leftpart .selectbox {width:100%;}*/
+.searchform_leftpart {width:100%;}
+.searchform_rightpart {width:100%;}
+.all_select {width:230px;}
+.form_field_div textarea {width:230px;}
+/*.form_btn {float:left;}*/
+/*form#addNewBuilding label {width: 187px;}*/
+
+.tenant-user-data .row > label {width: 43% !important;}
+.row_material_input {float: left; width: 57%;}
+
+	
+#regBuildingPInfo > label{width:157px;}
+#regBuildingBillInfo > input, #regBuildingAdminInfo > input {width: 280px;}
+/*#regBuildingBillInfo > label, #regBuildingAdminInfo > label {width: 176px;}*/
+
+#password_section > label {width: 172px;}
+.check-generate {width: 284px;}
+
+.check-generate input[type="checkbox"] {width:auto;}
+#password_section > input {width: 284px;}
+#regBuildingBillInfo > input, #regBuildingAdminInfo > input {margin: 0 0 8px; width: 130px;}
+#accesslevel{width: 279px;}
+#regBuildingBillInfo > input, #regBuildingAdminInfo > input {width: 279px;}
+
+/*#bAddressDiv textarea {width: 100%;}*/
+/*.tableGrid select {width:100% !important;}*/
+.uofficeErr {display: block; float: left;}
+.tt-input-div {float: left; width: 50%!important;}
+#editUser .row input#phone { width: 100% !important;}
+section.ch-home-form form .row input[type="text"] {float: left;  padding: 4px 5px;  width:100%;}
+.tt-input-div input { width: 100% !important;}
+
+.reemit-info {float: left; width: 60% !important;}
+ul.my_mid_nav li {
+  border-right: 1px solid #dddddd;
+  font-size: 15px;
+  margin: 31px 0 0 !important;
+  min-width: 0;
+  padding: 0 5px;
+}
+
+}
+
+
+/* iPads (landscape) --  --  --  --  -- - */
+@media only screen
+and (min-width : 768px) and (max-width : 1024px) and (orientation : landscape) {
+#first input[type="text"] { width: 50%;}
+#first select { width: 50%;}
+#first input#phoneNumber {width: 21%;}
+#first input#phoneExt {width: 21%!important;}
+input.ext {width: 40% !important;}	
+.field_edit_popup label{width:50%;}
+section.ch-home-form form .row label {width: 50%;}	
+.list_user select {width: 100%!important;}
+.detial-div {width: 100%;}
+.right-column { float: left; width: 100%;}
+.row_textarea textarea {width: 50%;}
+.cotentadmin {width: 90%!important;}
+.header{width: 100%!important;}
+.footer{width: 90%!important;}
+.adminright {width: 70%!important;}
+.adminleft {width: 20%!important; margin-left:56px!important;}
+.leftlink{width:100%!important;}
+/*.tableGrid select { padding: 4px 0; width:50%;}*/
+.add_cate_main_block { left: 5%; width: 90%;}
+.bd_form_inputs > input {width:100%;}
+.bd_form_inputs input#phoneNumber { width: 164px !important;}
+select#timezone {padding: 5px 0; width:100%;}
+.bd_form_inputs select#status {width:100%;}
+#priority-form section .row label {width: 50%;}
+/*#search_show_form .serach_row input[type="text"] {width: 92%!important;}*/
+/*.searchform_leftpart .selectbox {width: 92%;}*/
+
+#search_show_form {right: -410px; top: 15%; width:40%;}
+/*#search_show_form .serach_row input[type="text"]{width:92%;}*/
+/*.hasDatepicker { width:100% !important;}*/
+#activationDate.hasDatepicker {width:54%!important;}
+#editUser label {width:50%!important;} 
+.tt-input-div {float: left; width: 50%!important;}
+.tt-input-div > input[type="text"] {width: 100% !important;}
+.vendor-user-data {margin: 0 auto; max-width: 720px; width: 82.5%;}
+#search_txt > input { width:200px;}
+#form_field > select{width:200px;}
+#addNewUser input[type="text"] {width: 50%;}
+section.ch-home-form form .row select {width: 100%;}
+#addNewUser .row select {width: 50%;}
+#email_group .row > select {width: 50%;}
+#email_group .row > input {width: 50%;}
+
+/***************** 20-03-15 ****************/
+.panel-body {padding: 0!important;}
+#page-wrapper {padding: 10px 15px 0 10px!important;}
+.tenant-user-data { width: 547px!important;}
+.float_none {clear: both;}
+.eg-user-div table {float: left; width: 729px;}
+.tableGrid > div {width: 100%;}
+section.cate_edit_section { left: 5%!important; width:90% !important;}
+.bd_form_inputs input#phoneNumber {width:165px !important;}
+.work_update_select > a { display: block;    float:none;}
+.ext_label { float: left; width: 41px !important;}
+/*.cv-select-div > div {float: right; width:302px!important;}*/
+.cv-select-div > div {float: left;  width:50%;}
+select.my_assign_div {width: 100%; margin-bottom:5px;}
+.work_update_select select.all_select {width:100%!important;}
+form#addNewUser {width: 100%;}
+.download-report {clear: both; margin:0;}
+table.building_table_grid td select{width:50px!important;}
+#edit_note_1 select { width: 50px!important;}
+.phone_eror {width: 375px;}
+.bd_form_inputs input.ext {width:40% !important;}
+input#phone {float: left; width:45%;}
+input#billphoneNumber { float: left;  width: 45% !important;}
+.change-account > label {width:40%!important;}
+.hasDatepicker {width:22.2% !important;}
+
+section.ch-home-form form .row input[type="text"] {width: 50%;}
+input#phoneNumber { float: left; width: 43%;}
+.row_vender_input { float: left; width: 50%;}
+.row select {width: 100%;}
+.change-account > label {width:50%!important;}
+.change-account select{width:50%!important;}
+.row_vender_input input[type="text"]{width:100%!important;}
+/*select.status{width:50%!important;}*/
+
+.fade_default_opt { position:fixed;}
+
+.field_edit_popup label {padding: 0 0 0 9px;}
+
+.bd_form_row > label { float: left; width:49%;}
+.bd_form_inputs { float: left; width: 50%;}
+#accesslevel {width: 100%;}
+} 
+
+
+@media (max-width:900px) and (min-width:768px){
+		#regBuildingPInfo > label{width:156px;}
+/*		#regBuildingBillInfo > input, #regBuildingAdminInfo > input {width: 269px;}*/
+		#accesslevel {width:100%;}
+		
+
+}
+
+@media (min-width:900px) and (max-width:1060px) {
+	#regBuildingPInfo > label{width:312px;}
+	#regBuildingBillInfo > label, #regBuildingAdminInfo > label {width: 312px;}
+	#password_section > label{width:312px;}
+}
+@media (max-width: 1200px) {
+	.side-menu{ background: #34495e; }
+	#page-wrapper{ margin-top: 0!important;}
+	body{ padding: 0!important; }
+	.navbar-fixed-top, .navbar-fixed-bottom{ position: static!important;}
+	.navbar-static-side{ position: absolute; }
+	.container-right,.ch-home-form{ margin-top: 0; }
+	}
+@media (max-width: 767px) {
+	.navbar-header.avtar{ max-width: none!important;}
+	.logo.img-responsive{ max-width: 220px; }
+	ul.my_mid_nav { text-align: center; clear: both;}
+	ul.my_mid_nav li{ min-width: 0;}
+	
+	}

@@ -1,0 +1,33 @@
+[10-Dec-2012 03:12:46 UTC] PHP Fatal error:  Uncaught exception 'Exception' with message 'Unknown column 'Phone' in 'field list'' in /home/webhosti/public_html/bgedev/admin/lib/db.php:33
+Stack trace:
+#0 /home/webhosti/public_html/bgedev/admin/lib/db.php(41): cls_connection->error()
+#1 /home/webhosti/public_html/bgedev/admin/excel-to-database.php(51): cls_connection->execute('INSERT INTO ppi...')
+#2 {main}
+  thrown in /home/webhosti/public_html/bgedev/admin/lib/db.php on line 33
+[13-Dec-2012 12:13:05 UTC] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/webhosti/public_html/bgedev/admin/core/index.php:1) in /home/webhosti/public_html/bgedev/admin/core/index.php on line 1
+[13-Dec-2012 12:13:51 UTC] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/webhosti/public_html/bgedev/admin/core/index.php:1) in /home/webhosti/public_html/bgedev/admin/core/index.php on line 1
+[13-Dec-2012 12:15:01 UTC] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/webhosti/public_html/bgedev/admin/core/index.php:1) in /home/webhosti/public_html/bgedev/admin/core/index.php on line 3
+[13-Dec-2012 12:15:22 UTC] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/webhosti/public_html/bgedev/admin/core/index.php:1) in /home/webhosti/public_html/bgedev/admin/core/index.php on line 3
+[13-Dec-2012 12:15:22 UTC] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/webhosti/public_html/bgedev/admin/core/index.php:1) in /home/webhosti/public_html/bgedev/admin/core/index.php on line 3
+[13-Dec-2012 12:15:22 UTC] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/webhosti/public_html/bgedev/admin/core/index.php:1) in /home/webhosti/public_html/bgedev/admin/core/index.php on line 3
+[13-Dec-2012 12:15:52 UTC] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/webhosti/public_html/bgedev/admin/core/log-in.php:1) in /home/webhosti/public_html/bgedev/admin/core/log-in.php on line 1
+[13-Dec-2012 12:17:11 UTC] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/webhosti/public_html/bgedev/admin/core/log-in.php:1) in /home/webhosti/public_html/bgedev/admin/core/log-in.php on line 1
+[13-Dec-2012 12:17:15 UTC] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/webhosti/public_html/bgedev/admin/core/index.php:1) in /home/webhosti/public_html/bgedev/admin/core/index.php on line 4
+[13-Dec-2012 12:17:35 UTC] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/webhosti/public_html/bgedev/admin/core/index.php:1) in /home/webhosti/public_html/bgedev/admin/core/index.php on line 4
+[13-Dec-2012 12:18:05 UTC] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/webhosti/public_html/bgedev/admin/core/index.php:1) in /home/webhosti/public_html/bgedev/admin/core/index.php on line 4
+[13-Dec-2012 12:34:08 UTC] PHP Fatal error:  Using $this when not in object context in /home/webhosti/public_html/bgedev/admin/core/inc/head.php on line 29
+[13-Dec-2012 12:34:11 UTC] PHP Fatal error:  Using $this when not in object context in /home/webhosti/public_html/bgedev/admin/core/inc/head.php on line 29
+[13-Dec-2012 12:34:58 UTC] PHP Fatal error:  Using $this when not in object context in /home/webhosti/public_html/bgedev/admin/core/inc/head.php on line 29
+[13-Dec-2012 12:39:15 UTC] PHP Fatal error:  Using $this when not in object context in /home/webhosti/public_html/bgedev/admin/core/inc/head.php on line 29
+[14-Dec-2012 16:19:27 UTC] PHP Fatal error:  Uncaught exception 'Exception' with message 'Unknown column 'id' in 'order clause'' in /home/webhosti/public_html/bgedev/admin/core/lib/db.php:33
+Stack trace:
+#0 /home/webhosti/public_html/bgedev/admin/core/lib/db.php(55): cls_connection->error()
+#1 /home/webhosti/public_html/bgedev/admin/core/bgas.php(103): cls_connection->select('??????select *?...')
+#2 {main}
+  thrown in /home/webhosti/public_html/bgedev/admin/core/lib/db.php on line 33
+[14-Dec-2012 16:20:12 UTC] PHP Fatal error:  Uncaught exception 'Exception' with message 'Unknown column 'id' in 'order clause'' in /home/webhosti/public_html/bgedev/admin/core/lib/db.php:33
+Stack trace:
+#0 /home/webhosti/public_html/bgedev/admin/core/lib/db.php(55): cls_connection->error()
+#1 /home/webhosti/public_html/bgedev/admin/core/bgas.php(103): cls_connection->select('??????select *?...')
+#2 {main}
+  thrown in /home/webhosti/public_html/bgedev/admin/core/lib/db.php on line 33

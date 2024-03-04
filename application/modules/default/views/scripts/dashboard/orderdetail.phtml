@@ -1,0 +1,506 @@
+<?php 
+//echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/dashworkorder.js');
+ //print_r($this->woData);
+ $woData = $this->woData; 
+	$ssModel = new Model_ScheduleStatus();
+	$status_list = $ssModel->getScheduleStatus();
+	$status_array= array();
+	foreach($status_list as $sl){
+	   $status_array[$sl['ssID']] = $sl['title'];
+	}
+	$gplist = array();
+	$gp_names = '';
+	if($woData->send_email!=''){
+		$egModel = new Model_EmailGroup();
+		$gplist = $egModel->getGroupIds($woData->send_email);
+		foreach($gplist as $gp){
+			$gp_names .= ($gp_names!='')?',':'';
+			$gp_names .= $gp['group_name'];
+		}
+    }
+    
+   $wpModel = new Model_WorkOrderUpdate();
+   $cwpData = $wpModel->getCurrentWoUpdate($woData->woId);
+   $work_status = ($cwpData)?$cwpData[0]['wo_status']:0;
+   $internalNote = ($cwpData)?$cwpData[0]['internal_note']:'';	
+   $pscheduleModel = new Model_Schedule();
+											   
+   $schedule_list = $pscheduleModel->getSchedule($woData->pid);
+   $schedule_array = array();
+   if($schedule_list){
+	   foreach($schedule_list as $sl){
+		   $schedule_array[] = $sl['start_status'];
+	   }
+   }
+   //var_dump($schedule_list);
+   
+   $lenModel = new Model_Length();
+   $lenlist = $lenModel->getLength();
+   $catModel = new Model_Category();
+   $catlist = $catModel->getBuildingCategoryList($woData->building);
+   $cat_array= array();
+   foreach($catlist as $cat)
+     $cat_array[$cat['cat_id']]=$cat['categoryName'];
+     
+  /**********Get notes list ***********/ 
+  $noteModel = new Model_Notes();
+  $noteList = $noteModel->getNotes();
+  $dline_access = $this->acessHelper->checkAccess($this->roleId,$this->dline_location);
+  /*override access by custom user access if exist */
+  $customeAccessmodel = new Model_UserAccess();
+  $customeAccessmodeld = $customeAccessmodel->getUserCustomAccess($this->userId,$this->dline_location);
+  if($customeAccessmodeld[0]) {
+	$dline_access = $customeAccessmodeld[0];
+  }
+  /* end overriding access */
+?>
+<div class="editworkorder">
+<div class="order-details">     
+      <h1>Work Order Details :</h1>
+        <div class="col-lg-8">
+			<?php if($dline_access->is_write==1) {?>
+			<?php if($work_status !='6' && $work_status !='7' ){?>
+				<form name="wcassign-form" id="wcassign-form-<?php echo $woData->woId;?>">
+					<span id="assign_error_<?php echo $woData->woId;?>" class="error"></span>
+					<div id="assign_category" class="my_agn_div">
+					<div class="lbl_div">
+						 <label>Assign new category</label> </div>
+						 <input type="hidden" name="curr_cat_<?php echo $woData->woId;?>" id="curr_cat_<?php echo $woData->woId;?>" value="<?php echo $woData->category; ?>"/>
+						 <select name="assign_category_<?php echo $woData->woId;?>" id="assign_category_<?php echo $woData->woId;?>" class="my_assign_div">
+							 <option value="">Select Category</option>
+							 <?php 
+								if($catlist){
+									foreach($catlist as $cat){
+										echo '<option value="'.$cat['cat_id'].'"';
+										echo  ($cat['cat_id']==$woData->category)?'selected':'';
+										echo '>'.$cat['categoryName'].'</option>';
+								   }	 	
+							   }
+							 ?>
+						 </select>
+						 <input type="button" name="assign_button" class="form_btn" value="Assign Category" onClick="reassignCategory('<?php echo $woData->woId;?>');"/>
+					</div>
+				</form>	
+			<?php }?>	
+          <form name="worequestform" id="worequestform" action="<?php echo BASEURL.'/dashboard/updateorder/'?>" method="post">
+            <div class="form_group">
+              <div class="lbl_div">
+                <label <?php if($work_status=='7'){?> style="padding-left:8px;" <?php } ?> >Work Request</label>
+              </div>
+              <div class="form_field_div">                
+                <?php
+                      echo $woData->work_order_request;
+                ?>
+                
+                  <input type="hidden" name="work_order_id" id="work_order_id" value="<?php echo $woData->woId;?>"/>
+                <input type="hidden" name="priority" id="priority" value="<?php echo $woData->pid;?>"/>
+				<input type="hidden" name="exist_schedule" id="exist_schedule" value="<?php echo implode(',',$schedule_array);?>"/>
+				<input type="hidden" name="insert_schedule" id="insert_schedule" value="0"/>
+				<input type="hidden" name="current_wstatus" id="current_wstatus" value="<?php echo $work_status;?>"/>
+              </div>
+            </div>
+            <?php if($work_status!='7'){ ?>
+			<div class="form_group">
+              <div class="lbl_div">
+                <label>Update Status To</label>
+              </div>
+              <!-- Split button -->
+              <div class="form_field_div">
+                <div class="btn-group work_update_select">
+					<div id="wstatus_error" class="wst_error"></div>
+					<select name="order_status" id="order_status" class="all_select" onChange="javascript:checkSchedule('orderdetail','<?php echo $woData->woId;?>');">
+						   <?php foreach($status_array as $key=>$value){ ?>
+							   <option value="<?php echo $key;?>" <?php echo ($work_status==$key)?'selected':'';?>><?php echo $value;?></option>
+							 <?php }?>  
+					</select>                  
+                </div>
+                <div id="time_length_div" class="time_len_my_div" style="display:none">
+						 <div id="schedule_error" class="sch_error"></div>
+						 <div id="time_div">
+							 <label>Time <span class="required">*</span></label>
+							 <input type="text" name="Time" id="Time" maxlength="2" onkeypress="return isNumberKey(event)"/>
+						 </div>
+						 <div id="length_div" class="len_div">
+							 <label>Length <span class="required">*</span></label>
+							  <select name="length" id="length">
+								  <?php foreach($lenlist as $ll){?>
+									  <option value="<?php echo $ll['lID']?>"><?php echo $ll['title']?></option>
+								  <?php }?>
+							  </select>
+						 </div>
+					</div>
+              </div>
+            </div>
+			
+          
+            <div class="form_group"><input type="button" class="form_btn float_right" value="Update" onclick="ValidateForm()"></div>
+			
+             <div class="form_group note_group">
+              <div class="lbl_div">
+                <label>Note</label>
+				<input type="button" onclick="showNoteForm(<?php echo $woData->woId; ?>)" value="Add Notes" class="form_btn pull-right">
+				<div class="clear"></div>
+              </div>
+              <!-- Split button -->
+              <div class="form_field_div">
+			  <?php
+			      
+			  $wnModel = new Model_WoNote();
+													 $wnList = $wnModel->getWoNoteByWoId( $woData->woId);
+													 if($wnList){
+			  ?>
+			  <div class="table-responsive">
+			  <table>
+			  
+			  <tr class='addnotetable'>
+				  <th>Date/Time </th>   
+				  <th> Notes/Details</th> 
+				  <th>Internal(Y/N) </th> 
+				  <th>Entered By</th> 
+				 <?php  if($this->admin_role_id == 1 || $this->roleId == 2  || $this->roleId == 3 || $this->roleId == 4 ) { ?> <th>Action</th> <?php } ?>
+			  </tr>
+			  <?php
+														 foreach($wnList as $wn){ ?>
+														 
+														 <tr> 
+														 <td><?php  $dateConversion = strtotime($wn['created_at']);
+																    echo date('Y-m-d H:i:s A', $dateConversion); ?></td> 
+														 <td><?php echo $wn['note']; ?></td> 
+														 <td align="center"><?php echo ($wn['internal']=='1')?'Yes':'No';?></td> 
+														 <td width="120" align="center"> <?php echo $wn['firstName'].' '.$wn['lastName'] ; ?></td>
+														 <?php  if($this->admin_role_id == 1 || $this->roleId == 2  || $this->roleId == 3 || $this->roleId == 4 ) { ?>
+															 <td width="60" align="center">
+															 <?php  if($this->admin_role_id == 1 || $this->roleId == 2  || $this->roleId == 3 || $this->roleId == 4 ) { ?>
+																<a class="close_bt_hide_cls" title="Edit" href="javascript:void(0)" onclick="showEditNote('<?php echo $wn['wnId'];?>')"><img src="<?php echo BASEURL . 'public/images/edit.png'?>" /></a>
+															 <?php } ?>
+															  <?php if($this->admin_role_id == 1) { ?>
+																<a class="close_bt_hide_cls" href="javascript:void(0);"  title="Delete" onclick="deleteNote('<?php echo $wn['wnId'];?>', '<?php echo $woData->woId;?>')"><img src="<?php echo BASEURL . 'public/images/delete.png'?>" /></a>
+															  <?php } ?>
+															  </td>
+														 <?php } ?>
+														 
+														<?php }  ?>
+			 
+			  </tr>
+			  </table> </div><?php } ?>
+			  <div class='clearfix'>  &nbsp; </div>
+			  </div>
+			  
+            </div>
+			<?php } ?>
+          </form>
+          <?php }?>
+            <div id="progressbar">
+					<?php 
+					
+					$timezone_Model	=	new Model_TimeZone();
+					$build_model= new Model_Building();
+					$tz_build_data = $build_model->getbuildingbyid($woData->building);
+
+					if(isset($tz_build_data[0]['timezone']) && $tz_build_data[0]['timezone']!=0){								  
+						$timezone_data	=	$timezone_Model->getTimeZone($tz_build_data[0]['timezone']);
+						if(isset($timezone_data) && $timezone_data!='') {
+							$timezone=$timezone_data[0]['time_value'];			
+							date_default_timezone_set($timezone);
+						}						
+						//echo "date_default_timezone_get->".date_default_timezone_get();								
+						//$date = new DateTime(null, new DateTimeZone($timezone));
+					}
+					
+					$wsModel = new Model_WoScheduleStatus();
+						  $wsList = $wsModel->getWoAllStatus($woData->woId);														          
+						  $currTime = time();													          
+						  if($wsList){
+							  $i=0;
+							  $tot_width=0;
+							  $ws_status = '';
+							  $pro_prcentage=0;
+							  $pro_width = 0;
+							  $pro_msg = '';
+							  $colorCode='';
+							  $status_title_val='';
+								  //echo "<pre>";
+								  //print_r($work_status); die;
+							  foreach($wsList as $ws){
+								  if($ws->current_status == '1' && $ws->parent_priority_status == '1'){
+										 $lastTime ='';
+										if($work_status=='1'){
+											$lastTime = $woData->date_requested.' '.$woData->time_requested;
+										}else
+											$lastTime =$ws->created_at;
+										
+										$lastTime=date("Y-m-d h:i:s A",strtotime($lastTime));
+										$currTime=date("Y-m-d h:i:s A");
+																
+										 $timeDiff = abs(strtotime($currTime) - strtotime($lastTime));																							
+										 $calTime = $wsModel->getCalculateTime($ws->Time,$ws->length);
+										 if($calTime == 0) {
+											$devide_num = number_format((float)(0), 2, '.', '');
+										 } else {
+											$devide_num = number_format((float)($timeDiff/$calTime), 2, '.', '');
+										 }
+										 $pro_prcentage = $devide_num*100;
+						               if($pro_prcentage>100)
+										 {
+											 $pro_width = 100;
+											 $colorCode='#f0ad4e';
+											 $pro_msg = ' Time Out';
+										 }else{
+											 $pro_width = $pro_prcentage;
+											 $colorCode='#5cb85c';
+											 //$pro_msg = $pro_prcentage.' % Time has been passed.';
+											 $pro_msg = $pro_prcentage.'%';
+										 }
+/*
+if($woData->buildingName=="Test building"){
+echo "<br>date_default_timezone_get->".date_default_timezone_get();
+echo "<br>currTime".$currTime;
+echo "<br>lastTime".$lastTime;
+echo "<br>pro_prcentage".$pro_prcentage;
+}	
+*/										
+										$status_title_val= $status_array[$ws->start_status] .' - '.$ws->Time. ' '.$ws->length_title; 
+									 }																	 																		
+								  $ws_status .= ($ws_status!='')?'-> ':'';
+								  $ws_status .= $status_array[$ws->start_status];
+								            $current_status=$ws->current_status;
+											$parent_priority_status=$ws->parent_priority_status;
+											$email_status=$ws->email_status;
+											$parent_email_status=$ws->parent_email_status;
+					   }
+					   if($current_status==1 && $parent_priority_status==1 && $email_status==1 && $parent_email_status==1) {
+							 echo '<span class="ch-status"><strong>Status:</strong> '.$ws_status.'</span>';
+							 if($work_status!='6' && $work_status!='7'){
+							 ?>
+							 
+							 <div class="progress">
+							  <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="40"
+							  aria-valuemin="0" aria-valuemax="100" style="width:<?php echo $pro_width;?>%;background-color:<?php echo $colorCode; ?>;">
+								<?php echo $pro_msg;?>
+							  </div>
+							</div>
+							<label class="status-sval"><?php echo $status_title_val;?></label>
+							<ul class="indecate">
+							   <li><p>Time is available.</p></li>
+							   <li><p>Time is over.</p></li>
+							</ul>
+					 <?php   
+							 }
+							 }
+					  }
+					?>													        
+			  </div>
+        </div>
+        
+        <div class="col-lg-4">
+        <div class="panel panel-default contact_info_tab">
+                        
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <!-- Nav tabs -->
+                            <ul class="nav nav-tabs">
+                                <li class="active"><a data-toggle="tab" href="#contact">Contact Information</a>
+                                </li>
+                                <li class=""><a data-toggle="tab" href="#detail">Details</a>
+                                </li>
+                                
+                            </ul>
+
+                            <!-- Tab panes -->
+                            <div class="tab-content">
+                                <div id="contact" class="tab-pane fade active in">
+                                    <p><span class="request_span">Requested By :</span>    <span><?php echo stripslashes($woData->firstName.' '.$woData->lastName);?></span></p>
+                                    <p><span class="request_span">Suite/Location :</span>    <span><?php echo $woData->tenant_suite;?></span></p>
+                                    <p><span class="request_span">Email :</span>    <span><?php echo $woData->email;?></span></p>
+                                    <p><span class="request_span">Phone Number :</span>    <span><?php echo $woData->phoneNumber;?></span></p>
+                                </div>
+                                
+                                
+                                <div id="detail" class="tab-pane fade">
+                                   <p><span class="request_span">Email To :</span>    <span>
+									   <?php echo $gp_names;?>
+									</span></p>
+                                    <p><span class="request_span">Priority :</span> <span><?php echo $woData->priorityName;?></span></p>
+                                    <?php $fileModel = new Model_WoFiles();
+										  $fileList = $fileModel->getWoFilesByWoId($woData->woId);
+										  if($fileList){?>
+										<p><span class="request_span">Attachment :</span>
+										<ul>
+										  <?php foreach($fileList as $fl){?>
+											  <li>
+													<span><a href="<?php echo BASEURL.'public/work_order/'.$fl['file_name'];?>" target="_blank"><?php echo $fl['file_title'];?></a></span>
+											   </li>		
+										   <?php } ?>
+										  </ul> 
+									   </p>
+									<?php }?>
+                                   <?php 
+										$whlModel = new Model_WoHistoryLog();
+										$whlList = $whlModel->getWoHistoryLog($woData->woId);
+										if($whlList){
+									?>
+										 <p>
+											<span class="request_history_title" id="show_hist_<?php echo $woData->woId;?>"><a href="javascript:void(0)" onclick="showCatLog('<?php echo $woData->woId;?>')"> Show Work Order History Log </a></span>
+											<span class="request_history_title" style="display:none" id="hide_hist_<?php echo $woData->woId;?>"><a href="javascript:void(0)" onclick="hideCatLog('<?php echo $woData->woId;?>')"> Hide Work Order History Log </a></span>
+										</p>
+										 <div id="catlog_<?php echo $woData->woId;?>" style="display:none">
+											<div class="cat_log_history">
+													 <table class="history_log_table">
+														   <tr>
+															   <th>Log Type</th>
+															   <th>User</th>
+															   <th>Date</th>
+															   <th>Time</th>
+															   <th>Changes</th>
+														   </tr>
+															<?php foreach($whlList as $whl){ if($whl->log_type=='status' || $whl->log_type=='category') { ?>
+																<tr>
+																	<td><?php echo ucfirst($whl->log_type);?></td>
+																	<td><?php echo $whl->firstName.' '.$whl->lastName;?></td>
+																	<td><?php echo substr($whl->created_at,0,10);?></td>
+																	<td><?php  echo date_format(date_create($whl->created_at), 'g:i A');?></td>
+																	<td>
+																		<?php 
+																		 if($whl->log_type=='category')
+																		   echo $cat_array[$whl->current_value].' -> '.$cat_array[$whl->change_value];
+																		else
+																		  echo $status_array[$whl->current_value].' -> '.$status_array[$whl->change_value];
+																	  ?>
+																	</td>
+																</tr>																										
+															<?php } else if($whl->log_type=='Description of Work') {?>
+								  
+								   <tr>
+										  <td><?php echo ucfirst($whl->log_type);?></td>
+										  <td><?php echo $whl->firstName.' '.$whl->lastName;?></td>
+										  <td><?php echo substr($whl->created_at,0,10);?></td>
+										  <td><?php  echo date_format(date_create($whl->created_at), 'g:i A');?></td>
+										  <td>
+										  <?php if($whl->current_value!='') { 
+										  $current_value_histoy=json_decode($whl->current_value);
+										  $change_value_history=json_decode($whl->change_value);
+										  ?>
+										  <input type="hidden" id="current_value_<?php echo $whl->whId;?>" value="<?php echo addslashes($current_value_histoy->description) ;?>">
+										  <input type="hidden" id="change_value_<?php echo $whl->whId;?>" value="<?php echo addslashes($change_value_history->description) ;?>">
+										 <?php } else {
+										     $change_value_history=json_decode($whl->change_value);
+										 ?>
+										 
+										 <input type="hidden" id="current_value_<?php echo $whl->whId;?>" value="null">
+										 <input type="hidden" id="change_value_<?php echo $whl->whId;?>" value="<?php echo addslashes($change_value_history->description) ;?>">
+										 <?php } ?>
+										  <?php if($whl->current_value!=''){ echo HiSTORY_TEXT_EDIT; } else { echo HiSTORY_NEW_TEXT_ADDED;  } ?> <a href="javascript:void(0)" onclick='showHistoryDescription(<?php echo $whl->whId;?>)' class="vend_tooltip"><i class="fa fa-file-text-o textFile"></i> </a>
+								   <a href="#add_new_description_div" id="add_new_description_div_href" class="modalbox" style="display:none;">&nbsp;</a>
+								 
+								   </td>
+									 </tr>
+								  
+								  <?php }else if($whl->log_type=='Labor') {?>
+								  
+								   <tr>
+										  <td><?php echo ucfirst($whl->log_type);?></td>
+										  <td><?php echo $whl->firstName.' '.$whl->lastName;?></td>
+										  <td><?php echo substr($whl->created_at,0,10);?></td>
+										  <td><?php  echo date_format(date_create($whl->created_at), 'g:i A');?></td>
+										  <?php $current_value_histoy=($whl->current_value!='')? $whl->current_value:'null'?>
+										  <td><?php if($whl->current_value!='' && $whl->change_value!=''){ echo HiSTORY_TEXT_EDIT; } else if($whl->change_value=='') { echo HiSTORY_TEXT_DLETED; } else { echo HiSTORY_NEW_TEXT_ADDED; } $labordecode=json_decode($whl->change_value); ?> <a href="javascript:void(0)" onclick='historyoflabor(<?php echo $woData->building; ?>, <?php echo $whl->whId; ?> )' class="vend_tooltip"><i class="fa fa-file-text-o textFile"></i></a>
+								   <a href="#add_new_labor_div" id="add_new_labor_div_href" class="modalbox" style="display:none;">&nbsp;</a>
+								  
+								   </td>
+									 </tr><?php } else if($whl->log_type=='building services') {?>
+                                       <tr>
+										  <td><?php echo ucfirst($whl->log_type); ?></td>
+										  <td><?php echo $whl->firstName.' '.$whl->lastName;?></td>
+										  <td><?php echo substr($whl->created_at,0,10);?></td>
+										  <td><?php  echo date_format(date_create($whl->created_at), 'g:i A');?></td>
+										  <?php $current_value_histoy=($whl->current_value!='')? $whl->current_value:'null'?>
+										  <td><?php if($whl->current_value!='' && $whl->change_value!=''){ echo HiSTORY_TEXT_EDIT; } else if($whl->change_value=='') { echo HiSTORY_TEXT_DLETED; } else { echo HiSTORY_NEW_TEXT_ADDED;  } $buildingdecode=json_decode($whl->change_value); ?> <a href="javascript:void(0)" onclick='historyofBuilding(<?php echo $woData->building; ?>, <?php echo $whl->whId; ?> )' class="vend_tooltip"><i class="fa fa-file-text-o textFile"></i> </a>
+								   <a href="#add_history_building_div" id="add_history_building_div_href" class="modalbox" style="display:none;">&nbsp;</a>
+								  
+								   </td>
+									 </tr>
+									 <?php } else if($whl->log_type=='materials') { ?>
+									 <tr>
+										  <td><?php echo ucfirst($whl->log_type);?></td>
+										  <td><?php echo $whl->firstName.' '.$whl->lastName;?></td>
+										  <td><?php echo substr($whl->created_at,0,10);?></td>
+										  <td><?php  echo date_format(date_create($whl->created_at), 'g:i A');?></td>
+										  <?php $current_value_histoy=($whl->current_value!='')? $whl->current_value:'null'?>
+										  <td><?php if($whl->current_value!='' && $whl->change_value!=''){ echo HiSTORY_TEXT_EDIT; } else if($whl->change_value=='') { echo HiSTORY_TEXT_DLETED; } else { echo HiSTORY_NEW_TEXT_ADDED;  } $materialdecode=json_decode($whl->change_value); ?> <a href="javascript:void(0)" onclick='historyofMaterial(<?php echo $woData->building; ?>, <?php echo $whl->whId; ?>)' class="vend_tooltip"><i class="fa fa-file-text-o textFile"></i></a>
+								   <a href="#add_history_material_div" id="add_history_material_div_href" class="modalbox" style="display:none;">&nbsp;</a>
+								  
+								   </td>
+									 </tr>
+									 <?php } else if($whl->log_type=='outside service') {?>  
+									  <tr>
+										  <td><?php echo ucfirst($whl->log_type);?></td>
+										  <td><?php echo $whl->firstName.' '.$whl->lastName;?></td>
+										  <td><?php echo substr($whl->created_at,0,10);?></td>
+										  <td><?php  echo date_format(date_create($whl->created_at), 'g:i A');?></td>
+										  <?php $current_value_histoy=($whl->current_value!='')? $whl->current_value:'null'?>
+										  <td><?php if($whl->current_value!='' && $whl->change_value!=''){ echo HiSTORY_TEXT_EDIT; } else if($whl->change_value=='') { echo HiSTORY_TEXT_DLETED; } else { echo HiSTORY_NEW_TEXT_ADDED;  } $outsidedecode=json_decode($whl->change_value); ?> <a href="javascript:void(0)" onclick='historyofoutside(<?php echo $woData->building; ?>, <?php echo $whl->whId; ?> )' class="vend_tooltip"><i class="fa fa-file-text-o textFile"></i></a>
+								   <a href="#add_history_outside_div" id="add_history_outside_div_href" class="modalbox" style="display:none;">&nbsp;</a>
+								  
+								   </td>
+									 </tr>
+									 <?php } else if($whl->log_type=='notes'){ ?>   
+									<tr>
+										  <td><?php echo ucfirst($whl->log_type);?></td>
+										  <td><?php echo $whl->firstName.' '.$whl->lastName;?></td>
+										  <td><?php echo substr($whl->created_at,0,10);?></td>
+										  <td><?php  echo date_format(date_create($whl->created_at), 'g:i A');?></td>
+										  <?php $current_value_histoy=($whl->current_value!='')? $whl->current_value:'null'?>
+										  <td><?php if($whl->current_value!='' && $whl->change_value!=''){ echo HiSTORY_TEXT_EDIT; } else if($whl->change_value=='') { echo HiSTORY_TEXT_DLETED; } else { echo HiSTORY_NEW_TEXT_ADDED; } $notesdecode=json_decode($whl->change_value); ?> <a href="javascript:void(0)" onclick='historyofnotes(<?php echo $woData->building; ?>, <?php echo $whl->whId; ?> )' class="vend_tooltip"><i class="fa fa-file-text-o textFile"></i> </a>
+								   <a href="#add_history_notes_div" id="add_history_notes_div_href" class="modalbox" style="display:none;">&nbsp;</a>
+								  
+								   </td>
+									 </tr>
+									 
+									 <?php } else if($whl->log_type=='Attachment'){ ?>   
+									<tr>
+										  <td><?php echo ucfirst($whl->log_type);?></td>
+										  <td><?php echo $whl->firstName.' '.$whl->lastName;?></td>
+										  <td><?php echo substr($whl->created_at,0,10);?></td>
+										  <td><?php  echo date_format(date_create($whl->created_at), 'g:i A');?></td>
+										  <td><?php if($whl->current_value!=''){ echo "Attachment Deleted"; } else { echo "Attachment Added"; } ?> </td>
+									 </tr>
+									 
+									 <?php } else if($whl->log_type == 'work order') { ?>
+								    <tr>
+										  <td><?php echo ucfirst($whl->log_type);?></td>
+										  <td><?php echo $whl->firstName.' '.$whl->lastName;?></td>
+										  <td><?php echo substr($whl->created_at,0,10);?></td>
+										  <td><?php  echo date_format(date_create($whl->created_at), 'g:i A');?></td>
+										  <?php /*<td>---</td> */?>
+										  <td><?php
+										   $current_value_histoy=($whl->current_value!='')? $whl->current_value:'null';
+										   if($whl->current_value=='') { echo HiSTORY_NEW_TEXT_ADDED;  } else { echo HiSTORY_TEXT_EDIT; }
+											  ?>
+											  <a href="javascript:void(0)" onclick='hostoryofworkorder(<?php echo $woData->building; ?>,<?php echo $this->woData->woId; ?>, <?php echo $current_value_histoy ;?>, <?php echo $whl->change_value;?> )' class="vend_tooltip"><i class="fa fa-file-text-o textFile"></i>
+
+</a>
+											
+											  <a href="#add_histroy_workorder_div" id="add_histroy_workorder_div_href" class="modalbox" style="display:none;">&nbsp;</a>	
+									     </td>
+									 </tr>
+								  <?php }
+															
+															
+															}?>
+													  </table>	
+												 </div>
+										 </div> 
+									<?php }?>
+                                </div>
+                               
+                              
+                            </div>
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+        </div>
+</div> 
+</div>
+
+
+

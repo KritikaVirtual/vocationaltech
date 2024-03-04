@@ -1,0 +1,35 @@
+<div class="login_form">
+<div class="index_lform">
+<h1>Login to your account</h1>
+	<?php if(!empty($this->message)){ ?>
+				<div class="success"  style="margin-bottom: 21px;width:150px;font-weight:bold" ><?php echo $this->message; ?></div>
+	<?php }
+	
+		 if($this->error){
+			$err=$this->error; 
+			 
+			echo '<div><div class="error">';
+			echo '<div>';
+			
+			if(isset($err['save'])) echo '* Invalid username/password combination <br>';
+			if(isset($err['active'])) echo '* Your account has been deactivated <br>';
+			if(isset($err['remove'])) echo '* Your account has been temporarily disabled <br>';	
+			if(isset($err['company'])) echo '* Your company has been temporarily disabled <br>';			
+			echo '</div></div></div>';
+		  }  
+		 
+	?>		   
+		   <form method="post" />
+		        <div id="username_field"><label>Username:</label><?php echo $this->form->email ?>
+                 <span class="log_er"><?php if(isset($err['email'])) echo 'Please enter username.';?> </span></div>
+					<div id="password_field"><label>Password:</label> <?php echo $this->form->password ?>
+                    <span class="log_er"><?php if(isset($err['password'])) echo 'Please enter password.';?> </span></div>
+<?php /*<div class="rem"><input name="" type="checkbox" value="" /> Remember me</div>*/?>
+<div class="log_btn loginbtn"><input name="" type="submit" value="Login" /></div>
+
+		   </form>
+           <div class="all_p">
+<h2><a href="<?php echo BASEURL.'index/forgetpassword'?>">Forgot your password ?</a></h2>
+</div>
+	  </div>
+ </div>

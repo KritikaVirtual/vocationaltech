@@ -1,0 +1,16 @@
+<?php
+$serviceMapper = new Model_Services();
+$servicelist = $serviceMapper->getServices();
+?>
+<a href="javascript:void(0)" onclick="showServiceForm()">----Add New Service----</a>
+<select required id="services" class="status" name="services">
+	   <option value="">Select Service</option>
+		<?php 
+		   if($servicelist){
+				foreach ($servicelist as  $service) {											
+					  echo '<option value="'.$service['sid'].'">'.$service['service'].'</option>';				   
+				}
+			}
+		?>
+										                    
+</select>

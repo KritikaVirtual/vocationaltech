@@ -1,0 +1,8 @@
+<select name="category" id="category" class="all_select">
+	<option value="">Select..</option>
+	<?php if($this->catData!=''){
+		   foreach($this->catData as $cd){?>
+			   <option value="<?php echo $cd['cat_id']?>"><?php echo $cd['categoryName']?></option>
+			<?php }?>   
+	<?php }?>	
+</select>

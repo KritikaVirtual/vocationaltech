@@ -1,0 +1,115 @@
+<?php
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/conference.js');
+
+$startTime = ($this->start_time==""?'08:00 AM':$this->start_time);
+$endTime = ($this->start_time==""?'09:00 AM':$this->start_time);
+?>
+<div class="container-right">
+    <section style="z-index:9999" class="w-48 fr ch-home-form">
+        <section class="ch-form-header ">
+            <h3>New Conference Room Scheduler</h3>
+        </section>
+        <div class="room-setup">
+            <div class="tableGrid list_tableGrid my_table_grid">
+                <div class="message">
+                    <div class="success_message" style="text-align:center;width:100%;font-weight:bold;color:red;"></div>				  			
+                    <span id="success_msg"></span>
+                    <span id="error_msg"></span>
+                </div>
+                <div class="container">
+                    <div id="step1">
+                        <input type="hidden" value="<?php echo $this->building_id; ?>" name="building_id" id="building_id"/>
+                        <input type="hidden" value="" name="sid" id="sid"/>
+
+                        <div class="row">
+                            <label>Scheduler Name:<span class="required">*</span></label><span class="ugroupErr" id="schedule_name_error"></span>    
+                            <input type="text" value="" id="schedule_name" class="" name="schedule_name" Placeholder ='Please Enter Scheduler Name'/>  
+                        </div>
+
+                        <div class="row">    
+
+                            <label>Days of the week<span class="required">*</span> </label><span class="ugroupErr" id="schedule_week_days_error"></span>
+                            <select name="week_days_id" id="week_days_id">
+                                <?php foreach ($this->days_of_the_week as $key => $value) { ?>
+                                    <option value="<?php echo $value['wdID']; ?>" <?php
+                                    if ($value['wdID'] == 2) {
+                                        echo 'selected';
+                                    }
+                                    ?>>
+                                                <?php echo $value['title']; ?>
+                                    </option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                        <div class="row">    
+                            <label>Active<span class="required">*</span> </label><span class="ugroupErr" id="schedule_status_error"></span>
+                            <select name="status" id="status">
+                                <option value="1" > Yes</option>
+                                <option value="0">No </option>
+                            </select>
+                        </div>
+                        <div class="row act_time">
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                <label>Time Active<span class="required">*</span> :</label> 
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 start_time">
+                            <label style='margin-top:11px; width:84px;'>Start Time</label>
+                            <select name="start_time" id="start_time" class="status time_active" style='width:100px;'>                                
+                                <?php
+                                for ($i = 0; $i <= 23; $i++) {
+                                    $fDate = date("h:i A", strtotime($i . ':00'));
+                                    $sDate = date("h:i A", strtotime($i . ':30'));
+                                    ?>
+                                    <option value='<?php echo $fDate; ?>' <?php
+                                    if ($startTime == $fDate) {
+                                        echo 'selected';
+                                    }
+                                    ?>> <?php echo $fDate; ?> </option>
+                                    <option value='<?php echo $sDate; ?>' <?php
+                                    if ($startTime == $sDate) {
+                                        echo 'selected';
+                                    }
+                                    ?>> <?php echo $sDate; ?> </option>
+                                        <?php } ?>
+                            </select>
+                            <!-- end-time -->
+                            
+                            <label style='margin-top:11px; width:84px;'>End Time</label><select name="end_time" id="end_time" class="status time_active" style='width:100px;'>
+                                <?php
+                                for ($i = 0; $i <= 23; $i++) {
+                                    $fDate = date("h:i A", strtotime($i . ':00'));
+                                    $sDate = date("h:i A", strtotime($i . ':30'));
+                                    ?>
+                                    <option value="<?php echo $fDate; ?>" <?php
+                                    if ($endTime == $fDate) {
+                                        echo 'selected';
+                                    }
+                                    ?>> <?php echo $fDate; ?> </option>
+                                    <option value='<?php echo $sDate; ?>' <?php
+                                    if ($endTime == $sDate) {
+                                        echo 'selected';
+                                    }
+                                    ?>> <?php echo $sDate; ?> </option>
+                                        <?php } ?>
+                            </select>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                <input type='checkbox' id='all_day' name="all_day" onclick='selectAllDay()' value='1'> All Day
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div> </div>
+                    <div class="confirmBtn float_none">
+                         <input type="button" value="Save" name="save" class="confirm" id='emailsave' onclick="validateScheduler();">
+                        <input type="hidden" name="build_id" id="build_id" value="<?php echo $this->building_id; ?>" >
+                        <input type="button" value="Cancel" name="cancel" class="cancel" onclick="cancelConRoom();">
+                    </div>
+
+                </div>   
+            </div>
+        </div>
+</div>
+</section>
+</div>
+

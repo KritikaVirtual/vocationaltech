@@ -1,0 +1,139 @@
+<?php
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/pm-complete-workorder.js');
+if ($this->openPmWo[0]->Reading_Task === 'T') {
+    $text = 'Task';
+} else if ($this->openPmWo[0]->Reading_Task === 'R') {
+    $text = 'Reading';
+}
+if ($this->pmCompleteJobTime == 'M') {
+    $mandatory_bg_white_class = 'td-bg';
+} else if ($this->pmCompleteJobTime === 'O') {
+    $mandatory_bg_white_class = 'td-grey';
+} else if ($this->pmCompleteJobTime === 'R') {
+    $hide_colums = 'hide_colums';
+}
+
+function buildTree(array $elements, $parentId = 0) {
+    $branch = array();
+    foreach ($elements as $element) {
+        if ($element['Parent_ID'] == $parentId) {
+            $children = buildTree($elements, $element['AU_Template_Task_ID']);
+            if ($children) {
+                $element['children'] = $children;
+            }
+            $branch[] = $element;
+        }
+    }
+    return $branch;
+}
+?>
+<table class="table table-bordered table-bg">
+    <thead>
+        <tr>
+            <th>Task</th>
+            <th>Task / Instruction</th>
+            <th>Frequency</th>
+            <th>Date</th>
+            <th id="<?php echo $hide_colums; ?>">Est Time</th>
+            <th id="<?php echo $hide_colums; ?>">Actual Time</th>
+            <th>Date Completed</th>
+            <th>Notes / Comments</th>
+            <th class="completed-width">Completed By</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+<?php
+$tree = buildTree($this->pmWoTaskDetail);
+for ($i = 1; $i <= count($tree); $i++) {
+    if (array_key_exists("children", $tree[$i - 1])) {
+        ?>
+                <tr class="sub-bg-color tr-bg" >
+                    <td align="center"><?php echo $i; ?></td>
+                    <td><?php echo $tree[$i - 1]['Task_Instruction']; ?></td>
+                    <td></td>
+                    <td></td>
+                    <td id="<?php echo $hide_colums; ?>"></td>
+                    <td id="<?php echo $hide_colums; ?>"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+        <?php
+        for ($k = 1; $k <= count($tree[$i - 1]['children']); $k++) {
+            ?>
+                    <tr>
+                        <td>
+                            <table class="sub-tbl-col subitem">
+                                <tr class="td-subitem">
+                                    <td><?php echo $i . '-' . $k; ?></td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td><?php echo $tree[$i - 1]['children'][$k - 1]['Task_Instruction']; ?></td>
+                        <td align="center"><?php echo $tree[$i - 1]['children'][$k - 1]['Frequency']; ?></td>
+                        <td align="center"><?php echo date("m/d/Y", strtotime($tree[$i - 1]['children'][$k - 1]['PM_WO_StartDate'])); ?></td>
+                        <td id="<?php echo $hide_colums; ?>"><?php echo $tree[$i - 1]['JobTime']; ?></td>
+                        <td id="<?php echo $hide_colums; ?>" class="<?php echo $mandatory_bg_white_class; ?>"><input type="text" name="actualTime" id="actualTime_<?php echo $tree[$i - 1]['PM_WO_ID']; ?>"></td>
+                        <td class="completedDate" align="center"><input type="text" name="completedDate" class="form-control date-picker" id="completedDate_<?php echo $tree[$i - 1]['children'][$k - 1]['PM_WO_ID'] ;?>" value="<?php echo $this->completedDate; ?>"></td>
+                        <td><textarea name="notes" id="notes_<?php echo $tree[$i - 1]['PM_WO_ID'] ;?>"></textarea></td>
+                        <td>
+                                    <select class="form-control" name="selectedby" id="selectedby_<?php echo $tree[$i - 1]['children'][$k - 1]['PM_WO_ID']; ?>">
+                                            <option value="">Select From List</option>
+            <?php
+            foreach ($this->pmcompletedby as $users) {
+                ?>
+                                                <option value="<?php echo $users->uid; ?>" <?php if ($this->selectedby == $users->uid) {
+                    echo 'selected=selected';
+                } ?>><?php echo $users->fullname; ?></option>
+                                                <?php
+                                            }
+                                            ?>
+                                        </select>
+
+                                </td>
+                                <td align="center"><input type="checkbox" class="checkbox"></td>
+                    </tr>
+            <?php
+        }
+    } else {
+        ?>
+                <tr>
+                    <td align="center"><?php echo $i; ?></td>
+                    <td><?php echo $tree[$i - 1]['Task_Instruction']; ?></td>
+                    <td align="center"><?php echo $tree[$i - 1]['Frequency']; ?></td>
+                    <td align="center"><?php echo date("m/d/Y", strtotime($tree[$i - 1]['PM_WO_StartDate'])); ?></td>
+                    <td id="<?php echo $hide_colums; ?>"></td>
+                    <td class="<?php echo $mandatory_bg_white_class; ?>" id="<?php echo $hide_colums; ?>"><input type="text" name="actualTime" id="actualTime_<?php echo $tree[$i - 1]['PM_WO_ID']; ?>"></td>
+                    <td class="completedDate" align="center"><input type="text" name="completedDate" class="form-control date-picker" id="completedDate_<?php echo $tree[$i - 1]['PM_WO_ID'] ;?>" value="<?php echo $this->completedDate; ?>"></td>
+                    <td><textarea name="notes" id="notes_<?php echo $tree[$i - 1]['PM_WO_ID'] ;?>"></textarea></td>
+                    <td>
+                                    <select class="form-control" name="selectedby" id="selectedby_<?php echo $tree[$i - 1]['PM_WO_ID']; ?>">
+                                            <option value="">Select From List</option>
+            <?php
+            foreach ($this->pmcompletedby as $users) {
+                ?>
+                                                <option value="<?php echo $users->uid; ?>" <?php if ($this->selectedby == $users->uid) {
+                    echo 'selected=selected';
+                } ?>><?php echo $users->fullname; ?></option>
+                                                <?php
+                                            }
+                                            ?>
+                                        </select>
+
+                                </td>
+                                <td align="center"><input type="checkbox" class="checkbox" name="checkornot" id="chk_<?php echo $tree[$i - 1]['PM_WO_ID']; ?>"></td>
+                </tr>                
+        <?php
+    }
+}
+?>                
+
+    </tbody>
+</table>
+
+<script>
+    $(".view-point").html("<?php echo $text; ?>");
+    //$(".completedDate").html("<?php echo $this->completedDate; ?>");
+</script>

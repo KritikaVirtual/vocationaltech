@@ -1,0 +1,311 @@
+ <?php 
+    $startdateadj =  $this->startdateadjustment; 
+    $taskjobtime = $this->jobtime;
+    $FreqData = $this->frequency;
+    $CustomFreq = $this->CustmeFreq;
+    //print_r($frequency);
+ ?>
+<div id="addcss"></div>
+ <div class="dd" id="nestable">
+                <ol class="dd-list">
+                    <li class="dd-item dd3-item" data-id-root="">
+                        <div class="dd3-content tabelHeader">                           
+<!--                                <div class="id"></div>-->
+                                    <div class="id">Task Order</div>
+                                        <?php if(in_array(1,$this->listview)): ?>
+                                            <div class="id">Task Instruction</div>
+                                    <?php endif; ?>
+                                    <?php if(in_array(2,$this->listview)): ?>
+                                            <div class="id">Frequency <a onclick="javascript:openpopup('<?php echo $this->baseUrl() . '/pm/taskfrequency/desig_id/'.$this->desig_id; ?>');" href="#CreateNewMultiCon"><span class="glyphicon glyphicon-chevron-down"></span></a></div>
+                                    <?php endif; ?>
+                                    <?php if(in_array(3,$this->listview)): ?>
+                                            <div class="id">Start date <a onclick="javascript:openpopup('<?php echo $this->baseUrl() . '/pm/taskstartdate/desig_id/'.$this->desig_id; ?>');" href="#CreateNewMultiCon"><span class="glyphicon glyphicon-chevron-down"></span></a></div>
+                                     <?php endif; ?>
+                                     <?php if(in_array(4,$this->listview)): ?>
+                                            <div class="id">End date</div>
+                                     <?php endif; ?>
+                                      <?php if(in_array(5,$this->listview)): ?>
+                                            <div class="id">Seasonal</div>
+                                     <?php endif; ?>
+                                      <?php if(in_array(6,$this->listview)): ?>
+                                            <div class="id">Seasonal Start Month</div>
+                                     <?php endif; ?>
+                                      <?php if(in_array(7,$this->listview)): ?>
+                                            <div class="id">Seasonal End Month</div>
+                                     <?php endif; ?>
+                                     <?php if(in_array(8,$this->listview)): ?>
+                                            <div class="id"><a onclick="javascript:openpopup('<?php echo $this->baseUrl() . '/pm/taskstartdateofmonth/desig_id/'.$this->desig_id; ?>');" href="#CreateNewMultiCon"><span class="glyphicon glyphicon-chevron-down"></span></a>Start Date Of Month </div>
+                                     <?php endif; ?>
+                                    <?php if(in_array(9,$this->listview)): ?>
+                                             <div class="id"><a onclick="javascript:openpopup('<?php echo $this->baseUrl() . '/pm/taskstartdateadjustment/desig_id/'.$this->desig_id; ?>');" href="#CreateNewMultiCon"><span class="glyphicon glyphicon-chevron-down"></span></a>Start date Adjustment</div>
+                                    <?php endif; ?>
+                                    <?php if(in_array(10,$this->listview)): ?>
+                                             <div class="id">Task job Time(Hour)</div>
+                                    <?php endif; ?>
+                                    <?php if(in_array(11,$this->listview)): ?>
+                                             <div class="id">Over Time/Off Hour</div>
+                                    <?php endif; ?>
+                                    <?php if(in_array(12,$this->listview)): ?>
+                                             <div class="id">Assign To</div>
+                                    <?php endif; ?>
+                                    <div class="id"></div>        
+                        </div>
+                    </li>
+                    <?php 
+                    $count = 1;
+                    //print_r($this->alltask);
+                    foreach($this->alltask as $task):  ?>
+                    
+                        <?php 
+                        //print_r($task);
+                        //echo $task['task'][0]->id;
+                        if(empty($task['task']) && $task[0]->AU_Frequency_ID!=""){ 
+                            foreach($task as $fulltask):
+                               // print_r($this->listview);
+                                ?>
+                                <li class="dd-item dd3-item" data-id-root="<?php echo $fulltask->VT_Template_Task_ID; ?>">
+                                    <div class="dd-handle dd3-handle">Drag</div>
+                                    <div class="dd3-content" >
+                                    <!-- <div class="id"></div> -->
+                                        <div class="id"><?php echo $count; ?></div> 
+                                        <?php
+                                        //print_r($fulltask);
+                                        //echo $fulltask->AU_Frequency_ID;
+                                        if($fulltask->Interval_Value==1 || $fulltask->Interval_Value==0){
+                                            $frequency = $FreqData[$fulltask->AU_Frequency_ID];
+                                        }else{
+                                            $frequency = $fulltask->Interval_Value.'   '.$CustomFreq[$fulltask->AU_Frequency_ID];
+                                        }
+                                        
+                                        $taskj = explode(".",$fulltask->Task_jobtime);
+                                        $taskjobt = "";
+                                        if(!empty($taskj[0]) && $taskj[0]!=0)
+                                            $taskjobt .= $taskj[0]."  hours ";
+                                        if(!empty($taskj[1]))
+                                            $taskjobt .= $taskjobtime['0.'.$taskj[1]];
+                                                                                
+                                        if(in_array(1,$this->listview))
+                                                echo '<div class="id" style="overflow: hidden;">'.$fulltask->Task_Instruction.'</div>';
+                                        if(in_array(2,$this->listview))
+                                                echo '<div class="id">'.$frequency.'</div>';
+                                        if(in_array(3,$this->listview))
+                                                echo '<div class="id">'.$fulltask->Start_date.'</div>';
+                                        if(in_array(4,$this->listview))
+                                                echo '<div class="id">'.$fulltask->End_date.'</div>';
+                                        if(in_array(5,$this->listview))
+                                                echo '<div class="id">'.$fulltask->Seasonal_Task.'</div>';
+                                        if(in_array(6,$this->listview))
+                                                echo '<div class="id">'.($fulltask->Seasonal_Start_Date==""?"--":$fulltask->Seasonal_Start_Date).'</div>';
+                                        if(in_array(7,$this->listview))
+                                                echo '<div class="id">'.($fulltask->Seasonal_End_Date==""?"--":$fulltask->Seasonal_End_Date).'</div>';
+                                        if(in_array(8,$this->listview))
+                                                echo '<div class="id">'.$fulltask->Startdate_month.'</div>';
+                                        if(in_array(9,$this->listview))
+                                                echo '<div class="id">'.$startdateadj[$fulltask->AU_sda_ID].'</div>';
+                                        if(in_array(10,$this->listview))                                      
+                                                echo '<div class="id">'.$taskjobt.'</div>';                                        
+                                        if(in_array(11,$this->listview))
+                                                echo '<div class="id">'.($fulltask->Overtime==0?"No":"Yes").'</div>';
+                                        if(in_array(12,$this->listview))
+                                                echo '<div class="id">'.($fulltask->Assigned_to==1?"Default":"").'</div>';
+                                        
+                                        ?>
+                                        <div class="id">
+                                            <a onclick="javascript:openpopup('<?php echo $this->baseUrl() . '/pm/edittask/desig_id/'.$this->desig_id.'/task_id/'.$fulltask->VT_Template_Task_ID;?>');" href="#CreateNewMultiCon"><img src="<?php echo $this->baseUrl();?>/public/images/edit.png"></a>
+                                            <a  onclick="deletetask(<?php echo $fulltask->VT_Template_Task_ID; ?>,<?php echo $this->desig_id; ?>);" ><img src="<?php echo $this->baseUrl();?>/public/images/delete.png"></a>
+                                        </div>  
+                                    </div>
+                                </li>
+                        <?php  
+                            $count++;
+                            endforeach; 
+                            }else if($task['name']!=""){ 
+                                //print_r($task);
+                                ?>
+                        <li class="dd-item dd3-item collapse-table" data-id-subset="<?php echo $task['id']; ?>">
+                            <div class="dd-handle dd3-handle">Drag</div>
+                            <div class="dd3-content" style="font-weight: bold; ">
+                                <div class="id"><?php echo $count; ?></div>
+                                 <?php if(in_array(1,$this->listview)): ?>
+                                    <div class="id">Task subset- <?php echo $task['name']; ?></div>
+                                <?php endif; ?>
+                                <?php if(in_array(2,$this->listview)): ?>
+                                        <div class="id">Frequency <a onclick="javascript:openpopup('<?php echo $this->baseUrl() . '/pm/taskfrequencysubset/desig_id/'.$this->desig_id.'/parent_id/'.$task['id']; ?>');" href="#CreateNewMultiCon"><span class="glyphicon glyphicon-chevron-down"></span></a></div>
+                                <?php endif; ?>
+                                <?php if(in_array(3,$this->listview)): ?>
+                                        <div class="id">Start date <a onclick="javascript:openpopup('<?php echo $this->baseUrl() . '/pm/taskstartdatesubset/desig_id/'.$this->desig_id.'/parent_id/'.$task['id']; ?>');" href="#CreateNewMultiCon"><span class="glyphicon glyphicon-chevron-down"></span></a></div>
+                                 <?php endif; ?>
+                                 <?php if(in_array(4,$this->listview)): ?>
+                                        <div class="id">End date</div>
+                                 <?php endif; ?>
+                                  <?php if(in_array(5,$this->listview)): ?>
+                                        <div class="id">Seasonal</div>
+                                 <?php endif; ?>
+                                  <?php if(in_array(6,$this->listview)): ?>
+                                        <div class="id">Seasonal Start Month</div>
+                                 <?php endif; ?>
+                                  <?php if(in_array(7,$this->listview)): ?>
+                                        <div class="id">Seasonal End Month</div>
+                                 <?php endif; ?>
+                                 <?php if(in_array(8,$this->listview)): ?>
+                                        <div class="id"><a onclick="javascript:openpopup('<?php echo $this->baseUrl() . '/pm/taskstartdateofmonthsubset/desig_id/'.$this->desig_id.'/parent_id/'.$task['id']; ?>');" href="#CreateNewMultiCon"><span class="glyphicon glyphicon-chevron-down"></span></a>Start Date Of Month </div>
+                                 <?php endif; ?>
+                                <?php if(in_array(9,$this->listview)): ?>
+                                         <div class="id"><a onclick="javascript:openpopup('<?php echo $this->baseUrl() . '/pm/taskstartdateadjustmentsubset/desig_id/'.$this->desig_id.'/parent_id/'.$task['id']; ?>');" href="#CreateNewMultiCon"><span class="glyphicon glyphicon-chevron-down"></span></a>Start date Adjustment</div>
+                                <?php endif; ?>
+                                <?php if(in_array(10,$this->listview)): ?>
+                                         <div class="id">Task job Time(Hour)</div>
+                                <?php endif; ?>
+                                <?php if(in_array(11,$this->listview)): ?>
+                                         <div class="id">Over Time/Off Hour</div>
+                                <?php endif; ?>
+                                <?php if(in_array(12,$this->listview)): ?>
+                                         <div class="id">Assign To</div>
+                                <?php endif; ?>
+                                <div class="id">
+                                    <a onclick="javascript:openpopup('<?php echo $this->baseUrl() . '/pm/editsubset/subset_id/'.$task['id']."/desig_id/".$this->desig_id; ?>');" href="#CreateNewMultiCon"><img src="<?php echo $this->baseUrl();?>/public/images/edit.png"></a>
+                                    <a onclick="deletetask(<?php echo $task['id']; ?>,<?php echo $this->desig_id; ?>);"><img src="<?php echo $this->baseUrl();?>/public/images/delete.png"></a>
+                                </div>  
+                            </div>
+                            <ol class="dd-list">                                    
+                                <?php 
+                                $countsub = 1;
+                                foreach ($task['task'] as $fulltask): ?>                                                
+                                    <li class="dd-item dd3-item" data-id="<?php echo $fulltask->VT_Template_Task_ID;?>">
+                                        <div class="dd-handle dd3-handle">Drag</div>
+                                        <div class="dd3-content">
+                                        <div class="id" style="text-align:right;"><?php echo $countsub; ?></div>     
+                                            <?php
+                                        //print_r($fulltask);
+                                        
+                                        if($fulltask->Interval_Value==1 || $fulltask->Interval_Value==0){
+                                            $frequency = $FreqData[$fulltask->AU_Frequency_ID];
+                                        }else{
+                                             $frequency = $fulltask->Interval_Value.'   '.$CustomFreq[$fulltask->AU_Frequency_ID];
+                                        }
+                                        
+                                        $taskj = explode(".",$fulltask->Task_jobtime);
+                                        $taskjobt = "";
+                                        if(!empty($taskj[0]) && $taskj[0]!=0)
+                                            $taskjobt .= $taskj[0]."  hours ";
+                                        if(!empty($taskj[1]))
+                                            $taskjobt .= $taskjobtime['0.'.$taskj[1]];
+                                                                                
+                                        if(in_array(1,$this->listview))
+                                                echo '<div class="id" style="overflow: hidden;">'.$fulltask->Task_Instruction.'</div>';
+                                        if(in_array(2,$this->listview))
+                                                echo '<div class="id">'.$frequency.'</div>';
+                                        if(in_array(3,$this->listview))
+                                                echo '<div class="id">'.$fulltask->Start_date.'</div>';
+                                        if(in_array(4,$this->listview))
+                                                echo '<div class="id">'.$fulltask->End_date.'</div>';
+                                        if(in_array(5,$this->listview))
+                                                echo '<div class="id">'.$fulltask->Seasonal_Task.'</div>';
+                                        if(in_array(6,$this->listview))
+                                                echo '<div class="id">'.($fulltask->Seasonal_Start_Date==""?"--":$fulltask->Seasonal_Start_Date).'</div>';
+                                        if(in_array(7,$this->listview))
+                                                echo '<div class="id">'.($fulltask->Seasonal_End_Date==""?"--":$fulltask->Seasonal_End_Date).'</div>';
+                                        if(in_array(8,$this->listview))
+                                                echo '<div class="id">'.$fulltask->Startdate_month.'</div>';
+                                        if(in_array(9,$this->listview))
+                                                echo '<div class="id">'.$startdateadj[$fulltask->AU_sda_ID].'</div>';
+                                        if(in_array(10,$this->listview))                                      
+                                                echo '<div class="id">'.$taskjobt.'</div>';                                        
+                                        if(in_array(11,$this->listview))
+                                                echo '<div class="id">'.($fulltask->Overtime==0?"No":"Yes").'</div>';
+                                        if(in_array(12,$this->listview))
+                                                echo '<div class="id">'.($fulltask->Assigned_to==1?"Default":"").'</div>';
+                                        
+                                        ?>
+                                        <div class="id">
+                                            <a onclick="javascript:openpopup('<?php echo $this->baseUrl() . '/pm/edittask/desig_id/'.$this->desig_id.'/task_id/'.$fulltask->VT_Template_Task_ID;?>');" href="#CreateNewMultiCon"><img src="<?php echo $this->baseUrl();?>/public/images/edit.png"></a>
+                                            <a onclick="deletetask(<?php echo $fulltask->VT_Template_Task_ID; ?>,<?php echo $this->desig_id; ?>);"><img src="<?php echo $this->baseUrl();?>/public/images/delete.png"></a>
+                                        </div>                                         
+                                        </div>
+                                    </li>                                                
+                                <?php 
+                                $countsub++;
+                                endforeach; ?>
+                            </ol>
+                        </li>
+                        <?php 
+                        $count++;
+                        } ?>
+                    <!--    Child section start-->                       
+                    <!--    Child section End-->
+                    
+                    <?php endforeach; ?>
+                </ol>
+            </div>
+<script>
+    $(function() {
+        $('#nestable').nestable({
+            group: 1,
+            maxDepth:2
+        })
+        .on('change', function(e) {
+            var list = e.length ? e : $(e.target);
+            console.log(list.nestable('serialize'));
+            $('#nestable-output').val(window.JSON.stringify(list.nestable('serialize')));
+            //// send data to update ordering
+            $('.loader').show();
+            //$('.success_message').show();
+            $.ajax({    
+                type: "POST",
+                url: baseUrl + 'pm/updatetaskorder',
+                data: {task: window.JSON.stringify(list.nestable('serialize'))},
+                success: function (data) {
+                    $('.loader').hide();
+                    var content = $.parseJSON(data);
+                    //////////////////////
+                    var list  = "";
+                    $("input[type='checkbox']:checked").each(function(){
+                        console.log($(this).val());  
+                        list += parseInt($(this).val())+","; 
+                    });
+                    list =list.substring(0,list.length - 1);
+                    var all = list.split(',');
+                    var ctotal = all.length;
+                    console.log("total "+ctotal);
+                    cssdata = 94 / (ctotal + 1) ;
+                    csscolapsdata = 92.25 / (ctotal + 1) ;
+                    var html = ".dd3-content .id{";
+                        html += "width : " + cssdata+ "%";
+                        html +="}";
+                        html += ".collapse-table .dd3-content .id{";
+                        html += "width : " + csscolapsdata+ "%";
+                        html +="}";
+                    //////////////////////////////
+                    if (content.status == 'success') {
+                    //$('.success_message').html(content.msg); 
+                             $.ajax({    
+                                    type: "POST",
+                                    url: baseUrl + 'pm/viewtask/desig_id/<?php echo $this->desig_id; ?>',
+                                    data: {viewlist: list,desig_id:<?php echo $this->desig_id; ?>},
+                                    success: function (response) {
+                                        console.log("Sucess");
+                                       $("#viewtask").html(response);
+                                       //$('.success_message').slideUp(500);
+                                       $( "#addcss" ).html( '<style>'+html+'</style>' );
+                                    }
+                             });
+                    } else if (content.status == 'error') {
+                        //$('.success_message').html(content.msg);
+                        $.ajax({    
+                                type: "POST",
+                                url: baseUrl + 'pm/viewtask/desig_id/<?php echo $this->desig_id; ?>',
+                                data: {viewlist: list,desig_id:<?php echo $this->desig_id; ?>},
+                                success: function (response) {
+                                   $("#viewtask").html(response);
+                                   console.log("Error");
+                                   //$('.success_message').slideUp(500);
+                                   $( "#addcss" ).html( '<style>'+html+'</style>' );
+
+                                }
+                        });
+                    }
+                }
+            });
+        });
+    });
+    </script>

@@ -1,0 +1,95 @@
+<?php
+
+ob_start();
+
+class CoiController extends Ve_Controller_Base {
+
+    public function init() {
+
+
+        parent::init();
+
+        $this->_helper->layout()->setLayout('newlayout');
+        $this->accessHelper = $this->_helper->access;
+    }
+
+    public function indexAction() {
+        //$this->_redirect('/pm/matrix');
+        // echo "Cio";
+        //exit();
+        //$page = $this->_getParam('page', 1);
+        //$pageObj = new Ve_Paginator();
+        $templateName = "";
+        $designationName = "";
+        $data = $this->_request->getPost();
+        $template = new Model_CioTemplate();
+        $templatedata = array();
+         
+            $tempdata= $template->GetAllTemplatecoName();
+             $tempdatasecond= $template->GetAllTemplatecoNamesecontab();
+             $templatteumbrella=$template->GetAllTemplatecoUmbrella();
+             $templatteWorkers=$template->GetAllTemplatecoWorkers();
+          // print_r($templatteumbrella);
+          // die();
+            foreach ($tempdata as $temp) {
+                //echo $temp->coi_vt_default_description;
+                //exit();
+               
+                
+            }
+            
+        
+        
+        $this->view->templatedetails = $tempdata;
+
+         $this->view->templatedetailsseconnd =$tempdatasecond;
+         $this->view->templatedetailsthird=$templatteumbrella; 
+         $this->view->templatteWorkers=$templatteWorkers;        
+        
+        
+       
+    }
+    public function editecoiAction()
+    {
+       $query = $this->_request->getParams();
+
+
+        if (isset($query['id'])) {
+            $eioedite = new Model_CioTemplate();
+            $editeciodata = $eioedite->loadcioTemplate($query['id']);
+
+            $this->view->editeciodata = $editeciodata[0];
+           
+        } else {
+            $this->_redirect('/coi');
+        }
+       
+    }
+
+public function updatecioAction()
+{
+$query = $this->_request->getParams();
+
+ $id = $query['id'];
+if (isset($query['id'])) {        
+$updateData = array();
+                $updateData['coi_vt_defaults_Tenant'] = $query['coi_vt_defaults_Tenant'];
+                $updateData['coi_vt_defaults_Vendor'] = $query['coi_vt_defaults_Vendor'];
+                $updateData['coi_vt_default_description'] = $query['coi_vt_default_description'];
+               
+
+                 $ciomodel = new Model_CioTemplate();
+
+
+                 $res = $ciomodel->updatecio($updateData, $id);
+                  $this->_redirect('/coi');
+
+                }
+                else{
+                   $this->_redirect('/coi');
+                }
+}
+    
+
+    }
+    ?>

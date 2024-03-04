@@ -1,0 +1,330 @@
+<?php 
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/conference.js'); 
+$tenantInfo = $this->tenantuser;
+$isvId="";
+$userId = Zend_Auth::getInstance()->getStorage()->read()->uid;
+
+$userRoleID = Zend_Auth::getInstance()->getStorage()->read()->role_id;
+
+$tenantcountcrRoom = 0;
+if ($userRoleID == 5 || $userRoleID == 7) {
+    $tenant = new Model_Tenant();
+    $tenantuser = $tenant->getTenantByUser($userId); 
+    if(isset($tenantuser[0]->buildingId) && !empty($tenantuser[0]->buildingId)){
+        $buildingId = $tenantuser[0]->buildingId;
+        $cscheduleMapper = new Model_ConferenceSchedule();
+          //Tenant Admin
+        if($userRoleID == 5){          
+            $tenantcountcrRoom = $cscheduleMapper->checkTenantConfRoomByBuidingId($buildingId,5);
+		}
+        //Tenant User
+        if($userRoleID == 7){
+          $tenantcountcrRoom = $cscheduleMapper->checkTenantConfRoomByBuidingId($buildingId,7);
+         
+          
+        }
+       
+   
+    }
+}
+
+
+
+//echo $tenantInfo->role_id;
+if($tenantInfo->role_id==7){
+    $isvId=$tenantInfo->uid;
+    echo '<input type="hidden" name="t_type" id="t_type" value="tuser">';
+}else if($tenantInfo->role_id==5){
+    echo '<input type="hidden" name="t_type" id="t_type" value="tadmin">';
+    $isvId=$tenantInfo->tenantId;
+}else{
+  $isvId='tenant'; 
+  echo '<input type="hidden" name="t_type" id="t_type" value="">';
+}
+//$isvId=$tenantInfo->tenantId;
+?>
+<button type="button" onclick="changeMonth('<?php echo date("n"); ?>','<?php echo date("Y"); ?>','tenant');" class="btn btn-info active"> Monthly Availabilities </button>						
+<?php /*
+ *  <button type="button" onclick="changeweekly('<?php echo date("Y"); ?>','<?php echo $this->month; ?>','<?php echo $this->lastdate; ?>','tenant');" class="btn btn-info active"> Weekly Availabilities </button>						
+<button type="button" onclick="changedaily('<?php echo date("Y"); ?>','<?php echo $this->month; ?>','<?php echo date("d"); ?>','tenant');" class="btn btn-info active"> Daily Availabilities </button>
+<button type="button" onclick="schedule('<?php echo date("d"); ?>','<?php echo date("n"); ?>','<?php echo date("Y"); ?>','tenant');" class="btn btn-info active">Schedule</button>
+*/
+?>
+<?php
+     
+	$month = date("m");
+	$year = date("Y");
+	$m = $month;
+	$y = $year;
+	$mName = date("F");
+	$mp = date("m") - 1;
+	$yp = date("Y");
+	if ($mp < 1) {
+		$mp = 12;
+		$yp = date("Y") - 1;
+	}
+	$mn = date("m") + 1;
+	$yn = date("Y");
+	if ($mn > 12) {
+		$mn = 1;
+		$yn = date("Y") + 1;
+	}
+	
+	$today_day = date('j');
+	$tdate = date('t', mktime(0, 0, 0, $month, 1, $year));
+	$add_date= 06 - date("w",strtotime("$tdate-$month-$year"));
+    $add_date=sprintf("%02d",$add_date);
+	$from_date = $y . '-' . $m . '-' . '01';
+	$to_date = $y . '-' . $mn . '-' .$add_date;
+	$cscheduleMapper = new Model_ConferenceSchedule();
+	$bookingDetails = $cscheduleMapper->getBookingEvent($from_date, $to_date, $tenantInfo->buildingId);
+	
+	if($bookingDetails) {
+		foreach ($bookingDetails as $bookingDetailsVal) {
+			//print_r($bookingDetailsVal); 
+			$index = date('Y-m-d', strtotime($bookingDetailsVal->requested_date));
+			$booking_arr[$index] = $bookingDetailsVal;
+		}
+	}
+	//print_r($bookingDetails);
+	?>
+
+<div id="calender_change">
+	<div style='text-align:left;'>
+		<h2>
+			<a href="#" onclick="changeMonth('<?php echo $mp; ?>', '<?php echo $yp; ?>','<?php echo $isvId; ?>')">< </a>
+			<?php echo $mName." ".$year; ?>
+			<a href="#" onclick="changeMonth('<?php echo $mn; ?>', '<?php echo $yn; ?>','<?php echo $isvId; ?>')"> > </a>
+                        <a  style="display:none" id="curr_mo" href="#" onclick="changeMonth('<?php echo $m; ?>', '<?php echo $y; ?>', '<?php echo $isvId; ?>')"> > </a>
+		</h2>
+	</div>
+	<?php
+	/* draw table */
+	$calendar = '<table cellpadding="0" cellspacing="0" class="calendar">';
+
+	/* table headings */
+	$headings = array('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday');
+	$calendar.= '<tr class="calendar-row"><td class="calendar-day-head">' . implode('</td><td class="calendar-day-head">', $headings) . '</td></tr>';
+
+	/* days and weeks vars now ... */
+	$running_day = date('w', mktime(0, 0, 0, $month, 1, $year));
+	$days_in_month = date('t', mktime(0, 0, 0, $month, 1, $year));
+	$days = date('t', mktime(0, 0, 0, $month, 1, $year));
+	$days_in_month= $days_in_month + $add_date;
+	$days_in_this_week = 1;
+	$day_counter = 0;
+	$dates_array = array();
+
+	/* row for week one */
+	$calendar.= '<tr class="calendar-row" valign="top">';
+	
+	$running_day1  = $running_day-1;
+	$running_day = 0;
+
+	$tenent_calender_access = false;
+	/* print "blank" days until the first of the current week */
+
+	/* print "blank" days until the first of the current week */
+
+	for ($x = 0; $x < $running_day; $x++):
+		$calendar.= '<td class="calendar-day-np"> </td>';
+		$days_in_this_week++;
+	endfor;
+
+	$days_in_month1 = date('t', mktime(0, 0, 0, $month-1, 1, $year));
+	for($k=$days_in_month1-$running_day1; $k<=$days_in_month1; $k++)
+	{
+		$calendar.= '<td class="calendar-day-pre">';
+		$calendar.= '<div class="day-number-pre">' . $k . '</div>';
+		$calendar.= '</td>';
+		$running_day++;
+	}
+	
+	/* keep going with days.... */
+        $roomname=array();
+
+	for ($list_day = 1; $list_day <= $days_in_month; $list_day++):
+		
+		if($list_day > $days ){
+			$calendar.= '<td class="calendar-day-next">';
+		}else if($running_day==0 || $running_day==6 ){
+			$calendar.= '<td class="calendar-day weekday">';
+		}else{
+			$today_class = ( $list_day==$today_day)?"today":'';
+			$calendar.= '<td class="calendar-day '.$today_class.'">';
+		}
+		
+		if($list_day > $days ){
+			if($list_day==($days+1))
+			{
+				$month=sprintf("%02d",($month+1));	
+			}
+			$l_days=$list_day - $days;
+				
+			$calendar.= '<div class="day-number-next">' . $l_days . '</div>';
+			$url = "'" . $this->baseUrl() . '/tenant/createbooking/month/' . $month . '/year/' . $year . '/bid/' . $tenantInfo->buildingId . '/day/' . $list_day . "'";
+			$num_padded = sprintf("%02d", $l_days);
+			$index2 = $year . '-' . $month . '-' . $num_padded;
+		}else{
+			$calendar.= '<div class="day-number">' . $list_day . '</div>';
+			$url = "'" . $this->baseUrl() . '/tenant/createbooking/month/' . $month . '/year/' . $year . '/bid/' . $tenantInfo->buildingId . '/day/' . $list_day . "'";
+			$num_padded = sprintf("%02d", $list_day);
+			$index2 = $year . '-' . $month . '-' . $num_padded;
+		}
+		if($bookingDetails)
+		{
+                        $i=1;
+			$calendar.= '<div class="date-bg">';		
+			foreach ($bookingDetails as $bookingDetailsVal) {
+				$index = date('Y-m-d', strtotime($bookingDetailsVal->requested_date));
+				if ($index == $index2) {
+					//$calendar.='<div>' . $bookingDetailsVal->room_name . ' - ' . $bookingDetailsVal->start_time . ' ' . $bookingDetailsVal->end_time . '</div>';
+                                    $tnModel = new Model_Tenant();
+                                    $tndetail = $tnModel->getTenantNameById($bookingDetailsVal->tenant);
+                                    
+                                    //print_r($bookingDetailsVal);
+                                    //echo '<hr>'.$bookingDetailsVal->tenant."<hr>";
+                                         /* conference room decided access*/
+                                    $getuseraccess= new Model_ConferenceSchedule();
+                                    $acData=$getuseraccess->getcrDetailsuseraccess($bookingDetailsVal->croom_id);
+                                    
+                                    if($tenantInfo->role_id==7){
+                                       $bkdetails=$bookingDetailsVal->created_user;
+                                       $permition=$acData[0]->tenant_user;
+                                       $page="tenantuser";
+                                    }else if($tenantInfo->role_id==5){
+                                        $bkdetails=$bookingDetailsVal->tenant;
+                                        $permition=$acData[0]->tenant_admin;
+                                        $page="tenant";
+                                    }
+                                    
+                                    if(($bkdetails==$isvId && $permition==1) || $isvId=="tenant"):
+                                      // print_r($bookingDetailsVal); 
+                                    
+                                        //getcrDetailsuseraccess
+										$tenent_calender_access = true;
+										$rname= md5($bookingDetailsVal->room_name);
+                                        $calendar.= '<div  class="tooltip-vcm  book_week book_det_container  '.$rname.' ">';
+                                        $roomname[$rname]=$rname;
+                                        $calendar.='<div class="mtime">'. $bookingDetailsVal->start_time . ' - ' . $bookingDetailsVal->end_time ;
+                                        $calendar.= "&nbsp;&nbsp;".$bookingDetailsVal->room_name.'</div>';
+                                        $calendar.= '<span><div class="t_name">'.$tndetail[0]->tenantName.'</div>';
+                                        $calendar.= '<div class="r_name">'.$bookingDetailsVal->room_name.'</div>';
+                                        $calendar.='<div>'. $bookingDetailsVal->start_time . ' - ' . $bookingDetailsVal->end_time . '</div>';
+                                        $edit_url = "'" . $this->baseUrl() . '/conference/editbooking/month/' . $month . '/year/' . $year . '/bid/' . $tenantInfo->buildingId .'/day/'. $list_day . '/crid/'.$bookingDetailsVal->crid.'/page/'.$page.'/tid/'.$bkdetails."'";
+                                        $calendar.='<div class="edit_del_room"><div class="edit_broom">'
+                                                        . '<a href="#editbookroom" class="editCat" onclick="editbookroom('.$edit_url.')">'
+                                                . '<img src="'.BASEURL . 'public/images/edit.png'.'"></a></div>';
+                                        $calendar.='<div class="delete_broom">'
+                                                        . '<a href="javascript:void(0);" onclick="deleteCrRoom('.$bookingDetailsVal->crid.')" class="delCat" data-id="" title="Delete">'
+                                                . '<img src="'.BASEURL . 'public/images/delete.png'.'"></a></div>';                                                       
+                                    else:
+										
+                                        $calendar.= '<div  class="book_week book_det_container book-details-'.$i.' book_hot_schedule'.$i.'">';
+                                        $calendar.='<div>'. $bookingDetailsVal->start_time . ' - ' . $bookingDetailsVal->end_time ;
+                                        $calendar.= "&nbsp;&nbsp;".$bookingDetailsVal->room_name.'</div>';
+                                        
+
+                                        
+                                    endif;
+                                    $calendar.= '</span></div><div class="clearfix"></div></div>';
+                                    $i++;
+                                    
+                                }
+			}
+			$calendar.= '</div>';
+		}else{
+			$calendar.= '<div class="date-bg">';
+			$calendar.= '</div>';
+		}
+                $build_ID=$this->bId;
+                $da=$index2; 
+                $cscheduleMapper = new Model_ConferenceSchedule();
+                $getvalidday=$cscheduleMapper->getcrvaliddays($build_ID,$da);
+                //if(!empty($this->viewacess))
+                if(in_array($running_day, $this->viewacess) && !empty($getvalidday)){
+                    $plus='<div class="conbooking"><a href="#createBooking" onclick="createBooking('.$url.')">+</a> </div>';
+                }else{
+                    $plus="";
+                }
+                
+		if(date("m") == $month && date("d") <= $list_day ){
+			$calendar.= $plus;
+			
+		}
+		
+		/** QUERY THE DATABASE FOR AN ENTRY FOR THIS DAY !!  IF MATCHES FOUND, PRINT THEM !! * */
+		$calendar.= str_repeat('<p> </p>', 2);
+		$calendar.= '</td>';
+		if ($running_day == 6):
+			$calendar.= '</tr>';
+			if (($day_counter + 1) != $days_in_month):
+				$calendar.= '<tr class="calendar-row" valign="top">';
+			endif;
+			$running_day = -1;
+			$days_in_this_week = 0;
+		endif;
+		$days_in_this_week++;
+		$running_day++;
+		$day_counter++;
+	endfor;
+
+	/* finish the rest of the days in the week */
+	if ($days_in_this_week < 8):
+		for ($x = 1; $x <= (8 - $days_in_this_week); $x++):
+			//$calendar.= '<td class="calendar-day-np"> </td>';
+		endfor;
+	endif;
+
+	/* final row */
+	$calendar.= '</tr>';
+
+	/* end the table */
+	$calendar.= '</table>';
+
+	/* all done, return result */
+	echo $calendar;
+
+    $j=1;    
+foreach($roomname as $val){
+    
+  echo '<script>$(".'.str_replace(" ","_",$val).'").addClass("book_hot_schedule'.$j.'"); </script>';
+  $j++;
+}
+	/* sample usages */
+	?>
+	<?php
+	if(empty($tenantcountcrRoom)){?>
+		<script type="text/javascript">			
+	       window.location.href = baseUrl+'/tenant/noaccess';
+	  </script>
+	<?php }	?>
+<script type="text/javascript">
+$(".calendar-day .readmore").click(function(){
+    $(this).parent().parent().addClass("moreinfo");
+    $(this).parent().find('.tooltip-vcm').removeClass('hide').show();
+    $(this).parent().find('.tooltip-vcm').show();
+    $(this).hide();
+});
+
+if($(".calendar-day .conbooking").length>0){
+	$(".nav .conavailability").show();
+}else{
+	$(".nav .conavailability").hide();
+}
+
+
+$('.calendar-day').each(function () {
+    var meetingCount = $(this).find('.tooltip-vcm').length;       
+     if (meetingCount >3 ) {
+        jQuery(this).find('.readmore').show();
+        $(this).find('.readmore').css("display", "block");
+        $(this).find('.tooltip-vcm').each(function (index) {
+            if(index>2){
+               $meetingDiv =  $(this);
+               $meetingDiv.addClass("hide");
+            }
+        });
+     }   
+});
+</script>

@@ -1,0 +1,73 @@
+<?php
+$cscheduleDetails = $this->cscheduleDetails;
+$not_permit = array(2, 3, 6);
+
+$croom_access = $this->acessHelper->checkAccess($this->roleId, $this->croom_location);
+/* override access by custom user access if exist */
+$customeAccessmodel = new Model_UserAccess();
+$customeAccessmodeld = $customeAccessmodel->getUserCustomAccess($this->userId, $this->croom_location);
+if ($customeAccessmodeld[0]) {
+    $croom_access = $customeAccessmodeld[0];
+}
+?>
+
+<div id="priority_popup" style="display:none;"></div>
+<section class="w-48 fr ch-home-form">
+    <table class="priority-list" width="100%">
+
+        <tr>
+            <th>&nbsp;</th>
+            <th><a href="javascript:void(0)" class="" onclick="">Scheduler Name</a></th>
+            <th>Day's of the Week</th>
+            <th>Active <input type="hidden" name="priority_page" id="priority_page" value=""/></th>
+            <th>Time Active</th>
+            <?php if (!in_array($this->roleId, $not_permit) && $croom_access->is_write == 1) { ?>
+                <th>Action</th>
+            <?php } ?>
+        </tr>
+        <?php
+        if ($cscheduleDetails) {
+            foreach ($cscheduleDetails as $schval) {
+                ?>
+                <tr id="show_priority_id_<?php echo $schval->id; ?>" class="show-priority">
+                    <td>
+                        <div class="open_plus" id="open_div_cs_<?php echo $schval->id; ?>"> <?php if ($schval->default == 0 && (!in_array($this->roleId, $not_permit)) && $croom_access->is_write == 1 ) { ?>
+                                                        <a href="#EditCSchedule" onclick="javascript:EditCSchedule('<?php echo $this->baseUrl() . '/conference/editcschedule/bid/' . $this->select_build_id . '/sid/' . $schval->id; ?>');"   title="Edit"></a>
+                                                    <?php } else { ?>                                               
+                                                        <a href="javascript:void(0);" id="" onClick="";></a>
+                                                    <?php } ?>
+                                                    </div></div>
+                    </td>
+
+                    <td><?php echo $schval->schedule_name; ?></td>
+                    <td><?php echo $schval->schedule_title ?></td>
+                    <td><?php echo ($schval->status) ? 'Yes' : 'No'; ?></td>
+                    <td><?php
+                        if ($schval->all_day == 1) {
+                            echo "All Day";
+                        } else {
+                            echo $schval->start_time . '-' . $schval->end_time;
+                        }
+                        ?></td>
+                    <?php if ($schval->default == 0 && (!in_array($this->roleId, $not_permit)) && $croom_access->is_write == 1) { ?>
+                        <td> <?php if ($schval->default == 0) { ?>
+                                <div class="col02 coladdlastcol lastcol edit_delete_icon"><a href="#EditCSchedule" onclick="javascript:EditCSchedule('<?php echo $this->baseUrl() . '/conference/editcschedule/bid/' . $this->select_build_id . '/sid/' . $schval->id; ?>');"   title="Edit"><img src="<?php echo BASEURL . 'public/images/edit.png'; ?>" /></a> <a href="javascript:void(0);" onclick="deleteCScheduler('<?php echo $schval->id; ?>')" data-id="" title="Delete"><img src="<?php echo BASEURL . 'public/images/delete.png'; ?>" /></a></div>
+                            <?php } ?>
+                        </td>
+                    <?php } ?>
+                </tr>
+                <?php
+            }
+        }
+        ?>
+
+        <tr id="tr_schecdule-" class="show-tr-schlist" style="display:none">
+            <td>&nbsp;</td>
+            <td colspan="6" class="margin_padding_none" id="show_priority_schedule_"></td>
+        </tr>
+
+    </table>
+    <?php if (!in_array($this->roleId, $not_permit) && $croom_access->is_write == 1) { ?>
+        <a class="modalbox create_conf " onclick="javascript:addNewSchedule('<?php echo $this->baseUrl() . '/conference/addnewschedule/bid/' . $this->select_build_id; ?>');" href="#AddNewSchedule"> <button value="Memorize" name="memorize" type="button">Add new Schedule</button> </a>
+    <?php } ?>
+</section>

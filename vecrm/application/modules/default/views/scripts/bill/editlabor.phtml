@@ -1,0 +1,121 @@
+<?php
+
+$companyModel = new Model_Company();
+$nottenant = 1; // this for not listing the tenant user here.
+$users = $companyModel->getUserByBuildingId($this->bId,$nottenant);
+/********* get assigned user list **********/
+$blModel = new Model_BillLabor();
+$assignList = $blModel->getAssignByBId($this->bId);
+$assign_array = array();
+if($assignList){
+	foreach($assignList as $asl){
+		$aul = explode(",",$asl['assign_to']);
+		foreach($aul as $au)
+		  $assign_array[] = $au;
+	}
+}
+?>
+
+<div id="edit_labor_div">
+	<span>Edit Labor Charges</span>
+	<?php if($this->laborData) { 
+		  $labor = $this->laborData[0];
+		  $assignArr = explode(",",$labor['assign_to']);
+		?>
+	<div class="message">
+		<span id="success_msg" class="success"></span>
+		<span id="error_msg" class="error"></span>
+	</div>
+	<div class="labor_row">
+		  <label>Description:</label>
+		  <div class="labor_ibox_row">
+			   <span class="field_error" id="lerror_desc"></span>
+			   <input type="text" name="description" id="description" value="<?php echo $labor['description']; ?>"/>
+		  </div>			
+	</div>
+	<div class="labor_row">
+		 <label>Active:</label>
+		  <div class="labor_ibox_row">
+			   <span class="field_error" id="lerror_status"></span>
+			   <select name="status" id="status">
+				   <option value="1" <?php echo ($labor['status']==1)?'selected="selected"':'';?>>Yes</option>
+				   <option value="0" <?php echo ($labor['status']==0)?'selected="selected"':'';?>>No</option>
+			   </select>
+		  </div>
+	</div>
+	<div class="labor_row">
+		  <label>Charge/Hour $:</label>
+		  <div class="labor_ibox_row">
+			   <span class="field_error" id="lerror_charge"></span>
+			   <input type="text" name="charge_hour" id="charge_hour" onkeypress="return isNumber(event)" maxlength="6" value="<?php echo $labor['charge_hour']; ?>"/>
+		  </div>			
+	</div>
+	<div class="labor_row">
+		 <label>Set as Default:</label>
+		  <div class="labor_ibox_row">
+			   <span class="field_error" id="lerror_default"></span>
+			   <select name="set_default" id="set_default">
+				   <option value="1" <?php echo ($labor['set_default']==1)?'selected="selected"':'';?>>Yes</option>
+				   <option value="0" <?php echo ($labor['set_default']==0)?'selected="selected"':'';?>>No</option>
+			   </select>
+		  </div>
+	</div>
+	<div id="assigned-div">
+		  <table cellpadding="5" cellspacing="5" class="assign_table">
+				<tbody>
+					<tr>
+						<td>
+							<span class="span">List of Account Users</span>
+							<select id="usre_from_list" multiple="multiple" name="usre_from_list" width="240"> 
+								<?php foreach ($users as $key => $value) { 
+									  if(!in_array($value->uid,$assignArr)){
+										   if(in_array($value->uid,$assign_array)){
+										  ?>
+										 <option value="assigned" class="assign_user">
+											<?php echo $value->lastName.','.$value->firstName; ?>
+										 </option>
+										   <?php }else{?>
+									<option value="<?php echo $value->uid; ?>">
+										<?php echo $value->lastName.','.$value->firstName; ?>
+									</option>
+								<?php } 
+								  }
+								} ?>
+							</select>
+						</td>
+						<td style="border:none;">
+							 <div id="arrow-switcher">
+								 <a href="javascript:void(0)" onClick="move_list_items('usre_from_list','user_to_list')">
+									<img src="<?php echo BASEURL.'public/images/right-arrow.png';?>" width="50"/>
+								 </a>
+								 <a href="javascript:void(0)" onClick="move_list_items('user_to_list','usre_from_list')">
+									<img src="<?php echo BASEURL.'public/images/left-arrow.png';?>" width="50"/>
+								 </a>
+							 </div>
+						</td>
+						<td>
+							<span class="span">Assigned To</span>
+							<select id="user_to_list" name="user_to_list[]" multiple="multiple" width="240"> 
+								<?php foreach ($users as $key => $value) { 
+									 if(in_array($value->uid,$assignArr)){?>									
+									<option value="<?php echo $value->uid; ?>">
+										<?php echo $value->lastName.','.$value->firstName; ?>
+									</option>
+								<?php }
+								} ?>
+							</select>
+						</td>
+				   </tr>                                                              
+				</tbody>
+			</table>
+	  </div>
+	<div class="buttons">
+				   <button type="button" name="save_labor" id="save_labor" value="Save" onclick="updateLaborCharge('<?php echo $labor['blid'];?>','<?php echo $this->bId;?>')">Confirm</button>
+				   <button type="button" name="cancel" id="cancel" value="Cancel" onclick="cancelEditLabor()">Cancel</button>
+			  </div>
+	 <?php 
+   }else{
+	   echo 'Invalid URL';
+   }
+	 ?>		  
+</div>

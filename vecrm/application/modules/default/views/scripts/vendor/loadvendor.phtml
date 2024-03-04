@@ -1,0 +1,446 @@
+<?php 
+$sarray = array();
+$servModel = new Model_Services();
+$serviceList = $servModel->getServices();
+foreach($serviceList as $sl){
+	$sarray[$sl['sid']]=$sl['service'];
+}
+
+$carray = array();
+$contModel = new Model_ContactType();
+$contactList = $contModel->getContactType();
+foreach($contactList as $cl){
+	$carray[$cl['cid']]=$cl['contact'];
+}
+//print_r($this->vdata);
+$vendor = $this->vdata;
+$vid = $vendor['vid'];
+
+$vcModel = new Model_VendorContact();
+$vcList = $vcModel->getContactByVid($vid);
+$vendor_access = $this->acessHelper->checkAccess($this->roleId,$this->vendor_location);
+if($vendor_access->is_access == 0){
+?>  
+		<div id="vendor_contact_info_div">
+			<div id="vendor_info_div">
+				 <?php if($vendor_access->is_write==1){?>
+					   <div id="left_right_main" class="vendor_lr_row">
+						 <div id="left_section">
+						   <div class="field_edit_popup">
+								<li class="required">&nbsp;</li><label>Comapany Name</label> <span>:</span>
+								 <?php //echo (!empty($uinfo->tenantName))?$uinfo->tenantName:''; ?>
+								<a style="display:table-cell; padding: 0 0 0 3px;" href="#" class="company_name" id="company_name-<?php echo $vid; ?>"><?php echo (!empty($vendor['company_name']))?$vendor['company_name']:''; ?></a>
+								<input type="hidden" name="role_id" id="role_id" value="9"/>
+							  </div>
+							  <div class="field_edit_popup">
+								<li class="required">&nbsp;</li><label>First Name</label> <span style="float:left;">:</span>
+								 <a style="display:table-cell; padding: 0 0 0 3px;" href="#" class="first_name" id="first_name-<?php echo $vid; ?>" data-type="text" data-pk="<?php echo $vid; ?>" data-url="<?php echo $this->baseUrl().'/vendor/updatevendor';?>" data-title="Enter First Name" data-placeholder="Required" data-name="first_name"><?php echo (!empty($vendor['first_name']))?$vendor['first_name']:''; ?></a>										
+							  </div>
+							  <div class="field_edit_popup">
+								<li class="required">&nbsp;</li><label>Last Name</label> <span style="float:left;">:</span>
+								 <a style="display:table-cell; padding: 0 0 0 3px;" href="#" class="last_name" id="last_name-<?php echo $vid; ?>" data-type="text" data-pk="<?php echo $vid; ?>" data-url="<?php echo $this->baseUrl().'/vendor/updatevendor';?>" data-title="Enter Last Name" data-placeholder="Required" data-name="last_name"><?php echo (!empty($vendor['last_name']))?$vendor['last_name']:''; ?></a>										
+							  </div>
+							  <div class="field_edit_popup">
+								<li class="required">&nbsp;</li><label>Phone Number</label> <span style="float:left;">:</span>
+								 <a style="display:table-cell; padding: 0 0 0 3px;" href="#" class="phone_number" id="phone_number-<?php echo $vid; ?>" data-type="text" data-pk="<?php echo $vid; ?>" data-url="<?php echo $this->baseUrl().'/vendor/updatevendor';?>" data-title="Enter Phone Number" data-placeholder="Required" data-name="phone_number"><?php echo (!empty($vendor['phone_number']))?$vendor['phone_number']:''; ?></a>										
+							  </div>
+							  <div class="field_edit_popup">
+								<li class="not_required">&nbsp;</li><label>Cell Number</label> <span style="float:left;">:</span>
+								 <a style="display:table-cell; padding: 0 0 0 3px;" href="#" class="cell_number" id="cell_number-<?php echo $vid; ?>" data-type="text" data-pk="<?php echo $vid; ?>" data-url="<?php echo $this->baseUrl().'/vendor/updatevendor';?>" data-title="Enter Cell Number"  data-name="cell_number"><?php echo (!empty($vendor['cell_number']))?$vendor['cell_number']:''; ?></a>										
+							  </div>
+							  <div class="field_edit_popup">
+								<li class="not_required">&nbsp;</li><label>Email</label> <span style="float:left;">:</span>
+								 <a style="display:table-cell; padding: 0 0 0 3px;" href="#" class="email" id="email-<?php echo $vid; ?>"><?php echo (!empty($vendor['email']))?$vendor['email']:''; ?></a>										
+							  </div>
+							  <div class="field_edit_popup">
+								<li class="required">&nbsp;</li><label> Address </label> <span style="float:left;">:</span>
+								   <a style="display:table-cell; padding: 0 0 0 3px;" href="#" class="address1" id="address1-<?php echo $vid; ?>" data-type="text" data-pk="<?php echo $vid; ?>" data-url="<?php echo $this->baseUrl().'/vendor/updatevendor';?>" data-title="Enter Address1" data-placeholder="Required" data-name="address1"><?php echo (!empty($vendor['address1']))?$vendor['address1']:''; ?></a>				 										 
+							  </div>
+							  <div class="field_edit_popup">
+								 <li class="not_required">&nbsp;</li> <label>&nbsp;</label>
+								  <a style="display:table-cell; padding: 0 0 0 3px;" href="#" class="address2" id="address2-<?php echo $vid; ?>" data-type="text" data-pk="<?php echo $vid; ?>" data-url="<?php echo $this->baseUrl().'/vendor/updatevendor';?>" data-title="Enter Address2"  data-name="address2"><?php echo (!empty($vendor['address2']))?$vendor['address2']:''; ?></a>
+							  </div>	  
+							  <div class="field_edit_popup">
+								<li class="required">&nbsp;</li><label>City</label> <span style="float:left;">:</span>
+								 <a style="display:table-cell; padding: 0 0 0 3px;" href="#" class="city" id="city-<?php echo $vid; ?>" data-type="text" data-pk="<?php echo $vid; ?>" data-url="<?php echo $this->baseUrl().'/vendor/updatevendor';?>" data-title="Enter City" data-placeholder="Required" data-name="city"><?php echo (!empty($vendor['city']))?$vendor['city']:''; ?></a>										
+							  </div>
+							  <div class="field_edit_popup">
+								<li class="required">&nbsp;</li><label>State</label> <span style="float:left;">:</span>
+								 <a style="display:table-cell; padding: 0 0 0 3px;" href="#" class="state" id="state-<?php echo $vid; ?>" data-type="text" data-pk="<?php echo $vid; ?>" data-url="<?php echo $this->baseUrl().'/vendor/updatevendor';?>" data-title="Enter State" data-placeholder="Required" data-name="state"><?php echo (!empty($vendor['state']))?$vendor['state']:''; ?></a>										
+							  </div>
+							  <div class="field_edit_popup">
+								<li class="required">&nbsp;</li><label>Postal Code</label> <span style="float:left;">:</span>
+								 <a style="display:table-cell; padding: 0 0 0 3px;" href="#" class="postal_code" id="postal_code-<?php echo $vid; ?>" data-type="text" data-pk="<?php echo $vid; ?>" data-url="<?php echo $this->baseUrl().'/vendor/updatevendor';?>" data-title="Enter Postal Code" data-placeholder="Required" data-name="postal_code"><?php echo (!empty($vendor['postal_code']))?$vendor['postal_code']:''; ?></a>										
+							  </div>			  
+						 </div> 
+						 <div id="right_section">
+							  <div class="field_edit_popup">
+								<label>Date Created</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo date("F d,Y" ,strtotime($vendor['created_at']));?></span>
+							  </div>
+							   <div class="field_edit_popup">
+								<label>Last Modified</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo ($vendor['updated_at']!=NULL && $vendor['updated_at']!='0000-00-00 00:00:00')?date("F d,Y" ,strtotime($vendor['updated_at'])):'--';?></span>
+							  </div>
+							   <div class="field_edit_popup">
+								<label>Account Number</label> <span style="float:left;">:</span>
+								 <a style="display:table-cell; padding: 0 0 0 3px;" href="#" class="account_number" id="account_number-<?php echo $vid; ?>" data-type="text" data-pk="<?php echo $vid; ?>" data-url="<?php echo $this->baseUrl().'/vendor/updatevendor';?>" data-title="Enter Account Number"  data-name="account_number"><?php echo (!empty($vendor['account_number']))?$vendor['account_number']:''; ?></a>										
+							  </div>
+							   <div class="field_edit_popup">
+								<label>Service</label> <span style="float:left;">:</span>
+								 <a style="display:table-cell; padding: 0 0 0 3px;" href="#" class="services" id="services-<?php echo $vid; ?>" data-type="select" data-pk="<?php echo $vid; ?>" data-url="<?php echo $this->baseUrl().'/vendor/updatevendor';?>" data-title="Select Services" data-placeholder="Required" data-name="services" data-value="<?php echo $vendor['services'];?>"><?php echo $sarray[$vendor['services']]; ?></a>										
+							  </div>
+							   <div class="field_edit_popup">
+								<label>Contact Type</label> <span style="float:left;">:</span>
+								 <a style="display:table-cell; padding: 0 0 0 3px;" href="#" class="contact_type" id="contact_type-<?php echo $vid; ?>" data-type="select" data-pk="<?php echo $vid; ?>" data-url="<?php echo $this->baseUrl().'/vendor/updatevendor';?>" data-title="Select Contact Type" data-placeholder="Required" data-name="contact_type" data-value="<?php echo $vendor['contact_type'];?>"><?php echo $carray[$vendor['contact_type']]; ?></a>										
+							  </div>
+							   <div class="field_edit_popup">
+								<label>Emergency Contact</label> <span style="float:left;">:</span>
+								 <a style="display:table-cell; padding: 0 0 0 3px;" href="#" class="emergency_contact" id="emergency_contact-<?php echo $vid; ?>" data-type="select" data-pk="<?php echo $vid; ?>" data-url="<?php echo $this->baseUrl().'/vendor/updatevendor';?>" data-title="Emergency Contact"  data-name="emergency_contact" data-value="<?php echo $vendor['emergency_contact'];?>"><?php echo ($vendor['emergency_contact']=='1')?'Yes':'No'; ?></a>										
+							  </div>			 
+							  <div class="field_edit_popup">
+									 <label>Active </label> <span>:</span>
+									 <a style="display:table-cell; padding: 0 0 0 3px;" href="#" class="status" id="status-<?php echo $vid; ?>" data-type="select" data-pk="<?php echo $vid; ?>" data-url="<?php echo $this->baseUrl().'/vendor/updatevendor';?>" data-title="Status"  data-name="status" data-value="<?php echo $vendor['status'];?>"><?php echo ($vendor['status']=='1')?'Yes':'No'; ?></a>
+																																 
+							  </div>
+							  <div class="field_edit_popup">
+									 <label>Remove Vendor </label> <span>:</span>
+									 <span><a href="javascript:void(0);"  title="Delete" onclick="deleteVendor('<?php echo $vid;?>')"><img src="<?php echo BASEURL . 'public/images/delete.png'?>" /></a></span>													 										 
+							  </div>
+							  <div class="field_edit_popup">
+								<label>Notes:</label> <span style="float:left;">:</span>
+								 <a style="display:table-cell; padding: 0 0 0 3px;" href="#" class="notes" id="notes-<?php echo $vid; ?>" data-type="textarea" data-pk="<?php echo $vid; ?>" data-url="<?php echo $this->baseUrl().'/vendor/updatevendor';?>" data-title="Notes"  data-name="notes" data-value="<?php echo $vendor['notes'];?>"><?php echo (!empty($vendor['notes']))?$vendor['notes']:''; ?></a>										
+							  </div>
+							  
+						 </div>
+					   </div>  
+						 <div id="bottom_section">
+							  <table>
+								  <tr>
+									  <th>Last Name</th>
+									  <th>First Name</th>
+									  <th>E-mail Address</th>
+									  <th>Phone Number</th>
+									  <th>Cell Number</th>
+									  <th>Emergency Contact</th>
+									  <th>Action</th>
+								  </tr>
+								  <?php if($vcList){
+										   foreach($vcList as $vc){
+									  ?>
+									  <tr>
+										  <td><?php echo $vc['last_name'];?></td>
+										  <td><?php echo $vc['first_name'];?></td>
+										  <td><?php echo $vc['email'];?></td>
+										  <td><?php echo $vc['phone_number'];?></td>
+										  <td><?php echo $vc['cell_number'];?></td>
+										  <td><?php echo ($vc['emergency_contact'])?'Yes':'No';?></td>
+										  <td><a title="Edit" href="<?php echo BASEURL.'vendor/editvendorcontact/vcId/'.$vc['vcId'];?>" ><img src="<?php echo BASEURL . 'public/images/edit.png'?>" /></a>
+										 <a href="javascript:void(0);"  title="Delete" onclick="deleteVendorContact('<?php echo $vc['vcId'];?>','<?php echo $vid?>')"><img src="<?php echo BASEURL . 'public/images/delete.png'?>" /></a></td>
+									  </tr>
+								   <?php }
+								   }?>
+								  <tr>
+									  <th colspan="7"><a href="<?php echo BASEURL.'vendor/addvendorcontact/vid/'.$vid?>">Add alternative Vendor Contact</a></th>
+								  </tr>
+							  </table>
+						 </div>
+				 <?php }else{?>
+					    <div id="left_right_main" class="vendor_lr_row">
+						 <div id="left_section">
+						   <div class="field_edit_popup">
+								<li class="required">&nbsp;</li><label>Comapany Name</label> <span>:</span>
+								 <?php //echo (!empty($uinfo->tenantName))?$uinfo->tenantName:''; ?>
+								<span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($vendor['company_name']))?$vendor['company_name']:''; ?></span>
+								<input type="hidden" name="role_id" id="role_id" value="9"/>
+							  </div>
+							  <div class="field_edit_popup">
+								<li class="required">&nbsp;</li><label>First Name</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($vendor['first_name']))?$vendor['first_name']:''; ?></span>										
+							  </div>
+							  <div class="field_edit_popup">
+								<li class="required">&nbsp;</li><label>Last Name</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($vendor['last_name']))?$vendor['last_name']:''; ?></span>										
+							  </div>
+							  <div class="field_edit_popup">
+								<li class="required">&nbsp;</li><label>Phone Number</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($vendor['phone_number']))?$vendor['phone_number']:''; ?></span>										
+							  </div>
+							  <div class="field_edit_popup">
+								<li class="not_required">&nbsp;</li><label>Cell Number</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($vendor['cell_number']))?$vendor['cell_number']:''; ?></span>										
+							  </div>
+							  <div class="field_edit_popup">
+								<li class="not_required">&nbsp;</li><label>Email</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($vendor['email']))?$vendor['email']:''; ?></span>										
+							  </div>
+							  <div class="field_edit_popup">
+								<li class="required">&nbsp;</li><label> Address </label> <span style="float:left;">:</span>
+								   <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($vendor['address1']))?$vendor['address1']:''; ?></span>				 										 
+							  </div>
+							  <div class="field_edit_popup">
+								 <li class="not_required">&nbsp;</li> <label>&nbsp;</label>
+								  <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($vendor['address2']))?$vendor['address2']:''; ?></span>
+							  </div>	  
+							  <div class="field_edit_popup">
+								<li class="required">&nbsp;</li><label>City</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($vendor['city']))?$vendor['city']:''; ?></span>										
+							  </div>
+							  <div class="field_edit_popup">
+								<li class="required">&nbsp;</li><label>State</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($vendor['state']))?$vendor['state']:''; ?></span>										
+							  </div>
+							  <div class="field_edit_popup">
+								<li class="required">&nbsp;</li><label>Postal Code</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($vendor['postal_code']))?$vendor['postal_code']:''; ?></span>										
+							  </div>			  
+						 </div> 
+						 <div id="right_section">
+							  <div class="field_edit_popup">
+								<label>Date Created</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo date("F d,Y" ,strtotime($vendor['created_at']));?></span>
+							  </div>
+							   <div class="field_edit_popup">
+								<label>Last Modified</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo ($vendor['updated_at']!=NULL && $vendor['updated_at']!='0000-00-00 00:00:00')?date("F d,Y" ,strtotime($vendor['updated_at'])):'--';?></span>
+							  </div>
+							   <div class="field_edit_popup">
+								<label>Account Number</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($vendor['account_number']))?$vendor['account_number']:''; ?></span>										
+							  </div>
+							   <div class="field_edit_popup">
+								<label>Service</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo $sarray[$vendor['services']]; ?></span>										
+							  </div>
+							   <div class="field_edit_popup">
+								<label>Contact Type</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo $carray[$vendor['contact_type']]; ?></span>										
+							  </div>
+							   <div class="field_edit_popup">
+								<label>Emergency Contact</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo ($vendor['emergency_contact']=='1')?'Yes':'No'; ?></span>										
+							  </div>			 
+							  <div class="field_edit_popup">
+									 <label>Active </label> <span>:</span>
+									<span style="display:table-cell; padding: 0 0 0 3px;"><?php echo ($vendor['status']=='1')?'Yes':'No'; ?></span>
+																																 
+							  </div>							  
+							  <div class="field_edit_popup">
+								<label>Notes:</label> <span style="float:left;">:</span>
+								 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($vendor['notes']))?$vendor['notes']:''; ?></span>										
+							  </div>
+							  
+						 </div>
+					   </div>  
+						 <div id="bottom_section">
+							  <table>
+								  <tr>
+									  <th>Last Name</th>
+									  <th>First Name</th>
+									  <th>E-mail Address</th>
+									  <th>Phone Number</th>
+									  <th>Cell Number</th>
+									  <th>Emergency Contact</th>									 
+								  </tr>
+								  <?php if($vcList){
+										   foreach($vcList as $vc){
+									  ?>
+									  <tr>
+										  <td><?php echo $vc['last_name'];?></td>
+										  <td><?php echo $vc['first_name'];?></td>
+										  <td><?php echo $vc['email'];?></td>
+										  <td><?php echo $vc['phone_number'];?></td>
+										  <td><?php echo $vc['cell_number'];?></td>
+										  <td><?php echo ($vc['emergency_contact'])?'Yes':'No';?></td>										 
+									  </tr>
+								   <?php }
+								   }?>								  
+							  </table>
+						 </div>
+				 <?php }?> 	
+			</div>
+		</div>
+<?php }?>
+<script type="text/javascript">
+	var checkTenaant = '';
+$( document ).ready(function() {
+	
+	$.fn.editable.defaults.mode = 'popup';	
+	$('.company_name').editable({
+	        validate: function(value) {
+               if($.trim(value) == '') return 'This field is required';
+            },
+		    type: 'text',
+			url: baseUrl+'vendor/updatevendorname/building/'+'<?php echo $vendor['buildingId']; ?>',    
+			pk: '<?php echo $vid; ?>',
+			name:'company_name',    
+			title: 'Enter Company Name',						
+			success: function(response, newValue) {				
+				if(!response) {
+					return "Unknown error!";
+				}          
+				
+				if(response === 'true') {
+					 return "This vendor is already in use.";
+				}
+			}
+    });
+    
+    $('.email').editable({
+		    type: 'text',
+			url: baseUrl+'vendor/updatevendoremail/',    
+			pk: '<?php echo $vid; ?>',
+			name:'email',    
+			title: 'Enter E-mail Address',						
+			success: function(response, newValue) {				
+				if(!response) {
+					return "Unknown error!";
+				}          
+				
+				if(response === 'true') {
+					 return "This email is already in use.";
+				}
+			},
+			validate: function(value) {
+			   if($.trim(value) == '') return 'This field is required';
+			   var isValid = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i.test(value);
+				if (!isValid){
+					return 'The Email is not properly formated';
+				}
+
+			}
+    });   
+    
+
+	$('.first_name').editable({
+		validate: function(value) {
+           if($.trim(value) == '') return 'This field is required';
+        }
+	});
+	
+	$('.last_name').editable({
+		validate: function(value) {
+           if($.trim(value) == '') return 'This field is required';
+        }
+	});
+	
+	$('.address1').editable({
+		validate: function(value) {
+           if($.trim(value) == '') return 'This field is required';
+        }
+	});
+	
+	$('.address2').editable();
+	
+	
+	$('.phone_number').editable({
+		validate: function(value) {
+           if($.trim(value) == '') return 'This field is required';
+           var isValid = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(value);
+			if (!isValid){
+				return 'The \'Phone Number\' in the xxx.xxx.xxxx format';
+			}
+
+        }
+	});
+		
+    $('.cell_number').editable({
+		validate: function(value) {
+           if($.trim(value) == '') return 'This field is required';
+           var isValid = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(value);
+			if (!isValid){
+				return 'The \'Cell Number\' in the xxx.xxx.xxxx format';
+			}
+
+        }
+	});
+	
+	/*$('.email').editable({
+		validate: function(value) {
+           if($.trim(value) == '') return 'This field is required';
+           var isValid = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(value);
+			if (!isValid){
+				return 'The \'Cell Number\' in the xxx.xxx.xxxx format';
+			}
+
+        }
+	});	*/
+	
+
+	$('.city').editable({
+		validate: function(value) {
+           if($.trim(value) == '') return 'This field is required';
+        }
+	});
+	
+	$('.state').editable({
+		validate: function(value) {
+           if($.trim(value) == '') return 'This field is required';
+        }
+	});
+	
+	$('.postal_code').editable({
+		validate: function(value) {
+           if($.trim(value) == '') return 'This field is required';
+        }
+	});
+	
+	$('.account_number').editable({
+		validate: function(value) {
+           if($.trim(value) == '') return 'This field is required';
+        }
+	});
+	
+	$('.services').editable({
+		source: [
+		<?php foreach($sarray as $key=>$value){	?>
+        {value: <?php echo $key?>, text: '<?php echo $value?>'},       
+        <?php }?>
+       ],
+		validate: function(value) {
+           if($.trim(value) == '') return 'This field is required';
+        }
+	});
+	
+	$('.contact_type').editable({
+		source: [
+		<?php foreach($carray as $key=>$value){	?>
+        {value: <?php echo $key?>, text: '<?php echo $value?>'},       
+        <?php }?>
+       ],
+		validate: function(value) {
+           if($.trim(value) == '') return 'This field is required';
+        }
+	});
+
+    $('.emergency_contact').editable({
+		source: [
+		{value: '1', text: 'Yes'},
+        {value: '0', text: 'No'}
+       ],
+		validate: function(value) {
+           if($.trim(value) == '') return 'This field is required';
+        }
+	});
+	
+	$('.status').editable({
+		source: [		
+        {value: '1', text: 'Yes'},
+        {value: '0', text: 'No'}       
+        
+       ],
+		validate: function(value) {
+           if($.trim(value) == '') return 'This field is required';
+        }
+	});
+	
+	$('.billtoAddress').editable({		
+		validate: function(value) {
+           if($.trim(value) == '') return 'This field is required';
+        }
+	});
+	
+	$('.notes').editable();
+});
+
+</script>

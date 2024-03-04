@@ -1,0 +1,503 @@
+<?php
+//echo '<pre>';
+//print_r($this->templatedetails);
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/pm.js');
+
+$userRoleID = Zend_Auth::getInstance()->getStorage()->read()->role_id;
+$userId = Zend_Auth::getInstance()->getStorage()->read()->uid;
+$customeAccessmodelll = new Model_UserAccess();
+$actionnHelper = Zend_Controller_Action_HelperBroker::getStaticHelper('Access');
+$accarray =array(2,3,4,6);
+$WorkOrders = true;
+if(in_array($userRoleID, $accarray)){
+    $WorkOrdersss =  $actionnHelper->checkAccess($userRoleID, 31);
+    $customeAccessmodeld = $customeAccessmodelll->getUserCustomAccess($userId, 31);
+    if ($customeAccessmodeld[0]) {
+        $WorkOrdersss = $customeAccessmodeld[0];
+    }
+    if($WorkOrdersss->is_write == 0){
+        $WorkOrders = false;
+    }
+}
+
+foreach($this->templatedetails as $vals){
+    $autemplatenameid .= $vals['AU_Template_Name_ID']; 
+    $autemplatenameid .= ',' ;
+    foreach($vals['AU_TypeDesignation'] as $typedesgvals ){
+        $audesignationid .= $typedesgvals->AU_Template_Designation_ID;
+        $audesignationid .= ',';       
+        
+    }
+}
+
+$reportModel = new Model_Report();
+$reportDetailLinks = '';
+$dashBoardViewsdetails = '';
+$dashBoardViews = '';
+$woNumberAll = '';
+$invoiceAll = '';
+$uniqueCostCenterAll = '';
+$buildIdReportAll = '';
+$batch_number_report = '';
+$uniqueCostCenter = '';
+$batch_number_reportallbuilding = '';
+$buildIdReport = $this->select_build_id;
+
+$not_permit = array(2, 3, 6);
+//echo $this->roleId;
+//echo $this->croom_location;
+
+
+$croom_access = $this->acessHelper->checkAccess($this->roleId, $this->croom_location);
+//print_r($croom_access);
+//die;
+/* override access by custom user access if exist */
+$customeAccessmodel = new Model_UserAccess();
+$customeAccessmodeld = $customeAccessmodel->getUserCustomAccess($this->user_Id, $this->croom_location);
+if ($customeAccessmodeld[0]) {
+    $croom_access = $customeAccessmodeld[0];
+}
+//print_r($croom_access);
+//die;
+$moduleMapper = new Model_UserBuildingModule();
+$moduleAccess = $moduleMapper->getModuleByBuildingId($this->select_build_id, 3);
+$buildhasAccess = array();
+if ($moduleAccess) {
+    foreach ($moduleAccess as $moduleAccessVal) {
+        $buildhasAccess[] = $moduleAccessVal->module_id;
+    }
+}
+$dashboard_menu = array(45);
+if (in_array(3, $buildhasAccess)) {
+    $reportDetailLinks = $reportModel->getReport($this->custID, $dashboard_menu);
+        
+} else {
+    $reportDetailLinks = false;
+}
+
+$dashboard_menu = array(46);
+if (in_array(3, $buildhasAccess)) {
+    $templateNameLinks = $reportModel->getReport($this->custID, $dashboard_menu);
+        
+} else {
+    $templateNameLinks = false;
+}
+
+$dashboard_menu = array(47);
+if (in_array(3, $buildhasAccess)) {
+    $typeDesignationLinks = $reportModel->getReport($this->custID, $dashboard_menu);
+        
+} else {
+    $typeDesignationLinks = false;
+}
+
+
+$timezoneMapper = new Model_TimeZone();
+$timezoneMapper->setTimezone($this->select_build_id);
+$currentdate = date("Y-m-d");
+$booking_arr = array();
+
+$template = new Model_PmTemplate();
+
+//echo $this->roleId;
+//echo $croom_access->is_access;
+if ($this->roleId != 1 && $croom_access->is_access == 0) {
+    ?>
+    <div class="fdw" id="access-matrix">
+
+        <ol id="toc">
+
+            <?php
+            $j = 1;
+            //print_r($this->companyListing);
+            //die;
+
+            foreach ($this->companyListing as $cb) {
+                //print_r($cb);
+                if ($cb['build_id'] == $this->select_build_id) {
+                    $uniqueCostCenter = $cb['uniqueCostCenter'];
+                }
+                ?>
+                <li><a class="<?php if ($cb['build_id'] == $this->select_build_id) echo 'active'; ?>"  href="<?php echo $this->baseUrl() . '/pm/equipmenttemplate/bid/' . $cb['build_id']; ?>" ><span><?php echo $cb['buildingName']; ?></span></a>
+                    <?php /*
+                      if ($reportDetailLinks != '') {
+
+                      if ($cb['build_id'] == $this->select_build_id) {
+
+                      $uniqueCostCenter = $cb['uniqueCostCenter'];
+                      $batchDetails = $woBatch->showBatch($cb['build_id']);
+                      $batch_number_report = '';
+                      if ($batchDetails != '') {
+                      foreach ($batchDetails as $bd) {
+                      $batch_number_report = $batch_number_report . $bd['batch_number'] . ',';
+                      }
+                      }
+                      $order = 'woId';
+                      $dir = 'DESC';
+                      $wolist = $woReport->getWorkOrderByBuilding($cb['build_id'], $order, $dir);
+                      $invoicelist = $woReport->invoiceByBatch($cb['build_id'], $order, $dir);
+                      if ($wolist != '') {
+                      foreach ($wolist as $woNumber) {
+                      $woNumberAll = $woNumberAll . $woNumber->wo_number . ',';
+                      }
+                      }
+                      if ($invoicelist != '') {
+                      foreach ($invoicelist as $invoiceNumber) {
+                      $invoiceAll = $invoiceAll . $invoiceNumber->wo_number . ',';
+                      }
+                      }
+                      }
+                      } */
+                    ?> 
+                </li>
+
+            <?php } ?>
+        </ol>
+
+        <!-- Report Link -->
+        <?php if ($reportDetailLinks != '') { ?> <div class="tabmenu" ><ul style="padding:0px;list-style: none;"><?php
+            foreach ($reportDetailLinks as $reportvalue) {
+                if ($reportvalue->Report_Type == 'Flash') {
+                    $report_type = 'reports/VisionReportEngine/index.php?stimulsoft_client_key=ViewerFx&stimulsoft_';
+                } else {
+                    $report_type = 'vnsreports/index.php?';
+                }
+                $reportOption = explode(',', $reportvalue->report_option);
+                ?> <li class="report_text" ><a   <?php if ($reportvalue->report_target == 1) { ?> target='_blank' <?php } ?> href="<?php echo BASEURL; ?><?php echo $report_type; ?>report_key=<?php echo $reportvalue->report_mrt; ?><?php
+                if (in_array('[[++user_id]]', $reportOption)) {
+                    echo '&User=' . $this->userId;
+                }
+                ?><?php
+                        if ((in_array('[[++CostCenterNumber]]', $reportOption)) && $uniqueCostCenter != '') {
+                            echo '&Cost_Center_Number=' . $uniqueCostCenter;
+                        }
+                        ?><?php
+                        if ((in_array('[[++KeyBuildingNumber]]', $reportOption)) && $this->select_build_id != '') {
+                            echo '&buildkey=' . $this->select_build_id;
+                        }
+                        ?><?php if ((in_array('[[++AU_Template_Name_ID]]', $reportOption)) && $autemplatenameid != '') {
+                            echo '&AU_Template_Name_ID=' . rtrim($autemplatenameid,',');
+                        } ?><?php if ((in_array('[[++AU_Designation_ID]]', $reportOption)) && $audesignationid != '') {
+                            echo '&AU_Designation_ID=' . rtrim($audesignationid,',');
+                        } ?>" ><?php echo $reportvalue->report_name; ?> </a> </li> <?php } ?> </ul></div>	<?php } ?>
+
+                                                                                               <?php if (in_array(3, $buildhasAccess)) { ?>
+            <div class="pull-right">
+                <a class="modalbox create_conf " id="add_equp" onclick="javascript:pmSetupAndOption('<?php echo $this->baseUrl() . '/pm/pmsetupoptions/buiild_id/' . $this->select_build_id; ?>');" href="#CreateNewMultiCon"> 
+                    <button class="confirm">PM Work Order Options</button>
+                </a></div>
+
+            <section>
+            <?php if($WorkOrders){ ?>
+                <a class="modalbox create_conf " onclick="javascript:addnewtemplete('<?php echo $this->baseUrl() . '/pm/createequipmenttemplate'; ?>');" href="#CreateNewMultiCon"> 
+                    <button class="confirm"  >Create Template Name</button>
+                </a>
+                <a class="modalbox create_conf " onclick="javascript:addnewtemplete('<?php echo $this->baseUrl() . '/pm/createequipmenttemplatedesignation'; ?>');" href="#CreateNewMultiCon"> 
+                    <button class="confirm"  >Add Type designation</button>
+                </a>
+                <a class="modalbox create_conf " onclick="javascript:addnewtemplete('<?php echo $this->baseUrl() . '/pm/importtemplate'; ?>');" href="#CreateNewMultiCon"> 
+                    <button class="confirm" > Import Templates </button>
+                </a>
+                <a class="modalbox create_conf " onclick="javascript:addnewtemplete('<?php echo $this->baseUrl() . '/pm/exporttoanotherbuilding'; ?>');" href="#CreateNewMultiCon"> 
+                    <button class="confirm" > Export to Another Building </button>
+                </a>
+            <?php } ?>
+                <div id="vendor_search_div">
+                    <div id="row search_form_div">
+                        <div id="search_message"></div>
+                        <form name="search_form" id="search_form" action="<?php echo $this->baseUrl(); ?>/pm/equipmenttemplate" method="post">
+                          <div class="showing-drop-wrap-temp" >
+                            <lable class="ser_sp">Show</lable>
+                            <select id="show_limit" onchange="showlimit();" name="show_limit" style="width:100px !important;" >
+                                <option value="5" <?php echo ($this->show == 5 ? "selected" : ""); ?> >5</option>
+                                <option value="10" <?php echo ($this->show == 10 ? "selected" : ""); ?> >10</option>                                
+                                <option value="25" <?php echo ($this->show == 25 ? "selected" : ""); ?>>25</option>
+                                <option value="50" <?php echo ($this->show == 50 ? "selected" : ""); ?>>50</option>
+                                <option value="100" <?php echo ($this->show == 100 ? "selected" : ""); ?>>100</option>
+                                <!--<option value="all" <?php //echo ($this->show == 1000 ? "selected" : "");    ?>>All</option>-->
+                            </select>
+                            </div>
+                            <div id="form_field">
+                                <div style="float:left;">
+                                    <label class="labelcenter">Search For</label>
+                                </div>
+                                <!--<input id="pmsearch_by" type="text" name="templatename" placeholder="Template Name" value="<?php //echo $this->templateName;   ?>">-->
+                                <select class="form-control" name="templatename" id="pmsearch_by" onchange="searchfor();">
+        <?php foreach ($this->listAllTemplateName as $temp): ?>
+                                        <option  id="<?php echo $temp->AU_Template_Name_ID; ?>" value="<?php echo $temp->AU_Template_Name; ?>"><?php echo $temp->AU_Template_Name; ?></option>
+                                    <?php endforeach; ?>
+
+                                </select>
+
+                                <div class="text-select-div">
+                                    <div id="search_txt"><!--<input type="text" name="designationname" placeholder="Designation Name" value="<?php //echo $this->designationName;   ?>">-->
+
+                                        <input type="text" name="designationname" list="typehintvalue" id="designationname" class="form-control" autocomplete="off" />
+
+                                        <datalist id="typehintvalue">
+                                        </datalist>
+
+                                    </div>
+                                </div> 
+                            </div>
+                            <div class="form-button">
+                                <input type="submit" name="search" id="search" value="Search">
+                                <input type="button" name="reset" id="reset" value="Reset" onclick="window.location.href = '<?php echo BASEURL; ?>pm/equipmenttemplate'">
+                            </div> 
+  
+
+                        </form>
+        <?php
+        if ($this->nooftask > 0 || $this->noofreading > 0) {
+            ?>
+                            <div class="pull-right right_corner_btn">
+                                <a href="<?php echo $this->baseUrl() . '/pm/modifiedequipmentlist'; ?>">Modified Equipment List</a>
+                            </div>                        
+            <?php
+        }
+        ?>
+
+                    </div>
+                </div>
+            </section>
+            <section style="z-index:9999" class="w-48 fr ch-home-form" id="first">
+                <section class="ch-form-header">
+                    <h3>Existing PM templates</h3>
+                </section>
+                <div class="gridContainer-1">
+                    <div class="tableGrid">
+                        <table border="1" width="100%">
+                            <tr class="table-title"><td colspan="4">Template Name </td></tr>
+
+        <?php
+        foreach ($this->templatedetails as $val):
+            $reslt = $template->getEquipmentDetailbyTempId($val['AU_Template_Name_ID'], $this->select_build_id);
+            ?>
+
+                                <tr>
+                                    <td colspan="3" Class="border-top"><?php echo $val['AU_Template_Name']; ?></td>
+                                    <td class="td-imd-wd">
+            <?php
+            foreach ($templateNameLinks as $reportvalue) {
+                $reportOptions = explode(',', $reportvalue->report_option);
+                if ($reportvalue->Report_Type == 'Flash') {
+
+                    if ((in_array('[[++CostCenterNumber]]', $reportOptions)) && $uniqueCostCenter != '') {
+                        $key = array_search('[[++CostCenterNumber]]', $reportOptions);
+                        $costCenterNumber = str_replace('[[++CostCenterNumber]]', $uniqueCostCenter, $reportOptions[$key]);
+                    }
+
+                    if ((in_array('[[++KeyBuildingNumber]]', $reportOptions)) && $this->select_build_id != '') {
+                        $key = array_search('[[++KeyBuildingNumber]]', $reportOptions);
+                        $buildingID = str_replace('[[++KeyBuildingNumber]]', $this->select_build_id, $reportOptions[$key]);
+                    }
+                    if ((in_array('[[++user_id]]', $reportOptions)) && $this->userId != '') {
+                        $key = array_search('[[++user_id]]', $reportOptions);
+                        $userID = str_replace('[[++user_id]]', $this->userId, $reportOptions[$key]);
+                    }
+
+                    if ((in_array('[[++AU_Template_Name_ID]]', $reportOptions)) && $val['AU_Template_Name_ID'] != '') {
+                        $key = array_search('[[++AU_Template_Name_ID]]', $reportOptions);
+                        $auTemplateNameID = str_replace('[[++AU_Template_Name_ID]]', $val['AU_Template_Name_ID'], $reportOptions[$key]);
+                    }
+
+                    $print_url = $this->baseUrl() . '/reports/VisionReportEngine/index.php?stimulsoft_client_key=ViewerFx&stimulsoft_report_key=' . $reportvalue->report_mrt . '&Cost_Center_Number=' . $costCenterNumber . ' &buildkey=' . $buildingID . '&userID=' . $userID . '&AU_Template_Name_ID=' . $auTemplateNameID;
+                } else {
+
+
+                    if ((in_array('[[++CostCenterNumber]]', $reportOptions)) && $uniqueCostCenter != '') {
+                        $key = array_search('[[++CostCenterNumber]]', $reportOptions);
+                        $costCenterNumber = str_replace('[[++CostCenterNumber]]', $uniqueCostCenter, $reportOptions[$key]);
+                    }
+
+                    if ((in_array('[[++KeyBuildingNumber]]', $reportOptions)) && $this->select_build_id != '') {
+                        $key = array_search('[[++KeyBuildingNumber]]', $reportOptions);
+                        $buildingID = str_replace('[[++KeyBuildingNumber]]', $this->select_build_id, $reportOptions[$key]);
+                    }
+                    if ((in_array('[[++user_id]]', $reportOptions)) && $this->userId != '') {
+                        $key = array_search('[[++user_id]]', $reportOptions);
+                        $userID = str_replace('[[++user_id]]', $this->userId, $reportOptions[$key]);
+                    }
+
+                    if ((in_array('[[++AU_Template_Name_ID]]', $reportOptions)) && $val['AU_Template_Name_ID'] != '') { {
+                            $key = array_search('[[++AU_Template_Name_ID]]', $reportOptions);
+                            $auTemplateNameID = str_replace('[[++AU_Template_Name_ID]]', $val['AU_Template_Name_ID'], $reportOptions[$key]);
+                        }
+
+                        $print_url = $this->baseUrl() . '/vnsreports/index.php?report_key=' . $reportvalue->report_mrt . '&Cost_Center_Number=' . $costCenterNumber . ' &buildkey=' . $buildingID . '&User=' . $userID . '&AU_Template_Name_ID=' . $auTemplateNameID;
+                    }
+                }
+            }
+            ?>
+                                        <a <?php if ($reportvalue->report_target == 1) { ?> target='_blank' <?php } ?> href="<?php echo $print_url ?>"><img src="<?php echo $this->baseUrl(); ?>/public/images/printer.png" style="width:18px;"></a>
+                                        <?php if($WorkOrders){ ?>
+                                        <a onclick="javascript:edittemplete('<?php echo $this->baseUrl() . '/pm/editequipmenttemplate/template_id/' . $val['AU_Template_Name_ID']; ?>');" href="#CreateNewMultiCon"><img src="<?php echo $this->baseUrl(); ?>/public/images/edit.png" ></a>
+
+                                        <?php 
+                                        if (count($reslt) > 0) {
+                                            ?>
+                                            <a  onclick="javascript:showEquipmentOfTemplate('<?php echo $this->baseUrl() . '/pm/showequipmentoftemplate/'; ?>');" href="#CreateNewMultiCon"><img src="<?php echo $this->baseUrl(); ?>/public/images/delete.png"></a>
+
+                <?php
+            } else {
+                ?>
+                                            <a  onclick="deleteequipmenttemplate(<?php echo $val['AU_Template_Name_ID']; ?>)"><img src="<?php echo $this->baseUrl(); ?>/public/images/delete.png"></a>
+                                            <?php
+                                        } }
+                                        ?>
+
+                                    </td>
+                                </tr>
+                                        <?php if (!empty($val['AU_TypeDesignation'])) { ?>
+                                    <tr class="table-title">
+                                        <td width="10%"  style="border-bottom-color: transparent;background: #fff;"></td>
+                                        <td>Type Designation</td>
+                                        <td>Type Description</td>
+                                        <td></td>
+                                    </tr>
+                                    <?php
+                                    foreach ($val['AU_TypeDesignation'] as $temptype):
+
+                                        $result = $template->getEquipmentDetailbyTempId($temptype->AU_Template_Name_ID, $this->select_build_id);
+
+
+                                        foreach ($typeDesignationLinks as $reportvalue) {
+                                            $reportOptions = explode(',', $reportvalue->report_option);
+                                            if ($reportvalue->Report_Type == 'Flash') {
+
+
+                                                if ((in_array('[[++CostCenterNumber]]', $reportOptions)) && $uniqueCostCenter != '') {
+                                                    $key = array_search('[[++CostCenterNumber]]', $reportOptions);
+                                                    $costCenterNumber = str_replace('[[++CostCenterNumber]]', $uniqueCostCenter, $reportOptions[$key]);
+                                                }
+
+                                                if ((in_array('[[++KeyBuildingNumber]]', $reportOptions)) && $this->select_build_id != '') {
+                                                    $key = array_search('[[++KeyBuildingNumber]]', $reportOptions);
+                                                    $buildingID = str_replace('[[++KeyBuildingNumber]]', $this->select_build_id, $reportOptions[$key]);
+                                                }
+                                                if ((in_array('[[++user_id]]', $reportOptions)) && $this->userId != '') {
+                                                    $key = array_search('[[++user_id]]', $reportOptions);
+                                                    $userID = str_replace('[[++user_id]]', $this->userId, $reportOptions[$key]);
+                                                }
+
+                                                if ((in_array('[[++AU_Designation_ID]]', $reportOptions)) && $temptype->AU_Template_Designation_ID != '') {
+                                                    $key = array_search('[[++AU_Designation_ID]]', $reportOptions);
+                                                    $auDesignationID = str_replace('[[++AU_Designation_ID]]', $temptype->AU_Template_Designation_ID, $reportOptions[$key]);
+                                                }
+
+                                                $print_url = $this->baseUrl() . '/reports/VisionReportEngine/index.php?stimulsoft_client_key=ViewerFx&stimulsoft_report_key=' . $reportvalue->report_mrt . '&Cost_Center_Number=' . $costCenterNumber . ' &buildkey=' . $buildingID . '&userID=' . $userID . '&AU_Designation_ID=' . $auDesignationID;
+                                            } else {
+
+
+                                                if ((in_array('[[++CostCenterNumber]]', $reportOptions)) && $uniqueCostCenter != '') {
+                                                    $key = array_search('[[++CostCenterNumber]]', $reportOptions);
+                                                    $costCenterNumber = str_replace('[[++CostCenterNumber]]', $uniqueCostCenter, $reportOptions[$key]);
+                                                }
+
+                                                if ((in_array('[[++KeyBuildingNumber]]', $reportOptions)) && $this->select_build_id != '') {
+                                                    $key = array_search('[[++KeyBuildingNumber]]', $reportOptions);
+                                                    $buildingID = str_replace('[[++KeyBuildingNumber]]', $this->select_build_id, $reportOptions[$key]);
+                                                }
+                                                if ((in_array('[[++user_id]]', $reportOptions)) && $this->userId != '') {
+                                                    $key = array_search('[[++user_id]]', $reportOptions);
+                                                    $userID = str_replace('[[++user_id]]', $this->userId, $reportOptions[$key]);
+                                                }
+
+                                                if ((in_array('[[++AU_Designation_ID]]', $reportOptions)) && $temptype->AU_Template_Designation_ID != '') { {
+                                                        $key = array_search('[[++AU_Designation_ID]]', $reportOptions);
+                                                        $auDesignationID = str_replace('[[++AU_Designation_ID]]', $temptype->AU_Template_Designation_ID, $reportOptions[$key]);
+                                                    }
+
+                                                    $print_url = $this->baseUrl() . '/vnsreports/index.php?report_key=' . $reportvalue->report_mrt . '&Cost_Center_Number=' . $costCenterNumber . ' &buildkey=' . $buildingID . '&User=' . $userID . '&AU_Designation_ID=' . $auDesignationID;
+                                                }
+                                            }
+                                        }
+                                        ?>
+                                        <tr>
+                                            <td width="10%" style="border-bottom-color: transparent; background: #fff;"></td>
+                                            <td><a  title="Click To Go Task section" href="<?php echo BASEURL . 'pm/createequipmenttemplatetask/desig_id/' . $temptype->AU_Template_Designation_ID; ?>"><?php echo $temptype->AU_TypeDesignation; ?></a></td>
+                                            <td><a title="Click To Go Task section" href="<?php echo BASEURL . 'pm/createequipmenttemplatetask/desig_id/' . $temptype->AU_Template_Designation_ID; ?>"><?php echo $temptype->AU_TypeDescritpion; ?></a></td>
+                                            <td  class="td-imd-wd">
+                                                <a <?php if ($reportvalue->report_target == 1) { ?> target='_blank' <?php } ?> href="<?php echo $print_url; ?>"><img src="<?php echo $this->baseUrl(); ?>/public/images/printer.png" style="width:18px;"></a>
+                                                <?php if($WorkOrders){ ?>
+                                                <a  onclick="javascript:editdesignation('<?php echo $this->baseUrl() . '/pm/editequipmenttemplatedesignation/desig_id/' . $temptype->AU_Template_Designation_ID; ?>');" href="#CreateNewMultiCon"><img src="<?php echo $this->baseUrl(); ?>/public/images/edit.png" ></a> 
+
+                                                <?php 
+                                        if (count($result) > 0) {
+                                            ?>
+                                                    <a  onclick="javascript:showEquipmentOfTemplate('<?php echo $this->baseUrl() . '/pm/showequipmentoftemplate/temp_id/' . $temptype->AU_Template_Name_ID; ?>');" href="#CreateNewMultiCon"><img src="<?php echo $this->baseUrl(); ?>/public/images/delete.png"></a>
+
+                        <?php
+                    } else {
+                        ?>
+                                                    <a  onclick="deleteequipmenttemplatedesignation(<?php echo $temptype->AU_Template_Designation_ID; ?>)"><img src="<?php echo $this->baseUrl(); ?>/public/images/delete.png"></a>
+
+                                                    <?php
+                                                }}
+                                                ?>
+
+
+                                            </td>
+                                        </tr>
+                                            <?php endforeach; ?>
+                                        <?php } ?>                   
+
+                                    <?php endforeach; ?>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        <?php
+if (isset($this->templatedetails) && !empty($this->templatedetails)) {
+    echo $this->paginationControl($this->templatedetails, 'Sliding', 'pagination.phtml');
+}
+?> 
+
+        </div>
+                            <?php
+                        } else {
+                            echo '<div class="clearfix"> </div>';
+                            echo 'This Building does not have the access of this module.';
+                        }
+                    } else {
+                        echo "You don't have access for this module.";
+                    }
+                    ?>
+<div class="loader" style="display:none;" > <img src="<?php echo BASEURL . 'public/images/loader.gif'; ?>">
+</div>
+<script>
+        function showlimit() {        
+        var limit = $("#show_limit").val();
+        window.location = baseUrl + 'pm/equipmenttemplate/show/' + limit;
+    }
+    </script>
+
+<style>
+    #search_txt > input {
+        width: 200px;
+        padding: 4px 9px !important;
+    }
+    input#pmsearch_by {
+        margin-left: 32px;
+        /* padding-left: 38px; */
+        height: 30px;
+        width: 184px;
+    }
+    .gridContainer-1 .tableGrid {
+        display: block;
+        margin: 0px auto;
+        width: 100%;
+        padding: 0;
+    }
+    .border-top{ border-top: 1px solid #dddddd; }
+    .tableGrid table td{ padding: 5px 3px; }
+    .tableGrid table{ border-color: #dddddd;}
+    .table-title{
+        background-color: #2a6496;
+        color: #fff;
+    }        
+
+</style>
+
+
+

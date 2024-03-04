@@ -1,0 +1,36 @@
+<title>Administrator</title>
+<!-- SB Admin CSS - Include with every page -->
+<link href="<?php echo BASEURL.'/public'?>/css/custum.css" rel="stylesheet">
+<link href="<?php echo BASEURL.'/public'?>/css/mediaqueries.css" rel="stylesheet">
+
+<link href="<?php echo BASEURL.'/public'?>/css/bootstrap.min.css" rel="stylesheet">
+<link href="<?php echo BASEURL.'/public'?>/font-awesome/css/font-awesome.css" rel="stylesheet">
+<link rel="stylesheet" href="<?php echo BASEURL?>public/css/plugins/dataTables/dataTables.bootstrap.css">
+<link rel="stylesheet" type="text/css" href="<?php echo BASEURL.'/public'?>/css/easy-responsive-tabs.css " />
+<script src="<?php echo BASEURL.'/public'?>/js/jquery-1.9.1.min.js"></script>
+<script src="<?php echo BASEURL.'/public'?>/js/easyResponsiveTabs.js"></script>
+
+<!-- SB Admin CSS - Include with every page -->
+<link href="<?php echo BASEURL.'/public'?>/css/sb-admin.css" rel="stylesheet">
+
+<!-- Core Scripts - Include with every page --> 
+
+<script src="<?php echo BASEURL.'/public'?>/js/bootstrap.min.js"></script> 
+<script src="<?php echo BASEURL.'/public'?>/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+<!-- SB Admin Scripts - Include with every page --> 
+<script src="<?php echo BASEURL.'/public'?>/js/sb-admin.js"></script>
+<script src="//code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
+<script type="text/javascript" src="<?php echo $this->baseUrl() ?>/public/js/jquery.maskedinput.js"></script>
+<link rel="stylesheet" href="<?php echo $this->baseUrl() ?>/public/css/jquery-ui.css">
+<script type="text/javascript">
+	var baseUrl='<?php echo BASEURL ?>';
+function hideshow(which){
+if (!document.getElementById)
+return
+if (which.style.display=="block")
+which.style.display="none"
+else
+which.style.display="block"
+}
+</script>
+<?php  //echo $this->headLink()->appendStylesheet(BASEURL . 'public/homestyle.css') ?>	

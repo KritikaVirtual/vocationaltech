@@ -1,0 +1,172 @@
+<?php
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/pm-complete-workorder.js');
+if ($this->openPmWo[0]->Reading_Task === 'T') {
+    $text = 'Task';
+} else if ($this->openPmWo[0]->Reading_Task === 'R') {
+    $text = 'Reading';
+}
+if ($this->pmCompleteJobTime == 'M') {
+    $mandatory_bg_white_class = 'td-bg';
+} else if ($this->pmCompleteJobTime === 'O') {
+    $mandatory_bg_white_class = 'td-grey';
+} else if ($this->pmCompleteJobTime === 'R') {
+    $hide_colums = 'hide_colums';
+}
+
+// This is for Reading instruction
+function buildReadingTree(array $elements, $parentId = 0) {
+    $branch = array();
+    foreach ($elements as $element) {
+        if ($element['Parent_ID'] == $parentId) {
+            $children = buildReadingTree($elements, $element['AU_Template_Reading_ID']);
+            if ($children) {
+                $element['children'] = $children;
+            }
+            $branch[] = $element;
+        }
+    }
+    return $branch;
+}
+?>
+<table class="table table-bordered table-bg1">
+    <thead>
+        <tr>
+            <th>Task</th>
+            <th>Reading / Instruction</th>
+            <th>Frequency</th>
+            <th>Date</th>
+            <th id="<?php echo $hide_colums; ?>">Est Time</th>
+            <th>Assigned Value</th>
+            <th>Tolerance %</th>
+            <th id="<?php echo $hide_colums; ?>">Actual Time</th>
+            <th>Reading Value</th>
+            <th>Date Completed</th>
+            <th>Notes / Comments</th>
+            <th class="completed-width">Completed By</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        $tree = buildReadingTree($this->pmWoReadingDetail);
+        for ($i = 1; $i <= count($tree); $i++) {
+            if (array_key_exists("children", $tree[$i - 1])) {
+                ?>
+                <tr class="sub-bg-color tr-bg" >
+                    <td align="center"><?php echo $i; ?></td>
+                    <td><?php echo $tree[$i - 1]['Reading_Instruction']; ?></td>
+                    <td></td>
+                    <td></td>
+                    <td id="<?php echo $hide_colums; ?>"></td>
+                    <td id="<?php echo $hide_colums; ?>"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <?php
+                for ($k = 1; $k <= count($tree[$i - 1]['children']); $k++) {
+                    /**
+                     * Calculation for high and low
+                     */
+                    $readingValue = $tree[$i - 1]['children'][$k - 1]['Reading_Value']; //115
+                    $tolerance = $tree[$i - 1]['children'][$k - 1]['Tolerance']; //15      
+                    $high = $readingValue + ($readingValue * $tolerance / 100);
+                    $low = $readingValue - ($readingValue * $tolerance / 100);
+                    $wo_id = $tree[$i - 1]['children'][$k - 1]['PM_WO_ID'];
+                    ?>
+                    <tr>
+                        <td>
+                            <table class="sub-tbl-col subitem">
+                                <tr class="td-subitem s-items">
+                                    <td><?php echo $i . '-' . $k; ?></td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td><?php echo $tree[$i - 1]['children'][$k - 1]['Reading_Instruction']; ?></td>
+                        <td align="center"><?php echo $tree[$i - 1]['children'][$k - 1]['Frequency']; ?></td>
+                        <td align="center"><?php echo date("m/d/Y", strtotime($tree[$i - 1]['children'][$k - 1]['PM_WO_StartDate'])); ?></td>
+                        <td id="<?php echo $hide_colums; ?>"><?php echo $tree[$i - 1]['children'][$k - 1]['JobTime']; ?></td>
+                        <td><?php echo $tree[$i - 1]['children'][$k - 1]['Reading_Value'] . ' ' . $tree[$i - 1]['children'][$k - 1]['Unit_of_Measure']; ?></td>
+                        <td><?php echo $tree[$i - 1]['children'][$k - 1]['Tolerance']; ?></td>
+                        <td id="<?php echo $hide_colums; ?>" class="<?php echo $mandatory_bg_white_class; ?>"><input type="text" name="r_actualTime" id="r_actualTime_<?php echo $tree[$i - 1]['children'][$k - 1]['PM_WO_ID']; ?>"></td>
+                        <td><input type="text" name="readingValue" id="readingValue_<?php echo $tree[$i - 1]['children'][$k - 1]['PM_WO_ID']; ?>" onchange="confirm('<?php echo $high; ?>', '<?php echo $low; ?>', '<?php echo $tolerance; ?>', '<?php echo $wo_id; ?>');" /></td>
+                        <td class="completedDate" align="center"><input type="text" name="completedDate" class="form-control date-picker" id="r_completedDate_<?php echo $tree[$i - 1]['children'][$k - 1]['PM_WO_ID']; ?>" value="<?php echo $this->completedDate; ?>"></td>
+                        <td><textarea name="r_notes" id="r_notes_<?php echo $tree[$i - 1]['children'][$k - 1]['PM_WO_ID']; ?>"></textarea></td>
+                        <td>
+                            <select class="form-control" name="selectedby" id="selectedby_<?php echo $tree[$i - 1]['children'][$k - 1]['PM_WO_ID']; ?>">
+                                <option value="">Select From List</option>
+                                <?php
+                                foreach ($this->pmcompletedby as $users) {
+                                    ?>
+                                    <option value="<?php echo $users->uid; ?>" <?php
+                                    if ($this->selectedby == $users->uid) {
+                                        echo 'selected=selected';
+                                    }
+                                    ?>><?php echo $users->fullname; ?></option>
+                                            <?php
+                                        }
+                                        ?>
+                            </select>
+                        </td>
+                        <td align="center"><input type="checkbox" class="checkbox" name="checkornot" id="chk_<?php echo $tree[$i - 1]['children'][$k - 1]['PM_WO_ID']; ?>"></td>
+                    </tr>
+
+                    <?php
+                }
+            } else {
+
+                /**
+                 * Calculation for high and low
+                 */
+                $readingValue = $tree[$i - 1]['Reading_Value']; //115;
+                $tolerance = $tree[$i - 1]['Tolerance']; //15      
+                $high = $readingValue + ($readingValue * $tolerance / 100);
+                $low = $readingValue - ($readingValue * $tolerance / 100);
+                $wo_id = $tree[$i - 1]['PM_WO_ID'];
+                ?>
+                <tr>
+                    <td align="center"><?php echo $i; ?></td>
+                    <td><?php echo $tree[$i - 1]['Reading_Instruction']; ?></td>
+                    <td align="center"><?php echo $tree[$i - 1]['Frequency']; ?></td>
+                    <td align="center"><?php echo date("m/d/Y", strtotime($tree[$i - 1]['PM_WO_StartDate'])); ?></td>
+                    <td id="<?php echo $hide_colums; ?>"><?php echo $tree[$i - 1]['JobTime']; ?></td>
+                    <td><?php echo $tree[$i - 1]['Reading_Value'] . ' ' . $tree[$i - 1]['Unit_of_Measure']; ?></td>
+                    <td><?php echo $tree[$i - 1]['Tolerance']; ?></td>
+                    <td class="<?php echo $mandatory_bg_white_class; ?>" id="<?php echo $hide_colums; ?>"><input type="text" name="r_actualTime" id="r_actualTime_<?php echo $tree[$i - 1]['PM_WO_ID']; ?>"></td>
+                    <td><input type="text" name="readingValue" id="readingValue_<?php echo $tree[$i - 1]['PM_WO_ID']; ?>" onchange="confirm('<?php echo $high; ?>', '<?php echo $low; ?>', '<?php echo $tolerance; ?>', '<?php echo $wo_id; ?>');" /></td>
+                    <td class="completedDate" align="center"><input type="text" name="completedDate" class="form-control date-picker" id="r_completedDate_<?php echo $tree[$i - 1]['PM_WO_ID']; ?>" value="<?php echo $this->completedDate; ?>"></td>
+                    <td><textarea name="r_notes" id="r_notes_<?php echo $tree[$i - 1]['PM_WO_ID']; ?>"></textarea></td>
+                    <td>
+                        <select class="form-control" name="selectedby" id="selectedby_<?php echo $tree[$i - 1]['PM_WO_ID']; ?>">
+                            <option value="">Select From List</option>
+                            <?php
+                            foreach ($this->pmcompletedby as $users) {
+                                ?>
+                                <option value="<?php echo $users->uid; ?>" <?php
+                                        if ($this->selectedby == $users->uid) {
+                                            echo 'selected=selected';
+                                        }
+                                        ?>><?php echo $users->fullname; ?></option>
+            <?php
+        }
+        ?>
+                        </select>
+
+                    </td>
+                    <td align="center"><input type="checkbox" class="checkbox" name="checkornot" id="chk_<?php echo $tree[$i - 1]['PM_WO_ID']; ?>"></td>
+                </tr>                
+        <?php
+    }
+}
+?>
+    </tbody>
+</table>
+
+<script>
+    $(".view-point").html("<?php echo $text; ?>");
+
+</script>

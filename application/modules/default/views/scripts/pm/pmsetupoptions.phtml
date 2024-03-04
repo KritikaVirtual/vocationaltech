@@ -1,0 +1,289 @@
+<?php
+if (!empty($this->pmSetupOptionsData)) {
+    $data = $this->pmSetupOptionsData;
+} else {
+    $data = '';
+}
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/pm-workorder.js');
+//This is for PM work order Jobs
+if (!empty($data)) {
+    if ($data['0']->PM_Auto_Create_Jobs === 'Y') {
+        $chkddefault = 'checked';
+    } else if ($data['0']->PM_Auto_Create_Jobs === 'N') {
+        $chkd = 'checked';
+    }
+} else {
+    $chkddefault = 'checked';
+}
+
+if (!empty($data)) {
+    if ($data['0']->PM_Auto_Schedule === 'E') {
+        $chkeveryday = 'checked';
+    } else if ($data['0']->PM_Auto_Schedule === 'F') {
+        $chkmondFri = 'checked';
+    } else if ($data['0']->PM_Auto_Schedule === 'W') {
+        $weekly = 'checked';
+    } else if ($data['0']->PM_Auto_Schedule === 'M') {
+        $monthlydefault = 'checked';
+    } else {
+        $monthlydefault = 'checked';
+    }
+} else {
+    $monthlydefault = 'checked';
+}
+
+if (!empty($data)) {
+    if ($data['0']->PM_Auto_Exclude === 'Y') {
+        $chkeexclude = 'checked';
+    }
+}
+
+if (!empty($data)) {
+    if ($data['0']->PM_Auto_Exclude === 'N') {
+        $chkeexcludedailydef = 'checked';
+    } else {
+        $chkeexcludedaily = 'checked';
+    }
+} else {
+    $chkeexcludedailydef = 'checked';
+}
+
+
+if (!empty($data)) {
+    if ($data['0']->PM_Reports_Separate === 'Y') {
+           $chkreport = 'checked';        
+    } else if ($data['0']->PM_Reports_Separate === 'N') {       
+        
+        $chkreportDef = 'checked';  
+    }
+} else {
+    $chkreportDef = 'checked';
+}
+
+if (!empty($data)) {
+    if ($data['0']->PM_Reports_Exclude_Daily === 'Y') {
+        $chkdailypmjobsDef = 'checked';
+    } else if ($data['0']->PM_Reports_Exclude_Daily === 'N') {
+        $chkdailypmjobs = 'checked';
+    }
+} else {
+    $chkdailypmjobsDef = 'checked';
+}
+
+if (!empty($data)) {
+    if ($data['0']->PM_Reports_Exclude_Weekly === 'Y') {
+        $chkdweeklypmjobsDef = 'checked';
+    } else if ($data['0']->PM_Reports_Exclude_Weekly === 'N') {
+        $chkdweeklypmjobs = 'checked';
+    }
+} else {
+    $chkdweeklypmjobsDef = 'checked';
+}
+
+if (!empty($data)) {
+    if ($data['0']->PM_Complete_Job_Time === 'O') {
+        $chkjobtimeDef = 'checked';
+    } else if ($data['0']->PM_Complete_Job_Time === 'M') {
+        $chkjobtimeM = 'checked';
+    } else if ($data['0']->PM_Complete_Job_Time === 'R') {
+        $chkjobtimeR = 'checked';
+    }
+} else {
+    $chkjobtimeDef = 'checked';
+}
+?>
+<style>
+    body { background: #fff; }
+    .dynamicclass { padding-bottom: 20px; overflow: hidden; }
+    .heading-2 {padding: 0;margin-bottom: 15px;margin-top: 0;}   
+    .heading-2 span {font-size: 14px;padding: 5px; color:#fff}    
+    .form-c ul {list-style:none; padding:10px;margin:0}
+    .form-c ul li { margin-bottom:10px;}
+    .form-c label {float: left;}
+    .form-c .form-cont {float: left;margin-left: 10px;}
+    .form-c input {margin:0 10px}
+    .form-c .form-cont ul li input {margin-right:10px;}
+    .form-c .form-cont input {margin:0;}
+    .form-c .form-cont p {margin-bottom:5px;min-height: 20px;}
+    .form-c li {overflow: hidden;}
+    .form-c li p {margin:0;}
+    .form-c h3 { margin-top:0;}
+    .form-c>ul {padding: 20px;}
+    .form-c .flex-divi {display: flex;}
+    .form-c .flex-divi .daily-weekly {flex:1;}
+    .daily-weekly.fix-w {max-width: 115px;}
+    .flex-sp {padding:0 38px}
+</style>
+<section class="ch-form-header">
+    <h3 class="text-center">PM - Setup and Options </h3> 
+    <div class="clearfix"></div>
+    <div class="PM-setup-option-tab-cta">
+        <ul class="nav nav-tabs">
+            <li class="active"><a data-toggle="tab" href="#menu1">PM Work Order Jobs</a></li>
+            <li><a data-toggle="tab" href="#menu2">PM Work Order Reports</a></li>
+            <li><a data-toggle="tab" href="#menu3">PM Work Order Reports Job Time</a></li>
+        </ul>
+        <h6 class="text-center text-danger" id="building_error"></h6>
+        <div class="tab-content">
+            <div id="menu1" class="tab-pane fade in active">
+
+                <div class="form-c">
+                    <p><input type="radio" name="pmwojobs" id="pmwojobs" value="Y" <?php echo $chkddefault; ?>>Generate PM Jobs Automatically</p>
+                    <ul>
+                        <li><label><input type="radio" name="generatepmjobsauto" id="generatepmjobsauto" value="1" <?php echo $chkeveryday; ?>> Every day</label></li>
+                        <li>
+                            <label><input type="radio" name="generatepmjobsauto" id="generatepmjobsauto" value="2" <?php echo $chkmondFri; ?>>Monday - Friday</label> 
+                            <div class="form-cont">
+                                <h3>NOTE:</h3>
+                                <p><strong>-</strong> Daily PM Jobs that fall on a week end day will be ignored</p>
+                                <p><strong>-</strong> Weekly Jobs that fall on a week end day will be scheduled for the following Monday</p>
+                            </div>
+                        </li>
+                        <li>
+                            <label><input type="radio" name="generatepmjobsauto" id="generatepmjobsauto" value="3" <?php echo $weekly; ?>>Weekly - on</label> 
+                            <div class="form-cont">
+                                <p>
+<?php $days = array('1' => 'Monday', '2' => 'Tuesday', '3' => 'Wednesday', '4' => 'Thursday', '5' => 'Friday', '6' => 'Saturday', '7' => 'Sunday'); ?>
+                                    <select name="weeklyon" id="weeklyon">
+<?php
+foreach ($days as $key => $val) {
+    ?>
+                                            <option value="<?php echo $key; ?>" <?php if ($data['0']->PM_Auto_Month_Generate == $key) {
+                                        echo 'selected';
+                                    } ?>><?php echo $val; ?></option>                        
+                                            <?php
+                                        }
+                                        ?>
+
+                                    </select>
+                                    <span>Of each week </span>
+                                </p>
+                                <p><input type="checkbox" name="excdaily" id="excdaily" value="Y" <?php echo $chkeexclude; ?>> Exclude Daily ( Will generate PM jobs on a daily ).<br></p>
+                            </div>
+                        </li>
+                        <li>
+                            <label><input type="radio" name="generatepmjobsauto" id="generatepmjobsauto" value="4" <?php echo $monthlydefault; ?>>Monthly</label> 
+                            <div class="form-cont">
+                                <p></p>
+                                <p>
+                                    <input type="radio" name="generatepmjobsautomonth" id="generatepmjobsautomonth" value="" checked>
+<?php $noofdays = array('1' => '1st', '2' => '2nd', '3' => '3rd', '4' => '4th', '5' => '5th', '6' => '6th', '7' => '7th', '15' => '15th', 'Last' => 'Last'); ?>
+                                    <select name="monthlynoofday" id="monthlynoofday">
+                                    <?php foreach ($noofdays as $key => $val) {
+                                        ?>
+                                            <option value="<?php echo $key; ?>" <?php if ($data['0']->PM_Auto_Month_Day_Of_Week == $key) {
+                                            echo 'selected';
+                                        } ?>><?php echo $val; ?></option>              
+                                            <?php }
+                                        ?>
+
+
+                                    </select>
+                                    <?php $days = array('Day' => 'Day', '1' => 'Monday', '2' => 'Tuesday', '3' => 'Wednesday', '4' => 'Thursday', '5' => 'Friday', '6' => 'Saturday', '7' => 'Sunday'); ?>
+                                    <select name="monthlyday" id="monthlyday">
+                                        <?php foreach ($days as $key => $val) {
+                                            ?>
+                                            <option value="<?php echo $key; ?>" <?php if ($data['0']->PM_Auto_Month_Generate == $key) {
+                                            echo 'selected';
+                                        } ?>><?php echo $val; ?></option>              
+                                            <?php }
+                                        ?>
+
+                                    </select>
+                                    <span>Of each Month</span>
+                                </p>
+                                <p>Daily and Weekly PM jobs</p>
+                                <ul>
+                                    <li><input type="radio" name="dailyweeklypmjobs" id="dailyweeklypmjobs" value="N" <?php echo $chkeexcludedailydef; ?>>Generate Daily / Weekly PM jobs for the entire month.</li>
+                                    <li><input type="radio" name="dailyweeklypmjobs" id="dailyweeklypmjobs" value="Y" <?php echo $chkeexcludedaily; ?>>Exclude Daily / Weekly PM jobs ( will generate PM jobs on a daily / weekly  basis ).</li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                    <p><input type="radio" name="pmwojobs" id="pmwojobs" value="N" <?php echo $chkd; ?>> Manually create PM Jobs</p>
+                </div>
+            </div>
+
+            <div id="menu2" class="tab-pane fade">
+                <div class="form-c">
+                    <ul>
+                        <li>
+                            <p><input type="radio" name="pmworeports" id="pmworeports" value="Y" <?php echo $chkreport; ?>> Generate each PM Work Order Job on separate work sheet</p>
+                        </li>
+                        <li>
+                            <p><input type="radio" name="pmworeports" id="pmworeports" value="N" <?php echo $chkreportDef; ?>> Combine PM Jobs under Equipment Name / Location</p>
+                        </li>
+
+                        <li class="">
+                            <div class="">
+                                <div class="daily-weekly fix-w">
+                                    <p>Daily PM Jobs</p>
+                                </div>
+                                <div class="daily-weekly">
+                                    <p><input type="radio" name="dailypmjobs" id="dailypmjobs" value="Y" <?php echo $chkdailypmjobsDef; ?>> Exclude - Generate on separate work sheet</p>
+                                </div>
+                                <div class="daily-weekly">
+                                    <p><input type="radio" name="dailypmjobs" id="dailypmjobs" value="N" <?php echo $chkdailypmjobs; ?>> Combine under Equipment Name / Location</p>
+                                </div>
+                            </div>
+
+                            <div class="">
+                                <div class="daily-weekly fix-w">
+                                    <p>Weekly PM Jobs</p>
+                                </div>
+                                <div class="daily-weekly">
+                                    <p><input type="radio" name="weeklypmjobs" id="weeklypmjobs" value="Y" <?php echo $chkdweeklypmjobsDef; ?>> Exclude - Generate on separate work sheet</p>
+                                </div>
+                                <div class="daily-weekly">
+                                    <p><input type="radio" name="weeklypmjobs" id="weeklypmjobs" value="N" <?php echo $chkdweeklypmjobs; ?>> Combine under Equipment Name / Location</p>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div id="menu3" class="tab-pane fade">
+                <div class="form-c">
+                    <ul>
+                        <li class="">
+                            <div class="">
+                                <div class="daily-weekly">
+                                    <p><input type="radio" name="pmworeportsjobtime" id="pmworeportsjobtime" value="M" <?php echo $chkjobtimeM; ?>> Mandatory User must enter actual time </p>
+                                </div>
+                                <div class="daily-weekly">
+                                    <p><input type="radio" name="pmworeportsjobtime" id="pmworeportsjobtime" value="O" <?php echo $chkjobtimeDef; ?>> Show time, Optionally entered</p>
+                                </div>
+                                <div class="daily-weekly">
+                                    <p><input type="radio" name="pmworeportsjobtime" id="pmworeportsjobtime" value="R" <?php echo $chkjobtimeR; ?>> Remove Time Requirements </p>
+                                </div>
+                            </div>
+
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div> 
+    <div class="clearfix"></div>  
+    <div class="col-md-12 col-sm-12 col-xs-12 height_20 text-center">
+        <div class="bottom_button">
+            <input type="hidden" name="action" id="action" value="add">
+            <button class="confirm" onclick="vlidate_pmsetupoptions();">Save</button>
+            <button class="confirm" onclick="closepopup();">Cancel</button>
+        </div>
+    </div>
+
+    <div>
+
+</section>
+
+
+
+
+
+
+
+
+
+

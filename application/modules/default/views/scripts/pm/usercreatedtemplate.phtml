@@ -1,0 +1,69 @@
+<?php echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/pm_task.js'); ?>     
+<div class="container-right task-popup task-section new-container">
+    <div class="message">               
+        <span class="error-txt" style="color:red; text-align:center;"></span>
+    </div>
+    <section style="z-index:9999" class="w-48 fr ch-home-form">
+        <section class="ch-form-header ch-form-header-new">
+            <h3>Create a User Created Template </h3>
+        </section>
+        <form class="form-horizontal" onsubmit="return false">
+            <input type="hidden" id="desig_id" name="desig_id" value="<?php echo $this->desig_id; ?> ">
+        <div class="add-type-designation">
+            <div class="success-msg-box bg-success text-center" id="success"></div>
+            <div class="form-group">
+                <label  class="control-label col-sm-5 col-xs-12">Save Type Designation Under Templates:</label>
+                <div class="col-sm-7 col-xs-12">
+                       <ul class="import-form rest-item">
+                            <li><input type="radio" value="1" checked="checked" id="temptypedata" name="temptypedata"> <span>Use Default Template Name: </span>
+                                <input readonly="readonly" type="text" name="tempname" id="tempname" class="form-control" value="<?php echo $this->templatDesination->AU_Template_Name; ?>">
+                                <input type="hidden" name="tempnameid" id="tempnameid" value="<?php echo $this->templatDesination->AU_Template_Name_ID; ?>"></li>
+                            <li><?php if(!empty($this->templateAllVTList)):  ?>
+                                <input type="radio" value="2" id="temptypedata" name="temptypedata"> <span>Assign to an Existing Template:</span>
+                                <select name="existingtempname" id="existingtempname" class="form-control">
+                                     <option value="">Select from list</option>
+                                    <?php
+                                    foreach ($this->templateAllVTList as $tempdata):
+                                        $colorred = '';
+                                        if($tempdata->Vt_Admin_Template=='No'){
+                                            $colorred = 'color-red';                                            
+                                        }
+                                        echo ' <option class="'.$colorred.'" value="' . $tempdata->VT_Template_Name . '">' . $tempdata->VT_Template_Name . '</option>';
+                                    endforeach;
+                                    ?>
+                                </select><br>
+<?php endif;  ?></li>
+                            <li><input type="radio" value="3" id="temptypedata" name="temptypedata"> 
+                                <span>Assign a New Template Name: </span>
+                                <input type="text" name="temptypedatanew" id="temptypedatanew" class="form-control">
+                                <span class="ugroupErr" id="temptypedatanew_error" ></span></li>
+                        </ul>
+                </div>
+            </div> 
+            <div class="form-group">
+                <label  class="control-label col-sm-5 col-xs-12">Save Type Designation Name:</label>
+                <div class="col-sm-7 col-xs-12 leftgap-input">
+                       <input class="form-control" type="text" name="typedesignation" id="typedesignation" value="<?php echo $this->templatDesination->AU_TypeDesignation; ?>" />
+                       <span class="ugroupErr" id="typedesignation_error" ></span>
+                       
+                </div>
+            </div> 
+            
+        
+
+
+        <div class="col-md-12 col-sm-12 col-xs-12" style="text-align: right; margin-bottom:25px;">
+            <button class="confirm" onclick="closepopup();">Cancel</button>
+            <button class="confirm" onclick="validateTypeDesination()">Save</button>            
+        </div> 
+</div>
+    </form>
+    </section>
+</div>
+
+<div id="add_subsetpopup" class="bd-dft-cls" style="display: none;"></div>
+<div class="loader" style="display:none;" > <img src="<?php echo BASEURL . 'public/images/loader.gif'; ?>">
+</div>
+
+
+

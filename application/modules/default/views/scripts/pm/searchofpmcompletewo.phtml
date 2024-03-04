@@ -1,0 +1,301 @@
+<?php
+echo $this->headScript()->appendFile(BASEURL . '/public/js/pm-complete-workorder.js');
+if ($this->openPmWo[0]->Reading_Task === 'T') {
+    $text = 'Task';
+    $block = 'block';
+    $none = 'none';
+} else if ($this->openPmWo[0]->Reading_Task === 'R') {
+    $text = 'Reading';
+    $none = 'block';
+    $block = 'none';
+}
+?>
+<script>
+    $(".view-point").html("<?php echo $text; ?>");    
+</script>
+<?php
+if ($this->pmCompleteJobTime == 'M') {
+    $mandatory_bg_white_class = 'td-bg';
+    $pmWOReportJobOption = $this->pmCompleteJobTime;
+} else if ($this->pmCompleteJobTime === 'O') {
+    $mandatory_bg_white_class = 'td-grey';
+} else if ($this->pmCompleteJobTime === 'R') {
+    $hide_colums = 'hide_colums';
+}
+
+//This is for Task Instruction
+function buildTree($elements, $parentId = 0) {
+    $branch = array();
+    foreach ($elements as $element) {
+        if ($element['Parent_ID'] == $parentId) {
+            $children = buildTree($elements, $element['AU_Template_Task_ID']);
+            if ($children) {
+                $element['children'] = $children;
+            }
+            $branch[] = $element;
+        }
+    }
+    return $branch;
+}
+?> 
+<div class="col-md-12 no-pad mg-top">
+    <div class="pm-complete-work-order-table table-left table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Equipment Name</th>
+                    <th>Floor</th>
+                    <th>Unit</th>
+                    <th>Location</th>
+                    <th>PM WO Number</th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                foreach ($this->openPmWo as $val) {
+                    ?>
+                    <tr>
+                        <td><?php echo $val->AU_Equipment_Name; ?></td>
+                        <td><?php echo $val->Equipment_Floor; ?></td>
+                        <td><?php echo $val->Equipment_Unit; ?></td>
+                        <td><?php echo $val->Equipment_Location; ?></td>
+                        <td><?php echo $val->WO_Number; ?></td>
+                        
+                    </tr>
+
+                    <?php
+                }
+                ?>
+
+            </tbody>
+        </table>                        
+    </div>      
+
+    <div class="clearfix"></div> 
+    <div class="col-sm-12  no-pad  checkall">
+        <div class="col-sm-6">
+            <div class="alerts msg-success pull-right"  id="success_msg"></div>        
+        </div>
+        <div class="col-sm-6 btn-padding"></div>
+        <!--<div class="col-sm-6 btn-padding">
+            <button type="submit" class="btn btn-default pull-right" onclick="valid_complete('<?php echo $this->openPmWo[0]->Reading_Task ?>')">Complete</button>
+        </div>-->
+        <section class="section-menu">
+            <?php
+            
+            if(!empty($this->readingTask) && count($this->readingTask)>1){
+                ?>
+            <a class="modalbox create_conf" onclick="getDatafortask('<?php echo $this->readingTask[1]->PM_WO_Number; ?>','T');"> 
+                    <button id="tactive"  class="confirm <?php if ($this->readingTask[0]->Reading_Task === 'T') {
+                echo 'active';
+            } ?>"  >Task(s)</button>
+                </a>
+                <a class="modalbox create_conf" onclick="getDataforreading('<?php echo $this->readingTask[1]->PM_WO_Number; ?>','R');"> 
+                    <button id="ractive" class="confirm">Reading(s)</button>
+                </a>
+            <?php
+                
+            } else {
+                if($this->readingTask[0]->Reading_Task=='T'){
+                  ?>
+            <a class="modalbox create_conf "  onclick="getDatafortask('<?php echo $this->readingTask[0]->PM_WO_Number; ?>','T');"> 
+                    <button  class="confirm <?php if ($this->readingTask[0]->Reading_Task === 'T') {
+                echo 'active';
+            } ?>"  >Task(s)</button>
+                </a>
+            <?php
+                } else {
+                    ?>
+            <a class="modalbox create_conf" id="callReading"  onclick="getDataforreading('<?php echo $this->readingTask[0]->PM_WO_Number; ?>','R');"> 
+                    <button  class="confirm <?php if ($this->readingTask[0]->Reading_Task === 'R') {
+                echo 'active';
+            } ?>"  >Reading(s)</button>
+                </a>
+            <?php
+                    
+                }
+                
+            }           
+?>
+            <input type="hidden" name="pmwooption" id="pmwooption" value="<?php echo $pmWOReportJobOption; ?>" />
+            <input type="hidden" name="instruction" id="instruction" value="<?php echo $this->openPmWo[0]->Reading_Task ?>" />
+            <a id="xtrigdocs" class="modalbox create_conf notes-comments-btn photos-doc" onclick="javascript:pmSetupAndOption('<?php echo $this->baseUrl() . '/pm/documentsforpmcompletewo/build_id/' . $this->select_build_id.'/pm_wo_no/'.$this->openPmWo[0]->WO_Number; ?>');" href="#CreateNewMultiCon"> 
+                 Photo's / Documents</a>
+            <a class="modalbox create_conf notes-comments-btn" onclick="javascript:pmSetupAndOption('<?php echo $this->baseUrl() . '/pm/notesforpmcompletewo/build_id/' . $this->select_build_id.'/pm_wo_no/'.$this->openPmWo[0]->WO_Number; ?>');" href="#CreateNewMultiCon"> 
+                 Notes / Comments</a>
+            <button type="submit" class="btn btn-default pull-right PM-WO-cmplt" style="margin: 11px -165px 0px 0;" onclick="valid_complete()">Complete</button>
+
+        </section>
+    </div>
+    <div class="clearfix"></div> 
+    <!-- This is Task Instruction -->
+    <div class="pm-complete-work-data-table table-responsive" id="readingdatecompleted">
+        <table class="table table-bordered table-bg">
+            <thead>
+                <tr>
+                    <th>Task</th>
+                    <th>Task / Instruction</th>
+                    <th>Frequency</th>
+                    <th>Date</th>
+                    <th id="<?php echo $hide_colums; ?>">Est Time</th>
+                    <th id="<?php echo $hide_colums; ?>">Actual Time</th>
+                    <th><a href="#" class="date-pick" id="pickDate">Date Completed <input id="hiddenDate" type="hidden" onchange="updateCompletedDate('<?php echo $this->openPmWo[0]->Reading_Task; ?>')" name="completedDate" />
+                            <span class="glyphicon glyphicon-chevron-down"></span>
+                        </a></th>
+                    <th>Notes / Comments</th>
+                    <th class="completed-width"><select class="form-control" name="completedby" id="completedby" onchange="updateCompletedBy('<?php echo $this->openPmWo[0]->Reading_Task; ?>')">
+                            <option value="">Completed By</option>
+<?php
+foreach ($this->pmcompletedby as $users) {
+    ?>
+                                <option value="<?php echo $users->uid; ?>"><?php echo $users->fullname; ?></option>
+                    <?php
+                }
+                ?>
+                        </select></th>
+                    <th><button type="submit" class="btn btn-default pull-right" onclick="selectAll()">Check All</button></th>
+                </tr>
+            </thead>
+            <tbody>
+<?php
+$tree = buildTree($this->pmWoTaskDetail);
+for ($i = 1; $i <= count($tree); $i++) {
+    if (array_key_exists("children", $tree[$i - 1])) {
+        ?>
+                        <tr class="sub-bg-color tr-bg" >
+                            <td align="center"><?php echo $i; ?></td>
+                            <td><?php echo $tree[$i - 1]['Task_Instruction']; ?></td>
+                            <td></td>
+                            <td></td>
+                            <td id="<?php echo $hide_colums; ?>"></td>
+                            <td id="<?php echo $hide_colums; ?>"></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+        <?php
+        for ($k = 1; $k <= count($tree[$i - 1]['children']); $k++) {
+            ?>
+                            <tr>
+                                <td>
+                                    <table class="sub-tbl-col subitem">
+                                        <tr class="td-subitem">
+                                            <td><?php echo $i . '-' . $k; ?></td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td><?php echo $tree[$i - 1]['children'][$k - 1]['Task_Instruction']; ?></td>
+                                <td align="center"><?php echo $tree[$i - 1]['children'][$k - 1]['Frequency']; ?></td>
+                                <td align="center"><?php echo date("m/d/Y", strtotime($tree[$i - 1]['children'][$k - 1]['PM_WO_StartDate'])); ?></td>
+                                <td id="<?php echo $hide_colums; ?>"><?php echo $tree[$i - 1]['children'][$k - 1]['JobTime']; ?></td>
+                                <td id="<?php echo $hide_colums; ?>" class="<?php echo $mandatory_bg_white_class; ?>"><input type="text" name="actualTime" id="actualTime_<?php echo $tree[$i - 1]['children'][$k - 1]['PM_WO_ID']; ?>"></td>
+                                <td class="completedDate" align="center"><input type="text" class="form-control date-picker" name="completedDate" id="completedDate_<?php echo $tree[$i - 1]['children'][$k - 1]['PM_WO_ID']; ?>" autocomplete="off"></td>
+                                <td><textarea name="notes" id="notes_<?php echo $tree[$i - 1]['children'][$k - 1]['PM_WO_ID']; ?>"></textarea></td>
+                                <td>
+                                    <select class="form-control" name="selectedby" id="selectedby_<?php echo $tree[$i - 1]['children'][$k - 1]['PM_WO_ID']; ?>">
+                                        <option value="">Select From List</option>
+
+            <?php
+            foreach ($this->pmcompletedby as $users) {
+                ?>
+                                            <option value="<?php echo $users->uid; ?>"><?php echo $users->fullname; ?></option>
+                                <?php
+                            }
+                            ?>
+                                    </select>
+                                </td>
+                                <td align="center"><input type="checkbox" class="checkbox" name="checkornot" id="chk_<?php echo $tree[$i - 1]['children'][$k - 1]['PM_WO_ID']; ?>"></td>
+                            </tr>
+
+            <?php
+        }
+    } else {
+        ?>
+                        <tr>
+                            <td align="center"><?php echo $i; ?></td>
+                            <td><?php echo $tree[$i - 1]['Task_Instruction']; ?></td>
+                            <td align="center"><?php echo $tree[$i - 1]['Frequency']; ?></td>
+                            <td align="center"><?php echo date("m/d/Y", strtotime($tree[$i - 1]['PM_WO_StartDate'])); ?></td>
+                            <td id="<?php echo $hide_colums; ?>"><?php echo $tree[$i - 1]['JobTime']; ?></td>
+                            <td class="<?php echo $mandatory_bg_white_class; ?>" id="<?php echo $hide_colums; ?>"><input type="text" name="actualTime" id="actualTime_<?php echo $tree[$i - 1]['PM_WO_ID']; ?>"></td>
+                            <td class="completedDate" align="center"><input type="text" class="form-control date-picker" name="completedDate" id="completedDate_<?php echo $tree[$i - 1]['PM_WO_ID']; ?>" autocomplete="off"></td>
+                            <td><textarea name="notes" id="notes_<?php echo $tree[$i - 1]['PM_WO_ID']; ?>"></textarea></td>
+                            <td>
+                                <select class="form-control" name="selectedby" id="selectedby_<?php echo $tree[$i - 1]['PM_WO_ID']; ?>">
+                                    <option value="">Select From List</option>
+
+        <?php
+        foreach ($this->pmcompletedby as $users) {
+            ?>
+                                        <option value="<?php echo $users->uid; ?>"><?php echo $users->fullname; ?></option>
+                            <?php
+                        }
+                        ?>
+                                </select>
+
+                            </td>
+                            <td align="center"><input type="checkbox" class="checkbox" name="checkornot" id="chk_<?php echo $tree[$i - 1]['PM_WO_ID']; ?>"></td>
+                        </tr>                
+        <?php
+    }
+}
+?>                
+
+            </tbody>
+        </table>
+    </div>
+    
+</div>
+<div id="confirm">
+    <div class="message"></div>
+    <button class="yes">Correct Value</button>
+    <button class="no ack">Acknowledge and continue</button>
+</div>
+<style>
+    #confirm {
+        display: none;
+        background-color: #fff;
+        border: 4px solid #000;
+        position: absolute;
+        max-width: 460px;
+        width: 100%;
+        left: 50%;
+        margin-left: -100px;
+        padding: 20px 8px;
+        box-sizing: border-box;
+        text-align: center;
+    }
+    #confirm button {
+        background-color: #5cb85c;
+        color: #fff;
+        display: inline-block;
+        border: 1px solid #000;
+        padding: 5px;
+        text-align: center;
+        cursor: pointer;
+        margin-top: 20px;
+    }
+    #confirm .message {
+        text-align: center;
+        color: red;
+        font-size: 16px;    
+    }
+    .ack{margin-left: 10px;}
+
+    button.confirm.active {
+        background-color: #45e4a8;
+    }
+
+</style>
+<script>
+    $(document).ready(function(){
+        var reading_task = '<?php echo $this->openPmWo[0]->Reading_Task ?>';        
+        if(reading_task=='R'){
+            $("#callReading").trigger("click");            
+        }        
+    });    
+</script>
+
+

@@ -1,0 +1,60 @@
+<div id="add_build_serv_div">
+	<span>Add New Building Service</span>
+	<div class="message">
+		<span id="success_msg" class="success"></span>
+		<span id="error_msg" class="error"></span>
+	</div>
+	<div class="service_row">
+		  <label>Service Name:</label>
+		  <div class="serv_ibox_row">
+			   <span class="field_error" id="serror_name"></span>
+			   <input type="text" name="service_name" id="service_name"/>
+		  </div>			
+	</div>
+	<div class="service_row">
+		  <label>Unit Of Measure:</label>
+		  <div class="serv_ibox_row">
+			   <span class="field_error" id="serror_unit"></span>
+			   <input type="text" name="unit_measure" id="unit_measure"/>
+		  </div>			
+	</div>
+	<div class="service_row">
+		  <label>Cost $:</label>
+		  <div class="serv_ibox_row">
+			   <span class="field_error" id="serror_cost"></span>
+			   <input type="text" name="cost" id="cost" onkeypress="return isNumber(event)" maxlength="6"/>
+		  </div>			
+	</div>
+	<div class="service_row">
+		  <label>Minimum Required:</label>
+		  <div class="serv_ibox_row">
+			   <span class="field_error" id="serror_minimum"></span>
+			   <input type="text" name="minimum" id="minimum" onkeypress="return isNumber(event)" maxlength="6" value="1"/>
+		  </div>			
+	</div>
+	<div class="service_row">
+		 <label>Save as Global Template:</label>
+		  <div class="serv_ibox_row">
+			   <span class="field_error" id="serror_global"></span>
+			   <select name="global_template" id="global_template">
+				   <option value="1">Yes</option>
+				   <option value="0" selected="selected">No</option>
+			   </select>
+			   <input type="hidden" name="import_template" id="import_template" value="0"/>
+		  </div>
+	</div>
+	<div class="service_row">
+		 <label>Active:</label>
+		  <div class="serv_ibox_row">
+			   <span class="field_error" id="serror_status"></span>
+			   <select name="status" id="status">
+				   <option value="1" selected="selected">Yes</option>
+				   <option value="0">No</option>
+			   </select>
+		  </div>
+	</div>
+	<div class="buttons">
+				   <button type="button" name="save_service" id="save_service" value="Save" onclick="saveBuildService('<?php echo $this->bId;?>')">Save</button>
+				   <button type="button" name="cancel" id="cancel" value="Cancel" onclick="cancelAddService()">Cancel</button>
+			  </div>
+</div>

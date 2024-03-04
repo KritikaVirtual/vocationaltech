@@ -1,0 +1,241 @@
+<?php
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/conference.js');
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/jquery.form.js');
+$cscheduleDetails = $this->cscheduleDetails;
+$cPlan = $this->cPlan;
+$creditDetails = $this->creditDetails[0];
+$crDetails = $this->crDetails;
+//print_r($creditDetails);
+$cr_array = explode(',', $creditDetails->multi_id);
+?>
+<div class="container-right">
+    <div class="message">
+
+        <span class="error-txt" style="color:red; text-align:center;"></span>
+    </div>
+    <section style="z-index:9999" class="w-48 fr ch-home-form">
+        <section class="ch-form-header ">
+            <h3>Edit Conference Room Setup </h3>
+        </section>
+        <div class="room-setup">
+            <div class="tableGrid list_tableGrid my_table_grid">
+                <div class="message">
+                    <div class="success_message" style="text-align:center;width:100%;font-weight:bold;color:red;"></div>				  			
+                    <span id="success_msg"></span>
+                    <span id="error_msg"></span>
+                </div>
+                <div class="container">
+                    <div id="step1">
+
+
+                        <input type="hidden" value="<?php echo $creditDetails->cid; ?>" name="cid" id="cid"/>
+                        <div id='all_attachment' style="display:none;">
+
+                        </div>
+
+                        <div class="row">
+                            <label>Conference RM Name:<span class="required">*</span></label><span class="ugroupErr" id="room-name-error"></span>    
+                            <input type="text" value="<?php echo $creditDetails->room_name; ?>" id="room_name" class="" name="room_name" Placeholder ='Please Enter Conference Room Name'/>  
+                        </div>
+
+                        <div class="row">
+                            <label> Location:<span class="required">*</span></label><span class="ugroupErr" id="location-error"></span>
+                            <input type="text" value="<?php echo $creditDetails->location; ?>" id="location" class="" name="location" placeholder="Location"> 
+                        </div>
+                        <div class="row">    
+
+                            <label>Availability Schedule:<span class="required">*</span> </label><span class="ugroupErr" id="schedule-error"></span>
+                            <select name="schedule_name" id="schedule_name" onchange="edit_multi_rooms();">
+                                <option value="" > Select Schedule</option>
+                                <?php
+                                if (!empty($cscheduleDetails)) {
+                                    foreach ($cscheduleDetails as $csval) {
+                                        ?>
+                                        <option value='<?php echo $csval->id; ?>' <?php
+                                                if ($creditDetails->schedule_id == $csval->id) {
+                                                    echo 'selected';
+                                                }
+                                                ?>> <?php echo $csval->schedule_name; ?> </option>
+                                                <?php
+                                            }
+                                        }
+                                        ?>
+                            </select>
+                        </div>
+                        <!-- get total seduler time limit -->
+                            <script>
+                                edit_scheduleRat();
+                            </script>
+                        <div class="row">
+                            <label>Available Rooms:<span class="required">*</span></label><span class="ugroupErr" id="avroom-error"></span>
+                        </div>
+                        
+                        <script>
+                             edit_multi_rooms(<?php echo $crDetails[0]->schedule_id; ?> );
+                        </script>
+                        <div class="avaliable_room" >
+                            
+                        </div>
+                        <div class="Schedule_label">
+                            <label> Rate Schedule: </label>  
+                        </div>
+                        <div class="input_width Schedule_details" >                                                     <div style="text-align:center;"> <span id="rate-error" class="ugroupErr"></span></div>
+                            <div class="schedule-form">
+
+                                <table> <tr><th>Plan</th><th>Cost</th><th>Minimum</th><th>Max</th><th>Enabled</th> </tr> 
+                                    <?php
+                                    $cscheduleMapper = new Model_ConferenceSchedule();
+                                    $schrate = $cscheduleMapper->getcrRateSch($creditDetails->cid);
+                                    $plan_array = array();
+                                    foreach ($schrate as $schrateVal) {
+                                        $plan_array['plan_' . $schrateVal->plan]['cost'] = $schrateVal->cost;
+                                        $plan_array['plan_' . $schrateVal->plan]['min'] = $schrateVal->min;
+                                        $plan_array['plan_' . $schrateVal->plan]['max'] = $schrateVal->max;
+                                        $plan_array['plan_' . $schrateVal->plan]['plan'] = $schrateVal->plan;
+                                    }
+                                    ?>
+                                    <?php
+                                    if ($cPlan) {
+                                        foreach ($cPlan as $cpval) {
+                                            ?>
+                                            <tr>
+                                                <td><?php echo $cpval->plan_name; ?></td>
+                                                <td><input type="text"  name='cost_<?php echo $cpval->id; ?>' class='cost_max mx-cost' id='cost_<?php echo $cpval->id; ?>' value="<?php
+                                                           if (isset($plan_array['plan_' . $cpval->id]['cost'])) {
+                                                               echo $plan_array['plan_' . $cpval->id]['cost'];
+                                                           }
+                                                           ?>" onkeypress ="return isNumberKey(event)" placeholder="9999" /></td>
+                                                <td><input type="text"  name='min_<?php echo $cpval->id; ?>' class="plan_min mn-plan" value="<?php
+                                                           if (isset($plan_array['plan_' . $cpval->id]['min'])) {
+                                                               echo $plan_array['plan_' . $cpval->id]['min'];
+                                                           }
+                                                           ?>" id='min_<?php echo $cpval->id; ?>' placeholder="9999" onkeypress ="return isDeciNumberKey(event)" /></td>
+                                                <td><input type="text"  name='max_<?php echo $cpval->id; ?>' class='plan_max mx-plan' value="<?php
+                                                           if (isset($plan_array['plan_' . $cpval->id]['max'])) {
+                                                               echo $plan_array['plan_' . $cpval->id]['max'];
+                                                           }
+                                                           ?>" id='max_<?php echo $cpval->id; ?>' placeholder="9999" onkeypress ="return isDeciNumberKey(event)" /></td>
+                                                <td><input type='checkbox' class='plan_status st-plan' name='plan_status' onclick="showminmax(this)" value='<?php echo $cpval->id; ?>' <?php
+                                                           if (isset($plan_array['plan_' . $cpval->id]['plan'])) {
+                                                               echo 'checked';
+                                                           }
+                                                           ?> /></td>
+                                            </tr>
+                                            <?php
+                                        }
+                                    }
+                                    ?>
+
+                                </table>
+                            </div>
+                        </div>
+                        <div id="delete_attachment"> 
+                            <input type="hidden" class="delete_attachment" name="delete_attachment" value="" >
+                        </div>
+
+                        <div class="row room-design">
+                            <label> Room Layout Design: </label> <input type="button" value="Add New" name="attachment" class="confirm" id='attachment' onclick="showUploadForm('<?php echo $this->bid; ?>')" style='float:right'/>
+                            <div class="room-attachment">
+								<table border='1' id="table_attachment">
+									<tr class="tr-bg">
+										<th>Design Name</th>
+										<th>Attachment</th>
+										<th>Action</th>
+									</tr> 
+								<?php $designlayouts = $cscheduleMapper->getcrDesignLayout($creditDetails->cid); ?>
+								<?php 
+								if ($designlayouts)
+								{
+										foreach ($designlayouts as $dlVal) {	?>
+											<tr id='trid_r_<?php echo $dlVal->d_id; ?>'>
+												<td id="tdtitle_<?php echo $dlVal->d_id; ?>"><?php echo $dlVal->design_name; ?> </td>
+												<td id="tdurl_<?php echo $dlVal->d_id; ?>">
+													<a href="<?php echo BASEURL . 'public/conference_room/' . $dlVal->attachment; ?>" target="_blank" ><?php echo $dlVal->attachment; ?> </a>
+												</td>
+												<td>
+													<a href="#editConRoom" class="editCat" href="javascript:void(0);" onclick="editAttach(<?php echo $dlVal->d_id; ?>)"><img src="<?php echo BASEURL . 'public/images/edit.png'; ?>"></a>
+													<a href="javascript:void(0);" onclick="removeAttachDb('r_<?php echo $dlVal->d_id; ?>', <?php echo $dlVal->d_id; ?>)" class="delCat" data-id="" title="Delete">
+													<img src="<?php echo BASEURL . 'public/images/delete.png'; ?>"></a>
+												</td>
+											</tr>
+								<?php   }
+								} else {
+								?>
+										<tr id='no_design'><td colspan="3">No Room Layout Design!</td></tr>
+								<?php } ?>
+
+								<!--  <tr><td>Conference Room Schedule </td><td>Email.pdf </td><td>Action </td></tr>
+								<tr><td>Conference Room Schedule </td><td>Email.pdf </td><td>Action </td></tr> -->
+								</table>
+                            </div>
+                        </div>
+                        <div class="row tenant-access">
+                            <label> Tenant Access: </label>
+                        </div>
+                        <div class="row tenant-admin">
+                            <div class="col-lg-2 col-sm-2 col-xs-2"></div>
+                            <div class="col-lg-4 col-sm-4 col-xs-4 "> 
+								<input type="checkbox" id='tenant_admin' name='tenant_admin' value="1"  onclick="checkTUser();"  <?php echo ($creditDetails->tenant_admin ==1 || $creditDetails->tenant_admin==1 ?"checked":""); ?> /> Tenant Admins  
+							</div>
+							<div class="col-lg-6 col-sm-6 col-xs-6">
+								<input type="checkbox" id='tenant_user' name='tenant_user' value="1" onclick="checkTAdmin();" <?php echo ($creditDetails->tenant_user == 1 ? "checked":""); ?> /> Tenant Users 
+							</div>
+                        </div>
+
+                    </div>
+<!--                <div class="row tenant-access"> 
+                        <label> Auto Billing: </label>
+                    </div>
+                    <div class="row tenant-admin">
+                        <div class="col-lg-2 col-sm-2 col-xs-2">   </div>
+                        <div class="col-lg-10 col-sm-10 col-xs-10">
+                        <input type="checkbox" id='auto_billing' name='auto_billing' value="1" 	<?php //echo ($creditDetails->auto_billing == 1 ? "checked":"")?>	/>Generate Bill to tenant via work order system
+                    </div>
+                    </div>-->
+                    <div class="row tenant-access"> 
+                        <label> Recurrence: </label>
+                    </div>
+                    <div class="row tenant-admin">
+                        <div class="col-lg-2 col-sm-2 col-xs-2">   </div>
+                        <div class="col-lg-10 col-sm-10 col-xs-10">  
+                            <input type="checkbox" id="rec_building_users" name="rec_building_users" value="1" <?php echo ($crDetails->recurrence_building_user ==1?"checked":"");?> /><span style="padding-right: 12px;">Building Users</span> 
+                            <input type="checkbox" id="rec_tenant_admin" name="rec_tenant_admin" onclick="rec_tenant_admin()" value="1" <?php echo ($crDetails->recurrence_tenant_admin ==1?"checked":"");?> /><span style="padding-right: 12px;">Tenant Admins</span>
+                            <input type="checkbox" id="rec_tenant_users" name="rec_tenant_users" onclick="rec_tenant_users()" value="1"  <?php echo ($crDetails->recurrence_tenant_user ==1?"checked":"");?> /><span style="padding-right: 12px;">Tenant Users</span>
+                        </div>
+                    </div>
+                    <div class="row tenant-admin"> 
+                        <div class="col-lg-2 col-sm-2 col-xs-2">  
+                            <label> Active: </label> 
+                        </div>
+                        <div class="col-lg-8 col-sm-8 col-xs-8">
+                            <select id='status' name='status' class="act-sel"> 
+                                <option value='1' <?php echo  ($creditDetails->status == 1 ? "selected":""); ?> >Yes</option>
+                                <option value='0' <?php echo ($creditDetails->status == 0? "selected":""); ?> >No</option>
+                            </select>                           
+                        </div>
+                    </div>
+
+                    <div> </div>
+                    <div class="confirmBtn float_none">
+                        <input type="button" value="Save" name="save" class="confirm" id='emailsave' onclick="updateCMultiRoom('Multi');">
+                        <input type="button" value="Cancel" name="cancel" class="cancel" onclick="cancelConRoom();">
+                        <input type="hidden" value="" id="total">
+                    </div>
+
+                </div>   
+            </div>
+        </div>
+</div>
+</section>
+</div>
+<div class="fade_default_opt" id="fd_dft_div" style="display:none">
+    <a href="#file_form" id="file_form_href" class="modalbox">&nbsp;</a>	
+    <div id="file_form" class="bd-dft-cls" style="display:none"></div>
+</div>
+
+<div class="loader" style="display:none;" > <img src="<?php echo BASEURL.'public/images/loader.gif';?>"><div>
+<style>
+.loader {
+    height: 100% !important;
+}
+</style>

@@ -1,0 +1,263 @@
+<?php echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/complete_workorder.js'); 
+
+
+$reportDetail=$this->reportDetailLinks; 
+$reportDetailLinks='';
+$uniqueCostCenter='';
+$allWorkOrder='';
+$reportDetailLinksbw='';
+$batchreport='';
+$reportModel = new Model_Report();
+$reportDetailLinks=$reportModel->getReport($this->custID, 31); 
+if($reportDetailLinks!=0) {
+	$reportDetailLinks=$reportDetailLinks[0];
+	$reportOption=explode(',',$reportDetailLinks->report_option);
+}
+
+$reportDetailLinksbw=$reportModel->getReport($this->custID, 32); 
+if($reportDetailLinksbw!=0) {
+	$reportDetailLinksbw=$reportDetailLinksbw[0];
+	$reportOptionbw=explode(',',$reportDetailLinksbw->report_option);
+}
+
+ ?>
+<div class="container-right invoice_margin" id="user-Complete">
+
+<div class="gridContainer  invoice_margin">       
+<?php  
+  $color_code = array('00FFFF','FF0000','FF00FF','800000','008000','800080','808000','0000FF','00FF00','000080','FFFF00','808000','008080','FFA500');						
+  $building_color = array();  
+ ?>               
+<section style="z-index:9999" class="w-48 fr ch-home-form invoice_margin" id="first_step" style="display:block!important;">
+<div id="fdw" class="cmp_order_container invoice_margin" >
+<div class="building-list tabmenu my_tabmenu" >
+			   <ul class="invoice_tab_menu">
+		<?php  
+					$j = 1;
+					foreach($this->companyListing as $cb){  
+						if(isset($color_code[$j])) $building_color[$cb['build_id']] = $color_code[$j];
+						else{ 
+							$j=0;
+							$building_color[$cb['build_id']] = $color_code[$j];
+						}
+						?>
+					<li style="background-color:#<?php echo $color_code[$j]?>"><a href="<?php echo $this->baseUrl().'/complete/index/bid/'.$cb['build_id']; ?>" <?php if($cb['build_id']==$this->select_build_id) echo 'class="resp-tab-active my_resp-tab-active"';?>><?php echo $cb['buildingName']; ?></a></li>
+		<?php if($cb['build_id']==$this->select_build_id) { $uniqueCostCenter=$cb['uniqueCostCenter'];  } ?>
+				<?php $j++; } ?>         
+        
+        </ul>
+		 </div>
+    </div>
+	<section class="ch-form-header">
+        <h3 class="text-center">Generate New Batch Invoice Form</h3>
+    </section>
+	<div id="batch_error" class="batch_error"></div>
+       <div class="invoice_wrap"> 
+	   
+<div class="col-sm-3">
+<div class="form_group invoice_filter">
+<input type="hidden" value="<?php echo $this->bId; ?>" id="bId">
+<input type="hidden" value="<?php echo $this->page; ?>" id="page">
+<input type="hidden" value="<?php echo $this->batch; ?>" id="batch_id">
+<div class="invoicehead "><label>Filter By Tenant Name</label></div>
+<!-- Split button -->
+<div tabindex="2" id="show_tenant" class="btn-group work_update_select">
+	<select class="all_select" onchange="showWorkOrderInfo()" id="tenantId" name="tenant" <?php if($this->batch==1) { echo "disabled"; } ?>>
+	<option value="">All Tenants</option>
+	<?php foreach($this->tenantList as  $value) {?>
+    <option value="<?php echo $value->id; ?>" <?php if($this->tuid==$value->id) { ?> selected <?php } ?> ><?php echo $value->tenantName; ?></option>
+    <?php } ?> 
+	</select>							  
+</div>
+</div>
+</div>
+
+<div class="col-sm-3">
+<div class="form_group invoice_filter">
+<div class="invoicehead "><label>Filter By Date (Month/Year)</label></div>
+<!-- Split button -->
+<div tabindex="2" id="show_tenant" class="btn-group work_update_select">
+<input name="myDate" id="monthyear" class="monthYearPicker" style="top:250px;" value="<?php if($this->month!=''){ echo $this->month,'/', $this->year;} ?>"  <?php if($this->batch==1) { echo "disabled"; } ?> Placeholder = 'Month / Year' />
+</div>
+</div>
+
+<div class="form_group ">
+<div id="date_error" class="date_error"></div>
+<div class="invoicehead "><label>Filter By Date (Between Dates)</label></div>
+<!-- Split button -->
+<div tabindex="2" id="show_tenant" class="btn-group work_update_select"> 
+<input type='text' id='fromdate' value="<?php if($this->from!='') { $datefrom=date_create($this->from);  echo date_format($datefrom,"m/d/Y"); }  ?>" <?php if($this->batch==1) { echo "disabled"; } ?> placeholder='From' >
+	
+<input type='text' id='todate' value="<?php if($this->to!='') { $dateto=date_create($this->to);  echo date_format($dateto,"m/d/Y"); }  ?>" <?php if($this->batch==1) { echo "disabled"; } ?> style='margin-top:5px;' placeholder='To'>
+
+</div>
+</div>
+</div>
+<?php if($this->batch!=1) { ?>
+<div class="col-sm-3">
+<button class="btn invoicegreen" onclick="generateBatch()">Generate Batch Numbers</button>
+<button class="btn invoiceblack" onclick="cancelBatch()">Cancel</button>
+</div>
+<?php  }  ?>
+<?php if($this->batch==1) { ?>
+<div class="col-sm-3">
+<button class="btn invoicegreen" >Generate Batch Numbers</button>
+<button class="btn invoiceblack" onclick="cancelBatch()" >Cancel</button>
+</div> <br>
+<div class="col-sm-3">
+<?php if(count($this->wolist)>0 && !empty($this->wolist)){
+		foreach($this->wolist as $value) { if($this->batch==1) { if($value->wo_batch!=0) { 
+		$allWorkOrder=$allWorkOrder.$value->wo_number .',';
+		$batchreport=$value->wo_batch;
+		 }}} }  ?>
+<a <?php if($reportDetailLinks!='') { 
+if($reportDetailLinks->Report_Type == 'Flash') {
+   $report_type = 'reports/VisionReportEngine/index.php?stimulsoft_client_key=ViewerFx&stimulsoft_';
+} else {
+$report_type = 'vnsreports/index.php?';
+}
+$reportOption=explode(',',$reportDetailLinks->report_option);  if($reportDetailLinks->report_target==1) { ?> target="_blank" <?php } }?> class="invoicegreen" style="border-radius:4px;" href="<?php if($reportDetailLinks!='') { echo BASEURL.$report_type.'report_key='.$reportDetailLinks->report_mrt; ?><?php if(in_array('[[++user_id]]',$reportOption)) { echo '&User='.$this->userId; } ?><?php if((in_array('[[++CostCenterNumber]]',$reportOption)) && $uniqueCostCenter!=''){ echo '&Cost_Center_Number='.$uniqueCostCenter;} ?><?php if((in_array('[[++KeyBuildingNumber]]',$reportOption)) && $this->select_build_id!='') { echo '&buildkey='.$this->select_build_id; } ?><?php if((in_array('[[++BatchNumber]]',$reportOption)) ) { echo '&Batch_Number='.$batchreport; } ?><?php if(in_array('[[++WONumber]]',$reportOption)){ echo "&WO_Number=".rtrim($allWorkOrder,',');  }?><?php if(in_array('[[++InvoiceNumber]]',$reportOption)){ echo "&Invoice_Number=".rtrim($allWorkOrder,',');  }  } else{ echo "#";}?>" ><button class="btn invoicegreen">Print Batch Invoice</button></a>
+
+<a <?php if($reportDetailLinksbw!='') { 
+if($reportDetailLinksbw->Report_Type == 'Flash') {
+$report_type = 'reports/VisionReportEngine/index.php?stimulsoft_client_key=ViewerFx&stimulsoft_';
+}else {
+$report_type = 'vnsreports/index.php?';
+}
+$reportOptionbw=explode(',',$reportDetailLinksbw->report_option);  if($reportDetailLinksbw->report_target==1) { ?> target="_blank" <?php } }?> class="invoicegreen" style="border-radius:4px;" href="<?php if($reportDetailLinksbw!='') { echo BASEURL.$report_type.'report_key='.$reportDetailLinksbw->report_mrt; ?><?php if(in_array('[[++user_id]]',$reportOptionbw)) { echo '&User='.$this->userId; } ?><?php if((in_array('[[++CostCenterNumber]]',$reportOptionbw)) && $uniqueCostCenter!=''){ echo '&Cost_Center_Number='.$uniqueCostCenter;} ?><?php if((in_array('[[++KeyBuildingNumber]]',$reportOptionbw)) && $this->select_build_id!='') { echo '&buildkey='.$this->select_build_id; } ?><?php if((in_array('[[++BatchNumber]]',$reportOptionbw)) ) { echo '&Batch_Number='.$batchreport; } ?><?php if(in_array('[[++WONumber]]',$reportOptionbw)){ echo "&WO_Number=".rtrim($allWorkOrder,',');  }?><?php if(in_array('[[++InvoiceNumber]]',$reportOptionbw)){ echo "&Invoice_Number=".rtrim($allWorkOrder,','); }  } else{ echo "#";}?>"  ><button class="btn invoicegreen" >Print Batch Invoice w/Backup</button></a>
+<a href="<?php echo BASEURL .'complete/index/bid/'.$this->bId;?>"><button class="btn invoiceblack" >Exit</button> </a>
+</div>
+<?php  }  ?>
+</div>
+
+<div class="clearfix"></div>
+
+<div class="col-sm-12 invoice_list_table" > 
+	<div id="filterbyid">
+	<table class="table table-striped table-responsive">
+		<tr class="invoice_tab_heading"> 
+		<td>z
+		List of Billable Invoices</div>
+	</td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	</tr>
+		<tr>
+			<td>Invoice Number</td>
+			<td>Tenant</td>
+			<td>Description</td>
+			<td>Invoice Date</td>
+			<td>Batch Invoice Number</td>
+		</tr>
+		<?php 
+		if(count($this->wolist)>0 && !empty($this->wolist)){
+		foreach($this->wolist as $value) { if($this->batch==1) { if($value->wo_batch!=0) { ?>
+		
+		<tr>
+			<td><input type="checkbox" class="checkBoxClass"  value="<?php echo $value->woId; ?>" checked disabled /> <span><?php echo $value->wo_number; ?></span></td>
+			<td><?php echo $value->tenantName; ?></td>
+			<td><?php echo $value->categoryName; ?></td>
+			<td><?php echo $value->created_date; ?></td>
+			<td><?php if($value->wo_batch!=0){ echo "B",$value->wo_batch; } ?> <a title="Delete" href="javascript:void(0);" onclick="deleteBatch(<?php echo $value->woId; ?>, <?php echo $value->wo_batch; ?>, <?php echo $value->building;  ?> )" > <img src="<?php echo BASEURL . 'public/images/delete.png'?>"  /> </a></td>
+		</tr>
+		<?php } } else { if($value->wo_batch==0) {  ?> 
+<tr>
+			<td>
+			<input type="hidden" name="selectedworkorders" id="selectedworkorders" value='<?php if(isset($this->selectedBatch) && $this->selectedBatch!=''){ echo json_encode($this->selectedBatch);  } ?>'>
+			<input type="checkbox" class="checkBoxClass" value="<?php echo $value->woId.'_'.$value->tenant; ?>" <?php if(isset($this->selectedBatch) && $this->selectedBatch!=''){if(isset($this->selectedBatch) && $this->selectedBatch!='' && is_array($this->selectedBatch)) { if(in_array($value->woId.'_'.$value->tenant, $this->selectedBatch)) { echo "checked"; }   }}?>/> <span><?php echo $value->wo_number; ?></span></td>
+			<td><?php echo $value->tenantName; ?></td>
+			<td><?php echo $value->categoryName; ?></td>
+			<td><?php echo $value->created_date; ?></td> 
+			<td><?php if($value->wo_batch!=0){ echo "B",$value->wo_batch; } ?> </td>
+		</tr>
+
+<?php }		} } } ?>
+	
+			
+	</table>
+	</div>
+	<?php if(count($this->wolist)>0 && !empty($this->wolist)){
+					 echo $this->paginationControl($this->wolist, 'Sliding', 'pagination.phtml'); 
+					 }?>
+	<div>
+		<button class="btn tabinvoicegreen" onclick="selectInvoice();">Select All Invoice Numbers</button>
+		<button class="btn tabinvoicegreen" onclick="unselectInvoice();">Deselect All Invoice numbers</button>
+	</div>
+</div>
+</div>       
+   </section>                 
+                  
+	</div> </div>  
+<div class="loader" style="display:none;"><img src="<?php echo BASEURL.'public/images/loader.gif';?>"></div>
+
+<script>
+/*
+$(function () {
+var myDate = new Date(1978,2,11)
+$('.datePicker').datepicker({defaultDate: '01/01 / 2014', onSelect: function(dateText, inst) {
+       
+       var date = $(this).datepicker('getDate'),
+            day  = date.getDate(),  
+            month = date.getMonth() + 1,              
+            year =  date.getFullYear();
+        alert(day + '-' + month + '-' + year);
+      $(".monthYearPicker").val(month +' / '+year);
+
+    },dateFormat: 'dd / mm / yy' });
+}); */
+
+
+
+
+$(function(){
+var fromdate=$( "#fromdate" ).val();
+var todate=$( "#todate" ).val();
+
+if(todate!='') {
+var maxDate=todate;
+} else {
+var maxDate='0';
+}
+if(fromdate!='') {
+var minDate=fromdate;
+} else {
+var minDate='';
+}
+
+
+	$( "#fromdate" ).datepicker({
+		maxDate: maxDate,
+		changeMonth: true,
+		changeYear: true,
+		numberOfMonths: 1,
+		
+		onClose: function( selectedDate ) { 
+			$( "#todate" ).datepicker( "option", "minDate", selectedDate );
+			searchBydate();
+		}
+	});
+	$( "#todate" ).datepicker({
+		maxDate: '0',
+		minDate:minDate,
+		changeMonth: true,
+		changeYear: true,
+		numberOfMonths: 1,
+		onClose: function( selectedDate ) {
+		if(selectedDate!='') {
+			$( "#fromdate" ).datepicker( "option", "maxDate", selectedDate );
+		} else {
+			$( "#fromdate" ).datepicker( "option", "maxDate", '0' );
+		}
+			searchBydate();
+		}
+	});
+});
+
+
+</script>
+
+<style>
+a:hover, a:focus { text-decoration:none !important; }
+</style>

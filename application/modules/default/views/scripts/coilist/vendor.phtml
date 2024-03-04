@@ -1,0 +1,1088 @@
+<?php
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/coilist.js');
+
+ // to check the read,write and no access
+	$user_info = $this->acessHelper->checkAccess($this->roleId,$this->user_info_id); 
+	
+	/*override access by custom user access if exist */
+	$customeAccessmodel = new Model_UserAccess();
+	$customeAccessmodeld = $customeAccessmodel->getUserCustomAccess($this->userId,$this->user_info_id);
+	if($customeAccessmodeld[0]) {
+		$user_info = $customeAccessmodeld[0];
+		
+	}
+	/* end overriding access */
+
+    $moduleMapper = new Model_UserBuildingModule();
+	//print_r($this->select_build_id);
+    $moduleAccess = $moduleMapper->getModuleByBuildingId($this->select_build_id, 4);
+	
+    $buildhasAccess = array();
+    if ($moduleAccess) {
+            foreach ($moduleAccess as $moduleAccessVal) {
+                    $buildhasAccess[] = $moduleAccessVal->module_id;
+            }
+    }
+    
+ $reportModel = new Model_Report();
+$reportDetailLinks = '';
+$dashBoardViewsdetails = '';
+$dashBoardViews = '';
+$woNumberAll = '';
+$invoiceAll = '';
+$uniqueCostCenterAll = '';
+$buildIdReportAll = '';
+$batch_number_report = '';
+$uniqueCostCenter = '';
+$workorderstatus = '';
+$workorderallstatus = '';
+
+
+if ($this->view_type != 'detail') {
+    $reportDetailLinks = $reportModel->getReport($this->custID, 57);
+    $dashBoardViewsdetails = $reportModel->getReport($this->custID, 58);
+	 
+} else {
+    $reportDetailLinks = $reportModel->getReport($this->custID, 3);
+} 
+
+$vendor_order = ($this->vendor_order == 'ASC')?'DESC':'ASC'; 
+?>
+
+
+
+
+<style>
+.sorting, .ASC, .DESC {
+    color: #fff;
+}
+.bs-example{
+        margin: 20px;
+    }
+.coi-footer-button{
+margin: 34px -14px -14px -13.5px;
+    text-align: left;
+}
+.coi-footer-button .nav-tabs>li>a {
+    margin-right: 2px;
+    line-height: 1.428571429;
+    border: 1px solid transparent;
+    border-radius: 0 0 0 0;
+	padding: 10px 24.1px;
+	color: #000 !important;
+}
+th{
+	text-align:center;
+}
+tbody {
+	text-align:center;
+}
+</style>
+<div class="container-right" >
+
+<ol id="toc">
+            <?php
+            foreach ($this->companyListing as $cb) {
+                if ($cb['build_id'] == $this->select_build_id) {
+                    $uniqueCostCenter = $cb['uniqueCostCenter'];
+                }
+            ?>
+                <li>
+                    <a class="<?php if ($cb['build_id'] == $this->select_build_id) echo 'active'; ?>" href="<?php echo $this->baseUrl() . '/coilist/vendor/bid/' . $cb['build_id']; ?>">
+                        <span>
+                            <?php echo $cb['buildingName']; ?>
+                        </span>
+                    </a>
+                </li>
+            <?php } ?>
+        </ol>
+<br/>
+<br/>
+     <?php
+                    $woCOI = new Model_CoiList();
+                    //$woBatch = new Model_WoBatch();
+                    if ($reportDetailLinks != '') {
+                        if ($this->select_build_id != '') {
+                                
+                                $coilist = $woCOI->getActiveVendorByBId($this->select_build_id);
+								
+                               // $invoicelist = $woReport->invoiceByBatch($this->select_build_id, $order, $dir);
+                                if ($coilist != '') {
+                                    foreach ($coilist as $coiId) {
+		
+                                        $coiIdAll = $coiIdAll . $coiId['coi_au_tenant_id'] . ',';
+										$coiTenanetAll = $coiTenanetAll . $coiId['tenant_Id'] . ',';
+                                    }
+                                }
+                                /* if ($invoicelist != '') {
+                                    foreach ($invoicelist as $invoiceNumber) {
+                                        $invoiceAll = $invoiceAll . $invoiceNumber->wo_number . ',';
+                                    }
+                                } */
+                            }
+                       
+                    }
+					
+                    ?>
+				    
+	
+<!-- Report Link -->
+            <?php if ($reportDetailLinks != '') { ?> <div class="tabmenu" ><ul style="padding:0px;"><?php
+                foreach ($reportDetailLinks as $reportvalue) {
+					if ($reportvalue->Report_Type == 'Flash') {
+                        $report_type = 'reports/VisionReportEngine/index.php?stimulsoft_client_key=ViewerFx&stimulsoft_';
+                       } else {
+                        $report_type = 'vnsreports/index.php?';
+                        }
+					
+                    $reportOption = explode(',', $reportvalue->report_option);
+				
+					
+                    ?> <li class="report_text" ><a   <?php if ($reportvalue->report_target == 1) { ?> target='_blank' <?php } ?> href="<?php echo BASEURL; ?><?php echo $report_type; ?>report_key=<?php echo $reportvalue->report_mrt; ?><?php
+                            if (in_array('[[++user_id]]', $reportOption)) {
+                                echo '&User=' . $this->userId;
+                            }
+                            ?><?php
+                            if ((in_array('[[++CostCenterNumber]]', $reportOption)) && $uniqueCostCenter != '') {
+                                echo '&Cost_Center_Number=' . $uniqueCostCenter;
+                            }
+                            ?><?php
+                            if ((in_array('[[++CostCenterAllBuildings]]', $reportOption)) && $uniqueCostCenterAll != '' && $this->select_build_id == '') {
+                                echo '&Cost_Center_Number=' . rtrim($uniqueCostCenterAll, ',');
+                            }
+                            ?><?php
+                            if ((in_array('[[++KeyBuildingNumber]]', $reportOption)) && $this->select_build_id != '') {
+                                echo '&buildkey=' . $this->select_build_id;
+                            }
+                            ?><?php
+                            if ((in_array('[[++KeyBuildingAllBuildings]]', $reportOption)) && $buildIdReportAll != '' && $this->select_build_id == '') {
+                                echo '&buildkey=' . rtrim($buildIdReportAll, ',');
+                            }
+                            
+                            ?><?php
+                            if ((in_array('[[++coi_au_tenant_id]]', $reportOption)) && $coiIdAll != '') {
+                                echo "&coiAuTenantId=" . rtrim($coiIdAll, ',');
+                            }
+                            ?><?php
+                            if ((in_array('[[++coi_tenant_id]]', $reportOption)) && $coiTenanetAll != '') {
+                                echo '&tenantId=' . rtrim($coiTenanetAll, ',');
+                            }
+                            
+                            ?>" ><?php echo $reportvalue->report_name; ?> </a> </li> <?php } ?> </ul></div>	<?php } ?>	
+
+
+  <br/>
+<br/>       
+   <?php 
+		
+        if (in_array(4, $buildhasAccess)) {
+        ?>
+    <div class="button-coi">
+		<ul class="nav nav-tabs">
+                <li class="nav-item">
+                <a href="<?php echo $this->baseUrl() . '/coilist/index/' ; ?>" class="nav-link" >Tenants COI's</a>
+                </li>
+                <li class="nav-item active">
+                <a href="<?php echo $this->baseUrl() . '/coilist/vendor/' ; ?>" class="nav-link" >Vendor COI's</a>
+                </li>        
+            </ul>
+		</div>
+	<div id="page" class="content">
+	                <div class="row-limit" style="float: left;margin-top: 12px;">
+                        Show:
+                            <select id="show_limit" onchange="showlimit();" dir="rtl">
+                                <option value="10" <?php echo ($this->show==10?"selected":"");?> >10</option>
+                                <option value="25" <?php echo ($this->show==25?"selected":"");?>>25</option>
+                                <option value="50" <?php echo ($this->show==50?"selected":"");?>>50</option>
+                                <option value="100" <?php echo ($this->show==100?"selected":"");?>>100</option>
+                                <option value="all" <?php echo ($this->show=='all'?"selected":"");?>>All</option>
+                            </select>
+                    </div>
+                    <div id="vendor_search_div">
+                        <div id="search_form_div">
+                            <div id="search_message"></div>
+                                <form name="search_form" id="search_form" action="<?php echo BASEURL.'coilist/vendor/bid/'.$this->select_build_id;?>" method="post">
+                                    <div id="form_field">
+									    <div style='float:left;'>
+                                            <label class='labelcenter' >Search Vendor Name</label>
+                                        </div>
+                                        <div class="text-select-div">
+                                            <div id="search_txt" ><input type="text" name="search_value" id="search_value" value="<?php echo stripslashes(htmlentities($service_value)); ?>"/></div>
+                                        </div>
+                                    </div>
+									<div class="form-button">
+									    <input type="submit" name="search" id="search" value="Search"/>
+                                        <input type="button" name="reset" id="reset" value="Reset" onclick="window.location.href='<?php echo BASEURL.'coilist/vendor/bid/'.$this->select_build_id;?>'"/>
+                                    </div>  
+                                </form>
+                            </div>
+                        </div>
+						<div class="service_message" id="service_message">
+						    <div id="msg">
+                            <span class="message">
+                            <?php
+                                $tm = new Zend_Session_Namespace('tenant_message');
+                                echo $tm->msg;
+                                $tm->setExpirationSeconds(1);
+                            ?>
+                            </span>
+                            <span class="error-txt" style="color:red;"></span>
+                        </div>
+							<span id="service_success" class="success"></span>
+							<span id="service_error" class="error"></span>
+						</div>
+    <div class="tab-content">
+        <div class="tab-pane active" id="home">
+            <br>
+           <table id="service_data_table" class="building_table_grid" width="100%">
+								<tr>
+								    <th><a href="<?php echo BASEURL.'coilist/vendor/bid/'.$this->select_build_id . '/vendor_dir/vendorName'.'/vendor_order/'.$vendor_order; ?>" 
+							        class="<?php if($this->vendor_dir=='vendorName') { echo $this->vendor_order; } else { echo 'ASC';} ?>">Vendor Name</a></th>
+								    <th>Status</th>
+								    <th>Expiration Date</th>
+								    <th>Uploaded File</th>
+								    <th>Coi uploaded</th>
+								    <?php if($user_info->is_write == 1){ ?>
+								    <th></th>
+								    <?php }?>
+								    <th></th>
+								</tr>
+                                <?php if($this->bsList){
+										foreach($this->bsList as $bs){
+											
+								?>								
+								<tr>
+								    <td><?php echo stripslashes($bs->company_name);?></td>
+									
+									<?php if(!empty($bs->coi_au_date_to)) { 
+									        
+									    $date1 = date_create(date('Y-m-d'));
+                                        $date2 = date_create($bs->coi_au_date_to);
+
+                                        //difference between two dates
+                                        $diff = date_diff($date1,$date2);
+									    $cout = $diff->format("%a");
+										
+									    if($cout >= 0 && $cout <= 30 ){ 
+										$color = '#ffff00';
+                                        $value = 'Expires - '.$cout.' day';										
+										}
+									    if($cout >= 31 && $cout <= 60 ){ 
+										$color = '#ebf1df';
+                                        $value = 'Expires - '.$cout.' day';									
+										}
+										if($cout >= 61 && $cout <= 90 ){ 
+										$color = '#92d050'; 
+										$value = 'Expires - '.$cout.' day';
+										}
+										if($cout > 90 ){ 
+										$color = '#00b050';
+                                        $value = 'Current';										
+										}
+										
+									     $agoCD = $date1 <= $date2;									
+										if($agoCD != '1'){
+										  $diff = date_diff($date1,$date2);
+									      $cout = $diff->format("%a");	
+										  $color = '#ff0000';
+                                          $value = 'Expires - '.$cout.' day ago';
+										}
+										
+									?>
+									<td style="background:<?php echo $color; ?>"><?php echo $value ; ?></td>									
+									<?php } else { ?>
+									<td style="background: #ffc000;">No COI</td>
+									<?php } ?>
+									<?php if(!empty($bs->coi_au_date_to)) { ?>
+									<td><?php echo date("m/d/Y", strtotime($bs->coi_au_date_to));?></td>
+									<?php }else{?>
+									<td>--</td>
+									<?php }?>
+									<?php if(!empty($bs->coi_au_pdf_upload)) { ?>
+									<td><a href="<?php echo $this->baseUrl() ?>/public/coi/<?php echo $bs->coi_au_pdf_upload; ?>" target="_blank"><?php echo $bs->coi_au_pdf_upload; ?></a></td>
+									<?php }else{?>
+									<td>--</td>
+									<?php }?>
+									<?php if(!empty($bs->coi_au_pdf_upload)) { ?>
+									<td>Yes</td>
+									<?php }else{?>
+									<td>No</td>
+									<?php }?>
+									<?php if($user_info->is_write == 1){ ?>
+									<td>
+									<?php if(empty($bs->coi_au_tenant_id)) { ?>
+									<a title="add" href="javascript:void(0);" onclick="showAddCoiVendor('<?php echo $bs->vid;?>')"><img src="<?php echo $this->baseUrl() ?>/public/images/edit.png"></a>
+						            <?php }else{?>
+									<a title="Edit" href="javascript:void(0);" onclick="showEditCoiVendor('<?php echo $bs->coi_au_tenant_id;?>')"><img src="<?php echo $this->baseUrl() ?>/public/images/edit.png"></a>
+									<?php }?>
+									<?php if(empty($bs->coi_au_tenant_id)) { ?>
+									<a href="javascript:void(0);" title="When You will add the Expiration date.then Delete functionality is working" onclick="#"><img src="<?php echo $this->baseUrl() ?>/public/images/delete.png"></a>
+						            <?php }else{?>
+									<a href="javascript:void(0);" title="Delete" onclick="deleteCoiVendorList('<?php echo $bs->coi_au_tenant_id;?>')"><img src="<?php echo $this->baseUrl() ?>/public/images/delete.png"></a>
+						            <?php }?>
+									</td>
+									<?php }?>
+									<td>
+									<!--
+									<a class="dyn" href="#"><img src="<?php //echo $this->baseUrl() ?>/public/images/task.png"></a>
+									-->
+									
+									<a class="dyn" onclick="return sendcoivendoremail('<?php echo $bs->vid; ?>','<?php echo $bs->coi_au_tenant_id;?>','<?php echo $bs->email;?>');" href="javascript:void(0);"><img src="<?php echo $this->baseUrl() ?>/public/images/task.png"></a>
+
+								<?php if ($dashBoardViewsdetails != '' && $bs->coi_au_tenant_id != '') { 
+									
+	                                        if ($dashBoardViewsdetails[0]->Report_Type == 'Flash') {
+                                                $report_type = 'reports/VisionReportEngine/index.php?stimulsoft_client_key=ViewerFx&stimulsoft_';
+                                            } else {
+                                                $report_type = 'vnsreports/index.php?';
+                                            } 
+											$dashBoardViewsdetailsoption = explode(',', $dashBoardViewsdetails[0]->report_option);
+											
+									?>
+									<a     <?php if ($dashBoardViewsdetails[0]->report_target == 1) { ?> target="_blank"  <?php } ?> href="<?php echo BASEURL; ?><?php echo $report_type; ?>report_key=<?php echo $dashBoardViewsdetails[0]->report_mrt; ?><?php
+                                                                        if (in_array('[[++user_id]]', $dashBoardViewsdetailsoption)) {
+                                                                            echo '&User=' . $this->userId;
+                                                                        }
+                                                                        ?><?php
+                                                                        if ((in_array('[[++CostCenterNumber]]', $dashBoardViewsdetailsoption))) {
+                                                                            echo '&Cost_Center_Number=' . $bs->uniquecostcenter;
+                                                                        }
+                                                                        ?><?php
+                                                                        if ((in_array('[[++KeyBuildingNumber]]', $dashBoardViewsdetailsoption))) {
+                                                                            echo '&buildkey=' . $bs->building_id;
+                                                                        }
+                                                                        ?><?php
+                                                                        if (in_array('[[++coi_au_tenant_id]]', $dashBoardViewsdetailsoption)) {
+                                                                            echo '&coi_au_tenant_id=' . $bs->coi_au_tenant_id;
+                                                                        }
+                                                                        ?><?php
+                                                                        if ((in_array('[[++coi_tenant_id]]', $dashBoardViewsdetailsoption))) {
+                                                                            echo '&coi_tenant_id=' . $bs->tenant_Id;
+                                                                        }                              
+                                                                        ?>" ><img src="<?php echo BASEURL . 'public/images/printer.png'; ?>" style="width:20px;"></a>
+								    <?php }else{?>
+									<a href="#"><img src="<?php echo $this->baseUrl() ?>/public/images/printer.png" style="width:18px;"></a></td>
+								    <?php }?>
+								</tr>
+								<?php  }}else{
+								  ?>
+								  <tr>
+									  <td colspan="6">No Record Exist.</td>
+								  </tr>
+                                                                  
+								  <?php }?>
+															  
+                                <?php
+                                    if(count($this->bsList) > 0 && !empty($this->bsList)) {
+                                        echo '<tr><td colspan="6">';
+                                        echo $this->paginationControl($this->bsList, 'Sliding', 'pagination.phtml');
+                                        echo '</td></tr>';                  
+                                    }
+                                ?>
+								  
+							  </table>
+
+        </div>
+		<div class="tab-pane fade" id="afterthreeMonth">
+            <br>
+           <table id="service_data_table" class="building_table_grid" width="100%">
+								<tr>
+								    <th><a href="<?php echo BASEURL.'coilist/vendor/bid/'.$this->select_build_id . '/vendor_dir/vendorName'.'/vendor_order/'.$vendor_order; ?>" 
+							        class="<?php if($this->vendor_dir=='vendorName') { echo $this->vendor_order; } else { echo 'ASC';} ?>">Vendor Name</a></th>
+								    <th>Status</th>
+								    <th>Expiration Date</th>
+								    <th>Uploaded File</th>
+								    <th>Coi uploaded</th>
+								    <?php if($user_info->is_write == 1){ ?>
+								    <th></th>
+								    <?php }?>
+								    <th></th>
+								</tr>
+                                <?php if($this->listAfterThreeexpireData){
+										foreach($this->listAfterThreeexpireData as $bs){
+											
+								?>								
+								<tr>
+								    <td><?php echo stripslashes($bs->company_name);?></td>
+									
+									<?php if(!empty($bs->coi_au_date_to)) { 
+									        
+									    $date1 = date_create(date('Y-m-d'));
+                                        $date2 = date_create($bs->coi_au_date_to);
+
+                                        //difference between two dates
+                                        $diff = date_diff($date1,$date2);
+									    $cout = $diff->format("%a");
+										
+									    if($cout >= 0 && $cout <= 30 ){ 
+										$color = '#ffff00';
+                                        $value = 'Expires - '.$cout.' day';										
+										}
+									    if($cout >= 31 && $cout <= 60 ){ 
+										$color = '#ebf1df';
+                                        $value = 'Expires - '.$cout.' day';									
+										}
+										if($cout >= 61 && $cout <= 90 ){ 
+										$color = '#92d050'; 
+										$value = 'Expires - '.$cout.' day';
+										}
+										if($cout > 90 ){ 
+										$color = '#00b050';
+                                        $value = 'Current';										
+										}
+										
+									     $agoCD = $date1 <= $date2;									
+										if($agoCD != '1'){
+										  $diff = date_diff($date1,$date2);
+									      $cout = $diff->format("%a");	
+										  $color = '#ff0000';
+                                          $value = 'Expires - '.$cout.' day ago';
+										}
+										
+									?>
+									<td style="background:<?php echo $color; ?>"><?php echo $value ; ?></td>									
+									<?php } else { ?>
+									<td style="background: #ffc000;">No COI</td>
+									<?php } ?>
+									<?php if(!empty($bs->coi_au_date_to)) { ?>
+									<td><?php echo date("m/d/Y", strtotime($bs->coi_au_date_to));?></td>
+									<?php }else{?>
+									<td>--</td>
+									<?php }?>
+									<?php if(!empty($bs->coi_au_pdf_upload)) { ?>
+									<td><a href="<?php echo $this->baseUrl() ?>/public/coi/<?php echo $bs->coi_au_pdf_upload; ?>" target="_blank"><?php echo $bs->coi_au_pdf_upload; ?></a></td>
+									<?php }else{?>
+									<td>--</td>
+									<?php }?>
+									<?php if(!empty($bs->coi_au_pdf_upload)) { ?>
+									<td>Yes</td>
+									<?php }else{?>
+									<td>No</td>
+									<?php }?>
+									<?php if($user_info->is_write == 1){ ?>
+									<td>
+									<?php if(empty($bs->coi_au_tenant_id)) { ?>
+									<a title="add" href="javascript:void(0);" onclick="showAddCoiVendor('<?php echo $bs->vid;?>')"><img src="<?php echo $this->baseUrl() ?>/public/images/edit.png"></a>
+						            <?php }else{?>
+									<a title="Edit" href="javascript:void(0);" onclick="showEditCoiVendor('<?php echo $bs->coi_au_tenant_id;?>')"><img src="<?php echo $this->baseUrl() ?>/public/images/edit.png"></a>
+									<?php }?>
+									<?php if(empty($bs->coi_au_tenant_id)) { ?>
+									<a href="javascript:void(0);" title="When You will add the Expiration date.then Delete functionality is working" onclick="#"><img src="<?php echo $this->baseUrl() ?>/public/images/delete.png"></a>
+						            <?php }else{?>
+									<a href="javascript:void(0);" title="Delete" onclick="deleteCoiVendorList('<?php echo $bs->coi_au_tenant_id;?>')"><img src="<?php echo $this->baseUrl() ?>/public/images/delete.png"></a>
+						            <?php }?>
+									</td>
+									<?php }?>
+									<td>
+									<a class="dyn" href="#"><img src="<?php echo $this->baseUrl() ?>/public/images/task.png"></a>
+									<a href="#"><img src="<?php echo $this->baseUrl() ?>/public/images/printer.png" style="width:18px;"></a></td>
+								</tr>
+								<?php  }}else{
+								  ?>
+								  <tr>
+									  <td colspan="6">No Record Exist.</td>
+								  </tr>
+                                                                  
+								  <?php }?>
+															  
+                                <?php
+                                   /*  if(count($this->bsList) > 0 && !empty($this->bsList)) {
+                                        echo '<tr><td colspan="6">';
+                                        echo $this->paginationControl($this->bsList, 'Sliding', 'pagination.phtml');
+                                        echo '</td></tr>';                  
+                                    } */
+                                ?>
+								  
+							  </table>
+
+        </div>
+        <div class="tab-pane fade" id="threeMonth">
+            <br>
+           <table id="service_data_table" class="building_table_grid" width="100%">
+								<tr>
+								    <th><a href="<?php echo BASEURL.'coilist/vendor/bid/'.$this->select_build_id . '/vendor_dir/vendorName'.'/vendor_order/'.$vendor_order; ?>" 
+							        class="<?php if($this->vendor_dir=='vendorName') { echo $this->vendor_order; } else { echo 'ASC';} ?>">Vendor Name</a></th>
+								    <th>Status</th>
+								    <th>Expiration Date</th>
+								    <th>Uploaded File</th>
+								    <th>Coi uploaded</th>
+								    <?php if($user_info->is_write == 1){ ?>
+								    <th></th>
+								    <?php }?>
+								    <th></th>
+								</tr>
+                                <?php if($this->listThreeexpireData){
+										foreach($this->listThreeexpireData as $bs){
+											
+								?>								
+								<tr>
+								    <td><?php echo stripslashes($bs->company_name);?></td>
+									
+									<?php if(!empty($bs->coi_au_date_to)) { 
+									        
+									    $date1 = date_create(date('Y-m-d'));
+                                        $date2 = date_create($bs->coi_au_date_to);
+
+                                        //difference between two dates
+                                        $diff = date_diff($date1,$date2);
+									    $cout = $diff->format("%a");
+										
+									    if($cout >= 0 && $cout <= 30 ){ 
+										$color = '#ffff00';
+                                        $value = 'Expires - '.$cout.' day';										
+										}
+									    if($cout >= 31 && $cout <= 60 ){ 
+										$color = '#ebf1df';
+                                        $value = 'Expires - '.$cout.' day';									
+										}
+										if($cout >= 61 && $cout <= 90 ){ 
+										$color = '#92d050'; 
+										$value = 'Expires - '.$cout.' day';
+										}
+										if($cout > 90 ){ 
+										$color = '#00b050';
+                                        $value = 'Current';										
+										}
+										
+									     $agoCD = $date1 <= $date2;									
+										if($agoCD != '1'){
+										  $diff = date_diff($date1,$date2);
+									      $cout = $diff->format("%a");	
+										  $color = '#ff0000';
+                                          $value = 'Expires - '.$cout.' day ago';
+										}
+										
+									?>
+									<td style="background:<?php echo $color; ?>"><?php echo $value ; ?></td>									
+									<?php } else { ?>
+									<td style="background: #ffc000;">No COI</td>
+									<?php } ?>
+									<?php if(!empty($bs->coi_au_date_to)) { ?>
+									<td><?php echo date("m/d/Y", strtotime($bs->coi_au_date_to));?></td>
+									<?php }else{?>
+									<td>--</td>
+									<?php }?>
+									<?php if(!empty($bs->coi_au_pdf_upload)) { ?>
+									<td><a href="<?php echo $this->baseUrl() ?>/public/coi/<?php echo $bs->coi_au_pdf_upload; ?>" target="_blank"><?php echo $bs->coi_au_pdf_upload; ?></a></td>
+									<?php }else{?>
+									<td>--</td>
+									<?php }?>
+									<?php if(!empty($bs->coi_au_pdf_upload)) { ?>
+									<td>Yes</td>
+									<?php }else{?>
+									<td>No</td>
+									<?php }?>
+									<?php if($user_info->is_write == 1){ ?>
+									<td>
+									<?php if(empty($bs->coi_au_tenant_id)) { ?>
+									<a title="add" href="javascript:void(0);" onclick="showAddCoiVendor('<?php echo $bs->vid;?>')"><img src="<?php echo $this->baseUrl() ?>/public/images/edit.png"></a>
+						            <?php }else{?>
+									<a title="Edit" href="javascript:void(0);" onclick="showEditCoiVendor('<?php echo $bs->coi_au_tenant_id;?>')"><img src="<?php echo $this->baseUrl() ?>/public/images/edit.png"></a>
+									<?php }?>
+									<?php if(empty($bs->coi_au_tenant_id)) { ?>
+									<a href="javascript:void(0);" title="When You will add the Expiration date.then Delete functionality is working" onclick="#"><img src="<?php echo $this->baseUrl() ?>/public/images/delete.png"></a>
+						            <?php }else{?>
+									<a href="javascript:void(0);" title="Delete" onclick="deleteCoiVendorList('<?php echo $bs->coi_au_tenant_id;?>')"><img src="<?php echo $this->baseUrl() ?>/public/images/delete.png"></a>
+						            <?php }?>
+									</td>
+									<?php }?>
+									<td>
+									<a class="dyn" href="#"><img src="<?php echo $this->baseUrl() ?>/public/images/task.png"></a>
+									<a href="#"><img src="<?php echo $this->baseUrl() ?>/public/images/printer.png" style="width:18px;"></a></td>
+								</tr>
+								<?php  }}else{
+								  ?>
+								  <tr>
+									  <td colspan="6">No Record Exist.</td>
+								  </tr>
+                                                                  
+								  <?php }?>
+															  
+                                <?php
+                                   /*  if(count($this->bsList) > 0 && !empty($this->bsList)) {
+                                        echo '<tr><td colspan="6">';
+                                        echo $this->paginationControl($this->bsList, 'Sliding', 'pagination.phtml');
+                                        echo '</td></tr>';                  
+                                    } */
+                                ?>
+								  
+							  </table>
+
+        </div>
+        <div class="tab-pane fade" id="twoMonth">
+            <br>
+           <table id="service_data_table" class="building_table_grid" width="100%">
+								<tr>
+								    <th><a href="<?php echo BASEURL.'coilist/vendor/bid/'.$this->select_build_id . '/vendor_dir/vendorName'.'/vendor_order/'.$vendor_order; ?>" 
+							        class="<?php if($this->vendor_dir=='vendorName') { echo $this->vendor_order; } else { echo 'ASC';} ?>">Vendor Name</a></th>
+								    <th>Status</th>
+								    <th>Expiration Date</th>
+								    <th>Uploaded File</th>
+								    <th>Coi uploaded</th>
+								    <?php if($user_info->is_write == 1){ ?>
+								    <th></th>
+								    <?php }?>
+								    <th></th>
+								</tr>
+                                <?php if($this->listTwoexpireData){
+										foreach($this->listTwoexpireData as $bs){
+											
+								?>								
+								<tr>
+								    <td><?php echo stripslashes($bs->company_name);?></td>
+									
+									<?php if(!empty($bs->coi_au_date_to)) { 
+									        
+									    $date1 = date_create(date('Y-m-d'));
+                                        $date2 = date_create($bs->coi_au_date_to);
+
+                                        //difference between two dates
+                                        $diff = date_diff($date1,$date2);
+									    $cout = $diff->format("%a");
+										
+									    if($cout >= 0 && $cout <= 30 ){ 
+										$color = '#ffff00';
+                                        $value = 'Expires - '.$cout.' day';										
+										}
+									    if($cout >= 31 && $cout <= 60 ){ 
+										$color = '#ebf1df';
+                                        $value = 'Expires - '.$cout.' day';									
+										}
+										if($cout >= 61 && $cout <= 90 ){ 
+										$color = '#92d050'; 
+										$value = 'Expires - '.$cout.' day';
+										}
+										if($cout > 90 ){ 
+										$color = '#00b050';
+                                        $value = 'Current';										
+										}
+										
+									     $agoCD = $date1 <= $date2;									
+										if($agoCD != '1'){
+										  $diff = date_diff($date1,$date2);
+									      $cout = $diff->format("%a");	
+										  $color = '#ff0000';
+                                          $value = 'Expires - '.$cout.' day ago';
+										}
+										
+									?>
+									<td style="background:<?php echo $color; ?>"><?php echo $value ; ?></td>									
+									<?php } else { ?>
+									<td style="background: #ffc000;">No COI</td>
+									<?php } ?>
+									<?php if(!empty($bs->coi_au_date_to)) { ?>
+									<td><?php echo date("m/d/Y", strtotime($bs->coi_au_date_to));?></td>
+									<?php }else{?>
+									<td>--</td>
+									<?php }?>
+									<?php if(!empty($bs->coi_au_pdf_upload)) { ?>
+									<td><a href="<?php echo $this->baseUrl() ?>/public/coi/<?php echo $bs->coi_au_pdf_upload; ?>" target="_blank"><?php echo $bs->coi_au_pdf_upload; ?></a></td>
+									<?php }else{?>
+									<td>--</td>
+									<?php }?>
+									<?php if(!empty($bs->coi_au_pdf_upload)) { ?>
+									<td>Yes</td>
+									<?php }else{?>
+									<td>No</td>
+									<?php }?>
+									<?php if($user_info->is_write == 1){ ?>
+									<td>
+									<?php if(empty($bs->coi_au_tenant_id)) { ?>
+									<a title="add" href="javascript:void(0);" onclick="showAddCoiVendor('<?php echo $bs->vid;?>')"><img src="<?php echo $this->baseUrl() ?>/public/images/edit.png"></a>
+						            <?php }else{?>
+									<a title="Edit" href="javascript:void(0);" onclick="showEditCoiVendor('<?php echo $bs->coi_au_tenant_id;?>')"><img src="<?php echo $this->baseUrl() ?>/public/images/edit.png"></a>
+									<?php }?>
+									<?php if(empty($bs->coi_au_tenant_id)) { ?>
+									<a href="javascript:void(0);" title="When You will add the Expiration date.then Delete functionality is working" onclick="#"><img src="<?php echo $this->baseUrl() ?>/public/images/delete.png"></a>
+						            <?php }else{?>
+									<a href="javascript:void(0);" title="Delete" onclick="deleteCoiVendorList('<?php echo $bs->coi_au_tenant_id;?>')"><img src="<?php echo $this->baseUrl() ?>/public/images/delete.png"></a>
+						            <?php }?>
+									</td>
+									<?php }?>
+									<td>
+									<a class="dyn" href="#"><img src="<?php echo $this->baseUrl() ?>/public/images/task.png"></a>
+									<a href="#"><img src="<?php echo $this->baseUrl() ?>/public/images/printer.png" style="width:18px;"></a></td>
+								</tr>
+								<?php  }}else{
+								  ?>
+								  <tr>
+									  <td colspan="6">No Record Exist.</td>
+								  </tr>
+                                                                  
+								  <?php }?>
+															  
+                                <?php
+                                   /*  if(count($this->bsList) > 0 && !empty($this->bsList)) {
+                                        echo '<tr><td colspan="6">';
+                                        echo $this->paginationControl($this->bsList, 'Sliding', 'pagination.phtml');
+                                        echo '</td></tr>';                  
+                                    } */
+                                ?>
+								  
+							  </table>
+
+        </div>
+
+
+        <div class="tab-pane fade" id="oneMonth">
+            <br>
+           <table id="service_data_table" class="building_table_grid" width="100%">
+								<tr><th><a href="<?php echo BASEURL.'coilist/vendor/bid/'.$this->select_build_id . '/vendor_dir/vendorName'.'/vendor_order/'.$vendor_order; ?>" 
+							        class="<?php if($this->vendor_dir=='vendorName') { echo $this->vendor_order; } else { echo 'ASC';} ?>">Vendor Name</a></th>
+								    <th>Status</th>
+								    <th>Expiration Date</th>
+								    <th>Uploaded File</th>
+								    <th>Coi uploaded</th>
+								    <?php if($user_info->is_write == 1){ ?>
+								    <th></th>
+								    <?php }?>
+								    <th></th>
+								</tr>
+                                <?php if($this->listoneexpireData){
+										foreach($this->listoneexpireData as $bs){
+											
+								?>								
+								<tr>
+								    <td><?php echo stripslashes($bs->company_name);?></td>
+									
+									<?php if(!empty($bs->coi_au_date_to)) { 
+									        
+									    $date1 = date_create(date('Y-m-d'));
+                                        $date2 = date_create($bs->coi_au_date_to);
+
+                                        //difference between two dates
+                                        $diff = date_diff($date1,$date2);
+									    $cout = $diff->format("%a");
+										
+									    if($cout >= 0 && $cout <= 30 ){ 
+										$color = '#ffff00';
+                                        $value = 'Expires - '.$cout.' day';										
+										}
+									    if($cout >= 31 && $cout <= 60 ){ 
+										$color = '#ebf1df';
+                                        $value = 'Expires - '.$cout.' day';									
+										}
+										if($cout >= 61 && $cout <= 90 ){ 
+										$color = '#92d050'; 
+										$value = 'Expires - '.$cout.' day';
+										}
+										if($cout > 90 ){ 
+										$color = '#00b050';
+                                        $value = 'Current';										
+										}
+										
+									     $agoCD = $date1 <= $date2;									
+										if($agoCD != '1'){
+										  $diff = date_diff($date1,$date2);
+									      $cout = $diff->format("%a");	
+										  $color = '#ff0000';
+                                          $value = 'Expires - '.$cout.' day ago';
+										}
+										
+									?>
+									<td style="background:<?php echo $color; ?>"><?php echo $value ; ?></td>									
+									<?php } else { ?>
+									<td style="background: #ffc000;">No COI</td>
+									<?php } ?>
+									<?php if(!empty($bs->coi_au_date_to)) { ?>
+									<td><?php echo date("m/d/Y", strtotime($bs->coi_au_date_to));?></td>
+									<?php }else{?>
+									<td>--</td>
+									<?php }?>
+									<?php if(!empty($bs->coi_au_pdf_upload)) { ?>
+									<td><a href="<?php echo $this->baseUrl() ?>/public/coi/<?php echo $bs->coi_au_pdf_upload; ?>" target="_blank"><?php echo $bs->coi_au_pdf_upload; ?></a></td>
+									<?php }else{?>
+									<td>--</td>
+									<?php }?>
+									<?php if(!empty($bs->coi_au_pdf_upload)) { ?>
+									<td>Yes</td>
+									<?php }else{?>
+									<td>No</td>
+									<?php }?>
+									<?php if($user_info->is_write == 1){ ?>
+									<td>
+									<?php if(empty($bs->coi_au_tenant_id)) { ?>
+									<a title="add" href="javascript:void(0);" onclick="showAddCoiVendor('<?php echo $bs->vid;?>')"><img src="<?php echo $this->baseUrl() ?>/public/images/edit.png"></a>
+						            <?php }else{?>
+									<a title="Edit" href="javascript:void(0);" onclick="showEditCoiVendor('<?php echo $bs->coi_au_tenant_id;?>')"><img src="<?php echo $this->baseUrl() ?>/public/images/edit.png"></a>
+									<?php }?>
+									<?php if(empty($bs->coi_au_tenant_id)) { ?>
+									<a href="javascript:void(0);" title="When You will add the Expiration date.then Delete functionality is working" onclick="#"><img src="<?php echo $this->baseUrl() ?>/public/images/delete.png"></a>
+						            <?php }else{?>
+									<a href="javascript:void(0);" title="Delete" onclick="deleteCoiVendorList('<?php echo $bs->coi_au_tenant_id;?>')"><img src="<?php echo $this->baseUrl() ?>/public/images/delete.png"></a>
+						            <?php }?>
+									</td>
+									<?php }?>
+									<td>
+									<a class="dyn" href="#"><img src="<?php echo $this->baseUrl() ?>/public/images/task.png"></a>
+									<a href="#"><img src="<?php echo $this->baseUrl() ?>/public/images/printer.png" style="width:18px;"></a></td>
+								</tr>
+								<?php  }}else{
+								  ?>
+								  <tr>
+									  <td colspan="6">No Record Exist.</td>
+								  </tr>
+                                                                  
+								  <?php }?>
+															  
+                                <?php
+                                   /*  if(count($this->bsList) > 0 && !empty($this->bsList)) {
+                                        echo '<tr><td colspan="6">';
+                                        echo $this->paginationControl($this->bsList, 'Sliding', 'pagination.phtml');
+                                        echo '</td></tr>';                  
+                                    } */
+                                ?>
+								  
+							  </table>
+
+        </div>
+		<div class="tab-pane fade" id="expiresAgo">
+            <br>
+           <table id="service_data_table" class="building_table_grid" width="100%">
+								<tr>
+								    <th><a href="<?php echo BASEURL.'coilist/vendor/bid/'.$this->select_build_id . '/vendor_dir/vendorName'.'/vendor_order/'.$vendor_order; ?>" 
+							        class="<?php if($this->vendor_dir=='vendorName') { echo $this->vendor_order; } else { echo 'ASC';} ?>">Vendor Name</a></th>
+								    <th>Status</th>
+								    <th>Expiration Date</th>
+								    <th>Uploaded File</th>
+								    <th>Coi uploaded</th>
+								    <?php if($user_info->is_write == 1){ ?>
+								    <th></th>
+								    <?php }?>
+								    <th></th>
+								</tr>
+                                <?php if($this->listagoexpireData){
+										foreach($this->listagoexpireData as $bs){
+											
+								?>								
+								<tr>
+								    <td><?php echo stripslashes($bs->company_name);?></td>
+									
+									<?php if(!empty($bs->coi_au_date_to)) { 
+									        
+									    $date1 = date_create(date('Y-m-d'));
+                                        $date2 = date_create($bs->coi_au_date_to);
+
+                                        //difference between two dates
+                                        $diff = date_diff($date1,$date2);
+									    $cout = $diff->format("%a");
+										
+									    if($cout >= 0 && $cout <= 30 ){ 
+										$color = '#ffff00';
+                                        $value = 'Expires - '.$cout.' day';										
+										}
+									    if($cout >= 31 && $cout <= 60 ){ 
+										$color = '#ebf1df';
+                                        $value = 'Expires - '.$cout.' day';									
+										}
+										if($cout >= 61 && $cout <= 90 ){ 
+										$color = '#92d050'; 
+										$value = 'Expires - '.$cout.' day';
+										}
+										if($cout > 90 ){ 
+										$color = '#00b050';
+                                        $value = 'Current';										
+										}
+										
+									     $agoCD = $date1 <= $date2;									
+										if($agoCD != '1'){
+										  $diff = date_diff($date1,$date2);
+									      $cout = $diff->format("%a");	
+										  $color = '#ff0000';
+                                          $value = 'Expires - '.$cout.' day ago';
+										}
+										
+									?>
+									<td style="background:<?php echo $color; ?>"><?php echo $value ; ?></td>									
+									<?php } else { ?>
+									<td style="background: #ffc000;">No COI</td>
+									<?php } ?>
+									<?php if(!empty($bs->coi_au_date_to)) { ?>
+									<td><?php echo date("m/d/Y", strtotime($bs->coi_au_date_to));?></td>
+									<?php }else{?>
+									<td>--</td>
+									<?php }?>
+									<?php if(!empty($bs->coi_au_pdf_upload)) { ?>
+									<td><a href="<?php echo $this->baseUrl() ?>/public/coi/<?php echo $bs->coi_au_pdf_upload; ?>" target="_blank"><?php echo $bs->coi_au_pdf_upload; ?></a></td>
+									<?php }else{?>
+									<td>--</td>
+									<?php }?>
+									<?php if(!empty($bs->coi_au_pdf_upload)) { ?>
+									<td>Yes</td>
+									<?php }else{?>
+									<td>No</td>
+									<?php }?>
+									<?php if($user_info->is_write == 1){ ?>
+									<td>
+									<?php if(empty($bs->coi_au_tenant_id)) { ?>
+									<a title="add" href="javascript:void(0);" onclick="showAddCoiVendor('<?php echo $bs->vid;?>')"><img src="<?php echo $this->baseUrl() ?>/public/images/edit.png"></a>
+						            <?php }else{?>
+									<a title="Edit" href="javascript:void(0);" onclick="showEditCoiVendor('<?php echo $bs->coi_au_tenant_id;?>')"><img src="<?php echo $this->baseUrl() ?>/public/images/edit.png"></a>
+									<?php }?>
+									<?php if(empty($bs->coi_au_tenant_id)) { ?>
+									<a href="javascript:void(0);" title="When You will add the Expiration date.then Delete functionality is working" onclick="#"><img src="<?php echo $this->baseUrl() ?>/public/images/delete.png"></a>
+						            <?php }else{?>
+									<a href="javascript:void(0);" title="Delete" onclick="deleteCoiVendorList('<?php echo $bs->coi_au_tenant_id;?>')"><img src="<?php echo $this->baseUrl() ?>/public/images/delete.png"></a>
+						            <?php }?>
+									</td>
+									<?php }?>
+									<td>
+									<a class="dyn" href="#"><img src="<?php echo $this->baseUrl() ?>/public/images/task.png"></a>
+									<a href="#"><img src="<?php echo $this->baseUrl() ?>/public/images/printer.png" style="width:18px;"></a></td>
+								</tr>
+								<?php  }}else{
+								  ?>
+								  <tr>
+									  <td colspan="6">No Record Exist.</td>
+								  </tr>
+                                                                  
+								  <?php }?>
+															  
+                                <?php
+                                   /*  if(count($this->bsList) > 0 && !empty($this->bsList)) {
+                                        echo '<tr><td colspan="6">';
+                                        echo $this->paginationControl($this->bsList, 'Sliding', 'pagination.phtml');
+                                        echo '</td></tr>';                  
+                                    } */
+                                ?>
+								  
+							  </table>
+
+        </div>
+		<div class="tab-pane fade" id="noCoi">
+            <br>
+           <table id="service_data_table" class="building_table_grid" width="100%">
+								<tr>
+								    <th>Vendor Name</th>
+								    <th>Status</th>
+								    <th>Expiration Date</th>
+								    <th>Coi uploaded</th>
+								    <?php if($user_info->is_write == 1){ ?>
+								    <th></th>
+								    <?php }?>
+								    <th></th>
+								</tr>
+                                <?php if($this->listNoCoiData){
+										foreach($this->listNoCoiData as $NoCoiData){
+											
+								?>								
+								<tr>
+								    <td><?php echo stripslashes($NoCoiData->company_name);?></td>
+									<td style="background: #ffc000;">No COI</td>
+									<td>--</td>
+									<td>No</td>
+									<?php if($user_info->is_write == 1){ ?>
+									<td>
+									<?php if(empty($NoCoiData->coi_au_tenant_id)) { ?>
+									<a title="add" href="javascript:void(0);" onclick="showAddCoiVendor('<?php echo $NoCoiData->id;?>')"><img src="<?php echo $this->baseUrl() ?>/public/images/edit.png"></a>
+						            <?php }else{?>
+									<a title="Edit" href="javascript:void(0);" onclick="showEditCoiVendor('<?php echo $NoCoiData->coi_au_tenant_id;?>')"><img src="<?php echo $this->baseUrl() ?>/public/images/edit.png"></a>
+									<?php }?>
+									<?php if(empty($NoCoiData->coi_au_tenant_id)) { ?>
+									<a href="javascript:void(0);" title="When You will add the Expiration date.then Delete functionality is working" onclick="#"><img src="<?php echo $this->baseUrl() ?>/public/images/delete.png"></a>
+						            <?php }else{?>
+									<a href="javascript:void(0);" title="Delete" onclick="deleteCoiVendorList('<?php echo $bs->coi_au_tenant_id;?>')"><img src="<?php echo $this->baseUrl() ?>/public/images/delete.png"></a>
+						            <?php }?>
+									</td>
+									<?php }?>
+									<td>
+									<a class="dyn" href="#"><img src="<?php echo $this->baseUrl() ?>/public/images/task.png"></a>
+									<a href="#"><img src="<?php echo $this->baseUrl() ?>/public/images/printer.png" style="width:18px;"></a></td>
+								</tr>
+								<?php  }}else{
+								  ?>
+								  <tr>
+									  <td colspan="6">No Record Exist.</td>
+								  </tr>
+                                                                  
+								  <?php }?>
+															  
+                                <?php
+								
+                                    /* if(count($this->listNoCoiData) > 0 && !empty($this->listNoCoiData)) {
+                                        echo '<tr><td colspan="6">';
+                                        echo $this->paginationControl($this->listNoCoiData, 'Sliding', 'pagination.phtml');
+                                        echo '</td></tr>';                  
+                                    } */
+                                ?>
+								  
+							  </table>
+
+        </div>
+		
+    </div>
+	<div class="form-button coi-footer-button">
+	<ul class="nav nav-tabs">
+        <li class="nav-item active">
+            <a href="#home" class="nav-link" style="background-color: #0070c0 !important;" data-toggle="tab">All (<?php echo $this->ListAll->total;?>)</a>
+        </li>
+        <li class="nav-item">
+            <a href="#afterthreeMonth" class="nav-link" style="background-color: #00b050 !important;" data-toggle="tab">current (<?php echo $this->listAfterThreeMonth->total;?>)</a>
+        </li>
+        <li class="nav-item">
+            <a href="#threeMonth" class="nav-link" style="background-color: #92d050 !important;" data-toggle="tab">Expires 60 - 90 (<?php echo $this->listThreeMonth->total;?>)</a>
+        </li>
+
+        <li class="nav-item">
+            <a href="#twoMonth" class="nav-link" style="background-color: #ebf1df !important;" data-toggle="tab">Expires 30 - 60 (<?php echo $this->listTwoMonth->total;?>)</a>
+        </li>
+		<li class="nav-item">
+            <a href="#oneMonth" class="nav-link" style="background-color: #ffff00 !important;" data-toggle="tab">Expires 0 - 30 (<?php echo $this->listOneMonth->total;?>)</a>
+        </li>
+		<li class="nav-item">
+            <a href="#expiresAgo" class="nav-link" style="background-color: #ff0000 !important;" data-toggle="tab">Expires (<?php echo $this->listAgoAll->total;?>)</a>
+        </li>
+		<li class="nav-item">
+            <a href="#noCoi" class="nav-link" style="background-color: #ffc000 !important;" data-toggle="tab">No COI's (<?php echo $this->listNoCoiAll->total;?>)</a>
+        </li>
+
+        
+    </ul>
+	</div>
+	<div id="popup_form" style="display:none" class="service_popup_form">
+					 <a href="#add_service_form" id="add_service_form_href" class="modalbox">&nbsp;</a>					
+					 <div id="add_service_form" class="bd-dft-cls"  style="display:none"></div>
+					 <a href="#edit_service_form" id="edit_service_form_href" class="modalbox">&nbsp;</a>					
+					 <div id="edit_service_form" class="bd-dft-cls"  style="display:none"></div>
+					 <a href="#service_template_form" id="service_template_form_href" class="modalbox">&nbsp;</a>					
+					 <div id="service_template_form" class="bd-dft-cls" style="display:none"></div>					
+				</div>
+	</div>
+	<?php
+    } else {
+        echo '<div class="clearfix"> </div>';
+        echo 'This Building does not have the access of this module.';
+    }
+    ?>
+</div>
+<div class="loader" style="display:none;" > <img src="<?php echo BASEURL.'public/images/loader.gif';?>"><div>
+        <script>
+            function showlimit(){
+                var data = $("#show_limit").val();
+                window.location =baseUrl+"coilist/index/show/"+data;
+            }
+			
+			function buttonSearching(bid){
+                var expAgo = $("#expiresAgo").val();
+				if(bid!=''){
+		        $('.loader').show();
+		        $.ajax({
+				url         : baseUrl+"coilist/buttonsearch",
+				type        : "post",
+				datatype    : 'json',
+				data        : {bid:bid, expAgo:expAgo},
+				success     : function( data ) {
+					$('.loader').hide(); 
+           					
+					//$('#edit_service_form').html(data);				
+					//$('#edit_service_form_href').trigger('click');
+				},
+				error       : function(){
+					$('.loader').hide();
+					alert('There was an error');
+				}  
+				
+			 });
+	 }
+            }
+            </script>

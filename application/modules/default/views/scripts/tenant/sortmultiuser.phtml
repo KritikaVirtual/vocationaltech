@@ -1,0 +1,70 @@
+<?php
+//echo "<pre>";
+//$multiUserList = $this->multiUserList;
+// echo '<pre>';
+// //print_r($multiUserList);
+// echo 'test';
+// print_r($this->finalResultArr);
+// die;
+$multiUserList = $this->finalResultArr;
+// echo '<pre>';
+// print_r($multiUserList);
+?>
+
+<div class="table-responsive">         
+                            <table id="air_handling-unit" class="table table-bordered">
+                                <?php foreach($multiUserList as $rec){
+                                    $user = $rec['data']['allowed_user_data'];
+                                
+                                    ?>
+                                <tbody><tr class="colorblue"><td>&nbsp;<a href="#<?php echo $user->auTenantOptionID;?>" class="show_hide" onclick="plusminus(this.id);" id="plus2"><i class="fa fa fa-minus-circle" aria-hidden="true"></i></a>&nbsp;<?php echo $user->User_EMail ;?> | <?php echo $user->User_First_Name;?></td></tr>
+                                <tr class="collapseall" id="xyzplus2" style="display: table-row;">
+                                    <td class="td-bg-clr" id="mno2">
+                                        <div class="tble-left-gp">
+                                            <table class="table table-bordered text-center">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="1w_180" width="20%">Email Address<span><a href="#<?php echo $user->auTenantOptionID;?>" ></th>
+                                                        <th class="1w_180" width="20%">Building Name<span><a href="#<?php echo $user->auTenantOptionID;?>" ></th>
+                                                        <th class="1w_180" width="15%">Tenant Name<span><a href="<?php echo $user->auTenantOptionID;?>" ></th>
+                                                        <th class="1w_130"width="15%" >Location</th>
+                                                        <th class="1w_130"width="5%" >Deleted</th> 
+                                                        <th class="1w_130" width="5%"></th>                                                         
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                <?php foreach($rec['data']['list'] as $tenant){
+                                                //  echo '<pre>';
+                                                //  print_r($tenant)
+                                                    ?>                  
+                                                <tr>
+                                                                <td><?php echo $tenant->email ;?></td>
+                                                                <td><?php echo $tenant->buildingName;?></td>
+                                                                <td><?php echo $tenant->tenantName;?></td>
+                                                                <td><?php echo $tenant->Tenant_Suit_Location;?></td>
+                                                                <td><?php echo ($tenant->TenantUser_Removed==1)?'Yes':'NO';?></td>
+                                                                <td>   
+                                                                <a title="Edit" class="modalbox" onclick="javascript:editTenantUserLocation('<?php echo BASEURL . 'tenant/edittuser/tuId/' . $tenant->UserID; ?>/locationuser/yes');" href="#editNewUser" ><img src="<?php echo BASEURL . 'public/images/edit.png' ?>" /></a>
+                                                                <?php if($tenant->is_location_removed==1){?>                                         
+                                                                <a title="recover" class="dyn" onclick="javascript:recoverTenantOptionUser('<?php echo $tenant->TenantUserId;?>','<?php echo $tenant->UserID;?>','<?php echo count($tenantuser); ?>')" href="#"><img src="<?php echo $this->baseUrl(); ?>/public/images/recovery.png" width="95%"></a>
+                                                                <?php }else{ ?>
+                                                                <a title="delete" class="dyn" onclick="javascript:deleteTenantOptionUser('<?php echo $tenant->TenantUserId;?>','<?php echo $tenant->UserID;?>','<?php echo count($tenantuser); ?>')" href="#"><img src="<?php echo $this->baseUrl(); ?>/public/images/delete.png"></a>
+
+                                                                <?php } ?>    
+                                                                </td>
+                                                               
+                                                            </tr>
+                
+                                                  <?php } ?>                                                  
+                
+                                                                                                       
+
+                                                </tbody>
+                                            </table>      
+                                        </div>                                            
+                                    </td>
+                                </tr>
+                                <?php } ?>
+                            </tbody>
+                        </table>
+                     </div>  

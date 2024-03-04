@@ -1,0 +1,210 @@
+<?php error_reporting(E_ALL & ~E_NOTICE);
+  echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/category_template.js');
+  $data = $this->categoryDetail['categoryDetail'];
+  $prioritySchedules = $this->priorityDetail;
+  $id = $this->id;
+  $building_id = $this->build_id;
+  $groupList = $this->groupList;
+  $userList = $this->userList;
+  $tenantList = $this->tenantList;
+  $categoryMapper = new Model_Category();
+  $categorylist = $categoryMapper->getCategoryByCompany($this->cust_id, $building_id); 
+  
+  if(!empty($data)) {
+      $data = $data[0];
+  }
+  
+  if(isset($data['cat_id'])) {
+      $id = $data['cat_id'];
+  }
+  
+  $buildModel = new Model_Building();
+  $buildData = $buildModel->getbuildingbyid($building_id);
+  $buildingName = $buildData[0]['buildingName'];
+?>
+
+
+<!--div class="container-right" id="priority-form"-->
+ <div class="container-right" >
+ <div class="gridContainer"> 
+    
+  
+			<section class="ch-form-header">
+        <h3>Category Codes: Add New Category</h3>
+    </section>
+	<section class="w-48 fr ch-home-form_ ad-ptform">
+            <form id="addNewCategory" class="" action="<?php echo BASEURL.'category/importcategory'; ?>" method="post">
+                <input type="hidden" name="actionType_temp" value="<?php echo (!empty($data) ? "edit" : "insert")?>">
+                <input type="hidden" id="building_id_temp" name="data[building_id]" value='<?php echo $building_id;?>'>
+                <div class="build_puchline"><?php echo $buildingName;?>: Add Category Code </div>
+                <hr/>
+                <div id="category-active-div">
+					<div id="category-div">
+						<label>Category Name :<span class='required'>*</span></label> 
+                        <div class="add_ct_name">
+						 <span id="name_error" class="uemailErr"></span> 
+						 <select id="category_name_temp" name="data[categoryName]" onchange='getCategory(this.value)' style='width:155px;'>
+						 <option value=''> --Select-- </option>
+						 <?php
+						  foreach($categorylist as $categorylistValue) { ?>
+						  <option value='<?php echo $categorylistValue->cat_id; ?>'> <?php echo $categorylistValue->categoryName; ?> </option>
+						  <?php } ?>
+						 </select>
+                          </div>     
+					</div>
+					<div id="active-div">
+						<label>Active :<span class='required'>*</span></label> 
+						 <span class="costCenterErr" id="priority-status-error"></span>
+						
+						<select name="data[status]" id="status_temp" class="status cate_select">
+							<option value="1">Yes</option>
+							<option value="0">No</option>
+						</select>
+					</div>
+               </div>
+               <div id="priority-div">
+					<label>Priority Schedule :<span class='required'>*</span></label>
+                    <div class="ad_psd"> 
+                        <span class="costCenterErr" id="priority-description-error"></span>
+                        <select style="width:25.1% !important" name="data[prioritySchedule]" id="priority_temp" class="status">
+                            <option value="0">Not Assigned</option>						
+                            <?php 
+                                foreach($prioritySchedules as $key => $preoritySchedule) {
+                                    echo "<option value='".$preoritySchedule['pid']."'";
+                                    if($preoritySchedule['priorityName']=="200 - Normal")
+                                     echo "selected='selected'";
+                                     echo  ">".$preoritySchedule['priorityName']."</option>";
+                                }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+                <div class="edit_cate_bottom">
+                <div id="send-email-user-div">
+					  <label>Send E-mail(Account Users ) To:</label>
+					  <span class="ugroupErr" id="list-error"></span>
+					  <table cellpadding="5" cellspacing="5" class="cate_table">
+                            <tbody>
+                                <tr>
+									<td>
+										<span class="span">List of Account Users</span>
+                                        <select id="usre_from_list_temp" multiple="multiple" name="usre_from_list" width="240"> 
+                                            <?php foreach ($userList as $key => $value) { ?>
+                                                <option value="<?php echo $value->uid; ?>">
+                                                    <?php echo stripslashes($value->lastName).','.stripslashes($value->firstName); ?>
+                                                </option>
+                                            <?php } ?>
+                                        </select>
+                                    </td>
+                                    <td style="border:none;">
+										 <div id="arrow-switcher">
+											 <a href="javascript:void(0)" onClick="move_list_items('usre_from_list_temp','user_to_list_temp')">
+											    <img src="<?php echo BASEURL.'public/images/right-arrow.png';?>" width="50"/>
+											 </a>
+											 <a href="javascript:void(0)" onClick="move_list_items('user_to_list_temp','usre_from_list_temp')">
+											    <img src="<?php echo BASEURL.'public/images/left-arrow.png';?>" width="50"/>
+											 </a>
+										 </div>
+                                    </td>
+                                    <td>
+										<span class="span">Account User</span>
+                                        <select id="user_to_list_temp" name="user_to_list[]" multiple="multiple" width="240"> 
+                                            
+                                        </select>
+                                    </td>
+                               </tr>                                                              
+                            </tbody>
+                        </table>
+                  </div>
+                <div id="send-email-div">
+					  <label>Send E-mail(Email Distribution Group ) To:</label>
+					  <span class="ugroupErr" id="list-error"></span>
+					  <table cellpadding="5" cellspacing="5" class="cate_table">
+                            <tbody>
+                                <tr>
+									<td>
+										<span class="span">List of Distribution Group</span>
+                                        <select id="send_from_list_temp" multiple="multiple" name="send_from_list"> 
+                                            <?php foreach ($groupList as $key => $value) { 
+												 if($value['active']=='1'){
+												?>
+                                                <option value="<?php echo $value['id']; ?>">
+                                                    <?php echo stripslashes($value['group_name']); ?>
+                                                </option>
+                                            <?php } }?>
+                                        </select>
+                                    </td>
+                                    <td style="border:none;">
+										 <div id="arrow-switcher">
+											 <a href="javascript:void(0)" onClick="move_list_items('send_from_list_temp','send_to_list_temp')">
+											    <img src="<?php echo BASEURL.'public/images/right-arrow.png';?>" width="50"/>
+											 </a>
+											 <a href="javascript:void(0)" onClick="move_list_items('send_to_list_temp','send_from_list_temp')">
+											    <img src="<?php echo BASEURL.'public/images/left-arrow.png';?>" width="50"/>
+											 </a>
+										 </div>
+                                    </td>
+                                    <td>
+										<span class="span">Distribution Group</span>
+                                        <select id="send_to_list_temp" name="send_to_list[]" multiple="multiple"> 
+                                            
+                                        </select>
+                                    </td>
+                               </tr>                                                              
+                            </tbody>
+                        </table>
+                  </div>
+                  <div id="tenant-group-div">
+					   <label class="form-cat-label">Category:</label>
+					   <div id="select-visible-div_temp">
+						    <div id="visible-div-temp" style='float: left; width: 31%;'><input type="radio" name="visible_status" value="1" checked="checked" id="visible_div_temp" style='margin-top:5px'/> <span>Visible to Selected Tenants</span></div>
+						    <div id="non-visible-div-temp"><input  style='margin-top:5px' type="radio" name="visible_status" value="0" id='non_visible_div_temp'/> <span>Not Visible to Selected Tenants</span></div>
+					   </div>
+					   <span class="ugroupErr" id="tenant-list-error"></span>
+					   <table cellpadding="5" cellspacing="5" class="cate_table">
+                            <tbody>
+                                <tr>
+									<td>
+										<span class="span">List of Tenants</span>
+                                        <select id="tenant_from_list_temp" multiple="multiple" name="tenant_from_list"> 
+                                            <?php foreach ($tenantList as $key => $value) { ?>
+                                                <option value="<?php echo $value->id; ?>">
+                                                    <?php echo stripslashes($value->tenantName); ?>
+                                                </option>
+                                            <?php } ?>
+                                        </select>
+                                    </td>
+                                    <td style="border:none;">
+										 <div id="arrow-switcher">
+											 <a href="javascript:void(0)" onClick="move_list_items('tenant_from_list_temp','tenant_to_list_temp')">
+											    <img src="<?php echo BASEURL.'public/images/right-arrow.png';?>" width="50"/>
+											 </a>
+											 <a href="javascript:void(0)" onClick="move_list_items('tenant_to_list_temp','tenant_from_list_temp')">
+											    <img src="<?php echo BASEURL.'public/images/left-arrow.png';?>" width="50"/>
+											 </a>
+										 </div>
+                                    </td>
+                                    <td>
+										<span class="span">Tenant</span>
+                                        <select id="tenant_to_list_temp" name="tenant_to_list[]" multiple="multiple"> 
+                                            
+                                        </select>
+                                    </td>
+
+                               </tr>                      
+                               
+                            </tbody>
+                        </table>
+                  </div>        </div>       
+				  <div class="confirmBtn">
+						<!--<input type="reset" value="Reset" name="reset" class="cancel"/>-->
+						<input type="button" value="Confirm" name="next"  id="saveCatImport" class="confirm savePriority" onclick="return importPriorityTemplate()"/>
+						<input type="button" value="Cancel" name="cancel" class="reset" onclick="parent.cancelCategroyFrom()"/>
+				  </div>
+            </form>
+        
+    </section><!--/div-->
+    </div>  
+</div>
+
+

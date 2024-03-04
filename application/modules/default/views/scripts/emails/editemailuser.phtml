@@ -1,0 +1,70 @@
+<?php
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/emails.js');  
+
+$roleMapper = new Model_Role();
+$roleDetail = $roleMapper->getRole();
+$sendMapper = new Model_SendAs();
+$sendDetail = $sendMapper->getSendAs();
+
+$weekdaysMapper = new Model_WeekDays();
+$weekdaysDetail = $weekdaysMapper->getWeekDays();
+
+
+?>
+
+
+<div class="container-right" id="add-tenant-data">
+	<span id="page_heading"><h3>Edit Account User</h3></span>
+			 <div class="tenant-user-data">
+					<div class="success_message" style="text-align:center;width:100%;font-weight:bold;color:red;"></div>				  			
+	
+				   <section class="w-48 fr ch-home-form">
+					  <form name="editUser" id="editUser" action="<?php echo BASEURL.'emails/editemailuser/uid/'.$this->userDetial['id'];?>" method="post">
+						  <input type="hidden" value="<?php echo $this->userDetial['group_id'] ?>" name="groupId" id="groupId">
+						  <input type="hidden" value="<?php echo $this->userDetial['id'] ?>" name="id" id="id">
+						  <input type="hidden" value="<?php echo $this->buildingId ?>" name="buildingId" id="buildingId">
+						
+						  <div class="left">				  					  						  					  						  					  
+						  	<div class="row">
+								<label>Days of the week :</label>
+                                <div class="email-egu">
+								<select name="days_of_week" id="days_of_week">
+									<?php foreach($weekdaysDetail as $wd){ ?>
+										<option value="<?php echo $wd['wdID'];?>" <?php echo  ($wd['wdID']==$this->userDetial['days_of_week'])?'selected':'';?>><?php echo $wd['title'];?></option>
+									<?php } ?>
+										
+								</select>
+                                </div>
+							</div>
+
+							<div class="row">
+								<label>Send As :</label>
+                                <div class="email-egu">
+								<select name="send_as" id="send_as">
+									<?php foreach($sendDetail as $sd){ ?>
+										<option value="<?php echo $sd['sid'];?>" <?php echo  ($sd['sid']==$this->userDetial['send_as'])?'selected':'';?>><?php echo $sd['title'];?></option>
+									<?php } ?>	
+										
+								</select>
+                                </div>
+							</div>
+							<div class="row">
+								<label>Complete Notification :</label>
+                                <div class="email-egu">
+								<select name="complete_notification" id="complete_notification">
+									<option value="0" <?php echo  ('0'==$this->userDetial['complete_notification'])?'selected':'';?>>No</option>
+									<option value="1" <?php echo  ('1'==$this->userDetial['complete_notification'])?'selected':'';?>>Yes</option>
+								</select>
+							   </div>
+                            </div>
+								
+						</div>
+						
+                        <div class="confirmBtn">								
+							<input type="button" value="Confirm" name="next" class="confirm next" onclick="checkEditUserGroup()" >
+							<input type="button" value="Cancel" name="cancel" class="cancel" onclick="javascript:cancelEmailGroup();">
+					    </div>
+					  </form>
+				   </section>    
+			  </div>
+			  </div>

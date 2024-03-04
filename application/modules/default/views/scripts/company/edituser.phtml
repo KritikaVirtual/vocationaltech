@@ -1,0 +1,222 @@
+<?php
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/user_info.js');
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/jquery.form.js');
+$userDetails = $this->userDetails[0];
+//print_r($userDetails->logout_time);
+$deletUserByGroup = 'Yes';
+$distributionGroup = '';
+$group_Ids = '';
+$userGroupModel = new Model_EmailGroupUsers();
+$emailGroup = $userGroupModel->getGroupByUserId($this->uid);
+if ($emailGroup) {
+    foreach ($emailGroup as $eg) {
+        $groupId = $eg->group_id;
+        if ($eg->building_id == $this->build_id) {
+            $groups_users = $userGroupModel->getUsersByGid($groupId);
+            //echo 'Count User'.count($groups_users);
+            //echo 'Gropd name:'.$eg->group_name;
+            if (count($groups_users) == 1) {
+                $distributionGroup .= ($distributionGroup != '') ? ',' : '';
+                $distributionGroup .= $eg->group_name;
+                $deletUserByGroup = 'No';
+            }
+            $group_Ids .= ($group_Ids != '') ? ',' : '';
+            $group_Ids .= $groupId;
+        }
+    }
+}
+$building_info = '';
+$customeAccessmodel = new Model_UserAccess();
+//echo $this->uid;
+//echo "adasd";
+$customeAccessmodeld = $customeAccessmodel->getUserCustomAccess($this->uid, $this->building_location_id);
+if ($customeAccessmodeld[0]) {
+    $building_info = $customeAccessmodeld[0];
+}
+//print_r($building_info);
+?>
+<div class="container-right" id="user-Complete">
+
+
+    <div class="gridContainer">       
+
+        <section style="z-index:9999" class="w-48 fr ch-home-form" >
+            <section class="ch-form-header">
+                <h3>System Edit User <?php echo stripslashes(htmlentities($userDetails->firstName)); ?></h3>
+            </section>
+            <div class="success_message" style="text-align:center;width:100%;font-weight:bold;color:red;"></div>
+            <div class="tableGrid" style="padding:20px 0 20px 0">
+                <div id="first" class="step">
+                    <form method="post"   class="bbq system_edit_form34">
+                        <input type='hidden' name='group_Ids_<?php echo $this->uid; ?>' id='group_Ids_<?php echo $this->uid; ?>' value='<?php echo $group_Ids; ?>'>
+                        <div id="ufnameDiv" class="row system_edit_form_in34">
+                            <label for="firstName">First Name: <span class="required">*</span></label>
+                            <span id="ufName_error" class="uofficeErr"></span>
+                            <input autofocus type="text" class="input_field_12em" name="firstName" id="firstName" value="<?php echo stripslashes(htmlentities($userDetails->firstName)); ?>"  />
+                        </div>   
+                        <div id="ulnameDiv" class="row system_edit_form_in34">
+                            <label for="lastName">Last Name: <span class="required">*</span></label>
+                            <span id="ulName_error" class="uofficeErr"></span>
+                            <input type="text" class="input_field_12em" name="lastName" id="lastName" value="<?php echo stripslashes(htmlentities($userDetails->lastName)); ?>" />
+                        </div> 
+
+                        <div id="utitleDiv" class="row system_edit_form_in34">
+                            <label for="Title">Title: <span class="required">*</span></label>
+                            <span id="utitle_error" class="uofficeErr"></span>
+                            <input type="text" class="input_field_12em" name="Title" id="title" value="<?php echo stripslashes(htmlentities($userDetails->Title)); ?>" />
+                        </div> 
+
+                        <div class="row system_edit_phone34" id="phoneDiv ">
+                            <label>Phone Number :<span class="required">*</span></label>
+                            <span class="uofficeErr" id="phone-error"></span>
+                            <input type="text" onkeypress="return isNumberKey(event);" id="phoneNumber" class="" name="phoneNumber" value="<?php echo stripslashes(htmlentities($userDetails->phoneNumber)); ?>">
+                            <label class="ext_label">Extension</label> <input type="text" maxlength="5" class="ext" onkeypress="return isNumberKey(event);" name="phoneExt" id="phoneExt" value="<?php if ($userDetails->phoneExt != '') {
+    echo '11';
+    echo htmlentities($userDetails->phoneExt);
+} ?>">
+                        </div>
+
+                        <div id="emailDiv" class="row system_edit_form_in34">
+                            <label for="email">Email: <span class="required">*</span></label>
+                            <span id="email-error" class="uofficeErr"></span>
+                            <input type="text" class="input_field_12em suite" name="email" id="email" value="<?php echo stripslashes(htmlentities($userDetails->email)); ?>" />
+                        </div>
+
+                        <div id="userNameDiv" class="row system_edit_form_in34">
+                            <label for="userName">User Name: <span class="required">*</span></label>
+                            <span id="userName-error" class="uofficeErr"></span>
+                            <input type="text" class="input_field_12em city" name="userName" id="userName" value="<?php echo stripslashes(htmlentities($userDetails->userName)); ?>" />
+                        </div>
+                        
+                        <div id="userNameDiv" class="row system_edit_form_in34">
+                            <label for="userName">ccWelcome Letter: </label>
+                            <span id="userName-error" class="uofficeErr"></span>
+                            <input type="checkbox" name="ccwelcomeletter" class="input_field_12em" id="ccwelcomeletter" <?php  echo ($userDetails->ccwelcomeletter==1?"Checked":""); ?>>
+                        </div>
+                        
+                        
+                        <div id="resetpassDiv" class="row">		
+                            <label class="reset_pswd_heading"><strong>Reset password</strong></label>
+                        </div>
+                        <div class="clear"></div>
+                        <div class="system_edit_form_wrap34">
+                            <div class='hidepassword'>
+                                <div id="resetpassDiv" class="row system_edit_form_in34">								
+
+                                    <label for="resetPassword" class='passwordlabel'>New Password: </label>
+                                    <span id="resetPassword-error" class="uofficeErr"></span>
+                                    <input type="password" class="input_field_12em city" name="resetPassword" id="resetPassword" value=""  />
+                                </div>
+
+                                <div id="confirmpassDiv" class="row system_edit_form_in34">
+                                    <label for="confirmPass"   class="passwordlabel">Confirm Password: </label>
+                                    <span id="confirmpass-error" class="uofficeErr"></span>
+                                    <input type="password" class="input_field_12em city" name="confirmPass" id="confirmPass" value=""  />
+                                </div>
+                            </div>	 
+                            <div id="autoGenerateDiv" class="row">
+                                <label for="autoGenerate" class="text-right">Auto Generate: </label>
+                                <span id="autoGenerate-error" class="uofficeErr"></span>
+                                <input type="checkbox" class="input_field_12em city" name="autoGenerate" id="autoGenerate" value="" onclick='selectAutogenerate(this)'  />
+                            </div>
+
+                            <div id="noteNotificationDiv" class="row ">
+                                <label for="note_notification"></label>
+                                <span id="note_notification-error" class="uofficeErr"></span>
+                                <span class="system_edit_note_mob"><input type ='checkbox' name = 'note_notification' id='note_notification' value='1' <?php if ($userDetails->note_notification == 1) {
+    echo 'checked';
+} ?> > Note Notification </span>
+                                <div class="clear"></div>
+                                <label for="note_notification"></label>
+                                <span class="system_edit_note_mob"><input type ='checkbox' name = 'alert_notification' id='alert_notification' value='1' <?php if ($userDetails->alert_notification == 1) {
+    echo 'checked';
+} ?> > Alert Off Notification</span>
+                            </div>
+
+
+                        </div>
+                        <div class="system_edit_upload34">
+                            <img src="<?php if ($userDetails->user_img != '') {
+                                                echo BASEURL . 'public/user_img/' . $userDetails->user_img;
+                                            } else {
+                                                echo BASEURL . 'public/user_img/user_128.png';
+                                            } ?>" id='show_img' style='width:128px; height:128px;'>
+                            <div class="upload_file_link">
+                                <span><a href="javascript:void(0)" class="close_bt_hide_cls" id="open_upload_pic" onclick="openUploadImg()"><span>Upload pic</span></a></span>
+                                <input type="file" class="file" id="user_img" name="user_img" style="display: none;" onchange="readImg(this);"/>
+                            </div></div>
+                        <div class="clear"></div>
+
+                        <div id="userNameDiv" class="row" style="margin-top:20px!important;">
+                            <label for="accessName">User Access: <span class="required">*</span></label>
+                            <span id="access-error" class="uofficeErr"></span>
+                            <div class="system_edit_form_select34">
+                                    <?php $notallow = array(1, 5, 7, 9); ?>
+                                <select name= 'access' id= 'access'>
+
+                                <?php 
+
+                                foreach ($this->roleDetail as $role): ?>
+                                    <?php if (!in_array($role['roleID'], $notallow)) { ?>
+                                            <option value="<?php echo $role['roleID']; ?>" <?php echo ($role['roleID'] == $userDetails->role_id ? 'selected':""); ?>><?php echo $role['title']; ?></option>
+                                    <?php }
+                                    ?>
+
+                                <?php endforeach; ?>
+                                <?php if ($building_info != '') { ?>
+                                        <option value='' selected> Customized </option>
+                                <?php } ?>
+                                </select>
+                                <div class="clear"></div>
+                                <div class="upload_file_link">
+                                    <span><a href="javascript:void(0)" class="close_bt_hide_cls"  onclick="openAccessMaterix(<?php echo $this->uid; ?>,<?php echo $this->build_id; ?> )"><span>Customize User Access</span></a></span>
+                                </div>
+                            </div>
+                            <div class="clear"></div>
+                        </div>
+
+                        <div id="removeUserDiv" class="row system_edit_form_in34">
+                            <label for="removeuserName">Remove User From Building: <span class="required">*</span></label>
+                            <span id="removeuser-error" class="uofficeErr"></span>
+                            <span><a onclick="removeUser('<?php echo $this->uid; ?>', '<?php echo $this->build_id; ?>', '<?php echo $this->userCount; ?>', '<?php echo $deletUserByGroup ?>')" title="Delete" href="javascript:void(0);"><img src="<?php echo BASEURL . 'public/images/delete.png'; ?>"></a></span>
+                        </div>
+                        <div id="autoGenerateDiv" class="row">
+                            <label for="autoGenerate"></label>
+                            <span id="autoGenerate-error" class="uofficeErr"></span>
+                        </div>
+                        
+                        <div id="chang_logout" >
+                            <!--<span id="autoGenerate-error" class="logouttime_msg"></span> <br> -->
+                            <label for="accessName">Logout Time: <span class="required">*</span></label>
+                            <div class="system_edit_form"> 
+                                <?php //echo $userDetails->logout_time; ?>
+                                <select name='logout_time' id='logout_time' onChange="logouttime('<?php echo $this->uid; ?>');" >
+                                    <option value="120" <?php echo ($userDetails->logout_time==120?"SELECTED":"");?>>2 Minutes </option>
+                                    <option value="900" <?php echo ($userDetails->logout_time==900?"SELECTED":"");?>>15 Minutes </option>
+                                    <option value="1200" <?php echo ($userDetails->logout_time==1200?"SELECTED":"");?>>20 Minutes </option>
+                                    <option value="3600" <?php echo ($userDetails->logout_time==3600?"SELECTED":"");?>>1 hours </option>
+                                    <option value="7200" <?php echo ($userDetails->logout_time==7200?"SELECTED":"");?>>2 hours </option>
+                                    <option value="14400" <?php echo ($userDetails->logout_time==14400?"SELECTED":"");?>>4 hours </option>
+                                    <option value="28800" <?php echo ($userDetails->logout_time==28800?"SELECTED":"");?>>8 hours </option>
+                                </select>
+                                <div class="clear"></div>
+                            </div>
+                        </div>
+                        <div class="confirmBtn float_none">
+                            <input type="button" id='updateUser'value="Save" name="cancel" class="cancel" onclick ='updateAccountUser("<?php echo $this->uid; ?>", "<?php echo $this->build_id; ?>")'/>
+                            <input type="button" value="Cancel" name="cancel" class="cancel" onclick="cancelUser()"/>                                
+                        </div>
+                    </form>                        
+                </div>
+            </div>
+        </section>  
+
+
+    </div>
+
+</div>
+<a href="#show_user_access" id="show_user_access_href" class="modalbox"></a>	
+<div id="show_user_access" class="bd-dft-cls" style="display:none"></div>
+
+
+

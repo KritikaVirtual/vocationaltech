@@ -1,0 +1,99 @@
+<?php 
+
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/tenantNewUser.js');
+
+//$userWizardAccess = $this->acesshelper->checkAccess($this->role,$this->user_wizard_location);  ?>
+
+<div class="container-right" id="user-Complete">
+    <?php if($this->role!=1){ ?>
+    <?php        
+        $roles = $this->companyListing['roles'];
+        $modules = $this->companyListing['modules'];
+        $buildings = $this->companyListing['buildings'];
+    ?>
+<section style="z-index:9999" class="w-48 fr ch-home-form" id="first">
+    <section class="ch-form-header ">
+        <h3>New User Setup</h3>
+    </section>
+    <div class="gridContainer">
+        <div class="tableGrid" style="padding:20px 0 20px 0">
+                <div id="fieldWrapper">
+                    <div class="step" id="first">
+                        <form method="post" id="first_form" class="bbq">
+
+                            <div id="emailDiv">
+                                <label for="email">Email: <span class="required">*</span></label>
+                                <span id="email-error" class="uemailErr"></span>
+                                <input type="text" class="input_field_12em email required" name="email" id="email" />
+                            </div>
+                            
+                            <div id="firstDiv">    
+                                <label for="firstname">First Name: <span class="required">*</span></label>
+                                <span id="firstname-error" class="ufirstErr"></span>
+                                <input type="text" class="input_field_12em required" name="firstName" id="firstname" />
+                            </div>
+                            
+                            <div id="lastDiv">    
+                                <label for="lastname">Last Name: <span class="required">*</span></label>
+                                <span id="lastname-error" class="ulastErr"></span>
+                                <input type="text" class="input_field_12em required" name="lastName" id="lastname" />
+                            </div>
+                            
+                            <div id="phoneDiv">    
+                                <label for="phonenumber">Phone Number: <span class="required">*</span></label>
+                                <span id="office-phone-error" class="uofficeErr"></span>
+                                <input onkeypress="return isNumberKey(event)" type="text" onkeypress="return isNumberKey(event)" class="input_field_12em required" name="phoneNumber" id="office-phone" />
+                            </div>
+
+                            <div id="roleDiv"> 
+                                <label>Select access :</label>
+                                <select  id="accessRole" name="access">
+                                    <?php 
+                                        $selectedRole = array(6, 7, 8);
+                                        foreach ($roles as $ker => $role) {
+                                            if(in_array($role['roleID'], $selectedRole)){
+                                              echo '<option value="'.$role['roleID'].'">'.$role['title'].'</option>';
+                                           }
+                                        }
+                                    ?>                    
+                                </select>
+                            </div>
+                         <div id="ModuleDiv">
+							<label>Select Modules :</label>
+							  <span class="moduleErr"></span>
+							  <input type="hidden" name="building" value="<?php echo $this->select_build_id;?>" id="building"/>
+									<div class="module_list">
+										<?php if(count($modules)>0){foreach($modules as $modulelists){?>
+										<input type="checkbox" name="modules[]" class="" id="modulee" value="<?php echo $modulelists['module_id'] ?>" checked="checked"> <?php echo $modulelists['module_name']; ?> 
+										<?php }}?>
+									</div>
+						  </div>	
+                            <div class="confirmBtn">
+                                <input type="reset" value="Reset" name="cancel" class="cancel"/>
+                                <input type="button" value="Submit" name="next" id="nextFirst" class="confirm nextFirst"/>
+                                <input type="button" value="Cancel" name="cancel" class="cancel" onclick="cancelUser()"/>
+                            </div>
+
+                        </form>    
+                    </div>                  
+
+                    <input type="hidden" value="<?php echo BASEURL; ?>" id="baseurl" />
+                    <input type="hidden" value="<?php echo $this->select_build_id;?>" id="select_building"/>
+                    <div id="user-Complete">
+                    </div>
+
+                </div>
+           
+        </div>
+    </div>
+</section>
+<?php }else{?>
+        You don't have access for this module.
+      <?php }?>     
+</div>
+<div class="loader" style="display:none;" > <img src="<?php echo BASEURL.'public/images/loader.gif';?>"><div>
+<style>
+.loader {
+    height: 100% !important;
+}
+</style>

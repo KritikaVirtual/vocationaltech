@@ -1,0 +1,105 @@
+<script src="<?php echo BASEURL . 'public/js/notes.js'?>"></script>
+<div class="loader" style="display:none;" > <img src="<?php echo BASEURL.'public/images/loader.gif';?>"/></div><div class="row">
+<?php
+$noteAccess = $this->acessHelper->checkAccess($this->roleId,$this->note_location);
+/*override access by custom user access if exist */
+$customeAccessmodel = new Model_UserAccess();
+$customeAccessmodeld = $customeAccessmodel->getUserCustomAccess($this->userId,$this->note_location);
+if($customeAccessmodeld[0]) {
+	$noteAccess = $customeAccessmodeld[0];
+}
+/* end overriding access */
+?>	 
+	<div class="notes-list-div">
+		<?php if($this->roleId!=1 && $noteAccess->is_access == 0){  ?>
+		   <div id="message">
+			   <div id="success" class="success_msg"><?php echo $this->nm->success; ?></div>
+			   <div id="error" class="error_msg"><?php echo $this->nm->error;?></div>
+		   </div>
+		   
+	    <table class="building_table_grid">
+			<tr>
+				<th width="5%">Sr.no.</th>
+				<th>Notes</th>
+				<th>Status</th>
+				<?php if($noteAccess->is_write == 1){?><th>Action</th><?php }?>
+			</tr>
+			<?php if($this->notesList){
+				   $i=1;
+				   foreach($this->notesList as $nl){
+				?>
+				   <tr id="show_note_<?php echo $nl['nid'];?>" class="show_note_tr">
+				       <td ><?php echo $i;?></td>
+				       <td><?php echo $nl['notes'];?></td>
+				       <td><?php echo ($nl['status'])?'Yes':'No';?></td>
+				      <?php if($noteAccess->is_write == 1){?> 
+						  <td><a title="Edit" href="javascript:void(0);" onclick="showEditNote('<?php echo $nl['nid']?>')"><img src="<?php echo BASEURL . 'public/images/edit.png'?>" /></a> <a title="Delete" href="javascript:void(0);" onclick="deleteNote('<?php echo $nl['nid']?>')"><img src="<?php echo BASEURL . 'public/images/delete.png'?>" /></a></td>
+					  <?php }?> 	  
+				   </tr>
+				   <?php if($noteAccess->is_write == 1){?> 
+				   <tr id="edit_note_<?php echo $nl['nid'];?>" class="edit_note_tr" style="display:none">
+					   <td><?php echo $i;?></td>
+				       <td><textarea name="notes_<?php echo $nl['nid'];?>" id="notes_<?php echo $nl['nid'];?>"><?php echo $nl['notes'];?></textarea></td>
+				       <td>
+						   <select name="status_<?php echo $nl['nid'];?>" id="status_<?php echo $nl['nid'];?>">
+				               <option value="1" <?php if($nl['status']==1){echo "selected=selected";}?>>Yes</option>
+				               <option value="0" <?php if($nl['status']==0){echo "selected=selected";}?>>No</option>
+				           </select>
+				       </td>
+				       
+				         <td><a title="Save" href="javascript:void(0);" onclick="editNote('<?php echo $nl['nid']?>')" data-id="<?php echo $nl['nid']?>" class="editcmpny"><img src="<?php echo BASEURL . 'public/images/yes_icon.png'?>" /></a><a title="Cancel" href="javascript:void(0);" onclick="hideEditNote('<?php echo $nl['nid']?>')" data-id="<?php echo $companydata['cust_id']?>" class="hideeditcmpny"><img src="<?php echo BASEURL . 'public/images/no_icon.png'?>" /></a></td>
+
+				   </tr>
+				 <?php }?> 
+			<?php 
+			   $i++;
+			      } 
+			}else {?>
+				<tr>
+					<td colspan="4"> No predefined notes exist</td>
+				</tr>
+			<?php }?>
+			<?php if($noteAccess->is_write == 1){?>
+				<tr>
+					<th colspan="4"><a href="javascript:void(0)" onclick="showAddNote()"> Add New Predefined Notes</a></th>
+				</tr>
+			<?php }?>		
+	    </table>
+	  <?php
+       }else{?>
+	    You don't have access for this module.
+	  <?php }?> 
+	
+	</div>
+</div>
+<a href="#add_notes" id="add_notes_href" class="modalbox">&nbsp;</a>					
+<div id="add_notes" class="bd-dft-cls" style="display:none">
+	 <div class="formBuild">
+			<h1>Add New Predefined Notes</h1>
+		 <form name="form_add_note" id="form_add_note" method="post" action="<?php echo BASEURL.'notes/addnotes';?>">
+			  <div class="note_form_row">
+				 <label>Notes:</label>
+				 <div class="nf-ibox">
+					 <span class="error" id="notes_error"></span>
+					 <textarea name="notes" id="notes"></textarea>
+				 </div>
+			  </div>
+			  <div class="note_form_row">
+				  <label>Status</label>
+				  <div class="nf-ibox">
+					  <select name="status" id="status">
+						  <option value="1" selected="selected">Yes</option>
+						  <option value="0">No</option>
+					  </select>
+				  </div>				  
+			  </div>
+			  <div class="confirmBtn">
+				  <div class="add-note-button">
+					   <a href="javascript:void(0)" onclick="addNotes()">Confirm</a>  
+					   <a href="javascript:void(0)" id="canceladdNotes" onclick="cancelAddNote()">Cancel</a>
+				   </div>
+			   </div>
+		 </form>	 
+	 </div>
+</div>
+<?php Zend_Session::namespaceUnset("notes_message");   ?>

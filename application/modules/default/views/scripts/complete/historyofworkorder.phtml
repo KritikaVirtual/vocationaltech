@@ -1,0 +1,123 @@
+<?php
+$workOrder = $this->woData;
+$buildId=$workOrder->building;
+$tenantList = '';
+$categoryList = '';
+$tuserList = '';
+$tenantModel = new Model_Tenant();
+$categoryModel = new Model_Category();
+$tuserModel = new Model_TenantUser();
+if($buildId!=''){
+	$tenantList = $tenantModel->getTenantByBuildingId($buildId);
+	$categoryList = $categoryModel->getBuildingCategoryList($buildId);
+	$tuserList =     $tuserModel->getTenantUsers($workOrder->tenant);
+}
+
+ $wpModel = new Model_WorkOrderUpdate();
+ $cwpData = $wpModel->getCurrentWoUpdate($workOrder->woId);
+ $work_status = ($cwpData)?$cwpData[0]['wo_status']:0;
+?>
+
+
+	<h1>Work order history</h1>
+	
+	 <div class="grid_content" style="height:200px;">
+											  <table name="labor_grid" class="cw_table_grid-history" width="100%">
+												  <tr>
+													  <th>WO Number</th>
+													  <th>Company</th>
+													  <th>Date Received</th>
+													  <th>Time Received</th>
+													  <th>Requested By</th>
+													  <th>Suite/Location</th>
+													  <th>Email</th>
+													  <th>Phone Number</th>
+													  <th>Category</th>
+													  <th>Work Order Request</th>
+												  </tr>
+												
+															 <tr><?php if($this->current_value!='null' && $this->current_value!='' ) { ?>
+																<td><?php echo $workOrder->wo_number; ?></td>
+																<td> <?php if($tenantList!=''){
+																		       foreach($tenantList as $tl){
+																		           if($tl->id==$this->current_value['tenant']) { echo stripslashes($tl->tenantName); }
+																			}
+																		} ?> 
+																</td>
+																<td><?php echo date("m/d/Y",strtotime($this->current_value['date_requested'])); ?> </td>
+																<td><?php echo $workOrder->time_requested; ?></td>
+																<td><?php if($tuserList!=''){
+									                                          foreach($tuserList as $tul){
+									                                              if($tul->uid==$this->current_value['create_user']) { 
+																			          echo stripslashes($tul->firstName).' '.stripslashes($tul->lastName); 
+																				    }
+									                                            } 
+																			}  ?>
+																</td>
+																<td><?php echo $workOrder->tenant_suite; ?></td>
+																<td><?php echo $workOrder->email; ?></td>
+																<td><?php echo $workOrder->phoneNumber; ?></td>
+																<td><?php if($categoryList!=''){
+								                                              foreach($categoryList as $cl){
+								                                                  if($cl['cat_id']==$this->current_value['category']) { 
+																				      echo $cl['categoryName']; 
+																					}
+								                                                } 
+																			}else {  
+																			    echo $this->current_value['categoryName']; 
+																				} ?>
+																</td>
+																<td> <?php echo $this->current_value['work_order_request']; ?> </td>
+																<?php  }  else { ?>
+											                <td colspan="10" style="text-align:center"><?php echo HiSTORY_NONE; ?></td>
+											              <?php } ?>
+															 </tr> 
+															<tr><td colspan="10"> <div style="text-align:center">	<span style="font-size:20px; font-weight:bold;"><i class="fa fa-arrow-circle-down big-arrow"></i>
+</span> </div></td> </tr>
+															
+															  
+															  <tr>
+																<td><?php echo $workOrder->wo_number; ?></td>
+																<td> <?php if($tenantList!=''){
+																		       foreach($tenantList as $tl){
+																		           if($tl->id==$workOrder->tenant) { echo stripslashes($tl->tenantName); }
+																			}
+																		} ?> 
+																</td>
+																<td><?php echo date("m/d/Y",strtotime($workOrder->date_requested)); ?> </td>
+																<td><?php echo $workOrder->time_requested; ?></td>
+																<td><?php if($tuserList!=''){
+									                                          foreach($tuserList as $tul){
+									                                              if($tul->uid==$workOrder->create_user) { 
+																			          echo stripslashes($tul->firstName).' '.stripslashes($tul->lastName); 
+																				    }
+									                                            } 
+																			}  ?>
+																</td>
+																<td><?php echo $workOrder->tenant_suite; ?></td>
+																<td><?php echo $workOrder->email; ?></td>
+																<td><?php echo $workOrder->phoneNumber; ?></td>
+																<td><?php if($categoryList!=''){
+								                                              foreach($categoryList as $cl){
+								                                                  if($cl['cat_id']==$workOrder->category) { 
+																				      echo $cl['categoryName']; 
+																					}
+								                                                } 
+																			}else {  
+																			    echo stripslashes($workOrder->categoryName); 
+																				} ?>
+																</td>
+																<td> <?php echo stripslashes($workOrder->work_order_request); ?> </td>
+																
+															 </tr>
+														
+												
+												  
+											  </table>
+										  </div>
+	
+	
+	<div class="buttons">
+				   <button type="button" name="cancel" id="cancel" value="Cancel" onclick="cancelLaborForm()">Cancel</button>
+	  </div>
+

@@ -1,0 +1,82 @@
+<?php if($this->laborData) { 
+		  $labor = $this->laborData[0];
+		  
+		?>	
+	<div class="labor_row">
+		  <label>Description:</label>
+		  <div class="labor_ibox_row">
+			   <span class="field_error" id="lerror_desc"></span>
+			   <input type="text" name="description" id="description" value="<?php echo $labor['description']; ?>" readonly="readonly"/>
+		  </div>			
+	</div>
+	<div class="labor_row">
+		 <label>Active:</label>
+		  <div class="labor_ibox_row">
+			   <span class="field_error" id="lerror_status"></span>
+			   <select name="show_status" id="show_status" disabled="disabled ">
+				   <option value="1" <?php echo ($labor['status']==1)?'selected="selected"':'';?>>Yes</option>
+				   <option value="0" <?php echo ($labor['status']==0)?'selected="selected"':'';?>>No</option>
+			   </select>
+			   <input type="hidden" name="status" id="status" value="<?php echo $labor['status']; ?>"/>
+			   <input type="hidden" name="import_template" id="import_template" value="1"/>
+		  </div>
+	</div>
+	<div class="labor_row">
+		  <label>Charge/Hour $:</label>
+		  <div class="labor_ibox_row">
+			   <span class="field_error" id="lerror_charge"></span>
+			   <input type="text" name="charge_hour" id="charge_hour" onkeypress="return isNumber(event)" maxlength="6" value="<?php echo $labor['charge_hour']; ?>"/>
+		  </div>			
+	</div>
+	<div class="labor_row">
+		 <label>Set as Default:</label>
+		  <div class="labor_ibox_row">
+			   <span class="field_error" id="lerror_default"></span>
+			   <select name="set_default" id="set_default">
+				   <option value="1" <?php echo ($labor['set_default']==1)?'selected="selected"':'';?>>Yes</option>
+				   <option value="0" <?php echo ($labor['set_default']==0)?'selected="selected"':'';?>>No</option>
+			   </select>
+		  </div>
+	</div>
+	
+	 <?php 
+   }else{
+	   ?>
+	   <div class="labor_row">
+		  <label>Description:</label>
+		  <div class="labor_ibox_row">
+			   <span class="field_error" id="lerror_desc"></span>
+			   <input type="text" name="description" id="description"/>
+		  </div>			
+	</div>
+	<div class="labor_row">
+		 <label>Active:</label>
+		  <div class="labor_ibox_row">
+			   <span class="field_error" id="lerror_status"></span>
+			   <select name="status" id="status">
+				   <option value="1" selected="selected">Yes</option>
+				   <option value="0">No</option>
+			   </select>
+		  </div>
+	</div>
+	<div class="labor_row">
+		  <label>Charge/Hour $:</label>
+		  <div class="labor_ibox_row">
+			   <span class="field_error" id="lerror_charge"></span>
+			   <input type="text" name="charge_hour" id="charge_hour" onkeypress="return isNumber(event)" maxlength="6"/>
+		  </div>			
+	</div>	
+	<div class="labor_row">
+		 <label>Set as Default:</label>
+		  <div class="labor_ibox_row">
+			   <span class="field_error" id="lerror_default"></span>
+			   <select name="set_default" id="set_default">
+				   <option value="1">Yes</option>
+				   <option value="0" selected="selected">No</option>
+			   </select>
+		  </div>
+	</div>
+<?php	   
+   }
+   ?>
+	

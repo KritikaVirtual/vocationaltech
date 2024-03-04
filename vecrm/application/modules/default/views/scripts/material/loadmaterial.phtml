@@ -1,0 +1,411 @@
+<?php 
+$sarray = array();
+$servModel = new Model_Services();
+$serviceList = $servModel->getServices();
+foreach($serviceList as $sl){
+	$sarray[$sl['sid']]=$sl['service'];
+}
+
+
+//print_r($this->vdata);
+$material = $this->mdata;
+$mid = $material['mid'];
+$vid = $material['vendor'];
+$bid = $material['buildingId'];
+$vendor = array();
+$vendorList = array();
+$vcModel = new Model_Vendor();
+if($vid!=''){
+$vData = $vcModel->getVendor($vid);
+$vendor = $vData[0];
+}
+if($bid!=''){
+   $vendorData = $vcModel->getVendorListByBid($bid);
+   if($vendorData){	
+		foreach($vendorData as $vl){
+			$vendorList[$vl['vid']]=$vl['company_name'];
+		}
+	}
+}
+$mvModel = new Model_MaterialVendor();
+$mvList = $mvModel->getContactByMid($mid);
+$material_access = $this->acessHelper->checkAccess($this->roleId,$this->material_location);
+if($material_access->is_access == 0){
+?>
+<div id="vendor_contact_info_div">
+	<div id="vendor_info_div">
+		<?php if($material_access->is_write==1){?>
+		   <div id="left_right_main" class="vendor_lr_row">
+			 <div id="left_section">
+			   <div class="field_edit_popup">
+					<li class="required">&nbsp;</li><label>Description</label> <span>:</span>
+					 <?php //echo (!empty($uinfo->tenantName))?$uinfo->tenantName:''; ?>
+					<a style="display:table-cell; padding: 0 0 0 3px;" href="#" class="description" id="description-<?php echo $mid; ?>" data-type="text" data-pk="<?php echo $mid; ?>" data-url="<?php echo $this->baseUrl().'/material/updatematerial';?>" data-title="Enter Description" data-placeholder="Required" data-name="description"><?php echo (!empty($material['description']))?$material['description']:''; ?></a>
+					<input type="hidden" name="role_id" id="role_id" value="9"/>
+				  </div>
+				  <div class="field_edit_popup">
+					<li class="required">&nbsp;</li><label>Service</label> <span style="float:left;">:</span>
+					 <a style="display:table-cell; padding: 0 0 0 3px;" href="#" class="service" id="service-<?php echo $mid; ?>" data-type="select" data-pk="<?php echo $mid; ?>" data-url="<?php echo $this->baseUrl().'/material/updatematerial';?>" data-title="Select Service" data-placeholder="Required" data-name="service" data-value="<?php echo $material['service'];?>"><?php echo (!empty($material['service']))?$sarray[$material['service']]:''; ?></a>										
+				  </div>
+				  <div class="field_edit_popup">
+					<li class="required">&nbsp;</li><label>Cost $</label> <span style="float:left;">:</span>
+					 <a style="display:table-cell; padding: 0 0 0 3px;" href="#" class="cost" id="cost-<?php echo $mid; ?>" data-type="text" data-pk="<?php echo $mid; ?>" data-url="<?php echo $this->baseUrl().'/material/updatematerial';?>" data-title="Enter Cost" data-placeholder="Required" data-name="cost"><?php echo (!empty($material['cost']))?$material['cost']:''; ?></a>										
+				  </div>
+				  <div class="field_edit_popup">
+					<li class="not_required">&nbsp;</li><label>Markup</label> <span style="float:left;">:</span>
+					 <a style="display:table-cell; padding: 0 0 0 3px;" href="#" class="markup" id="markup-<?php echo $mid; ?>" data-type="text" data-pk="<?php echo $mid; ?>" data-url="<?php echo $this->baseUrl().'/material/updatematerial';?>" data-title="Enter Markup" data-placeholder="Required" data-name="markup"><?php echo (!empty($material['markup']))?$material['markup']:'0'; ?></a><span class="mark-percentage">%</span>
+				  </div>
+				  <div class="field_edit_popup">
+					<li class="not_required">&nbsp;</li><label>Prefered Vendor Name</label> <span style="float:left;">:</span>
+					 <a style="display:table-cell; padding: 0 0 0 3px;" href="#" class="vendor" id="vendor-<?php echo $mid; ?>" data-type="select" data-pk="<?php echo $mid; ?>" data-url="<?php echo $this->baseUrl().'/material/updatematerial';?>" data-title="Select Vendor"  data-name="vendor" data-value="<?php echo $material['vendor'];?>"><?php echo (!empty($material['vendor']))?$vendor['company_name']:''; ?></a>										
+				  </div>
+				  <?php if($vid!=''){ ?>
+				  <div class="vendor_details">
+					  <div class="vendor_detail_row">
+						  <label>Contact</label> 
+						  <span style="float:left;">:</span>
+						  <span><?php echo $vendor['first_name'].' '.$vendor['last_name'];?></span>
+					  </div>
+					  <div class="vendor_detail_row">
+						  <label>E-mail</label> 
+						  <span style="float:left;">:</span>
+						  <span><?php echo $vendor['email']?></span>
+					  </div>
+					  <div class="vendor_detail_row">
+						  <label>Phone Number</label> 
+						  <span style="float:left;">:</span>
+						  <span><?php echo $vendor['phone_number']?></span>
+					  </div>
+					  <div class="vendor_detail_row">
+						  <label>Cell Number</label> 
+						  <span style="float:left;">:</span>
+						  <span><?php echo $vendor['cell_number']?></span>
+					  </div>
+					  <div class="vendor_detail_row">
+						  <label>City</label> 
+						  <span style="float:left;">:</span>
+						  <span><?php echo $vendor['city']?></span>
+					  </div>
+					  <div class="vendor_detail_row">
+						  <label>State</label> 
+						  <span style="float:left;">:</span>
+						  <span><?php echo $vendor['state']?></span>
+					  </div>
+					  <div class="vendor_detail_row">
+						  <label>Postal Code</label> 
+						  <span style="float:left;">:</span>
+						  <span><?php echo $vendor['postal_code']?></span>
+					  </div>
+				  </div>
+				  <?php }?>
+			 </div> 
+			 <div id="right_section">
+				  <div class="field_edit_popup">
+					<label>Date Created</label> <span style="float:left;">:</span>
+					 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo date("F d,Y" ,strtotime($material['created_at']));?></span>
+				  </div>
+				   <div class="field_edit_popup">
+					<label>Last Modified</label> <span style="float:left;">:</span>
+					 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo ($material['updated_at']!=NULL && $material['updated_at']!='0000-00-00 00:00:00')?date("F d,Y" ,strtotime($material['updated_at'])):'--';?></span>
+				  </div>
+				   <div class="field_edit_popup">
+					<label>Vendor Part Number</label> <span style="float:left;">:</span>
+					 <a style="display:table-cell; padding: 0 0 0 3px;" href="#" class="vendor_part" id="vendor_part-<?php echo $mid; ?>" data-type="text" data-pk="<?php echo $mid; ?>" data-url="<?php echo $this->baseUrl().'/material/updatematerial';?>" data-title="Enter Part Number"  data-name="vendor_part"><?php echo (!empty($material['vendor_part']))?$material['vendor_part']:''; ?></a>										
+				  </div>
+				   <div class="field_edit_popup">
+					<label>Manufacturer</label> <span style="float:left;">:</span>
+					 <a style="display:table-cell; padding: 0 0 0 3px;" href="#" class="manufacturer" id="manufacturer-<?php echo $mid; ?>" data-type="text" data-pk="<?php echo $mid; ?>" data-url="<?php echo $this->baseUrl().'/material/updatematerial';?>" data-title="Enter Manufacturer" data-placeholder="Required" data-name="manufacturer" data-value="<?php echo $material['manufacturer'];?>"><?php echo $material['manufacturer']; ?></a>										
+				  </div>
+				   <div class="field_edit_popup">
+					<label>Manufacturer Part Number</label> <span style="float:left;">:</span>
+					 <a style="display:table-cell; padding: 0 0 0 3px;" href="#" class="mfg" id="mfg-<?php echo $mid; ?>" data-type="text" data-pk="<?php echo $mid; ?>" data-url="<?php echo $this->baseUrl().'/material/updatematerial';?>" data-title="Select Contact Type" data-placeholder="Required" data-name="mfg" data-value="<?php echo $material['mfg'];?>"><?php echo $material['mfg']; ?></a>										
+				  </div>			   			 
+				  <div class="field_edit_popup">
+						 <label>Active </label> <span>:</span>
+						 <a style="display:table-cell; padding: 0 0 0 3px;" href="#" class="status" id="status-<?php echo $mid; ?>" data-type="select" data-pk="<?php echo $mid; ?>" data-url="<?php echo $this->baseUrl().'/material/updatematerial';?>" data-title="Status"  data-name="status" data-value="<?php echo $material['status'];?>"><?php echo ($material['status']=='1')?'Yes':'No'; ?></a>
+																													 
+				  </div>
+				  <div class="field_edit_popup">
+						 <label>Remove</label> <span>:</span>
+						 <span><a href="javascript:void(0);"  title="Delete" onclick="deleteMaterial('<?php echo $mid;?>')"><img src="<?php echo BASEURL . 'public/images/delete.png'?>" /></a></span>													 										 
+				  </div>
+				  <div class="field_edit_popup">
+					<label>Notes:</label> <span style="float:left;">:</span>
+					 <a style="display:table-cell; padding: 0 0 0 3px;" href="#" class="notes" id="notes-<?php echo $mid; ?>" data-type="textarea" data-pk="<?php echo $mid; ?>" data-url="<?php echo $this->baseUrl().'/material/updatematerial';?>" data-title="Notes"  data-name="notes" data-value="<?php echo $vendor['notes'];?>"><?php echo (!empty($material['notes']))?$material['notes']:''; ?></a>										
+				  </div>
+				  
+			 </div>
+		   </div>
+			<div id="bottom_section">
+				  <table>
+					  <tr>
+						  <th>Vendor Name</th>
+						  <th>Contact</th>
+						  <th>E-mail Address</th>
+						  <th>Phone Number</th>
+						  <th>Cell Number</th>
+						  <th>Vednor Part No.</th>
+						  <th>Action</th>
+					  </tr>
+					  <?php if($mvList){
+							   foreach($mvList as $mv){
+						  ?>
+						  <tr>
+							  <td><?php echo $mv['vendor_name'];?></td>
+							  <td><?php echo $mv['contact'];?></td>
+							  <td><?php echo $mv['email'];?></td>
+							  <td><?php echo $mv['phone_number'];?></td>
+							  <td><?php echo $mv['cell_number'];?></td>
+							  <td><?php echo $mv['part_number'];?></td>
+							  <td><a title="Edit" href="<?php echo BASEURL.'material/editvendorcontact/mvId/'.$mv['mvId'];?>" ><img src="<?php echo BASEURL . 'public/images/edit.png'?>" /></a>
+							 <a href="javascript:void(0);"  title="Delete" onclick="deleteVendorContact('<?php echo $mv['mvId'];?>','<?php echo $mid?>')"><img src="<?php echo BASEURL . 'public/images/delete.png'?>" /></a></td>
+						  </tr>
+					   <?php }
+					   }?>
+					  <tr>
+						  <th colspan="7"><a href="<?php echo BASEURL.'material/addvendorcontact/mid/'.$mid?>">Add alternative Vendor Contact</a></th>
+					  </tr>
+				  </table>
+			 </div>
+		  <?php }else{?>
+			  <div id="left_right_main" class="vendor_lr_row">
+			 <div id="left_section">
+			   <div class="field_edit_popup">
+					<li class="required">&nbsp;</li><label>Description</label> <span>:</span>
+					 <?php //echo (!empty($uinfo->tenantName))?$uinfo->tenantName:''; ?>
+					<span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($material['description']))?$material['description']:''; ?></span>
+					<input type="hidden" name="role_id" id="role_id" value="9"/>
+				  </div>
+				  <div class="field_edit_popup">
+					<li class="required">&nbsp;</li><label>Service</label> <span style="float:left;">:</span>
+					 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($material['service']))?$sarray[$material['service']]:''; ?></span>										
+				  </div>
+				  <div class="field_edit_popup">
+					<li class="required">&nbsp;</li><label>Cost $</label> <span style="float:left;">:</span>
+					 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($material['cost']))?$material['cost']:''; ?></span>										
+				  </div>
+				  <div class="field_edit_popup">
+					<li class="not_required">&nbsp;</li><label>Markup</label> <span style="float:left;">:</span>
+					 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($material['markup']))?$material['markup']:'0'; ?></span><span class="mark-percentage">%</span>
+				  </div>
+				  <div class="field_edit_popup">
+					<li class="not_required">&nbsp;</li><label>Prefered Vendor Name</label> <span style="float:left;">:</span>
+					 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($material['vendor']))?$vendor['company_name']:''; ?></span>										
+				  </div>
+				  <?php if($vid!=''){ ?>
+				  <div class="vendor_details">
+					  <div class="vendor_detail_row">
+						  <label>Contact</label> 
+						  <span style="float:left;">:</span>
+						  <span><?php echo $vendor['first_name'].' '.$vendor['last_name'];?></span>
+					  </div>
+					  <div class="vendor_detail_row">
+						  <label>E-mail</label> 
+						  <span style="float:left;">:</span>
+						  <span><?php echo $vendor['email']?></span>
+					  </div>
+					  <div class="vendor_detail_row">
+						  <label>Phone Number</label> 
+						  <span style="float:left;">:</span>
+						  <span><?php echo $vendor['phone_number']?></span>
+					  </div>
+					  <div class="vendor_detail_row">
+						  <label>Cell Number</label> 
+						  <span style="float:left;">:</span>
+						  <span><?php echo $vendor['cell_number']?></span>
+					  </div>
+					  <div class="vendor_detail_row">
+						  <label>City</label> 
+						  <span style="float:left;">:</span>
+						  <span><?php echo $vendor['city']?></span>
+					  </div>
+					  <div class="vendor_detail_row">
+						  <label>State</label> 
+						  <span style="float:left;">:</span>
+						  <span><?php echo $vendor['state']?></span>
+					  </div>
+					  <div class="vendor_detail_row">
+						  <label>Postal Code</label> 
+						  <span style="float:left;">:</span>
+						  <span><?php echo $vendor['postal_code']?></span>
+					  </div>
+				  </div>
+				  <?php }?>
+			 </div> 
+			 <div id="right_section">
+				  <div class="field_edit_popup">
+					<label>Date Created</label> <span style="float:left;">:</span>
+					 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo date("F d,Y" ,strtotime($material['created_at']));?></span>
+				  </div>
+				   <div class="field_edit_popup">
+					<label>Last Modified</label> <span style="float:left;">:</span>
+					 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo ($material['updated_at']!=NULL && $material['updated_at']!='0000-00-00 00:00:00')?date("F d,Y" ,strtotime($material['updated_at'])):'--';?></span>
+				  </div>
+				   <div class="field_edit_popup">
+					<label>Vendor Part Number</label> <span style="float:left;">:</span>
+					 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($material['vendor_part']))?$material['vendor_part']:''; ?></span>										
+				  </div>
+				   <div class="field_edit_popup">
+					<label>Manufacturer</label> <span style="float:left;">:</span>
+					 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo $material['manufacturer']; ?></span>										
+				  </div>
+				   <div class="field_edit_popup">
+					<label>Manufacturer Part Number</label> <span style="float:left;">:</span>
+					 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo $material['mfg']; ?></span>										
+				  </div>			   			 
+				  <div class="field_edit_popup">
+						 <label>Active </label> <span>:</span>
+						 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo ($material['status']=='1')?'Yes':'No'; ?></span>
+																													 
+				  </div>				 
+				  <div class="field_edit_popup">
+					<label>Notes:</label> <span style="float:left;">:</span>
+					 <span style="display:table-cell; padding: 0 0 0 3px;"><?php echo (!empty($material['notes']))?$material['notes']:''; ?></span>										
+				  </div>
+				  
+			 </div>
+		   </div>
+			<div id="bottom_section">
+				  <table>
+					  <tr>
+						  <th>Vendor Name</th>
+						  <th>Contact</th>
+						  <th>E-mail Address</th>
+						  <th>Phone Number</th>
+						  <th>Cell Number</th>
+						  <th>Vednor Part No.</th>						 
+					  </tr>
+					  <?php if($mvList){
+							   foreach($mvList as $mv){
+						  ?>
+						  <tr>
+							  <td><?php echo $mv['vendor_name'];?></td>
+							  <td><?php echo $mv['contact'];?></td>
+							  <td><?php echo $mv['email'];?></td>
+							  <td><?php echo $mv['phone_number'];?></td>
+							  <td><?php echo $mv['cell_number'];?></td>
+							  <td><?php echo $mv['part_number'];?></td>							 
+						  </tr>
+					   <?php }
+					   }?>
+					  
+				  </table>
+			 </div>
+		  <?php }?>	  	   		 
+	</div>
+</div>
+<?php }?>
+<script type="text/javascript">
+	var checkTenaant = '';
+$( document ).ready(function() {
+	
+	$.fn.editable.defaults.mode = 'popup';	
+	/*$('.company_name').editable({
+	        validate: function(value) {
+               if($.trim(value) == '') return 'This field is required';
+            },
+		    type: 'text',
+			url: baseUrl+'vendor/updatevendorname/building/'+'<?php echo $vendor['buildingId']; ?>',    
+			pk: '<?php echo $vid; ?>',
+			name:'company_name',    
+			title: 'Enter Company Name',						
+			success: function(response, newValue) {				
+				if(!response) {
+					return "Unknown error!";
+				}          
+				
+				if(response === 'true') {
+					 return "This vendor is already in use.";
+				}
+			}
+    });
+    
+    $('.email').editable({
+		    type: 'text',
+			url: baseUrl+'vendor/updatevendoremail/',    
+			pk: '<?php echo $vid; ?>',
+			name:'email',    
+			title: 'Enter E-mail Address',						
+			success: function(response, newValue) {				
+				if(!response) {
+					return "Unknown error!";
+				}          
+				
+				if(response === 'true') {
+					 return "This email is already in use.";
+				}
+			}
+    }); */  
+    
+
+	$('.description').editable({
+		validate: function(value) {
+           if($.trim(value) == '') return 'This field is required';
+        }
+	});
+	
+	$('.cost').editable({
+		validate: function(value) {
+           if($.trim(value) == '') return 'This field is required';
+           if(!validateDecimal(value)) return 'Invalid cost value';
+        }
+	});
+	
+	$('.vendor').editable({
+		source: [
+		<?php foreach($vendorList as $key=>$value){	?>
+        {value: <?php echo $key?>, text: '<?php echo $value?>'},       
+        <?php }?>
+       ],
+		validate: function(value) {
+           if($.trim(value) == '') return 'This field is required';
+        }
+	});
+	
+	$('.markup').editable({
+		validate: function(value){
+			if($.trim(value) != ''){
+				var isValid = /^\d+$/.test(value);
+				if (!isValid){
+					return 'The \'Mark-up\' in the xx format';
+				}
+			}
+		 }		
+		});	
+	
+	$('.vendor_part').editable();
+	
+	$('.manufacturer').editable();
+	
+	$('.mfg').editable();	
+	
+	
+	$('.service').editable({
+		source: [
+		<?php foreach($sarray as $key=>$value){	?>
+        {value: <?php echo $key?>, text: '<?php echo $value?>'},       
+        <?php }?>
+       ],
+		validate: function(value) {
+           if($.trim(value) == '') return 'This field is required';
+        }
+	});
+	
+	
+	
+	$('.status').editable({
+		source: [		
+        {value: '1', text: 'Yes'},
+        {value: '0', text: 'No'}       
+        
+       ],
+		validate: function(value) {
+           if($.trim(value) == '') return 'This field is required';
+        }
+	});	
+	
+	
+	$('.notes').editable();
+});
+
+</script>

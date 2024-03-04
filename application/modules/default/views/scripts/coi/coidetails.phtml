@@ -1,0 +1,263 @@
+<?php
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/ckeditor/ckeditor.js');
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/ckeditor/adapters/jquery.js');
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/coidetails.js');
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/ckeditor/ckeditor.js');
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/ckeditor/adapters/jquery.js');
+
+
+// to check the read,write and no access
+$user_info = $this->acessHelper->checkAccess($this->roleId, $this->user_info_id);
+
+/*override access by custom user access if exist */
+$customeAccessmodel = new Model_UserAccess();
+$customeAccessmodeld = $customeAccessmodel->getUserCustomAccess($this->userId, $this->user_info_id);
+if ($customeAccessmodeld[0]) {
+    $user_info = $customeAccessmodeld[0];
+}
+/* end overriding access */
+
+$moduleMapper = new Model_UserBuildingModule();
+//print_r($this->select_build_id);
+$moduleAccess = $moduleMapper->getModuleByBuildingId($this->select_build_id, 4);
+
+$buildhasAccess = array();
+if ($moduleAccess) {
+    foreach ($moduleAccess as $moduleAccessVal) {
+        $buildhasAccess[] = $moduleAccessVal->module_id;
+    }
+}
+
+$reportModel = new Model_Report();
+$reportDetailLinks = '';
+$dashBoardViewsdetails = '';
+$coiIdAll = '';
+
+
+if ($this->view_type != 'detail') {
+    $reportDetailLinks = $reportModel->getReport($this->custID, 60);
+    $dashBoardViewsdetails = $reportModel->getReport($this->custID, 58);
+} else {
+    $reportDetailLinks = $reportModel->getReport($this->custID, 3);
+}
+
+?>
+<style>
+    .create_table_btn {
+        width: 250px !important;
+    }
+
+    .middle_btn>ul {
+        margin-top: 20px;
+    }
+
+    .coi-details h1 {
+        font-weight: bold;
+    }
+
+    .coi-details .wrap{
+        width: 65%;       
+        border: 1px solid;
+        padding: 10px 10px 40px;
+        margin-top: 20px;
+        word-break: break-word;
+    }
+    .col-lg-12.coi-details {
+        padding:0px !important;
+    }
+
+    .cke_bottom{
+        padding:0 !important;
+        background-image:none !important;
+        background:none !important;
+        border-top:none !important;
+        position: relative;
+        float:right;
+        margin:-25px 0px;
+    }
+    .cke_contents{
+        /* float:left !important; */
+        border:1px solid #ccc;
+        margin:5px -9px;
+    }
+    .cke_chrome{
+        border:none !important;
+    }
+    .cke_top{
+        display:none !important;
+    }
+    .cke_path{
+        display:none;
+    }
+    .cke_resizer_ltr{
+        /* margin-right:7px !important;
+        margin-top: 5px !important; */
+        margin-right:-3px !important;
+    }
+    .cke_inner {
+        display:block;
+    }
+    span#description_name_error {
+    max-width: 300px !important;
+    overflow:hidden;
+    
+    }
+</style>
+<ol id="toc">
+    <?php
+    foreach ($this->companyListing as $cb) {
+        if ($cb['build_id'] == $this->select_build_id) {
+            $uniqueCostCenter = $cb['uniqueCostCenter'];
+        }
+    ?>
+        <li>
+            <a class="<?php if ($cb['build_id'] == $this->select_build_id) echo 'active'; ?>" href="<?php echo $this->baseUrl() . '/coi/coidetails/bid/' . $cb['build_id']; ?>">
+                <span>
+                    <?php echo $cb['buildingName']; ?>
+                </span>
+            </a>
+        </li>
+    <?php } ?>
+</ol>
+
+<br />
+<br />
+<?php
+$woCOI = new Model_CoiDetails();
+if ($reportDetailLinks != '') {
+    if ($this->select_build_id != '') {
+
+        $coilist = $woCOI->getReportByBId($this->select_build_id);
+
+        if ($coilist != '') {
+            foreach ($coilist as $coiId) {
+
+                $coiIdAll = $coiIdAll . $coiId['coi_au_details_ID'] . ',';
+            }
+        }
+    }
+}
+
+?>
+
+
+<!-- Report Link -->
+<?php if ($reportDetailLinks != '') { ?> <div class="tabmenu">
+        <ul style="padding:0px;"><?php
+                                    foreach ($reportDetailLinks as $reportvalue) {
+                                        if ($reportvalue->Report_Type == 'Flash') {
+                                            $report_type = 'reports/VisionReportEngine/index.php?stimulsoft_client_key=ViewerFx&stimulsoft_';
+                                        } else {
+                                            $report_type = 'vnsreports/index.php?';
+                                        }
+
+                                        $reportOption = explode(',', $reportvalue->report_option);
+
+
+                                    ?> <li class="report_text"><a <?php if ($reportvalue->report_target == 1) { ?> target='_blank' <?php } ?> href="<?php echo BASEURL; ?><?php echo $report_type; ?>report_key=<?php echo $reportvalue->report_mrt; ?><?php
+                                                                                                                                                                                                                                        if (in_array('[[++user_id]]', $reportOption)) {
+                                                                                                                                                                                                                                            echo '&User=' . $this->userId;
+                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                        ?><?php
+                                        if ((in_array('[[++CostCenterNumber]]', $reportOption)) && $uniqueCostCenter != '') {
+                                            echo '&Cost_Center_Number=' . $uniqueCostCenter;
+                                        }
+                                ?><?php
+                                        if ((in_array('[[++CostCenterAllBuildings]]', $reportOption)) && $uniqueCostCenterAll != '' && $this->select_build_id == '') {
+                                            echo '&Cost_Center_Number=' . rtrim($uniqueCostCenterAll, ',');
+                                        }
+                                ?><?php
+                                        if ((in_array('[[++KeyBuildingNumber]]', $reportOption)) && $this->select_build_id != '') {
+                                            echo '&buildkey=' . $this->select_build_id;
+                                        }
+                                ?><?php
+                                        if ((in_array('[[++KeyBuildingAllBuildings]]', $reportOption)) && $buildIdReportAll != '' && $this->select_build_id == '') {
+                                            echo '&buildkey=' . rtrim($buildIdReportAll, ',');
+                                        }
+
+                                ?><?php
+                                        if ((in_array('[[++coi_au_details_id]]', $reportOption)) && $coiIdAll != '') {
+                                            echo "&coiAuDetailsId=" . rtrim($coiIdAll, ',');
+                                        }
+                                ?>"><?php echo $reportvalue->report_name; ?> </a> </li> <?php } ?> </ul>
+    </div> <?php } ?>
+
+
+
+<?php if (in_array(4, $buildhasAccess)) { ?>
+      <div class="middle_btn my_middle_btn create-btn"> 
+    <ul>
+	<?php if($user_info->is_write == 1) { 
+		 if(empty($this->coiDetails[0]->coi_au_details_ID)){
+		?>
+        <li>
+            <a href="#showNewPop" onclick="javascript:showNewPop('<?php echo BASEURL; ?>coi/shownewcoidetails/');" class="modalbox create_table_btn">Add Certificate Information</a>
+        <li>
+	<?php }else{?>
+		<li>
+            <a onclick="showEditCoidetails(<?php echo $this->coiDetails[0]->coi_au_details_ID; ?>)" href="javascript:void(0);" class="modalbox create_table_btn">Edit Certificate Information</a>
+        <li>
+<?php } }?>
+    </ul>
+</div>
+
+   
+<div class="row"> 
+    <div class="col-lg-12 coi-details" style="overflow:auto">
+	    <h1>Certificate Holder </h1>
+		<?php if(!empty($this->coiDetails)){?>
+	    <div class="wrap"><?php echo $this->coiDetails[0]->coi_au_details_holder; ?></div>
+		<?php }else{?>
+        <div class="wrap">No Report Exists</div>
+		<?php } ?>
+    <h1 style="margin-top:30px" >DESCRIPTION OF OPERATIONS/LOCATIONS/VEHICLES/SPECIAL TERMS</h1>
+	    <?php if(!empty($this->coiDetails)){?>
+        <div class="wrap"><?php echo $this->coiDetails[0]->coi_au_details_specialterms; ?></div>
+		<?php }else{?>
+        <div class="wrap">No Report Exists</div>
+		<?php } ?>		
+		<h1 style="margin-top:30px" >Send Certificate To</h1>
+		<?php if(!empty($this->coiDetails)){?>
+        <div class="wrap"><?php echo $this->coiDetails[0]->coi_au_details_send_certificate_to; ?></div>
+		<?php }else{?>
+        <div class="wrap">No Report Exists</div>
+		<?php } ?>
+    </div>
+</div>
+    
+<?php
+} else {
+    echo '<div class="clearfix"> </div>';
+    echo 'This Building does not have the access of this module.';
+}
+?>
+
+<a href="#show_Edit_Report_div" id="show_Edit_Report_div_href" class="modalbox"> </a>
+<div id="show_Edit_Report_div" class="show_Edit_Report_div" style="display:none"></div>
+
+<script>
+    function showNewPop(url) {
+        CheckForSessionpop(baseUrl);
+        //$('form#first_form input#tenantName').trigger('click');
+        $('a[href="#showNewPop"]').fancybox({
+            type: 'iframe',
+            href: url,
+            width: 750,
+            height: 600,
+            'beforeClose': function() {
+                $('.loader').hide();
+            },
+            'afterLoad': function() {
+                $.fancybox.hideLoading();
+                $('.loader').show();
+                setInterval(function() {
+                    $('.loader').hide();
+                }, 5000);
+            },
+            afterShow: function() {
+
+            }
+        });
+    }
+  
+</script>

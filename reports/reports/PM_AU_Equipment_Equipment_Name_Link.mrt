@@ -1,0 +1,2442 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<StiSerializer version="1.02" type="Net" application="StiReport">
+  <CalculationMode>Interpretation</CalculationMode>
+  <Dictionary Ref="1" type="Dictionary" isKey="true">
+    <BusinessObjects isList="true" count="0" />
+    <Databases isList="true" count="1">
+      <Con_workorders Ref="2" type="Stimulsoft.Report.Dictionary.StiMySqlDatabase" isKey="true">
+        <Alias>Con_workorders</Alias>
+        <ConnectionStringEncrypted>w9rP680MS91vFTHc6kwhD9V00YjmDKmZYmixhE1c8RfZeP8Cx0+rhWl37ZDqXOJj71LPwmJdo5l0S83MZQTjZ8JW2cJIBWPF7FrR3GEcpUbGes3LRldDgeE=</ConnectionStringEncrypted>
+        <Name>Con_workorders</Name>
+      </Con_workorders>
+    </Databases>
+    <DataSources isList="true" count="7">
+      <rsEquipment Ref="3" type="Stimulsoft.Report.Dictionary.StiMySqlSource" isKey="true">
+        <Alias>rsEquipment</Alias>
+        <Columns isList="true" count="10">
+          <value>BuildingID,System.Int32</value>
+          <value>Building_Name,System.String</value>
+          <value>CostCenter,System.UInt32</value>
+          <value>Equip_Name_ID,System.Int32</value>
+          <value>Equip_Status,System.Int32</value>
+          <value>Equipment_Name,System.String</value>
+          <value>Template_Name,System.String</value>
+          <value>Template_Type_Designation,System.String</value>
+          <value>Template_Type_Designation_Discrpition,System.String</value>
+          <value>status,System.String</value>
+        </Columns>
+        <CommandTimeout>30</CommandTimeout>
+        <Dictionary isRef="1" />
+        <Key>e594ff2256304c9680fecd3d073769f3</Key>
+        <Name>rsEquipment</Name>
+        <NameInSource>Con_workorders</NameInSource>
+        <Parameters isList="true" count="0" />
+        <SqlCommand>Select
+    buildings.buildingName As Building_Name,
+    pm_au_equipment_name.BuildingID As BuildingID,
+    buildings.uniqueCostCenter As CostCenter,
+    pm_au_equipment_name.AU_Equipment_Name As Equipment_Name,
+    pm_au_equipment_detail.Equipment_Status As Equip_Status,
+    buildings.status,
+       pm_au_equipment_name.AU_Equipment_Name_ID As Equip_Name_ID,
+    pm_au_template_typedesignation.AU_TypeDesignation As Template_Type_Designation,
+    pm_au_template_typedesignation.AU_TypeDescritpion As Template_Type_Designation_Discrpition
+From
+    pm_au_equipment_detail Right Join
+    pm_au_equipment_name On pm_au_equipment_name.AU_Equipment_Name_ID = pm_au_equipment_detail.AU_Equipment_Name_ID
+    Left Join
+    pm_au_template_name On pm_au_template_name.AU_Template_Name_ID = pm_au_equipment_detail.AU_Template_Name_ID
+    Left Join
+    buildings On buildings.build_id = pm_au_equipment_detail.BuildingID Left Join
+    pm_au_template_typedesignation On pm_au_template_typedesignation.AU_Template_Name_ID =
+            pm_au_template_name.AU_Template_Name_ID
+Where
+  buildings.status = '1' AND
+  pm_au_equipment_name.BuildingID IN  ({buildkey})
+ AND
+  buildings.uniqueCostCenter IN  ({Cost_Center_Number})
+ AND pm_au_equipment_name.AU_Equipment_Name_ID  =  ({AU_Equipment_Name_ID})
+GROUP BY
+  pm_au_equipment_name.AU_Equipment_Name
+ORDER BY
+  Equipment_Name
+</SqlCommand>
+      </rsEquipment>
+      <EquipmentDetails Ref="4" type="Stimulsoft.Report.Dictionary.StiMySqlSource" isKey="true">
+        <Alias>EquipmentDetails</Alias>
+        <Columns isList="true" count="18">
+          <value>BuildingID,System.Int32</value>
+          <value>Building_Name,System.String</value>
+          <value>CostCenter,System.UInt32</value>
+          <value>EquipImage,System.String</value>
+          <value>EquipManual,System.String</value>
+          <value>Equip_Floor,System.String</value>
+          <value>Equip_In_Service_Date,System.DateTime</value>
+          <value>Equip_Location,System.String</value>
+          <value>Equip_Make_Model,System.String</value>
+          <value>Equip_Name_ID,System.Int32</value>
+          <value>Equip_Notes,System.String</value>
+          <value>Equip_Serial_Number,System.String</value>
+          <value>Equip_Status,System.Int32</value>
+          <value>Equip_Unit,System.String</value>
+          <value>Equipment_Name,System.String</value>
+          <value>Task_Reading_Link_ID,System.Int32</value>
+          <value>Template_Name,System.String</value>
+          <value>status,System.String</value>
+        </Columns>
+        <CommandTimeout>30</CommandTimeout>
+        <Dictionary isRef="1" />
+        <Key>3f2ab8c3b30049569d80121f5a979233</Key>
+        <Name>EquipmentDetails</Name>
+        <NameInSource>Con_workorders</NameInSource>
+        <Parameters isList="true" count="0" />
+        <SqlCommand>SELECT
+  buildings.buildingName AS Building_Name,
+  pm_au_equipment_name.BuildingID AS BuildingID,
+  buildings.uniqueCostCenter AS CostCenter,
+  pm_au_template_name.AU_Template_Name AS Template_Name,
+  pm_au_equipment_name.AU_Equipment_Name AS Equipment_Name,
+  pm_au_equipment_detail.Equipment_Floor AS Equip_Floor,
+  pm_au_equipment_detail.Equipment_Unit AS Equip_Unit,
+  If(pm_au_equipment_detail.Equipment_Make_Model Is Null Or pm_au_equipment_detail.Equipment_Make_Model = "", " --- ",pm_au_equipment_detail.Equipment_Make_Model) AS Equip_Make_Model,
+  pm_au_equipment_detail.Equipment_Location AS Equip_Location,
+  If(pm_au_equipment_detail.Equipment_Serial_Number Is Null Or pm_au_equipment_detail.Equipment_Serial_Number = "", " --- ", pm_au_equipment_detail.Equipment_Serial_Number) AS Equip_Serial_Number,
+  DATE_FORMAT(if(pm_au_equipment_detail.Equipment_Inservice_Date = '1969-12-31' , "2000-01-01", pm_au_equipment_detail.Equipment_Inservice_Date),"%m/%d/%Y") AS Equip_In_Service_Date, 
+  pm_au_equipment_detail.Equipment_Notes AS Equip_Notes,
+  pm_au_equipment_detail.Equipment_Status AS Equip_Status,
+  pm_au_equipment_detail.AU_Equipment_Detail_ID AS Task_Reading_Link_ID,
+  buildings.status,
+  pm_au_equipment_detail.AU_Equipment_Name_ID AS Equip_Name_ID,
+  Concat('/public/pm/', pm_au_equipment_detail.Equipment_Manual) as EquipManual,
+  If(pm_au_equipment_detail.Equipment_Image Is Null Or pm_au_equipment_detail.Equipment_Image = "", NULL,  Concat('/public/pm/', pm_au_equipment_detail.Equipment_Image)) As EquipImage
+FROM
+  pm_au_equipment_detail
+  LEFT JOIN pm_au_equipment_name ON pm_au_equipment_name.AU_Equipment_Name_ID =
+    pm_au_equipment_detail.AU_Equipment_Name_ID
+  LEFT JOIN pm_au_template_name ON pm_au_template_name.AU_Template_Name_ID = pm_au_equipment_detail.AU_Template_Name_ID
+  LEFT JOIN buildings ON buildings.build_id = pm_au_equipment_detail.BuildingID
+WHERE
+  buildings.status = '1' AND
+  pm_au_equipment_name.BuildingID IN  ({buildkey}) AND
+  buildings.uniqueCostCenter IN ({Cost_Center_Number})
+ORDER BY
+  Building_Name</SqlCommand>
+      </EquipmentDetails>
+      <rsBuildingInfo Ref="5" type="Stimulsoft.Report.Dictionary.StiMySqlSource" isKey="true">
+        <Alias>rsBuildingInfo</Alias>
+        <Columns isList="true" count="13">
+          <value>BuildingID,System.Int32</value>
+          <value>Building_Address_1,System.String</value>
+          <value>Building_Address_2,System.String</value>
+          <value>Building_City_State_Zip,System.String</value>
+          <value>Building_CostCenter,System.UInt32</value>
+          <value>Building_Name,System.String</value>
+          <value>Building_Phone,System.String</value>
+          <value>Building_Status,System.String</value>
+          <value>Building_Suite,System.String</value>
+          <value>Company_Logo,System.String</value>
+          <value>Company_Name,System.String</value>
+          <value>Company_Status,System.SByte</value>
+          <value>user_id,System.Int32</value>
+        </Columns>
+        <CommandTimeout>30</CommandTimeout>
+        <Dictionary isRef="1" />
+        <Key>f41ed5090afa486fb4ea5a323dc08ad7</Key>
+        <Name>rsBuildingInfo</Name>
+        <NameInSource>Con_workorders</NameInSource>
+        <Parameters isList="true" count="0" />
+        <SqlCommand>SELECT
+  buildings.buildingName AS Building_Name,
+  buildings.address AS Building_Address_1,
+  buildings.address2 AS Building_Address_2,
+  buildings.billSuite AS Building_Suite,
+  Concat(buildings.city, ', ', buildings.state, ' ', buildings.postalCode) AS Building_City_State_Zip,
+  buildings.phoneNumber AS Building_Phone,
+  company.companyName AS Company_Name,
+  buildings.status AS Building_Status,
+  company.status AS Company_Status,
+  company.company_logo AS Company_Logo,
+  user_building_module_access.user_id,
+  buildings.uniqueCostCenter AS Building_CostCenter,
+  user_building_module_access.building_id AS BuildingID
+FROM
+  pm_au_equipment_name
+  LEFT JOIN buildings ON pm_au_equipment_name.BuildingID = buildings.build_id
+  LEFT JOIN company ON buildings.cust_id = company.cust_id
+  INNER JOIN user_building_module_access ON buildings.build_id = user_building_module_access.building_id
+WHERE
+  buildings.status = '1' AND
+  company.status = 1 And
+  user_building_module_access.user_id =   ({User}) And
+  buildings.build_id In  ({buildkey})  And
+  buildings.uniqueCostCenter In  ({Cost_Center_Number})
+GROUP BY
+  buildings.build_id,
+  buildings.buildingName,
+  buildings.address,
+  buildings.address2,
+  buildings.billSuite,
+  Concat(buildings.city, ', ', buildings.state, ' ', buildings.postalCode),
+  buildings.phoneNumber,
+  company.companyName,
+  buildings.status,
+  company.status,
+  company.company_logo,
+  user_building_module_access.user_id,
+  buildings.uniqueCostCenter,
+  buildings.build_id
+ORDER BY
+  Building_Name</SqlCommand>
+      </rsBuildingInfo>
+      <rsTask Ref="6" type="Stimulsoft.Report.Dictionary.StiMySqlSource" isKey="true">
+        <Alias>rsTask</Alias>
+        <Columns isList="true" count="22">
+          <value>AU_Assign_Vendor,System.String</value>
+          <value>End_Date,System.String</value>
+          <value>Equip_Name_ID,System.Int32</value>
+          <value>Frequency_AU_Interval,System.String</value>
+          <value>Frequency_Interval,System.String</value>
+          <value>Frequency_Name,System.String</value>
+          <value>Frequency_Unit_Value,System.String</value>
+          <value>Is_OverTime,System.String</value>
+          <value>Is_Seasonal,System.String</value>
+          <value>JobTime,System.String</value>
+          <value>Link_ID,System.Int32</value>
+          <value>Lint_to_Sub_Task,System.String</value>
+          <value>Parent_ID,System.Int32</value>
+          <value>Seasonal_End_Date,System.String</value>
+          <value>Seasonal_Start_Date,System.String</value>
+          <value>Sort_Order,System.Int64</value>
+          <value>Start_Date,System.String</value>
+          <value>Start_Date_Adjustemnt,System.String</value>
+          <value>Start_Date_EOM,System.String</value>
+          <value>Start_Day_of_Month,System.String</value>
+          <value>Task,System.String</value>
+          <value>group_name,System.String</value>
+        </Columns>
+        <CommandTimeout>30</CommandTimeout>
+        <Dictionary isRef="1" />
+        <Key>481e50a96c384842a79545defa02652e</Key>
+        <Name>rsTask</Name>
+        <NameInSource>Con_workorders</NameInSource>
+        <Parameters isList="true" count="0" />
+        <SqlCommand>Select
+    pm_au_equipment_task.AU_Equipment_Detail_ID As Equip_Name_ID,
+    Concat(pm_au_equipment_task.AU_Equipment_Detail_ID, pm_au_template_task.AU_Template_Task_ID) As Lint_to_Sub_Task,
+    pm_au_equipment_task.Start_Date As Start_Date,
+    pm_au_equipment_task.End_Date As End_Date,
+    pm_au_template_task.Task_Instruction As Task,
+    pm_au_template_task.View_order As Sort_Order,
+    pm_au_template_task.Seasonal_Task As Is_Seasonal,
+    pm_au_template_task.Seasonal_Start_Date As Seasonal_Start_Date,
+    pm_au_template_task.Seasonal_End_Date As Seasonal_End_Date,
+    pm_au_equipment_task.Startdate_month As Start_Day_of_Month,
+    pm_au_template_task.Task_jobtime As JobTime,
+    pm_au_template_task.overtime As Is_OverTime,
+    pm_au_template_task.Interval_Value As Frequency_Interval,
+    pm_au_startdateadjustment.Name As Start_Date_Adjustemnt,
+    pm_au_template_task.Startdate_EOM As Start_Date_EOM,
+    pm_au_template_task.AU_Template_Task_ID As Link_ID,
+    pm_au_template_task.Parent_ID As Parent_ID,
+    pm_au_frequency.Name As Frequency_Name,
+    pm_au_frequency.`Interval` As Frequency_Unit_Value,
+    pm_au_frequency.Interval_Value As Frequency_AU_Interval,
+    email_group.group_name,
+    pm_au_equipment_task.AU_Assign_Vendor,
+    pm_au_template_name.BuildingID
+From
+    pm_au_equipment_task Left Join
+    email_group On email_group.id = pm_au_equipment_task.Email_group_ID Left Join
+    pm_au_template_task On pm_au_template_task.AU_Template_Task_ID = pm_au_equipment_task.AU_Template_Task_ID Left Join
+    pm_au_startdateadjustment On pm_au_startdateadjustment.AU_sda_ID = pm_au_template_task.AU_sda_ID Left Join
+    pm_au_frequency On pm_au_frequency.AU_Frequency_ID = pm_au_template_task.AU_Frequency_ID Right Join
+    pm_au_template_typedesignation On pm_au_template_task.AU_Template_Designation_ID =
+            pm_au_template_typedesignation.AU_Template_Designation_ID Right Join
+    pm_au_template_name On pm_au_template_typedesignation.AU_Template_Name_ID = pm_au_template_name.AU_Template_Name_ID
+Where
+    pm_au_template_task.Parent_ID = 0 And
+    pm_au_template_name.BuildingID IN ({buildkey})
+Order By
+    Sort_Order,
+    Link_ID,
+    Parent_ID</SqlCommand>
+      </rsTask>
+      <rsTask_SubTask Ref="7" type="Stimulsoft.Report.Dictionary.StiMySqlSource" isKey="true">
+        <Alias>rsTask_SubTask</Alias>
+        <Columns isList="true" count="22">
+          <value>AU_Assign_Vendor,System.String</value>
+          <value>End_Date,System.String</value>
+          <value>Equip_Name_ID,System.Int32</value>
+          <value>Frequency_AU_Interval,System.String</value>
+          <value>Frequency_Interval,System.String</value>
+          <value>Frequency_Name,System.String</value>
+          <value>Frequency_Unit_Value,System.String</value>
+          <value>Is_OverTime,System.String</value>
+          <value>Is_Seasonal,System.String</value>
+          <value>JobTime,System.String</value>
+          <value>Link_ID,System.Int32</value>
+          <value>Link_to_Sub_Task,System.String</value>
+          <value>Parent_ID,System.Int32</value>
+          <value>Seasonal_End_Date,System.String</value>
+          <value>Seasonal_Start_Date,System.String</value>
+          <value>Sort_Order,System.Int64</value>
+          <value>Start_Date,System.String</value>
+          <value>Start_Date_Adjustemnt,System.String</value>
+          <value>Start_Date_EOM,System.String</value>
+          <value>Start_Day_of_Month,System.String</value>
+          <value>Task,System.String</value>
+          <value>group_name,System.String</value>
+        </Columns>
+        <CommandTimeout>30</CommandTimeout>
+        <Dictionary isRef="1" />
+        <Key>01ef2dabb4cf43b69f20f311b9997284</Key>
+        <Name>rsTask_SubTask</Name>
+        <NameInSource>Con_workorders</NameInSource>
+        <Parameters isList="true" count="0" />
+        <SqlCommand>Select
+    pm_au_equipment_task.AU_Equipment_Detail_ID As Equip_Name_ID,
+    Concat(pm_au_equipment_task.AU_Equipment_Detail_ID, pm_au_template_task.Parent_ID) As Link_to_Sub_Task,
+    pm_au_equipment_task.Start_Date As Start_Date,
+    pm_au_equipment_task.End_Date As End_Date,
+    pm_au_template_task.Task_Instruction As Task,
+    pm_au_template_task.View_order As Sort_Order,
+    pm_au_template_task.Seasonal_Task As Is_Seasonal,
+    pm_au_template_task.Seasonal_Start_Date As Seasonal_Start_Date,
+    pm_au_template_task.Seasonal_End_Date As Seasonal_End_Date,
+    pm_au_equipment_task.Startdate_month As Start_Day_of_Month,
+    pm_au_template_task.Task_jobtime As JobTime,
+    pm_au_template_task.overtime As Is_OverTime,
+    pm_au_template_task.Interval_Value As Frequency_Interval,
+    pm_au_startdateadjustment.Name As Start_Date_Adjustemnt,
+    pm_au_template_task.Startdate_EOM As Start_Date_EOM,
+    pm_au_template_task.AU_Template_Task_ID As Link_ID,
+    pm_au_template_task.Parent_ID As Parent_ID,
+    pm_au_frequency.Name As Frequency_Name,
+    pm_au_frequency.`Interval` As Frequency_Unit_Value,
+    pm_au_frequency.Interval_Value As Frequency_AU_Interval,
+    email_group.group_name,
+    pm_au_equipment_task.AU_Assign_Vendor,
+    pm_au_template_name.BuildingID
+From
+    pm_au_equipment_task Left Join
+    email_group On email_group.id = pm_au_equipment_task.Email_group_ID Left Join
+    pm_au_template_task On pm_au_template_task.AU_Template_Task_ID = pm_au_equipment_task.AU_Template_Task_ID Left Join
+    pm_au_startdateadjustment On pm_au_startdateadjustment.AU_sda_ID = pm_au_template_task.AU_sda_ID Left Join
+    pm_au_frequency On pm_au_frequency.AU_Frequency_ID = pm_au_template_task.AU_Frequency_ID Right Join
+    pm_au_template_typedesignation On pm_au_template_task.AU_Template_Designation_ID =
+            pm_au_template_typedesignation.AU_Template_Designation_ID Inner Join
+    pm_au_template_name On pm_au_template_typedesignation.AU_Template_Name_ID = pm_au_template_name.AU_Template_Name_ID
+Where
+    pm_au_template_task.Parent_ID &gt; 0 And
+    pm_au_template_name.BuildingID IN ({buildkey})
+Group By
+    pm_au_equipment_task.AU_Equipment_Detail_ID,
+    pm_au_equipment_task.Start_Date,
+    pm_au_equipment_task.End_Date,
+    pm_au_template_task.Task_Instruction,
+    pm_au_template_task.View_order,
+    pm_au_template_task.Seasonal_Task,
+    pm_au_template_task.Seasonal_Start_Date,
+    pm_au_template_task.Seasonal_End_Date,
+    pm_au_template_task.Task_jobtime,
+    pm_au_template_task.overtime,
+    pm_au_template_task.Interval_Value,
+    pm_au_startdateadjustment.Name,
+    pm_au_template_task.Startdate_EOM,
+    pm_au_template_task.AU_Template_Task_ID,
+    pm_au_template_task.Parent_ID,
+    pm_au_frequency.Name,
+    pm_au_frequency.`Interval`,
+    pm_au_frequency.Interval_Value,
+    email_group.group_name,
+    pm_au_equipment_task.AU_Assign_Vendor,
+    pm_au_template_task.Startdate_month,
+    pm_au_template_name.BuildingID
+Order By
+    Sort_Order,
+    Link_ID,
+    Parent_ID</SqlCommand>
+      </rsTask_SubTask>
+      <rsReadings Ref="8" type="Stimulsoft.Report.Dictionary.StiMySqlSource" isKey="true">
+        <Alias>rsReadings</Alias>
+        <Columns isList="true" count="23">
+          <value>Assinged_To,System.String</value>
+          <value>End_Date,System.String</value>
+          <value>Equip_Name_ID,System.Int32</value>
+          <value>Frequency_AU_Interval,System.String</value>
+          <value>Frequency_Interval,System.String</value>
+          <value>Frequency_Name,System.String</value>
+          <value>Frequency_Unit_Value,System.String</value>
+          <value>Is_Overtime,System.String</value>
+          <value>Is_Seasonal,System.String</value>
+          <value>Job_Time,System.String</value>
+          <value>Link_ID,System.Int32</value>
+          <value>Lint_to_Sub_Reading,System.String</value>
+          <value>Parent_ID,System.Int32</value>
+          <value>Reading_Instruction,System.String</value>
+          <value>Seasonal_End_Date,System.String</value>
+          <value>Seasonal_Start_Date,System.String</value>
+          <value>Sort_Order,System.Int64</value>
+          <value>Start_Date,System.String</value>
+          <value>Start_Date_Adjustment,System.String</value>
+          <value>Start_Day_of_Month,System.String</value>
+          <value>Tolerance,System.String</value>
+          <value>Unit_Of_Mesure,System.String</value>
+          <value>Value,System.String</value>
+        </Columns>
+        <CommandTimeout>30</CommandTimeout>
+        <Dictionary isRef="1" />
+        <Key>5057b5dd8d4346f686e630614aa5fc06</Key>
+        <Name>rsReadings</Name>
+        <NameInSource>Con_workorders</NameInSource>
+        <Parameters isList="true" count="0" />
+        <SqlCommand>Select
+    pm_au_equipment_readings.AU_Equipment_Detail_ID As Equip_Name_ID,
+    Concat(pm_au_equipment_readings.AU_Equipment_Detail_ID, pm_au_template_reading.AU_Template_Reading_ID) As
+    Lint_to_Sub_Reading,
+    pm_au_equipment_readings.Start_Date As Start_Date,
+    pm_au_equipment_readings.End_Date As End_Date,
+    pm_au_template_reading.Reading_Instruction As Reading_Instruction,
+    pm_au_template_reading.Reading_Value As Value,
+    pm_au_template_reading.Tolerance As Tolerance,
+    pm_au_template_reading.Seasonal_Task As Is_Seasonal,
+    pm_au_template_reading.Seasonal_Start_Date As Seasonal_Start_Date,
+    pm_au_template_reading.Seasonal_End_Date As Seasonal_End_Date,
+    pm_au_equipment_readings.Startdate_month As Start_Day_of_Month,
+    pm_au_template_reading.Task_jobtime As Job_Time,
+    pm_au_template_reading.overtime As Is_Overtime,
+    pm_au_template_reading.View_order As Sort_Order,
+    pm_au_unitofmeasure.Name As Unit_Of_Mesure,
+    pm_au_template_reading.Interval_Value As Frequency_Interval,
+    pm_au_frequency.Name As Frequency_Name,
+    pm_au_frequency.`Interval` As Frequency_Unit_Value,
+    pm_au_frequency.Interval_Value As Frequency_AU_Interval,
+    pm_au_equipment_email_group.Group_Name As Assinged_To,
+    pm_au_template_reading.AU_Template_Reading_ID As Link_ID,
+    pm_au_template_reading.Parent_ID As Parent_ID,
+    pm_au_startdateadjustment.Name As Start_Date_Adjustment
+From
+    pm_au_equipment_readings Left Join
+    pm_au_equipment_email_group On pm_au_equipment_email_group.ID = pm_au_equipment_readings.Email_group_ID Left Join
+    pm_au_template_reading On pm_au_template_reading.AU_Template_Reading_ID =
+            pm_au_equipment_readings.AU_Template_Reading_ID Left Join
+    pm_au_startdateadjustment On pm_au_startdateadjustment.AU_sda_ID = pm_au_template_reading.AU_sda_ID Left Join
+    pm_au_unitofmeasure On pm_au_unitofmeasure.AU_uom_ID = pm_au_template_reading.AU_uom_ID Left Join
+    pm_au_frequency On pm_au_frequency.AU_Frequency_ID = pm_au_template_reading.AU_Frequency_ID Right Join
+    pm_au_template_typedesignation On pm_au_template_reading.AU_Template_Designation_ID =
+            pm_au_template_typedesignation.AU_Template_Designation_ID Right Join
+    pm_au_template_name On pm_au_template_typedesignation.AU_Template_Name_ID = pm_au_template_name.AU_Template_Name_ID
+Where
+    pm_au_template_reading.Parent_ID = 0 And
+    pm_au_template_name.BuildingID IN ({buildkey})
+Order By
+    Sort_Order,
+    Link_ID,
+    Parent_ID</SqlCommand>
+      </rsReadings>
+      <rsReadings_SubReadings Ref="9" type="Stimulsoft.Report.Dictionary.StiMySqlSource" isKey="true">
+        <Alias>rsReadings_SubReadings</Alias>
+        <Columns isList="true" count="23">
+          <value>Assinged_To,System.String</value>
+          <value>End_Date,System.String</value>
+          <value>Equip_Name_ID,System.Int32</value>
+          <value>Frequency_AU_Interval,System.String</value>
+          <value>Frequency_Interval,System.String</value>
+          <value>Frequency_Name,System.String</value>
+          <value>Frequency_Unit_Value,System.String</value>
+          <value>Is_Overtime,System.String</value>
+          <value>Is_Seasonal,System.String</value>
+          <value>Job_Time,System.String</value>
+          <value>Link_ID,System.Int32</value>
+          <value>Lint_to_Sub_Reading,System.String</value>
+          <value>Parent_ID,System.Int32</value>
+          <value>Reading_Instruction,System.String</value>
+          <value>Seasonal_End_Date,System.String</value>
+          <value>Seasonal_Start_Date,System.String</value>
+          <value>Sort_Order,System.Int64</value>
+          <value>Start_Date,System.String</value>
+          <value>Start_Date_Adjustment,System.String</value>
+          <value>Start_Day_of_Month,System.String</value>
+          <value>Tolerance,System.String</value>
+          <value>Unit_Of_Mesure,System.String</value>
+          <value>Value,System.String</value>
+        </Columns>
+        <CommandTimeout>30</CommandTimeout>
+        <Dictionary isRef="1" />
+        <Key>745036ec59fb459aadf9f4262c623d85</Key>
+        <Name>rsReadings_SubReadings</Name>
+        <NameInSource>Con_workorders</NameInSource>
+        <Parameters isList="true" count="0" />
+        <SqlCommand>Select
+    pm_au_equipment_readings.AU_Equipment_Detail_ID As Equip_Name_ID,
+    Concat(pm_au_equipment_readings.AU_Equipment_Detail_ID, pm_au_template_reading.Parent_ID) As Lint_to_Sub_Reading,
+    pm_au_equipment_readings.Start_Date As Start_Date,
+    pm_au_equipment_readings.End_Date As End_Date,
+    pm_au_template_reading.Reading_Instruction As Reading_Instruction,
+    pm_au_template_reading.Reading_Value As Value,
+    pm_au_template_reading.Tolerance As Tolerance,
+    pm_au_template_reading.Seasonal_Task As Is_Seasonal,
+    pm_au_template_reading.Seasonal_Start_Date As Seasonal_Start_Date,
+    pm_au_template_reading.Seasonal_End_Date As Seasonal_End_Date,
+    pm_au_equipment_readings.Startdate_month As Start_Day_of_Month,
+    pm_au_template_reading.Task_jobtime As Job_Time,
+    pm_au_template_reading.overtime As Is_Overtime,
+    pm_au_template_reading.View_order As Sort_Order,
+    pm_au_unitofmeasure.Name As Unit_Of_Mesure,
+    pm_au_template_reading.Interval_Value As Frequency_Interval,
+    pm_au_frequency.Name As Frequency_Name,
+    pm_au_frequency.`Interval` As Frequency_Unit_Value,
+    pm_au_frequency.Interval_Value As Frequency_AU_Interval,
+    pm_au_equipment_email_group.Group_Name As Assinged_To,
+    pm_au_template_reading.AU_Template_Reading_ID As Link_ID,
+    pm_au_template_reading.Parent_ID As Parent_ID,
+    pm_au_startdateadjustment.Name As Start_Date_Adjustment,
+    pm_au_template_name.BuildingID
+From
+    pm_au_equipment_readings Left Join
+    pm_au_equipment_email_group On pm_au_equipment_email_group.ID = pm_au_equipment_readings.Email_group_ID Left Join
+    pm_au_template_reading On pm_au_template_reading.AU_Template_Reading_ID =
+            pm_au_equipment_readings.AU_Template_Reading_ID Left Join
+    pm_au_startdateadjustment On pm_au_startdateadjustment.AU_sda_ID = pm_au_template_reading.AU_sda_ID Left Join
+    pm_au_unitofmeasure On pm_au_unitofmeasure.AU_uom_ID = pm_au_template_reading.AU_uom_ID Left Join
+    pm_au_frequency On pm_au_frequency.AU_Frequency_ID = pm_au_template_reading.AU_Frequency_ID Right Join
+    pm_au_template_typedesignation On pm_au_template_reading.AU_Template_Designation_ID =
+            pm_au_template_typedesignation.AU_Template_Designation_ID Inner Join
+    pm_au_template_name On pm_au_template_typedesignation.AU_Template_Name_ID = pm_au_template_name.AU_Template_Name_ID
+Where
+    pm_au_template_reading.Parent_ID &gt; 0 And
+    pm_au_template_name.BuildingID IN ({buildkey})
+Order By
+    Sort_Order,
+    Link_ID,
+    Parent_ID</SqlCommand>
+      </rsReadings_SubReadings>
+    </DataSources>
+    <Relations isList="true" count="6">
+      <Rel_Building_to_Equipment Ref="10" type="DataRelation" isKey="true">
+        <Alias>Rel_Building_to_Equipment</Alias>
+        <ChildColumns isList="true" count="1">
+          <value>BuildingID</value>
+        </ChildColumns>
+        <ChildSource isRef="3" />
+        <Dictionary isRef="1" />
+        <Name>Rel_Building_to_Equipment</Name>
+        <NameInSource>Rel_Building_to_Equipment</NameInSource>
+        <ParentColumns isList="true" count="1">
+          <value>BuildingID</value>
+        </ParentColumns>
+        <ParentSource isRef="5" />
+      </Rel_Building_to_Equipment>
+      <Rel_Equip_EquipDetails Ref="11" type="DataRelation" isKey="true">
+        <Alias>Rel_Equip_EquipDetails</Alias>
+        <ChildColumns isList="true" count="1">
+          <value>Equip_Name_ID</value>
+        </ChildColumns>
+        <ChildSource isRef="4" />
+        <Dictionary isRef="1" />
+        <Name>Rel_Equip_EquipDetails</Name>
+        <NameInSource>Rel_Equip_EquipDetails</NameInSource>
+        <ParentColumns isList="true" count="1">
+          <value>Equip_Name_ID</value>
+        </ParentColumns>
+        <ParentSource isRef="3" />
+      </Rel_Equip_EquipDetails>
+      <Rel_EquipDetails_to_Task Ref="12" type="DataRelation" isKey="true">
+        <Alias>Rel_EquipDetails_to_Task</Alias>
+        <ChildColumns isList="true" count="1">
+          <value>Equip_Name_ID</value>
+        </ChildColumns>
+        <ChildSource isRef="6" />
+        <Dictionary isRef="1" />
+        <Name>Rel_EquipDetails_to_Task</Name>
+        <NameInSource>Rel_EquipDetails_to_Task</NameInSource>
+        <ParentColumns isList="true" count="1">
+          <value>Task_Reading_Link_ID</value>
+        </ParentColumns>
+        <ParentSource isRef="4" />
+      </Rel_EquipDetails_to_Task>
+      <Rel_Task_to_SubTask Ref="13" type="DataRelation" isKey="true">
+        <Alias>Rel_Task_to_SubTask</Alias>
+        <ChildColumns isList="true" count="1">
+          <value>Link_to_Sub_Task</value>
+        </ChildColumns>
+        <ChildSource isRef="7" />
+        <Dictionary isRef="1" />
+        <Name>Rel_Task_to_SubTask</Name>
+        <NameInSource>Rel_Task_to_SubTask</NameInSource>
+        <ParentColumns isList="true" count="1">
+          <value>Lint_to_Sub_Task</value>
+        </ParentColumns>
+        <ParentSource isRef="6" />
+      </Rel_Task_to_SubTask>
+      <Rel_EquipDetails_to_Readings Ref="14" type="DataRelation" isKey="true">
+        <Alias>Rel_EquipDetails_to_Readings</Alias>
+        <ChildColumns isList="true" count="1">
+          <value>Equip_Name_ID</value>
+        </ChildColumns>
+        <ChildSource isRef="8" />
+        <Dictionary isRef="1" />
+        <Name>Rel_EquipDetails_to_Readings</Name>
+        <NameInSource>Rel_EquipDetails_to_Readings</NameInSource>
+        <ParentColumns isList="true" count="1">
+          <value>Task_Reading_Link_ID</value>
+        </ParentColumns>
+        <ParentSource isRef="4" />
+      </Rel_EquipDetails_to_Readings>
+      <Rel_Readings_To_SubReadings Ref="15" type="DataRelation" isKey="true">
+        <Alias>Rel_Readings_To_SubReadings</Alias>
+        <ChildColumns isList="true" count="1">
+          <value>Lint_to_Sub_Reading</value>
+        </ChildColumns>
+        <ChildSource isRef="9" />
+        <Dictionary isRef="1" />
+        <Name>Rel_Readings_To_SubReadings</Name>
+        <NameInSource>Rel_Readings_To_SubReadings</NameInSource>
+        <ParentColumns isList="true" count="1">
+          <value>Lint_to_Sub_Reading</value>
+        </ParentColumns>
+        <ParentSource isRef="8" />
+      </Rel_Readings_To_SubReadings>
+    </Relations>
+    <Report isRef="0" />
+    <Resources isList="true" count="0" />
+    <Variables isList="true" count="6">
+      <value>,TaskLineNumber,TaskLineNumber,,System.String,_x0030_,False,False,False,False,_x003C__x003F_xml_x0020_version_x003D__x0022_1.0_x0022__x0020_encoding_x003D__x0022_utf-16_x0022__x0020_standalone_x003D__x0022_yes_x0022__x003F__x003E__x003C_StiSerializer_x0020_version_x003D__x0022_1.02_x0022__x0020_type_x003D__x0022_Net_x0022__x0020_application_x003D__x0022_State_x0022__x003E__x003C_DateTimeType_x003E_DateAndTime_x003C__x002F_DateTimeType_x003E__x003C_BindingVariable_x0020_isNull_x003D__x0022_true_x0022__x0020__x002F__x003E__x003C_Keys_x0020_isList_x003D__x0022_true_x0022__x0020_count_x003D__x0022_0_x0022__x0020__x002F__x003E__x003C_Values_x0020_isList_x003D__x0022_true_x0022__x0020_count_x003D__x0022_0_x0022__x0020__x002F__x003E__x003C__x002F_StiSerializer_x003E_</value>
+      <value>,IsGreen,IsGreen,,System.String,_x0030_,False,False,False,False,_x003C__x003F_xml_x0020_version_x003D__x0022_1.0_x0022__x0020_encoding_x003D__x0022_utf-16_x0022__x0020_standalone_x003D__x0022_yes_x0022__x003F__x003E__x003C_StiSerializer_x0020_version_x003D__x0022_1.02_x0022__x0020_type_x003D__x0022_Net_x0022__x0020_application_x003D__x0022_State_x0022__x003E__x003C_DateTimeType_x003E_DateAndTime_x003C__x002F_DateTimeType_x003E__x003C_BindingVariable_x0020_isNull_x003D__x0022_true_x0022__x0020__x002F__x003E__x003C_Keys_x0020_isList_x003D__x0022_true_x0022__x0020_count_x003D__x0022_0_x0022__x0020__x002F__x003E__x003C_Values_x0020_isList_x003D__x0022_true_x0022__x0020_count_x003D__x0022_0_x0022__x0020__x002F__x003E__x003C__x002F_StiSerializer_x003E_</value>
+      <value>,buildkey,buildkey,,System.String,_x0031__x002C_2_x002C_44,False,False,False,False,_x003C__x003F_xml_x0020_version_x003D__x0022_1.0_x0022__x0020_encoding_x003D__x0022_utf-16_x0022__x0020_standalone_x003D__x0022_yes_x0022__x003F__x003E__x003C_StiSerializer_x0020_version_x003D__x0022_1.02_x0022__x0020_type_x003D__x0022_Net_x0022__x0020_application_x003D__x0022_State_x0022__x003E__x003C_DateTimeType_x003E_DateAndTime_x003C__x002F_DateTimeType_x003E__x003C_BindingVariable_x0020_isNull_x003D__x0022_true_x0022__x0020__x002F__x003E__x003C_Keys_x0020_isList_x003D__x0022_true_x0022__x0020_count_x003D__x0022_0_x0022__x0020__x002F__x003E__x003C_Values_x0020_isList_x003D__x0022_true_x0022__x0020_count_x003D__x0022_0_x0022__x0020__x002F__x003E__x003C__x002F_StiSerializer_x003E_,,True</value>
+      <value>,Cost_Center_Number,Cost_Center_Number,,System.String,_x0036_00_x002C_1442921703_x002C_1460335468,False,False,False,False,_x003C__x003F_xml_x0020_version_x003D__x0022_1.0_x0022__x0020_encoding_x003D__x0022_utf-16_x0022__x0020_standalone_x003D__x0022_yes_x0022__x003F__x003E__x003C_StiSerializer_x0020_version_x003D__x0022_1.02_x0022__x0020_type_x003D__x0022_Net_x0022__x0020_application_x003D__x0022_State_x0022__x003E__x003C_DateTimeType_x003E_DateAndTime_x003C__x002F_DateTimeType_x003E__x003C_BindingVariable_x0020_isNull_x003D__x0022_true_x0022__x0020__x002F__x003E__x003C_Keys_x0020_isList_x003D__x0022_true_x0022__x0020_count_x003D__x0022_0_x0022__x0020__x002F__x003E__x003C_Values_x0020_isList_x003D__x0022_true_x0022__x0020_count_x003D__x0022_0_x0022__x0020__x002F__x003E__x003C__x002F_StiSerializer_x003E_,,True</value>
+      <value>,User,User,,System.String,_x0034_21,False,False,False,False,_x003C__x003F_xml_x0020_version_x003D__x0022_1.0_x0022__x0020_encoding_x003D__x0022_utf-16_x0022__x0020_standalone_x003D__x0022_yes_x0022__x003F__x003E__x003C_StiSerializer_x0020_version_x003D__x0022_1.02_x0022__x0020_type_x003D__x0022_Net_x0022__x0020_application_x003D__x0022_State_x0022__x003E__x003C_DateTimeType_x003E_DateAndTime_x003C__x002F_DateTimeType_x003E__x003C_BindingVariable_x0020_isNull_x003D__x0022_true_x0022__x0020__x002F__x003E__x003C_Keys_x0020_isList_x003D__x0022_true_x0022__x0020_count_x003D__x0022_0_x0022__x0020__x002F__x003E__x003C_Values_x0020_isList_x003D__x0022_true_x0022__x0020_count_x003D__x0022_0_x0022__x0020__x002F__x003E__x003C__x002F_StiSerializer_x003E_,,True</value>
+      <value>,AU_Equipment_Name_ID,AU_Equipment_Name_ID,,System.String,_x0032_,False,False,False,False,_x003C__x003F_xml_x0020_version_x003D__x0022_1.0_x0022__x0020_encoding_x003D__x0022_utf-16_x0022__x0020_standalone_x003D__x0022_yes_x0022__x003F__x003E__x003C_StiSerializer_x0020_version_x003D__x0022_1.02_x0022__x0020_type_x003D__x0022_Net_x0022__x0020_application_x003D__x0022_State_x0022__x003E__x003C_DateTimeType_x003E_DateAndTime_x003C__x002F_DateTimeType_x003E__x003C_BindingVariable_x0020_isNull_x003D__x0022_true_x0022__x0020__x002F__x003E__x003C_Keys_x0020_isList_x003D__x0022_true_x0022__x0020_count_x003D__x0022_0_x0022__x0020__x002F__x003E__x003C_Values_x0020_isList_x003D__x0022_true_x0022__x0020_count_x003D__x0022_0_x0022__x0020__x002F__x003E__x003C__x002F_StiSerializer_x003E_</value>
+    </Variables>
+  </Dictionary>
+  <EngineVersion>EngineV2</EngineVersion>
+  <GlobalizationStrings isList="true" count="0" />
+  <Key>9f5436d90dee4dd386d702609a3d85ae</Key>
+  <MetaTags isList="true" count="0" />
+  <Pages isList="true" count="3">
+    <Page1 Ref="16" type="Page" isKey="true">
+      <Border>None;Black;2;Solid;False;4;Black</Border>
+      <Brush>Transparent</Brush>
+      <Components isList="true" count="10">
+        <PageHeaderBand1 Ref="17" type="PageHeaderBand" isKey="true">
+          <Brush>Transparent</Brush>
+          <CanShrink>True</CanShrink>
+          <ClientRectangle>0,20,1022,150</ClientRectangle>
+          <Components isList="true" count="2">
+            <Image1 Ref="18" type="Image" isKey="true">
+              <Brush>Transparent</Brush>
+              <CanGrow>True</CanGrow>
+              <CanShrink>True</CanShrink>
+              <ClientRectangle>0,0,200,80</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <GrowToHeight>True</GrowToHeight>
+              <IconColor>68, 114, 196</IconColor>
+              <ImageURL>https://www.visionworkorders.com/public/images/clogo/{rsBuildingInfo.Company_Logo}</ImageURL>
+              <Margins>0,0,0,0</Margins>
+              <Name>Image1</Name>
+              <Page isRef="16" />
+              <Parent isRef="17" />
+              <Stretch>True</Stretch>
+            </Image1>
+            <Text1 Ref="19" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>320,0,700,100</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>e192b64c79b64d1694d365169dc3bd6a</Guid>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text1</Name>
+              <Page isRef="16" />
+              <Parent isRef="17" />
+              <Text>{rsBuildingInfo.Company_Name}
+{IIF(rsBuildingInfo.Building_Name != "", rsBuildingInfo.Building_Name ,"" )}
+{IIF(rsBuildingInfo.Building_Name !=rsBuildingInfo.Building_Address_1,rsBuildingInfo.Building_Address_1, rsBuildingInfo.Building_City_State_Zip)}
+{IIF(rsBuildingInfo.Building_Name!=rsBuildingInfo.Building_Address_1, rsBuildingInfo.Building_City_State_Zip,"")}
+
+{Today.ToString("MMMM d yyyy")}
+</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text1>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>PageHeaderBand1</Name>
+          <Page isRef="16" />
+          <Parent isRef="16" />
+        </PageHeaderBand1>
+        <PageFooterBand1 Ref="20" type="PageFooterBand" isKey="true">
+          <Brush>Transparent</Brush>
+          <ClientRectangle>0,732,1022,40</ClientRectangle>
+          <Components isList="true" count="2">
+            <Text18 Ref="21" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>890,4,120,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>d80b62d0e36b485eab78ebfae2b3b7ca</Guid>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text18</Name>
+              <Page isRef="16" />
+              <Parent isRef="20" />
+              <Text>{PageNofMThrough}</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <Type>SystemVariables</Type>
+            </Text18>
+            <Text19 Ref="22" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>500,23.6,510,10</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,5</Font>
+              <Guid>6f7d8658650a41e6a5b258f4a39c0e76</Guid>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text19</Name>
+              <Page isRef="16" />
+              <Parent isRef="20" />
+              <Text>Vocational Technologies, LLC 2000 - {Year(Today)}</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <Type>Expression</Type>
+            </Text19>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>PageFooterBand1</Name>
+          <Page isRef="16" />
+          <Parent isRef="16" />
+        </PageFooterBand1>
+        <DB_Building_Info Ref="23" type="DataBand" isKey="true">
+          <Bookmark>{rsBuildingInfo.Building_Name}</Bookmark>
+          <Brush>Transparent</Brush>
+          <BusinessObjectGuid isNull="true" />
+          <ClientRectangle>0,210,1022,30</ClientRectangle>
+          <Components isList="true" count="1">
+            <Text6 Ref="24" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,0,680,30</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,18,Bold| Italic</Font>
+              <Guid>51fa44483ef343a9adbde0e8b3fcb297</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text6</Name>
+              <Page isRef="16" />
+              <Parent isRef="23" />
+              <Text>{rsBuildingInfo.Building_Name}</Text>
+              <TextBrush>Black</TextBrush>
+            </Text6>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <DataRelationName isNull="true" />
+          <DataSourceName>rsBuildingInfo</DataSourceName>
+          <Expressions isList="true" count="0" />
+          <Filters isList="true" count="0" />
+          <Name>DB_Building_Info</Name>
+          <NewPageBefore>True</NewPageBefore>
+          <Page isRef="16" />
+          <Parent isRef="16" />
+          <Sort isList="true" count="2">
+            <value>ASC</value>
+            <value>Building_Name</value>
+          </Sort>
+        </DB_Building_Info>
+        <DB_Equpment Ref="25" type="DataBand" isKey="true">
+          <Bookmark>{rsEquipment.Equipment_Name}</Bookmark>
+          <Brush>Transparent</Brush>
+          <BusinessObjectGuid isNull="true" />
+          <CanBreak>True</CanBreak>
+          <CanShrink>True</CanShrink>
+          <ClientRectangle>0,280,1022,80</ClientRectangle>
+          <Components isList="true" count="1">
+            <Text2 Ref="26" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,0,670,40</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,18,Bold| Italic</Font>
+              <Guid>a1ab3dbc5b09480f8bb4144bed82d314</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text2</Name>
+              <Page isRef="16" />
+              <Parent isRef="25" />
+              <Text>{rsEquipment.Equipment_Name}</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <VertAlignment>Center</VertAlignment>
+            </Text2>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <DataRelationName>Rel_Building_to_Equipment</DataRelationName>
+          <DataSourceName>rsEquipment</DataSourceName>
+          <Expressions isList="true" count="0" />
+          <Filters isList="true" count="0" />
+          <MasterComponent isRef="23" />
+          <Name>DB_Equpment</Name>
+          <NewPageBefore>True</NewPageBefore>
+          <Page isRef="16" />
+          <Parent isRef="16" />
+          <PrintOnAllPages>True</PrintOnAllPages>
+          <Sort isList="true" count="2">
+            <value>ASC</value>
+            <value>Equipment_Name</value>
+          </Sort>
+        </DB_Equpment>
+        <HeaderBand1 Ref="27" type="HeaderBand" isKey="true">
+          <Brush>[77:182:172]</Brush>
+          <ClientRectangle>0,400,1022,40</ClientRectangle>
+          <Components isList="true" count="4">
+            <Text7 Ref="28" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>20,10,100,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <Guid>883c760e2e51450e9a5a15f0aa542dec</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text7</Name>
+              <Page isRef="16" />
+              <Parent isRef="27" />
+              <Text>Floor</Text>
+              <TextBrush>[255:255:255]</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Bottom</VertAlignment>
+            </Text7>
+            <Text8 Ref="29" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>160,10,100,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <Guid>cd55685998674e6683b41e938e6ae3ac</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text8</Name>
+              <Page isRef="16" />
+              <Parent isRef="27" />
+              <Text>Unit</Text>
+              <TextBrush>[255:255:255]</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Bottom</VertAlignment>
+            </Text8>
+            <Text10 Ref="30" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>300,10,140,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <Guid>1526e91d60b440e499250eb9424b9a0f</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text10</Name>
+              <Page isRef="16" />
+              <Parent isRef="27" />
+              <Text>Location</Text>
+              <TextBrush>[255:255:255]</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Bottom</VertAlignment>
+            </Text10>
+            <Text3 Ref="31" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>470,0,550,40</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7</Font>
+              <Guid>3b4fbb0d0db0416180fd4dc79428b157</Guid>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text3</Name>
+              <Page isRef="16" />
+              <Parent isRef="27" />
+              <Text>Template Name :  {rsEquipment.Equipment_Name} 
+Type Designation :{rsEquipment.Template_Type_Designation} 
+Type Description : {rsEquipment.Template_Type_Designation_Discrpition}</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text3>
+          </Components>
+          <ComponentStyle>Header</ComponentStyle>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>HeaderBand1</Name>
+          <Page isRef="16" />
+          <Parent isRef="16" />
+          <SkipFirst>False</SkipFirst>
+        </HeaderBand1>
+        <DB_Equip_Details Ref="32" type="DataBand" isKey="true">
+          <Bookmark>{EquipmentDetails.Equip_Floor} - {EquipmentDetails.Equip_Unit}</Bookmark>
+          <Brush>Transparent</Brush>
+          <BusinessObjectGuid isNull="true" />
+          <CanShrink>True</CanShrink>
+          <ClientRectangle>0,480,1022,70</ClientRectangle>
+          <Components isList="true" count="11">
+            <Text4 Ref="33" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>20,0,120,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10</Font>
+              <Guid>6356d14e8c2b44539dc93e82cb1637c3</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text4</Name>
+              <Page isRef="16" />
+              <Parent isRef="32" />
+              <Text>{EquipmentDetails.Equip_Floor}</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <VertAlignment>Bottom</VertAlignment>
+            </Text4>
+            <Text5 Ref="34" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>160,0,120,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10</Font>
+              <Guid>bffbe68661b24f989b9c5d5a024a7bb7</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text5</Name>
+              <Page isRef="16" />
+              <Parent isRef="32" />
+              <Text>{EquipmentDetails.Equip_Unit}</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <VertAlignment>Bottom</VertAlignment>
+            </Text5>
+            <Text9 Ref="35" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <CanGrow>True</CanGrow>
+              <CanShrink>True</CanShrink>
+              <ClientRectangle>300,0,300,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10</Font>
+              <Guid>cb8ef0cb26a34788a368c8ce1333d83b</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text9</Name>
+              <Page isRef="16" />
+              <Parent isRef="32" />
+              <Text>{EquipmentDetails.Equip_Location}</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Bottom</VertAlignment>
+            </Text9>
+            <Text11 Ref="36" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>730,0,180,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10,Italic</Font>
+              <Guid>90b849ad75cf4b348637b0cde516d9d2</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text11</Name>
+              <Page isRef="16" />
+              <Parent isRef="32" />
+              <Text>{EquipmentDetails.Equip_Make_Model}</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <VertAlignment>Bottom</VertAlignment>
+            </Text11>
+            <Text13 Ref="37" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>730,40,180,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10,Italic</Font>
+              <Guid>3c6f01b3ad264445bcb868e3ad7e0c4b</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text13</Name>
+              <Page isRef="16" />
+              <Parent isRef="32" />
+              <Text>{EquipmentDetails.Equip_In_Service_Date}</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <TextFormat Ref="38" type="DateFormat" isKey="true" />
+              <VertAlignment>Bottom</VertAlignment>
+            </Text13>
+            <Text15 Ref="39" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>730,20,180,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10,Italic</Font>
+              <Guid>ef0cd814f44c48f0aeac60be3dd1778c</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text15</Name>
+              <Page isRef="16" />
+              <Parent isRef="32" />
+              <Text>{EquipmentDetails.Equip_Serial_Number}</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <VertAlignment>Bottom</VertAlignment>
+            </Text15>
+            <Image2 Ref="40" type="Image" isKey="true">
+              <AspectRatio>True</AspectRatio>
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <CanShrink>True</CanShrink>
+              <ClientRectangle>920,0,80,70</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <HorAlignment>Center</HorAlignment>
+              <IconColor>68, 114, 196</IconColor>
+              <ImageURL>http://www.qaworkorder.com{EquipmentDetails.EquipImage}</ImageURL>
+              <Margins>0,0,0,0</Margins>
+              <Name>Image2</Name>
+              <Page isRef="16" />
+              <Parent isRef="32" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Stretch>True</Stretch>
+              <VertAlignment>Center</VertAlignment>
+            </Image2>
+            <Text14 Ref="41" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>620,40,100,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10</Font>
+              <Guid>46f7559306e54f3d8edf9a4adba7c37f</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text14</Name>
+              <Page isRef="16" />
+              <Parent isRef="32" />
+              <Text>In Service Date</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Bottom</VertAlignment>
+            </Text14>
+            <Text16 Ref="42" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>620,20,100,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10</Font>
+              <Guid>33a8f2ac04cb458b90a8327de8bb5f55</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text16</Name>
+              <Page isRef="16" />
+              <Parent isRef="32" />
+              <Text>Serial Number</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Bottom</VertAlignment>
+            </Text16>
+            <Text12 Ref="43" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>620,0,100,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10</Font>
+              <Guid>cb6df4aa8d1e4554b7ecd8b54515f7e2</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text12</Name>
+              <Page isRef="16" />
+              <Parent isRef="32" />
+              <Text>Make / Model</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Bottom</VertAlignment>
+            </Text12>
+            <Text17 Ref="44" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <CanGrow>True</CanGrow>
+              <CanShrink>True</CanShrink>
+              <ClientRectangle>20,40,580,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10</Font>
+              <Guid>20696b00767f40c19f5482609c128449</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text17</Name>
+              <Page isRef="16" />
+              <Parent isRef="32" />
+              <Text>{EquipmentDetails.Equip_Notes}</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Text17>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <DataRelationName>Rel_Equip_EquipDetails</DataRelationName>
+          <DataSourceName>EquipmentDetails</DataSourceName>
+          <Expressions isList="true" count="0" />
+          <Filters isList="true" count="0" />
+          <MasterComponent isRef="25" />
+          <Name>DB_Equip_Details</Name>
+          <NewPageBefore>True</NewPageBefore>
+          <Page isRef="16" />
+          <Parent isRef="16" />
+          <PrintOnAllPages>True</PrintOnAllPages>
+          <Sort isList="true" count="4">
+            <value>ASC</value>
+            <value>Equip_Floor</value>
+            <value>ASC</value>
+            <value>Equip_Unit</value>
+          </Sort>
+        </DB_Equip_Details>
+        <HeaderBand2 Ref="45" type="HeaderBand" isKey="true">
+          <Brush>[77:182:172]</Brush>
+          <CanGrow>False</CanGrow>
+          <ClientRectangle>0,590,1022,40</ClientRectangle>
+          <Components isList="true" count="9">
+            <Text21 Ref="46" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>10,10,100,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Bold</Font>
+              <Guid>c987b71977ec460cabfe4f2e083cb56a</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text21</Name>
+              <Page isRef="16" />
+              <Parent isRef="45" />
+              <Text>Task Instruction</Text>
+              <TextBrush>[255:255:255]</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Bottom</VertAlignment>
+            </Text21>
+            <Text23 Ref="47" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>400,10,60,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Bold</Font>
+              <Guid>d937c65a67f74d7d969c74e5b2151119</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text23</Name>
+              <Page isRef="16" />
+              <Parent isRef="45" />
+              <Text>Frequency</Text>
+              <TextBrush>[255:255:255]</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Bottom</VertAlignment>
+            </Text23>
+            <Text25 Ref="48" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>460,0,80,30</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Bold</Font>
+              <Guid>385e1a8346774212bee9eb4c0df55aae</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text25</Name>
+              <Page isRef="16" />
+              <Parent isRef="45" />
+              <Text>Start Date
+End Date</Text>
+              <TextBrush>[255:255:255]</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Bottom</VertAlignment>
+            </Text25>
+            <Text27 Ref="49" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>200,10,120,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>b4a7eedd94ae4582852ee4cb98908728</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text27</Name>
+              <Page isRef="16" />
+              <Parent isRef="45" />
+              <Text>{TaskLineNumber= 0}</Text>
+              <TextBrush>Transparent</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Bottom</VertAlignment>
+            </Text27>
+            <Text28 Ref="50" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>580,0,60,30</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Bold</Font>
+              <Guid>e42cf8fff7a54c2d9ec3d08138c8eac7</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text28</Name>
+              <Page isRef="16" />
+              <Parent isRef="45" />
+              <Text>Start Date of Month</Text>
+              <TextBrush>[255:255:255]</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Bottom</VertAlignment>
+            </Text28>
+            <Text30 Ref="51" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>650,0,120,30</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Bold</Font>
+              <Guid>6b058f0377ae4554a71ecf0957cfa1f2</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text30</Name>
+              <Page isRef="16" />
+              <Parent isRef="45" />
+              <Text>Seasonal 
+Start Date - End Date</Text>
+              <TextBrush>[255:255:255]</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Bottom</VertAlignment>
+            </Text30>
+            <Text32 Ref="52" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>780,0,100,30</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Bold</Font>
+              <Guid>fd6123b22c5e4130b086674187a80987</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text32</Name>
+              <Page isRef="16" />
+              <Parent isRef="45" />
+              <Text>Start Date Adjustement</Text>
+              <TextBrush>[255:255:255]</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Bottom</VertAlignment>
+            </Text32>
+            <Text34 Ref="53" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>890,0,60,30</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Bold</Font>
+              <Guid>63dbf6b5c93540a58adbe2b91dc13f62</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text34</Name>
+              <Page isRef="16" />
+              <Parent isRef="45" />
+              <Text>Job Time</Text>
+              <TextBrush>[255:255:255]</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Bottom</VertAlignment>
+            </Text34>
+            <Text36 Ref="54" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>960,0,60,30</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Bold</Font>
+              <Guid>05090333786a4ab5b3cf26aabb882f99</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text36</Name>
+              <Page isRef="16" />
+              <Parent isRef="45" />
+              <Text>Over Time</Text>
+              <TextBrush>[255:255:255]</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Bottom</VertAlignment>
+            </Text36>
+          </Components>
+          <ComponentStyle>Header</ComponentStyle>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>HeaderBand2</Name>
+          <Page isRef="16" />
+          <Parent isRef="16" />
+          <PrintOnAllPages>False</PrintOnAllPages>
+        </HeaderBand2>
+        <DB_Task Ref="55" type="DataBand" isKey="true">
+          <Brush>Transparent</Brush>
+          <BusinessObjectGuid isNull="true" />
+          <CanBreak>True</CanBreak>
+          <CanShrink>True</CanShrink>
+          <ClientRectangle>0,670,1022,140</ClientRectangle>
+          <Components isList="true" count="10">
+            <Text22 Ref="56" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>20,0,380,20</ClientRectangle>
+              <Conditions isList="true" count="1">
+                <value>_x007B_rsTask.Frequency_Name_x0020__x003D__x003D__x0020__x0022__x0022__x007D_,[0:0:0],Transparent,Arial_x002C_10_x002C_Bold,True,False,,,None</value>
+              </Conditions>
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>2cc5c6019ae2414e9c67a18fd3acae6f</Guid>
+              <Margins>10,0,0,0</Margins>
+              <Name>Text22</Name>
+              <Page isRef="16" />
+              <Parent isRef="55" />
+              <Text>{rsTask.Task}</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Text22>
+            <Text24 Ref="57" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>410,0,60,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>ba09ba9ff2ce4019ad14c29a764e3da0</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text24</Name>
+              <Page isRef="16" />
+              <Parent isRef="55" />
+              <Text>{IIF (rsTask.Frequency_Name== "","",IIF(rsTask.Frequency_Interval == 1, rsTask.Frequency_Name, rsTask.Frequency_Interval  + " " + rsTask.Frequency_Name))}</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text24>
+            <Text26 Ref="58" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>480,0,90,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>50de03aebe45443399c46961f76b1014</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text26</Name>
+              <Page isRef="16" />
+              <Parent isRef="55" />
+              <Text>{rsTask.Start_Date}
+{rsTask.End_Date}</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text26>
+            <Text29 Ref="59" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>EmptyBrush</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>580,0,60,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>40eab8011b124d0684672f0bce9aae69</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text29</Name>
+              <Page isRef="16" />
+              <Parent isRef="55" />
+              <Text>{rsTask.Start_Day_of_Month}</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <Type>DataColumn</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text29>
+            <Text31 Ref="60" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>650,0,120,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>266729d8f2a54daf8cf4e08297675e59</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text31</Name>
+              <Page isRef="16" />
+              <Parent isRef="55" />
+              <Text>{IIF (rsTask.Frequency_Name== "","",rsTask.Seasonal_Start_Date + " - " + rsTask.Seasonal_End_Date)}</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text31>
+            <Text33 Ref="61" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>770,0,110,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>eb5daba1d5564445a1c5d0495d2a1876</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text33</Name>
+              <Page isRef="16" />
+              <Parent isRef="55" />
+              <Text>{rsTask.Start_Date_Adjustemnt}</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <VertAlignment>Center</VertAlignment>
+            </Text33>
+            <Text35 Ref="62" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>890,0,60,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>2cefdac84faa46d2b2bfaf08fe7a3188</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text35</Name>
+              <Page isRef="16" />
+              <Parent isRef="55" />
+              <Text>{rsTask.JobTime}</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <VertAlignment>Center</VertAlignment>
+            </Text35>
+            <Text37 Ref="63" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>960,0,60,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>7fafbd56fc9a451889c76c9a776e60cb</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text37</Name>
+              <Page isRef="16" />
+              <Parent isRef="55" />
+              <Text>{IIF (rsTask.Frequency_Name== "","",IIF (rsTask.Is_OverTime == 0, "N","Y")
+)}</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text37>
+            <Text38 Ref="64" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,20,10</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,5</Font>
+              <Guid>3362793b36e04ab6bdc467f10a68d4d6</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text38</Name>
+              <Page isRef="16" />
+              <Parent isRef="55" />
+              <Text>{TaskLineNumber = TaskLineNumber  +1 }</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <Type>Expression</Type>
+            </Text38>
+            <SubReport_Task Ref="65" type="SubReport" isKey="true">
+              <Border>Top;[191:191:191];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>20,30,1000,20</ClientRectangle>
+              <Components isList="true" count="0" />
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Guid>df884b5503a94fcabdc7af444c375711</Guid>
+              <Name>SubReport_Task</Name>
+              <Page isRef="16" />
+              <Parameters isList="true" count="0" />
+              <Parent isRef="55" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <SubReportPageGuid>39871153e978420ba4af9f027bd5a5be</SubReportPageGuid>
+            </SubReport_Task>
+          </Components>
+          <Conditions isList="true" count="2">
+            <value>_x007B__x0028_TaskLineNumber_x0020__x0026__x0020_1_x0029__x0020__x003D__x003D__x0020_1_x007D_,[255:0:0],Transparent,Arial_x002C_8,True,False,,Data,None</value>
+            <value>_x007B_rsTask.Frequency_Name_x0020__x003D__x003D__x0020__x0022__x0022__x007D_,[255:0:0],Transparent,Arial_x002C_8,True,False,,Task_x0020_Sub_x0020_Set,None</value>
+          </Conditions>
+          <DataRelationName>Rel_EquipDetails_to_Task</DataRelationName>
+          <DataSourceName>rsTask</DataSourceName>
+          <Expressions isList="true" count="0" />
+          <Filters isList="true" count="0" />
+          <MasterComponent isRef="32" />
+          <MinHeight>25</MinHeight>
+          <Name>DB_Task</Name>
+          <Page isRef="16" />
+          <Parent isRef="16" />
+          <Sort isList="true" count="0" />
+        </DB_Task>
+        <HeaderBand3 Ref="66" type="HeaderBand" isKey="true">
+          <Brush>[77:182:172]</Brush>
+          <CanGrow>False</CanGrow>
+          <ClientRectangle>0,850,1022,40</ClientRectangle>
+          <Components isList="true" count="11">
+            <Text20 Ref="67" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,10,150,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Bold</Font>
+              <Guid>e7de88977bcf44729c81ba1200f8b5d8</Guid>
+              <Margins>10,0,0,0</Margins>
+              <Name>Text20</Name>
+              <Page isRef="16" />
+              <Parent isRef="66" />
+              <Text>Reading Instruction</Text>
+              <TextBrush>[255:255:255]</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Bottom</VertAlignment>
+            </Text20>
+            <Text51 Ref="68" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>150,10,30,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>bb53810bd0c54991bfe357e7542c4edf</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text51</Name>
+              <Page isRef="16" />
+              <Parent isRef="66" />
+              <Text>{TaskLineNumber= 0}</Text>
+              <TextBrush>Transparent</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Bottom</VertAlignment>
+            </Text51>
+            <Text52 Ref="69" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>210,10,70,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Bold</Font>
+              <Guid>f10ee9c05e6d47a4bfa6af12713da7cc</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text52</Name>
+              <Page isRef="16" />
+              <Parent isRef="66" />
+              <Text>Frequency</Text>
+              <TextBrush>[255:255:255]</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Bottom</VertAlignment>
+            </Text52>
+            <Text55 Ref="70" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>290,10,110,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Bold</Font>
+              <Guid>17d8049d94e442fd8d0971b3b2f18209</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text55</Name>
+              <Page isRef="16" />
+              <Parent isRef="66" />
+              <Text>Reading</Text>
+              <TextBrush>[255:255:255]</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Bottom</VertAlignment>
+            </Text55>
+            <Text57 Ref="71" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>410,10,60,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Bold</Font>
+              <Guid>ed7c72a6880740f0bab6c1fe5390d5da</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text57</Name>
+              <Page isRef="16" />
+              <Parent isRef="66" />
+              <Text>Tolerance</Text>
+              <TextBrush>[255:255:255]</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Bottom</VertAlignment>
+            </Text57>
+            <Text58 Ref="72" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>480,0,70,30</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Bold</Font>
+              <Guid>1a6d3b868aa04bc394bf7e8b2b90abbc</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text58</Name>
+              <Page isRef="16" />
+              <Parent isRef="66" />
+              <Text>Start Date
+End Date</Text>
+              <TextBrush>[255:255:255]</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Bottom</VertAlignment>
+            </Text58>
+            <Text59 Ref="73" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>580,0,60,30</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Bold</Font>
+              <Guid>0b54f8b1a66c4dbca64393e35259c2e5</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text59</Name>
+              <Page isRef="16" />
+              <Parent isRef="66" />
+              <Text>Start Date of Month</Text>
+              <TextBrush>[255:255:255]</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Bottom</VertAlignment>
+            </Text59>
+            <Text60 Ref="74" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>650,0,120,30</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Bold</Font>
+              <Guid>d6753b23e2da477bbf57082bdbbc9a23</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text60</Name>
+              <Page isRef="16" />
+              <Parent isRef="66" />
+              <Text>Seasonal 
+Start Date - End Date</Text>
+              <TextBrush>[255:255:255]</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Bottom</VertAlignment>
+            </Text60>
+            <Text61 Ref="75" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>780,0,100,30</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Bold</Font>
+              <Guid>c0bc2d03231e4a25bcd89e0975de2a89</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text61</Name>
+              <Page isRef="16" />
+              <Parent isRef="66" />
+              <Text>Start Date Adjustment</Text>
+              <TextBrush>[255:255:255]</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Bottom</VertAlignment>
+            </Text61>
+            <Text62 Ref="76" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>890,0,60,30</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Bold</Font>
+              <Guid>ff7cdb0638da4fa2b7dd0b6fd2bb41f0</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text62</Name>
+              <Page isRef="16" />
+              <Parent isRef="66" />
+              <Text>Job Time</Text>
+              <TextBrush>[255:255:255]</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Bottom</VertAlignment>
+            </Text62>
+            <Text63 Ref="77" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>960,0,60,30</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Bold</Font>
+              <Guid>977d27b154ac4604879847339238a547</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text63</Name>
+              <Page isRef="16" />
+              <Parent isRef="66" />
+              <Text>Over Time</Text>
+              <TextBrush>[255:255:255]</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Bottom</VertAlignment>
+            </Text63>
+          </Components>
+          <ComponentStyle>Header</ComponentStyle>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>HeaderBand3</Name>
+          <Page isRef="16" />
+          <Parent isRef="16" />
+        </HeaderBand3>
+        <DB_Reading Ref="78" type="DataBand" isKey="true">
+          <Brush>Transparent</Brush>
+          <BusinessObjectGuid isNull="true" />
+          <CanShrink>True</CanShrink>
+          <ClientRectangle>0,930,1022,45</ClientRectangle>
+          <Components isList="true" count="12">
+            <Text48 Ref="79" type="Text" isKey="true">
+              <Border>None;[191:191:191];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>20,0,180,20</ClientRectangle>
+              <Conditions isList="true" count="1">
+                <value>_x007B_rsReadings.Frequency_Name_x0020__x003D__x003D__x0020__x0022__x0022__x007D_,[0:0:0],Transparent,Arial_x002C_10_x002C_Bold,True,False,,,None</value>
+              </Conditions>
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>677ac974c9214799a2992f769d60a609</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text48</Name>
+              <Page isRef="16" />
+              <Parent isRef="78" />
+              <Text>{rsReadings.Reading_Instruction}</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <VertAlignment>Center</VertAlignment>
+            </Text48>
+            <Text53 Ref="80" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,0,20,10</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,5</Font>
+              <Guid>e48ca63319a8448eadfe6450bd1d6f21</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text53</Name>
+              <Page isRef="16" />
+              <Parent isRef="78" />
+              <Text>{TaskLineNumber = TaskLineNumber  +1 }</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <Type>Expression</Type>
+            </Text53>
+            <Text54 Ref="81" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>210,0,70,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>aaa2ed692c4d499ca2702c2628e255c3</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text54</Name>
+              <Page isRef="16" />
+              <Parent isRef="78" />
+              <Text>{IIF (rsReadings.Frequency_Name == "","",IIF(rsReadings.Frequency_Interval =="1", rsReadings.Frequency_Name, rsReadings.Frequency_Interval  + " " + rsReadings.Frequency_Name))}</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text54>
+            <Text56 Ref="82" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>290,0,110,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>6600a5f021a148b49fab22a1565ec973</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text56</Name>
+              <Page isRef="16" />
+              <Parent isRef="78" />
+              <Text>{rsReadings.Value} {rsReadings.Unit_Of_Mesure}</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text56>
+            <Text64 Ref="83" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>480,0,90,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>c4edfa886fdc4a16a646a129d91dcfb6</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text64</Name>
+              <Page isRef="16" />
+              <Parent isRef="78" />
+              <Text>{rsReadings.Start_Date}
+{rsReadings.End_Date}</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text64>
+            <Text65 Ref="84" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>410,0,60,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>b00da8f0c1574c549b0fcf8493aedfee</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text65</Name>
+              <Page isRef="16" />
+              <Parent isRef="78" />
+              <Text>{IIF(rsReadings.Frequency_Name =="", "", rsReadings.Tolerance + "%")}
+</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text65>
+            <Text66 Ref="85" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>580,0,60,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>392a7a08f64b4caaa4afcb1ba840caae</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text66</Name>
+              <Page isRef="16" />
+              <Parent isRef="78" />
+              <Text>{rsReadings.Start_Day_of_Month}</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+            </Text66>
+            <Text67 Ref="86" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>650,0,120,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>87a5b11b84c8452584d5afba63430892</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text67</Name>
+              <Page isRef="16" />
+              <Parent isRef="78" />
+              <Text>{IIF (rsReadings.Frequency_Name== "","",rsReadings.Seasonal_Start_Date + " - " + rsReadings.Seasonal_End_Date)}
+</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text67>
+            <Text68 Ref="87" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>770,0,110,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>3ed30d6ca0004ccca38cc49c71512839</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text68</Name>
+              <Page isRef="16" />
+              <Parent isRef="78" />
+              <Text>{rsReadings.Start_Date_Adjustment}</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <VertAlignment>Center</VertAlignment>
+            </Text68>
+            <Text69 Ref="88" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>890,0,60,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>5b58f6241da347509f329d114006edb8</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text69</Name>
+              <Page isRef="16" />
+              <Parent isRef="78" />
+              <Text>{rsReadings.Job_Time}</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <VertAlignment>Center</VertAlignment>
+            </Text69>
+            <Text70 Ref="89" type="Text" isKey="true">
+              <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>960,0,60,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>d3f2aaef4f864715a032e906df91f8f9</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text70</Name>
+              <Page isRef="16" />
+              <Parent isRef="78" />
+              <Text>{IIF (rsReadings.Frequency_Name== "","",IIF (rsReadings.Is_Overtime == 0, "N","Y")
+)}
+</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text70>
+            <SubReport_Readings Ref="90" type="SubReport" isKey="true">
+              <Border>Top;[191:191:191];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>20,20,1000,30</ClientRectangle>
+              <Components isList="true" count="0" />
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Name>SubReport_Readings</Name>
+              <Page isRef="16" />
+              <Parameters isList="true" count="0" />
+              <Parent isRef="78" />
+              <SubReportPageGuid>ec43280e06334a0fb84194f86e7b983f</SubReportPageGuid>
+            </SubReport_Readings>
+          </Components>
+          <Conditions isList="true" count="2">
+            <value>_x007B__x0028_TaskLineNumber_x0020__x0026__x0020_1_x0029__x0020__x003D__x003D__x0020_1_x007D_,[255:0:0],Transparent,Arial_x002C_8,True,False,,Data,None</value>
+            <value>_x007B_rsReadings.Frequency_Name_x0020__x003D__x003D__x0020__x0022__x0022__x007D_,[255:0:0],Transparent,Arial_x002C_8,True,False,,Task_x0020_Sub_x0020_Set,None</value>
+          </Conditions>
+          <DataRelationName>Rel_EquipDetails_to_Readings</DataRelationName>
+          <DataSourceName>rsReadings</DataSourceName>
+          <Expressions isList="true" count="0" />
+          <Filters isList="true" count="0" />
+          <MasterComponent isRef="32" />
+          <MinHeight>25</MinHeight>
+          <Name>DB_Reading</Name>
+          <Page isRef="16" />
+          <Parent isRef="16" />
+          <Sort isList="true" count="0" />
+        </DB_Reading>
+      </Components>
+      <Conditions isList="true" count="0" />
+      <Expressions isList="true" count="0" />
+      <Guid>6fe18d42801749e3ae597a7b749c87b5</Guid>
+      <LargeHeight>True</LargeHeight>
+      <Margins>39,39,39,39</Margins>
+      <Name>Page1</Name>
+      <Orientation>Landscape</Orientation>
+      <PageHeight>850</PageHeight>
+      <PageWidth>1100</PageWidth>
+      <PaperSize>Letter</PaperSize>
+      <Report isRef="0" />
+    </Page1>
+    <Sub_Task Ref="91" type="Page" isKey="true">
+      <Border>None;Black;2;Solid;False;4;Black</Border>
+      <Brush>Transparent</Brush>
+      <Components isList="true" count="1">
+        <DataBand1 Ref="92" type="DataBand" isKey="true">
+          <Brush>Transparent</Brush>
+          <BusinessObjectGuid isNull="true" />
+          <CanShrink>True</CanShrink>
+          <ClientRectangle>0,20,1000,30</ClientRectangle>
+          <Components isList="true" count="9">
+            <Text39 Ref="93" type="Text" isKey="true">
+              <Border>None;[191:191:191];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>EmptyBrush</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>30,0,360,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>65aa6c26071f4e9092194c117c5ac237</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text39</Name>
+              <Page isRef="91" />
+              <Parent isRef="92" />
+              <Text>{rsTask_SubTask.Task}</Text>
+              <TextBrush>Black</TextBrush>
+              <VertAlignment>Center</VertAlignment>
+            </Text39>
+            <Text40 Ref="94" type="Text" isKey="true">
+              <Border>None;[191:191:191];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,30,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,5</Font>
+              <Guid>795275d71cc14afa8ca40f7601c309ed</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text40</Name>
+              <Page isRef="91" />
+              <Parent isRef="92" />
+              <Text>{TaskLineNumber} - {Line}
+</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text40>
+            <Text41 Ref="95" type="Text" isKey="true">
+              <Border>None;[191:191:191];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>EmptyBrush</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>390,0,60,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>e1eda4cd77bd45e5aa9340bfb508f8fa</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text41</Name>
+              <Page isRef="91" />
+              <Parent isRef="92" />
+              <Text>{IIF(rsTask_SubTask.Frequency_Interval == 1,rsTask_SubTask.Frequency_Name, rsTask_SubTask.Frequency_Interval + " " + rsTask_SubTask.Frequency_Name)}</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text41>
+            <Text42 Ref="96" type="Text" isKey="true">
+              <Border>None;[191:191:191];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>EmptyBrush</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>460,0,90,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>e80055e4eb4746da8d9a423f627da123</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text42</Name>
+              <Page isRef="91" />
+              <Parent isRef="92" />
+              <Text>{rsTask_SubTask.Start_Date}
+{rsTask_SubTask.End_Date}</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text42>
+            <Text43 Ref="97" type="Text" isKey="true">
+              <Border>None;[191:191:191];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>EmptyBrush</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>560,0,60,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>b624c4a0b1414b979dc5f61169292160</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text43</Name>
+              <Page isRef="91" />
+              <Parent isRef="92" />
+              <Text>{rsTask_SubTask.Start_Day_of_Month}</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <VertAlignment>Center</VertAlignment>
+            </Text43>
+            <Text44 Ref="98" type="Text" isKey="true">
+              <Border>None;[191:191:191];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>EmptyBrush</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>630,0,120,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>d0560757e161482b9016fda93e92b215</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text44</Name>
+              <Page isRef="91" />
+              <Parent isRef="92" />
+              <Text>{rsTask_SubTask.Seasonal_Start_Date} - {rsTask_SubTask.Seasonal_End_Date}</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text44>
+            <Text45 Ref="99" type="Text" isKey="true">
+              <Border>None;[191:191:191];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>EmptyBrush</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>750,0,110,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>2401430d612442cfb8a78329443e2b65</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text45</Name>
+              <Page isRef="91" />
+              <Parent isRef="92" />
+              <Text>{rsTask_SubTask.Start_Date_Adjustemnt}</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <VertAlignment>Center</VertAlignment>
+            </Text45>
+            <Text46 Ref="100" type="Text" isKey="true">
+              <Border>None;[191:191:191];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>EmptyBrush</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>870,0,60,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>4aa5243a17b84bd3baa9f1f99eab8537</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text46</Name>
+              <Page isRef="91" />
+              <Parent isRef="92" />
+              <Text>{rsTask_SubTask.JobTime}</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <VertAlignment>Center</VertAlignment>
+            </Text46>
+            <Text47 Ref="101" type="Text" isKey="true">
+              <Border>None;[191:191:191];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>EmptyBrush</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>940,0,60,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>485fd10f37084c1b86b06a2d4630f50d</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text47</Name>
+              <Page isRef="91" />
+              <Parent isRef="92" />
+              <Text>{IIF (rsTask_SubTask.Is_OverTime == 0, "Y","N")}
+</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text47>
+          </Components>
+          <Conditions isList="true" count="2">
+            <value>_x007B__x0028_Line_x0020__x0026__x0020_1_x0029__x0020__x003D__x003D__x0020_1_x007D_,[255:0:0],Transparent,Arial_x002C_8,True,False,,Data,None</value>
+            <value>_x007B__x0028_Line_x0020__x0026__x0020_1_x0029__x0020__x003D__x003D__x0020_0_x007D_,[0:0:0],Transparent,Arial_x002C_8,True,False,,,None</value>
+          </Conditions>
+          <DataRelationName>Rel_Task_to_SubTask</DataRelationName>
+          <DataSourceName>rsTask_SubTask</DataSourceName>
+          <Expressions isList="true" count="0" />
+          <Filters isList="true" count="0" />
+          <MasterComponent isRef="55" />
+          <Name>DataBand1</Name>
+          <Page isRef="91" />
+          <Parent isRef="91" />
+          <Sort isList="true" count="0" />
+        </DataBand1>
+      </Components>
+      <Conditions isList="true" count="0" />
+      <Expressions isList="true" count="0" />
+      <Guid>39871153e978420ba4af9f027bd5a5be</Guid>
+      <Margins>39,39,39,39</Margins>
+      <Name>Sub_Task</Name>
+      <Orientation>Landscape</Orientation>
+      <PageHeight>850</PageHeight>
+      <PageWidth>1078</PageWidth>
+      <Report isRef="0" />
+    </Sub_Task>
+    <Sub_Reading Ref="102" type="Page" isKey="true">
+      <Border>None;Black;2;Solid;False;4;Black</Border>
+      <Brush>Transparent</Brush>
+      <Components isList="true" count="1">
+        <DB_SubReadings Ref="103" type="DataBand" isKey="true">
+          <Brush>Transparent</Brush>
+          <BusinessObjectGuid isNull="true" />
+          <CanShrink>True</CanShrink>
+          <ClientRectangle>0,20,1000,40</ClientRectangle>
+          <Components isList="true" count="11">
+            <Text71 Ref="104" type="Text" isKey="true">
+              <Border>None;[191:191:191];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,0,20,10</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,5</Font>
+              <Guid>02ef769c27474ead9633e9a8ddd50435</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text71</Name>
+              <Page isRef="102" />
+              <Parent isRef="103" />
+              <Text>{TaskLineNumber} - {Line}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text71>
+            <Text72 Ref="105" type="Text" isKey="true">
+              <Border>None;[191:191:191];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>20,0,160,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>c3d9c79d157548798ce9e750f2e303f2</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text72</Name>
+              <Page isRef="102" />
+              <Parent isRef="103" />
+              <Text>{rsReadings_SubReadings.Reading_Instruction}</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Text72>
+            <Text73 Ref="106" type="Text" isKey="true">
+              <Border>None;[191:191:191];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>190,0,70,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>80e606dadb6b442c90c451c6f7402843</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text73</Name>
+              <Page isRef="102" />
+              <Parent isRef="103" />
+              <Text>{IIF(rsReadings_SubReadings.Frequency_Interval == 1, rsReadings_SubReadings.Frequency_Name, rsReadings_SubReadings.Frequency_Interval + " " + rsReadings_SubReadings.Frequency_Name)}</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text73>
+            <Text74 Ref="107" type="Text" isKey="true">
+              <Border>None;[191:191:191];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>270,0,110,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>a4508028eae1415ab68c45e00206ed76</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text74</Name>
+              <Page isRef="102" />
+              <Parent isRef="103" />
+              <Text>{rsReadings_SubReadings.Value}  {rsReadings_SubReadings.Unit_Of_Mesure}</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text74>
+            <Text75 Ref="108" type="Text" isKey="true">
+              <Border>None;[191:191:191];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>390,0,60,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>2ae276997f7142af96e963877c24957d</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text75</Name>
+              <Page isRef="102" />
+              <Parent isRef="103" />
+              <Text>{IIF(rsReadings_SubReadings.Frequency_Name =="", "", rsReadings_SubReadings.Tolerance + "%")}</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text75>
+            <Text76 Ref="109" type="Text" isKey="true">
+              <Border>None;[191:191:191];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>460,0,90,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>a1ea96d98ddc4ab0acb4bc70432e6845</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text76</Name>
+              <Page isRef="102" />
+              <Parent isRef="103" />
+              <Text>{rsReadings_SubReadings.Start_Date}
+{rsReadings_SubReadings.End_Date}</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text76>
+            <Text77 Ref="110" type="Text" isKey="true">
+              <Border>None;[191:191:191];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>560,0,60,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>b170c21fb93a4ee489bc94ead9321da2</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text77</Name>
+              <Page isRef="102" />
+              <Parent isRef="103" />
+              <Text>{rsReadings_SubReadings.Start_Day_of_Month}</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <VertAlignment>Center</VertAlignment>
+            </Text77>
+            <Text78 Ref="111" type="Text" isKey="true">
+              <Border>None;[191:191:191];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>630,0,120,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>f6f71f76543b422184c181f066fa52b7</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text78</Name>
+              <Page isRef="102" />
+              <Parent isRef="103" />
+              <Text>{rsReadings_SubReadings.Seasonal_Start_Date} - {rsReadings_SubReadings.Seasonal_End_Date}</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text78>
+            <Text79 Ref="112" type="Text" isKey="true">
+              <Border>None;[191:191:191];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>750,0,110,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>7e1e2071bed74061bfecd002046f22ae</Guid>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text79</Name>
+              <Page isRef="102" />
+              <Parent isRef="103" />
+              <Text>{rsReadings_SubReadings.Start_Date_Adjustment}</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <VertAlignment>Center</VertAlignment>
+            </Text79>
+            <Text80 Ref="113" type="Text" isKey="true">
+              <Border>None;[191:191:191];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>870,0,60,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>e89def5c6af74be6a5e3b54d91e3cba8</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text80</Name>
+              <Page isRef="102" />
+              <Parent isRef="103" />
+              <Text>{rsReadings_SubReadings.Job_Time}</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <VertAlignment>Center</VertAlignment>
+            </Text80>
+            <Text81 Ref="114" type="Text" isKey="true">
+              <Border>None;[191:191:191];1;Solid;False;4;[0:0:0]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>940,0,60,20</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>6d5084b404e34faa83e19572cbd0e35a</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text81</Name>
+              <Page isRef="102" />
+              <Parent isRef="103" />
+              <Text>{IIF (rsReadings_SubReadings.Is_Overtime== 0, "N","Y")}</Text>
+              <TextBrush>[0:0:0]</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text81>
+          </Components>
+          <Conditions isList="true" count="2">
+            <value>_x007B__x0028_Line_x0020__x0026__x0020_1_x0029__x0020__x003D__x003D__x0020_1_x007D_,[255:0:0],Transparent,Arial_x002C_8,True,False,,Data,None</value>
+            <value>_x007B__x0028_Line_x0020__x0026__x0020_1_x0029__x0020__x003D__x003D__x0020_0_x007D_,[0:0:0],Transparent,Arial_x002C_8,True,False,,,None</value>
+          </Conditions>
+          <DataRelationName>Rel_Readings_To_SubReadings</DataRelationName>
+          <DataSourceName>rsReadings_SubReadings</DataSourceName>
+          <Expressions isList="true" count="0" />
+          <Filters isList="true" count="0" />
+          <MasterComponent isRef="78" />
+          <Name>DB_SubReadings</Name>
+          <Page isRef="102" />
+          <Parent isRef="102" />
+          <Sort isList="true" count="0" />
+        </DB_SubReadings>
+      </Components>
+      <Conditions isList="true" count="0" />
+      <Expressions isList="true" count="0" />
+      <Guid>ec43280e06334a0fb84194f86e7b983f</Guid>
+      <Margins>39,39,39,39</Margins>
+      <Name>Sub_Reading</Name>
+      <Orientation>Landscape</Orientation>
+      <PageHeight>850</PageHeight>
+      <PageWidth>1078</PageWidth>
+      <PaperSize>Letter</PaperSize>
+      <Report isRef="0" />
+    </Sub_Reading>
+  </Pages>
+  <ReferencedAssemblies isList="true" count="8">
+    <value>System.Dll</value>
+    <value>System.Drawing.Dll</value>
+    <value>System.Windows.Forms.Dll</value>
+    <value>System.Data.Dll</value>
+    <value>System.Xml.Dll</value>
+    <value>Stimulsoft.Controls.Dll</value>
+    <value>Stimulsoft.Base.Dll</value>
+    <value>Stimulsoft.Report.Dll</value>
+  </ReferencedAssemblies>
+  <ReportAlias>PM_AU_Equipment_Equipment_Name_Link</ReportAlias>
+  <ReportAuthor>Robert Palermo</ReportAuthor>
+  <ReportChanged>6/5/2018 12:03:16 PM</ReportChanged>
+  <ReportCreated>6/5/2018 12:03:16 PM</ReportCreated>
+  <ReportGuid>ef0f9b67e4be4467b76b7b201b23eea6</ReportGuid>
+  <ReportName>PM_AU_Equipment_Equipment_Name_Link</ReportName>
+  <ReportUnit>HundredthsOfInch</ReportUnit>
+  <ReportVersion>2020.5.1.0</ReportVersion>
+  <Script>using System;
+using System.Drawing;
+using System.Windows.Forms;
+using System.Data;
+using Stimulsoft.Controls;
+using Stimulsoft.Base.Drawing;
+using Stimulsoft.Report;
+using Stimulsoft.Report.Dialogs;
+using Stimulsoft.Report.Components;
+
+namespace Reports
+{
+    public class Report : Stimulsoft.Report.StiReport
+    {
+        public Report()        {
+            this.InitializeComponent();
+        }
+
+        #region StiReport Designer generated code - do not modify
+		#endregion StiReport Designer generated code - do not modify
+    }
+}
+</Script>
+  <ScriptLanguage>CSharp</ScriptLanguage>
+  <Styles isList="true" count="4">
+    <Data Ref="115" type="Stimulsoft.Report.StiStyle" isKey="true">
+      <AllowUseBorderFormatting>False</AllowUseBorderFormatting>
+      <AllowUseBorderSides>False</AllowUseBorderSides>
+      <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+      <Brush>[213:240:230]</Brush>
+      <CollectionName>Style</CollectionName>
+      <Conditions isList="true" count="0" />
+      <Font>Arial,8</Font>
+      <Name>Data</Name>
+      <NegativeTextBrush>Red</NegativeTextBrush>
+      <TextBrush>[255:255:255]</TextBrush>
+    </Data>
+    <Header Ref="116" type="Stimulsoft.Report.StiStyle" isKey="true">
+      <AllowUseBorderFormatting>False</AllowUseBorderFormatting>
+      <AllowUseBorderSides>False</AllowUseBorderSides>
+      <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+      <Brush>[77:182:172]</Brush>
+      <CollectionName>Style</CollectionName>
+      <Conditions isList="true" count="0" />
+      <Font>Arial,8</Font>
+      <Name>Header</Name>
+      <NegativeTextBrush>Red</NegativeTextBrush>
+      <TextBrush>[255:255:255]</TextBrush>
+    </Header>
+    <Title_x0020_Header Ref="117" type="Stimulsoft.Report.StiStyle" isKey="true">
+      <AllowUseBorderFormatting>False</AllowUseBorderFormatting>
+      <AllowUseBorderSides>False</AllowUseBorderSides>
+      <Border>None;[0:0:0];1;Solid;False;4;[0:0:0]</Border>
+      <Brush>[96:125:129]</Brush>
+      <CollectionName>Styles</CollectionName>
+      <Conditions isList="true" count="0" />
+      <Font>Arial,20</Font>
+      <HorAlignment>Right</HorAlignment>
+      <Name>Title Header</Name>
+      <NegativeTextBrush>Red</NegativeTextBrush>
+      <TextBrush>[255:255:255]</TextBrush>
+      <VertAlignment>Center</VertAlignment>
+    </Title_x0020_Header>
+    <Task_x0020_Sub_x0020_Set Ref="118" type="Stimulsoft.Report.StiStyle" isKey="true">
+      <AllowUseBorderFormatting>False</AllowUseBorderFormatting>
+      <AllowUseFont>False</AllowUseFont>
+      <Border>Top, Bottom;[0:0:0];5;Solid;False;4;[0:0:0]</Border>
+      <Brush>[255:255:255]</Brush>
+      <Conditions isList="true" count="0" />
+      <Font>Arial,8</Font>
+      <Name>Task Sub Set</Name>
+      <NegativeTextBrush>Red</NegativeTextBrush>
+      <TextBrush>EmptyBrush</TextBrush>
+    </Task_x0020_Sub_x0020_Set>
+  </Styles>
+</StiSerializer>

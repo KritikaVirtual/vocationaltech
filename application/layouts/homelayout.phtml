@@ -1,0 +1,220 @@
+<?php echo $this->partial('homeheader.phtml'); 
+$controller=Zend_Controller_Front::getInstance()->getRequest()->getControllerName();
+$actionnm=Zend_Controller_Front::getInstance()->getRequest()->getActionName();
+$userRoleID=Zend_Auth::getInstance()->getStorage()->read()->role_id;
+$userId=Zend_Auth::getInstance()->getStorage()->read()->uid;
+$customeAccessmodel = new Model_UserAccess();
+// getting the object of access helper
+$actionnHelper=Zend_Controller_Action_HelperBroker::getStaticHelper('Access'); 
+
+//this is for building information
+$buildingAccess = $actionnHelper->checkAccess($userRoleID,4); 
+/*override access by custom user access if exist */
+$customeAccessmodeld = $customeAccessmodel->getUserCustomAccess($this->userId,4);
+if($customeAccessmodeld[0]) {
+	$buildingAccess = $customeAccessmodeld[0];
+}
+
+//this is for billing information
+$billingAccess = $actionnHelper->checkAccess($userRoleID,5); 
+$customeAccessmodeld = $customeAccessmodel->getUserCustomAccess($this->userId,5);
+if($customeAccessmodeld[0]) {
+	$billingAccess = $customeAccessmodeld[0];
+}
+
+//this is for remit information
+$remitAccess = $actionnHelper->checkAccess($userRoleID,6);
+$customeAccessmodeld = $customeAccessmodel->getUserCustomAccess($this->userId,6);
+if($customeAccessmodeld[0]) {
+	$remitAccess = $customeAccessmodeld[0];
+}
+
+//this is for User information
+$userInfoAccess = $actionnHelper->checkAccess($userRoleID,7); 
+$customeAccessmodeld = $customeAccessmodel->getUserCustomAccess($this->userId,7);
+if($customeAccessmodeld[0]) {
+	$userInfoAccess = $customeAccessmodeld[0];
+}
+
+//this is for New user wizard access
+$userAccess = $actionnHelper->checkAccess($userRoleID,8); 
+$customeAccessmodeld = $customeAccessmodel->getUserCustomAccess($this->userId,8);
+if($customeAccessmodeld[0]) {
+	$userAccess = $customeAccessmodeld[0];
+}
+
+//this is for Category access
+$categoryAccess = $actionnHelper->checkAccess($userRoleID,10);
+$customeAccessmodeld = $customeAccessmodel->getUserCustomAccess($this->userId,10);
+if($customeAccessmodeld[0]) {
+	$categoryAccess = $customeAccessmodeld[0];
+}
+
+//this is for Priority access
+$ip = $_SERVER['REMOTE_ADDR'];
+$priorityAccess = $actionnHelper->checkAccess($userRoleID,11);
+$customeAccessmodeld = $customeAccessmodel->getUserCustomAccess($this->userId,11);
+if($customeAccessmodeld[0]) {
+	$priorityAccess = $customeAccessmodeld[0];
+}
+$logo_image = '';
+if($userRoleID!=1){
+	$custId=Zend_Auth::getInstance()->getStorage()->read()->cust_id;
+	$acModel = new Model_Account();
+	if($custId){
+	 $companyDetail = $acModel->getcompany($custId);	 
+	 $logo_image = $companyDetail[0]['company_logo'];
+   }
+}
+$img_src='';
+if($logo_image!=''){
+	$logo_path = BASE_PATH.'public/images/clogo/'.$logo_image;
+	if(file_exists($logo_path))
+	{
+		$img_src = BASEURL.'public/images/clogo/'.$logo_image;
+	}else{
+		$img_src = BASEURL.'public/images/logo.png';
+	}
+}else{
+		$img_src = BASEURL.'public/images/logo.png';
+	}
+?><div id="dvLoading"><div class="lod">Loading...</div></div>
+<div class="wrapper" id="div_content_load" style="display:none">
+<div class="header-bg">
+     <div class="header">
+          <div class="leftlogo">
+               <a href="<?php echo BASEURL;?>"><img src="<?php echo $img_src;?>" class="logo"/></a>
+          </div>
+          <div class="rightlogo">
+               <div class="rightmenu"></div>
+			   <div class="mainmenu"><div class="menu-top-navigation-container"></div></div>
+		 </div>
+    </div> 
+<div id="main">
+<div class="main-div">
+<div class="container">
+<div class="container-left">
+<ul id="accordion" class="accordion">
+<?php if($userRoleID==1){?>
+  <li <?php if(($controller=='account' || $controller=='building' || $controller=='access' || $controller == 'emails') && $actionnm!='changeaccount'){?>class="open"<?php }?>>
+    <div class="link"><i class="fa fa-database"></i>Administrator<i class="fa fa-chevron-down"></i></div>
+    <ul class="submenu" <?php if(($controller=='account' || $controller=='building' || $controller=='access' || $controller == 'emails') && $actionnm!='changeaccount'){?>style="display:block;"<?php }?>>
+      <li><a href="<?php echo BASEURL.'account';?>" <?php if($controller=='account'){?>class="menuselected"<?php }?>>Accounts</a></li>
+      <li><a href="<?php echo BASEURL.'building';?>" <?php if($controller=='building' && $actionnm=='index'){?>class="menuselected"<?php }?>>Buildings</a></li>
+      <li><a href="<?php echo BASEURL.'building/registration'?>" <?php if($controller=='building' && $actionnm=='registration'){?>class="menuselected"<?php }?> >New Building setup Wizard</a></li>
+
+      <li><a href="<?php echo BASEURL.'access/matrix'?>" <?php if($controller=='access' && $actionnm=='matrix'){?>class="menuselected"<?php }?> >Access User Matrix</a></li> 
+      <?php if($ip == '115.112.129.194'){ ?>
+      <li><a href="<?php echo BASEURL.'emails/log'?>" <?php if($controller=='emails' && $actionnm=='log'){?>class="menuselected"<?php }?> >Email Log</a></li> 
+      <?php } ?>
+      
+    </ul>
+  </li>
+  <?php }
+    if($userRoleID!=1){
+  ?> 
+  <?php if($buildingAccess->is_access == 0 || $billingAccess->is_access == 0 || $remitAccess->is_access == 0 || $userInfoAccess->is_access == 0 || $userAccess->is_access==0){ ?> 
+  <li <?php if($controller=='company' || $controller=='user'){?> class="open"<?php }?>> 
+    <div class="link"><i class="fa fa-code"></i>Building Administration<i class="fa fa-chevron-down"></i></div>
+    <ul class="submenu" <?php if($controller=='company' || $controller=='user'){?>style="display:block;"<?php }?>>
+
+    <?php if($buildingAccess->is_access == 0 || $billingAccess->is_access == 0 || $remitAccess->is_access == 0){ ?>
+      <li><a href="<?php echo BASEURL.'company'?>" <?php if($controller=='company' && $actionnm=='index'){?>class="menuselected"<?php }?>>Company Information</a></li>
+    <?php } 
+     if($userInfoAccess->is_access == 0 || $userRoleID==9){ ?>
+      <li><a href="<?php echo BASEURL.'company/users'?>" <?php if($controller=='company' && $actionnm=='users'){?>class="menuselected"<?php }?>>User Information</a></li>
+      <?php } 
+
+       if($userAccess->is_access==0 || $userRoleID==9){ ?>
+      <li><a href="<?php echo BASEURL.'user'?>" <?php if($controller=='user' && $actionnm=='index'){?>class="menuselected"<?php }?>>Add New User wizard</a></li>
+
+       <?php } ?>
+
+    </ul>
+    </li>
+    <?php } ?>
+<!-- ////////////// -->
+
+   
+      <?php if($userRoleID==5 || $userRoleID==7){?>
+		   <li <?php if($controller=='tenant' || $controller=='workorder'){?> class="open"<?php }?>> 
+		   <div class="link"><i class="fa fa-code"></i>Tenant Administration<i class="fa fa-chevron-down"></i></div>
+		   <ul class="submenu" <?php if($controller=='tenant' || $controller=='workorder'){?>style="display:block;"<?php }?>>	  
+		     <li><a href="<?php echo BASEURL.'tenant/tenantuser'?>" <?php if($controller=='tenant' && $actionnm=='tenantuser'){?>class="menuselected"<?php }?>>Tenant Information</a></li>
+		     <li><a href="<?php echo BASEURL.'workorder/index'?>" <?php if($controller=='workorder' && $actionnm=='index'){?>class="menuselected"<?php }?>>Work Orders</a></li>
+             <li><a href="<?php echo BASEURL.'workorder/createworkorder'?>" <?php if($controller=='workorder' && $actionnm=='createworkorder'){?>class="menuselected"<?php }?>>Create Work Order</a></li>
+             
+			 <?php /*<li><a href="<?php echo BASEURL.'tenant/createuser'?>" <?php if($controller=='tenant' && $actionnm=='createuser'){?>class="menuselected"<?php }?>>Add New User</a></li>*/?>
+			 </ul>
+	  </li>
+       <?php }else if($userRoleID!=6){ ?>
+		    <li <?php if($controller=='tenant'){?> class="open"<?php }?>> 
+    <div class="link"><i class="fa fa-code"></i>Tenant Maintenance<i class="fa fa-chevron-down"></i></div>
+    <ul class="submenu" <?php if($controller=='tenant'){?>style="display:block;"<?php }?>>   
+       <li><a href="<?php echo BASEURL.'tenant/users'?>" <?php if($controller=='tenant' && ($actionnm=='users' || $actionnm=='index')){?>class="menuselected"<?php }?>>Tenant Information</a></li>
+       <li><a href="<?php echo BASEURL.'tenant/tenantrecovery'?>" <?php if($controller=='tenant' && ($actionnm=='tenantrecovery')){?>class="menuselected"<?php }?>>Tenant Recovery</a></li>
+		   <?php /*<li><a href="<?php echo BASEURL.'tenant/index'?>" <?php if($controller=='tenant' && $actionnm=='index'){?>class="menuselected"<?php }?>>Add New Tenant wizard</a></li>*/?>
+       </ul>
+  </li>
+	 <?php }?>	   
+    
+   <?php if($categoryAccess->is_access == 0 || $priorityAccess->is_access == 0 ){ ?>
+  <li <?php if($controller=='category'){?> class="open"<?php }?>>
+    <div class="link"><i class="fa fa-mobile"></i>Category Console<i class="fa fa-chevron-down"></i></div>
+    <ul class="submenu" <?php if($controller=='category'){?>style="display:block;"<?php }?>>
+      <li><a href="<?php echo BASEURL.'category'?>" <?php if(($controller=='category') && ($actionnm=='index' || $actionnm=='addcategory' || $actionnm=='addpriorityschedule')){?>class="menuselected"<?php }?>>Category</a></li>
+      <li><a href="<?php echo BASEURL.'category/recovercategory'?>" <?php if(($controller=='category') && ($actionnm=='recovercategory')){?>class="menuselected"<?php }?>>Recover Category</a></li>
+    </ul>
+  </li>
+  <?php
+     }
+     ?>
+     <?php 
+          $not_email = array(1,5,6,7);
+     if(!in_array($userRoleID,$not_email)){?>
+     <li <?php if($controller=='emails'){?> class="open"<?php }?>>
+    <div class="link"><i class="fa fa-mobile"></i>Email Console<i class="fa fa-chevron-down"></i></div>
+    <ul class="submenu" <?php if($controller=='emails'){?>style="display:block;"<?php }?>>
+      <li><a href="<?php echo BASEURL.'emails/index'?>" <?php if(($controller=='emails') && ($actionnm=='index' || $actionnm=='create' || $actionnm=='editemail')){?>class="menuselected"<?php }?>>Email Templates</a></li>
+      <li><a href="<?php echo BASEURL.'emails/send'?>" <?php if(($controller=='emails') && ($actionnm=='send' || $actionnm=='sendemail' || $actionnm=='editemail')){?>class="menuselected"<?php }?>>Send Notification</a></li>
+      
+        <li><a href="<?php echo BASEURL.'emails/console'?>" <?php if(($controller=='emails') && ($actionnm=='console')){?>class="menuselected"<?php }?>>Email Distribution Groups</a></li>
+  
+      
+    </ul>
+  </li>
+    <?php  } } 
+  $adminNamespace = new Zend_Session_Namespace('Admin_User');
+  if($adminNamespace->role_id==1){?>
+  <li>
+    <div class="link"><i class="fa fa-globe"></i><a href="<?php echo BASEURL.'account/changeaccount'?>">Switch Account</a>
+	</div>
+  </li>
+  <?php }?>
+  <li>
+    <div class="link"><i class="fa fa-globe"></i><a href="<?php echo BASEURL.'accountsetting'?>">Change Password</a>
+	</div>
+  </li>
+  <li>
+    <div class="link"><i class="fa fa-globe"></i><a href="<?php echo BASEURL.'index/logout/redirect/redirect'?>">Logout</a><i class="fa fa-chevron-down"></i></div>
+  </li>
+</ul>
+</div>
+	<?php echo $this->layout()->content ?>
+</div>
+
+
+</div>
+</div>
+
+</div>
+</div>
+
+<script>
+$(window).load(function() {
+	$("#div_content_load").fadeIn("slow");
+	$("#dvLoading").fadeOut("slow");
+})
+</script>
+</body>
+</html>

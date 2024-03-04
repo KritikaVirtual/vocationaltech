@@ -1,0 +1,1 @@
+<?php 		ob_start();	require_once 'inc/constant.php';	header('location: '.BASEURL);		?>

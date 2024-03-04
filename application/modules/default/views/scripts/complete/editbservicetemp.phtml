@@ -1,0 +1,75 @@
+<?php	
+	 $bsModel = new Model_BuildService();
+	 $bsList = $bsModel->getActiveBuildServiceByBId($this->bId);
+	 
+	 $bserviceData = $this->bserviceData[$this->index];
+	 	
+?>
+<script type="text/javascript">
+	var bs_charge = [];
+	var bs_minimum = [];
+	<?php 
+	     if($bsList){
+			 foreach($bsList as $bsl){
+			 ?>
+				 bs_charge['<?php echo $bsl['bsid'];?>'] = '<?php echo $bsl['cost'];?>';
+				 bs_minimum['<?php echo $bsl['bsid'];?>'] = '<?php echo $bsl['minimum'];?>';
+			<?php
+			 }
+		 }
+	?>
+</script>
+<div id="ct_bservice_fm_div">
+	<h1>Edit Building Services Charge(s)</h1>	
+	<div class="message">
+		<span id="success_msg" class="success"></span>
+		<span id="error_msg" class="error"></span>
+	</div>
+	<div id="bservice_form_ data">
+		 <div class="cw_row">
+			 <label>Service</label>
+			 <div class="cw-ibox-row">
+				 <span class="field_error" id="cwerr_service"></span>
+				 <input type="hidden" name="woId" id="edit_woId" value="<?php echo $bserviceData['woId'];?>">
+				 <select name="service" id="edit_service" onchange="setBServCharge(this.value)">
+					 <option value="">-- Select --</option>
+					 <?php
+					 if($bsList){ 
+					     foreach ($bsList as  $bsl) { ?>
+							<option value="<?php echo $bsl['bsid']; ?>" 
+							 <?php if($bserviceData['service']==$bsl['bsid']) echo 'selected="selected"';?> flag_id="<?php echo $bsl['unit_measure']; ?>" >
+								<?php echo stripslashes($bsl['service_name']); ?>
+							</option>
+					<?php }
+					} ?>
+				 </select>
+			 </div>
+		 </div>
+		 <div class="cw_row">
+			  <label>Charge ($)</label>
+			  <div class="cw-ibox-row">
+				 <span class="field_error" id="cwerr_charge"></span>				 
+					   <input type="text" name="charge" id="edit_charge" onkeypress="return isNumber(event)" value="<?php echo $bserviceData['charge']?>">			 
+			  </div>
+		 </div>
+		 <div class="cw_row">
+			  <label>Amount Requested</label>
+			  <div class="cw-ibox-row">
+				 <span class="field_error" id="cwerr_amount"></span>				 
+					   <input type="text" name="amount_requested" id="edit_amount_requested" onkeypress="return isNumber(event)" value="<?php echo $bserviceData['amount_requested']?>">			 
+			  </div>
+		 </div>		 
+		 <div class="cw_row">
+			 <label>Comment (Optional)</label>
+			 <div class="cw-ibox-row">				 
+				   <textarea name="comment" id="edit_comment" rows="5" cols="45"><?php echo stripslashes($bserviceData['comment']);?></textarea>
+			 </div>
+		 </div>
+	</div>
+	<div class="buttons">
+	               <input type="hidden" id="edittempbservice" value="">
+				   <input type="hidden" id="edit_historywoId" value="<?php echo $bserviceData['woId']; ?>">
+				   <button type="button" name="save_labor" id="save_bdservice" value="Save" onclick="updateBServiceDataTemp2('<?php echo $this->index;?>')">Save</button>
+				   <button type="button" name="cancel" id="cancel" value="Cancel" onclick="cancelBServiceEdit()">Cancel</button>
+	  </div>
+</div>

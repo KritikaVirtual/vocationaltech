@@ -1,0 +1,84 @@
+die;
+<div id="pm-work-cta" class="pm-work-tbl">
+    <?php
+    function unique_multidim_array($array, $key) {
+        $temp_array = array();
+        $i = 0;
+        $key_array = array();
+
+        foreach ($array as $val) {
+            if (!in_array($val[$key], $key_array)) {
+                $key_array[$i] = $val[$key];
+                $temp_array[$i] = $val;
+            }
+            $i++;
+        }
+        return $temp_array;
+    }
+    $equipmentName = unique_multidim_array($this->workorderList, 'AU_Equipment_Name');
+    foreach ($equipmentName as $equipment) {
+        ?>                            
+        <table id="air_handling-unit" class="table table-bordered">
+            <tr class="colorblue"><td><a href="#<?php echo $equipment['AU_Equipment_Name_ID']; ?>" class="show_hide" onclick="plusminus(this.id);" id="plus<?php echo $equipment['AU_Equipment_Name_ID']; ?>"><i class="fa fa fa-minus-circle" aria-hidden="true"></i></a>&nbsp;<?php echo $equipment['AU_Equipment_Name']; ?></td></tr>
+            <tr class="collapseall" id="xyzplus<?php echo $equipment['AU_Equipment_Name_ID']; ?>">
+                <td class="td-bg-clr" id="mno<?php echo $equipment['AU_Equipment_Name_ID']; ?>">
+                    <div class="tble-left-gp">
+                        <table class="table table-bordered text-center">
+                            <thead>
+                                <tr>
+                                    <th class="w_180">Floor<span><a href="#<?php echo $equipment['AU_Equipment_Name_ID']; ?>" id="sortingidbyfloor" onclick="sortingbyfloor('floor', '<?php echo $equipment['AU_Equipment_Name_ID']; ?>');"><span class="shorting-icon-white glyphicon glyphicon-sort-by-attributes arrow-shrting"></span><input type="hidden" value="1" name="sortingvaluebyfloor" id="sortingvaluebyfloor"></a></span></th>
+                                    <th class="w_180">Unit<span><a href="#<?php echo $equipment['AU_Equipment_Name_ID']; ?>" id="sortingidbyunit" onclick="sortingbyunit('unit', '<?php echo $equipment['AU_Equipment_Name_ID']; ?>');"><span class="shorting-icon-white glyphicon glyphicon-sort-by-attributes arrow-shrting"></span><input type="hidden" value="1" name="sortingvaluebyunit" id="sortingvaluebyunit"></a></span></th>
+                                    <th class="w_180">Work Order Number<span><a href="#<?php echo $equipment['AU_Equipment_Name_ID']; ?>" id="sortingidbywo" onclick="sortingbywo('wo', '<?php echo $equipment['AU_Equipment_Name_ID']; ?>');"><span class="shorting-icon-white glyphicon glyphicon-sort-by-attributes arrow-shrting"></span><input type="hidden" value="1" name="sortingvaluebywo" id="sortingvaluebywo"></a></span></th>
+                                    <th>Location</th>
+                                    <th class="w_130">Task or Reading</th>
+                                    <th class="w_130">Print</th>
+                                    <th class="w_130">Complete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                foreach ($this->workorderList as $detail) {
+                                    if ($detail['AU_Equipment_Name_ID'] == $equipment['AU_Equipment_Name_ID']) {
+                                        ?>
+                                        <tr>
+                                            <td><?php echo $detail['Equipment_Floor']; ?></td>
+                                            <td><?php echo $detail['Equipment_Unit']; ?></td>
+                                            <td><?php echo $detail['WO_Number']; ?></td>
+                                            <td><?php echo $detail['Equipment_Location']; ?></td>
+                                            <td>                                                      
+                                                <a class="dyn" href="#">
+                                                    <?php
+                                                    if ($detail['Reading_Task'] == 'T') {
+                                                        ?>
+                                                        <img src="<?php echo $this->baseUrl(); ?>/public/images/task.png">
+                                                        <?php
+                                                    } else if ($detail['Reading_Task'] == 'R') {
+                                                        ?>
+                                                        <img src="<?php echo $this->baseUrl(); ?>/public/images/reading.png">
+                                                        <?php
+                                                    }
+                                                    ?>
+                                                </a></td>
+                                            <td><a target="_blank" href="#"><img src="<?php echo $this->baseUrl(); ?>/public/images/printer.png" style="width:20px;"></a></td>
+                                            <td><a target="_blank" href="#"><img src="<?php echo $this->baseUrl(); ?>/public/images/complete.png" style="width:20px;"></a></td>
+                                        </tr>
+                                        <?php
+                                    }
+                                    ?>
+
+                                    <?php
+                                }
+                                ?>                                               
+
+                            </tbody>
+                        </table>      
+                    </div>                                            
+                </td>
+            </tr>
+        </table>
+
+        <?php
+    }
+    ?>
+    <div class="clearfix"></div>
+</div>

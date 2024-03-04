@@ -1,0 +1,250 @@
+<?php 
+
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/tenantUser.js');
+
+$tenantAccess = $this->acesshelper->checkAccess($this->role,$this->tenant_location); 
+
+/*override access by custom user access if exist */
+$customeAccessmodel = new Model_UserAccess();
+$customeAccessmodeld = $customeAccessmodel->getUserCustomAccess($this->userId,$this->tenant_location);
+if($customeAccessmodeld[0]) {
+	$tenantAccess = $customeAccessmodeld[0];
+}
+/* end overriding access */
+
+ ?>
+
+<?php 
+    $accountmap=new Model_Account();
+    $states=$accountmap->getStates();
+?>
+
+<div class="container-right" id="user-Complete">
+    <?php if($this->role!=1 && $tenantAccess->is_access == 0 && $tenantAccess->is_write == 1){ ?>
+    <?php        
+        $roles = $this->companyListing['roles'];
+        $modules = $this->companyListing['modules'];
+        $buildings = $this->companyListing['buildings'];
+        //var_dump($buildings);
+        $buildData = $buildings[0];
+
+		if($buildData['billCompanyName']) $bill_2_address[]=$buildData['billCompanyName'];
+		if($buildData['billAddress']) $bill_2_address[]=$buildData['billAddress'];
+		if($buildData['billAddress2']) $bill_2_address[]=$buildData['billAddress2'];
+		if($buildData['billcity']) $bill_2_address[]=$buildData['billcity'];
+		if($buildData['billState']) $bill_2_address[]=$buildData['billState'];
+		if($buildData['billPostalCode']) $bill_2_address[]=$buildData['billPostalCode'];
+		
+		if($bill_2_address) $bill_to_address	=	implode(", ",$bill_2_address);
+		else $bill_to_address	=	"";
+		
+		// It overwrites bill to address's data
+		$bill_to_address="";
+		
+    ?>
+ <div class="gridContainer">       
+                
+<section style="z-index:9999" class="w-48 fr ch-home-form" id="first_step">
+    <section class="ch-form-header">
+        <h3>New Tenant Setup Wizard</h3>
+    </section>
+               <div class="tableGrid" style="padding:20px 0 20px 0">
+					 <div id="first" class="step">
+                       <form method="post" id="first_form" style="display:block;" class="bbq">
+						   <div style="padding: 5px 0px 15px 20px;"><h4>(Please Enter Tenant information) Step 1</h4></div>
+                            <div id="tnameDiv" class="row">
+								<input type="hidden" name="building" id="building" value="<?php echo $this->select_build_id; ?>"/>
+                                <label for="tenantname">Tenant Name: <span class="required">*</span></label>
+                                <span id="tName_error" class="uofficeErr"></span>
+                                <input type="text" class="input_field_12em" name="tenantName" id="tenantName" autofocus />
+                            </div>   
+                            <div id="tcontactDiv" class="row">
+                                <label for="tenantcontact">Tenant Contact: <span class="required">*</span></label>
+                                <span id="tContact_error" class="uofficeErr"></span>
+                                <input type="text" class="input_field_12em" name="tenantContact" id="tenantContact" />
+                            </div> 
+                            <div id="address1Div" class="row">
+                                <label for="address1">Address: <span class="required">*</span></label>
+                                <span id="address1-error" class="uofficeErr"></span>
+                                <div id="addressField">                                    
+                                       <input type="text" class="input_field_12em" name="address1" id="address1" 
+                                              value="<?php echo $buildData['address'];?>" readonly="readonly"/>                                      
+                                       <label for="address1">&nbsp;</span></label>
+                                       <input type="text" class="input_field_12em" name="address2" id="address2" 
+                                          value="<?php echo $buildData['address2'];?>" readonly="readonly"/>
+                                </div>
+                            </div>                           
+
+                            <div id="suiteDiv" class="row">
+                                <label for="suite">Suite Number: <span class="required">*</span></label>
+                                <span id="suite-error" class="uofficeErr"></span>
+                                <input type="text" class="input_field_12em suite" name="suite" id="suite" />
+                            </div>
+
+                            <div id="cityDiv" class="row">
+                                <label for="city">City: <span class="required">*</span></label>
+                                <span id="city-error" class="uofficeErr"></span>
+                                <input type="text" class="input_field_12em city" name="city" id="city" value="<?php echo $buildData['city'];?>" readonly="readonly"/>
+                            </div>
+
+                            <div id="stateDiv" class="row">
+                                <label for="state">State: <span class="required">*</span></label>
+                                <span id="state-error" class="uofficeErr"></span>
+								<select name="state" id="state" disabled >
+								<option value=""> Select State </option>
+								<?php foreach($states as $values) { ?>
+								<option value="<?php echo $values->state_code; ?>" <?php if($buildData['state_code']==$values->state_code) {?> selected   <?php } ?>  > <?php echo $values->state; ?> </option>
+								<?php } ?>
+								</select>
+                                
+                            </div>
+
+                            <div id="postalDiv" class="row">
+                                <label for="postalcode">Postal Code: <span class="required">*</span></label>
+                                <span id="postal-error" class="uofficeErr"></span>
+                                <input onkeypress="return isNumberKey(event)" type="text" class="input_field_12em postalcode" name="postalCode" id="postalcode" value="<?php echo $buildData['postalCode'];?>" readonly="readonly"/>
+                            </div>
+                            <div id="phoneDiv" class="row">
+								<label>Phone Number :<span class="required">*</span></label>
+								<span id="phone-error" class="uofficeErr"></span>
+								<input type="text" name="phoneNumber" class="" id="phoneNumber" onkeypress="return isNumberKey(event);" >
+						       <label class="ext_label">EXT</label> <input type="text" id="phoneExt" name="phoneExt" onkeypress="return isNumberKey(event);" class="ext" maxlength="5">
+                            </div>
+                           <div id="bAddressDiv" class="row row_textarea">
+							   <label for="bAddressDiv">Bill To Address: </label>
+							   <span id="bAddress_error" class="uofficeErr"></span>
+							   <textarea name="billtoAddress" id="billtoAddress" cols="38" rows="5"><?php echo $bill_to_address;?></textarea>
+                           </div> 
+                           <div id="statusDiv" class="row">
+							   <label>Active? :</label>
+							   <select name="status" class="status" id="status">
+									<option value="1">Yes</option>
+									<option value="0">No</option>
+								</select>
+                           </div>
+                            <div class="confirmBtn float_none">
+								<input type="reset" value="Reset" name="cancel" class="cancel"/>
+                                <input type="button" value="Next" name="next" class="confirm next" onclick="checkTenant()"/>
+                                <input type="button" value="Cancel" name="cancel" class="cancel" onclick="cancelUser()"/>                                
+                            </div>
+
+                        </form>                        
+                    </div>
+                    </div>
+                  </section>  
+                  <section class="w-48 fr ch-home-form" id="second_step" style="display:none">
+				  <section class="ch-form-header ">
+						<h3>New Tenant Setup Wizard: Setup Initial User: Step2 </h3>
+				   </section>
+				   <div class="tableGrid" style="padding:20px 0 20px 0">					
+                    <div class="step" id="second">
+                        <form method="post" id="second_form" class="bbq">							
+                            <div id="emailDiv" class="row">
+                                <label for="email">Email: <span class="required">*</span></label>
+                                <span id="email-error" class="uemailErr"></span>
+                                <input type="text" class="input_field_12em email" name="email" id="email" />
+                            </div>
+                            
+                            <div id="firstDiv" class="row">    
+                                <label for="firstname">First Name: <span class="required">*</span></label>
+                                <span id="firstname-error" class="ufirstErr"></span>
+                                <input type="text" class="input_field_12em" name="firstName" id="firstname" />
+                            </div>
+                            
+                            <div id="lastDiv" class="row">    
+                                <label for="lastname">Last Name: <span class="required">*</span></label>
+                                <span id="lastname-error" class="ulastErr"></span>
+                                <input type="text" class="input_field_12em" name="lastName" id="lastname" />
+                            </div>
+                            
+                            <div id="titleDiv" class="row">    
+                                <label for="lastname">Title:</label>
+                                <span id="title-error" class="ulastErr"></span>
+                                <input type="text" class="input_field_12em" name="title" id="title" />
+                            </div>
+                            <div id="suiteDiv" class="row">							
+                                <label>Suite/Location :<span class="required">*</span></label>
+                                <span class="usuiteErr" id="suite_location-error"></span> 	
+                                <input type="text" required="" id="suite_location" class="" name="suite_location">
+                            </div>
+                            <div id="phoneDiv" class="row">    
+                                <label for="phonenumber">Office Phone: <span class="required">*</span></label>
+                                <span id="office-phone-error" class="uofficeErr"></span>
+                                <input onkeypress="return isNumberKey(event)" type="text" onkeypress="return isNumberKey(event)" class="input_field_12em" name="phoneNumber" id="office-phone"/>
+                            </div>
+                            <div id="roleDiv" class="row"> 
+                                <label>Select access :</label>
+                                <select  id="accessRole" name="access">
+                                    <?php 
+                                        $selectedRole = array(5,7);
+                                        foreach ($roles as $ker => $role) {
+                                            if(in_array($role['roleID'], $selectedRole)){
+                                              echo '<option value="'.$role['roleID'].'">'.$role['title'].'</option>';
+                                           }
+                                        }
+                                    ?>                    
+                                </select>
+                            </div>
+							<?php 
+							/*<div id="moduleDiv">
+							      <label>Select Modules :</label>
+							      <span class="moduleErr"></span>							         
+									  <div class="module_list">
+										<?php if(count($modules)>0){foreach($modules as $modulelists){?>
+										<input type="checkbox" name="modules[]" class="" id="modulee" value="<?php echo $modulelists['module_id'] ?>" checked="checked"> <?php echo $modulelists['module_name']; ?> 
+										<?php }}?>
+									  </div>
+						    </div>
+						    */ ?>	
+                            <div class="confirmBtn float_none">
+                                <input type="button" value="Save" name="next" id="save" class="confirm last" onclick="checkTenantAdmin()"/>
+                                <input type="button" value="Cancel" name="cancel" class="cancel" onclick="cancelUser()"/>
+                            </div>
+
+                        </form>    
+                    </div>
+                    </div>
+</section>
+                                      
+                   
+                     
+                  <section class="w-48 fr ch-home-form" id="third_step" style="border:2px solid #000000;display:none">
+					  <section class="ch-form-header ">
+							<h3>New Tenant Setup Wizard: Welcome Letter: Step 3</h3>
+					   </section>
+					   <div class="tableGrid" style="padding:20px 20px 20px 20px"> 
+							<div id="user_Complete" class="wletter_class" style="display:none">
+								 <div id="sendDiv">
+									 <form name="welcomeFrom" id="sendwelcome" action="<?php echo BASEURL.'tenant/sendwelcomeletter/bid/'.$this->select_build_id;?>">
+											<div class="success_message" style="text-align:center;width:100%;font-weight:bold;color:red;"></div>				  			
+										  <div id="welcome_field">
+											  <input type="checkbox" name="send_letter" id="send_letter" value="1" checked="checked"/>
+											  <span>Send Welcome Letter Now</span>
+											  <div class="finish_wizard_btn">
+											    <input style="height: 25px; padding: 0 45px;" type="button" name="send" value="Finish Wizard" class="confirm next" onclick="javascript:sendwelcomeForm();"/>
+											  </div>   
+										  </div>
+									 </form>
+								 </div>
+								 <div class="hr"><hr/></div>
+								 <div id="show_welcome_text">
+								 </div>
+							</div>
+							<div id="user_error" style="display:none">
+								<span>Error occurred.</span>
+							</div>
+						</div>
+                    </section>
+
+                
+    
+
+            <input type="hidden" value="<?php echo BASEURL; ?>" id="baseurl" />
+                    <input type="hidden" value="<?php echo $this->select_build_id;?>" id="select_building"/>
+    
+    </div>
+<?php }else{?>
+        You don't have access for this module.
+      <?php }?>     
+</div>
+<div class="loader" style="display:none;"><img src="<?php echo BASEURL.'public/images/loader.gif';?>"></div>

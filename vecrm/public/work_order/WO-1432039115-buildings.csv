@@ -1,0 +1,54 @@
+"build_id","cust_id","user_id","buildingName","address","address2","suite","city","state","postalCode","phoneNumber","phoneExt","faxNumber","timezone","billCompanyName","billAddress","billAddress2","billSuite","billcity","billState","billPostalCode","billPhone","billPhoneExt","billFax","attention","uniqueCostCenter","remit_address","dateCreated","status"
+"3","2","1","River Heights","My Building address","My Building address Two",NULL,"Noida","UP","20301","999.999.9999","99999","999.999.9999","0","Amarpali","My Building address","My Building address Two","River Height Suites","Noida","UP","20301","999.999.9999","99999","999.999.9999","River Height Attention","1418134362","This is text message.
+This is text message.
+This is text message.
+This is text message.","0000-00-00 00:00:00","1"
+"4","2","1","Silicon City","My Silicon City Address","My Silicon City Address Two",NULL,"Noida","UP","20130","888.888.8888","88888","888.888.8888","0","Amarpali","My Silicon City Address","My Silicon City Address Two","Silicon City Suite","Noida","UP","20130","888.888.8888","88888","888.888.8888","Silicon City Attention","1418134709",,"0000-00-00 00:00:00","1"
+"5","3","1","Gaurs Cascade","My Gaurs Cascade Addess","My Gaurs Cascade Address Two",NULL,"Noida","UP","99999","999.999.9999","99999","999.999.9999","0","Gaurs","My Gaurs Cascade Addess","My Gaurs Cascade Address Two","Gaurs Cascade Suite","Noida","UP","99999","999.999.9999","99999","999.999.9999","Gaurs Cascade Attention","1418136891",,"0000-00-00 00:00:00","1"
+"6","3","1","Gaurs Cascade","My Gaurs Cascade Addess","My Gaurs Cascade Address Two",NULL,"Noida","UP","99999","999.999.9999","99999","999.999.9999","0","Gaurs","My Gaurs Cascade Addess","My Gaurs Cascade Address Two","Gaurs Cascade Suite","Noida","UP","99999","999.999.9999","99999","999.999.9999","Gaurs Cascade Attention","1418136891",,"0000-00-00 00:00:00","1"
+"9","5","1","High Street, LLC","100 High Street",,NULL,"Boston","MA","03079","617.256.3655","2147483647","123.456.7890","0","CB Richard Ellisc","100 High Street",,"1001","Boston","MA","03079","617.256.3655","0",,"Ken Smith","1418320773","dfvds sdcsd scs asas asxasd asxas 
+
+dfsv
+dsav
+12534","0000-00-00 00:00:00","1"
+"10","5","1","State Street, LLP","60 State Street",,NULL,"Boston","MA","02109","617.255.2255","0",,"0","CB Richard Ellis","60 State Street",,"201","Boston","MA","02109","617.255.2255","0",,"Mike Smith","1418321734",,"0000-00-00 00:00:00","1"
+"12","5","1","Mall Rd, LLC","25 Mall Rd",,NULL,"Billerica","MA","02109","125.252.5258","0","622.522.2222","0","CB Richard Ellis","25 Mall Rd",,"102","Billerica","MA","02109","125.252.5258","0","622.522.2222","Eileen Smith","10102","25 Mall Rd , LLC
+Account Number f0-40
+PO Box 12344
+New York, NY 09523","0000-00-00 00:00:00","1"
+"13","5","1","Lucas Buildig, LLC","10 Lucas Drive",,NULL,"Bostn","Ma","01222","333.333.3333","0",,"0","CB Richard Ellis","10 Lucas Drive",,"1002","Bostn","Ma","01222","333.333.3333","0",,"Mrk","1418433995",,"0000-00-00 00:00:00","1"
+"14","3","1","testing gaurs","Sky towers Address","Sky towers Address Two",NULL,"florida","FL","99999","999.999.9999","99999","999.999.9999","0","Gaurs","Sky towers Address","Sky towers Address Two","999999","florida","FL","99999","999.999.9999","99999","999.999.9999","999999","1418819246",,"0000-00-00 00:00:00","1"
+"15","2","1","test building","weweq","weqwqe",NULL,"23321","32231","23123","231.321.2313","0","321.321.3212","0","Amarpali","weweq","weqwqe","213231","23321","32231","23123","231.321.2313","0","321.321.3212","231231","1418887893",,"0000-00-00 00:00:00","1"
+"18","4","1","Federal Street","155 Federal Street",,NULL,"Boston","MA","02109","614.252.5252","0",,"0","Farley White Interest","155 Federal Street",,"102","Boston","MA","02109","614.252.5252","0",,"Sam","1419289429",,"0000-00-00 00:00:00","1"
+"25","3","1","New G Building","32","23",NULL,"32","32","23132","231.231.2311","0",,"0","Gaurs","32","23","231231","32","32","23132","231.231.2311","0","232.312.3132","231321231","1420466695",,"0000-00-00 00:00:00","1"
+"26","2","1","Test A Building","321","231",NULL,"32321","321321","32132","231.321.3213","0",,"0","Amarpali","321","231","231321","32321","321321","32132","231.321.3213","0","321.321.3232","231321321321","1420466940",,"0000-00-00 00:00:00","1"
+"27","14","1","Tower 1","256,Bharat Plaza","sector 127",NULL,"Noida","UP","20130","257.452.7468","0",,"0","Twin Tech Solutions","256,Bharat Plaza","sector 127","suite 1","Noida","UP","20130","257.452.7468","0",,"attention","1420533729","265,
+bharat Plaza
+Noida
+","0000-00-00 00:00:00","1"
+"28","14","1","Tower 2","43 lex street","jhbhn",NULL,"Gurgaon","Up","21425","325.413.2543","32543",,"0","Twin Tech Solutions","43 lex street","jhbhn","suite 2","Gurgaon","Up","21425","325.413.2543","32543",,"attention 2","1420534257",,"0000-00-00 00:00:00","1"
+"32","2","1","abcdefghijk","asdad","asdasd",NULL,"asdasd","asdasd","43222","234.234.2342","0","234.234.3242","0","Amarpali","asdad","asdasd","sdfsdf","asdasd","asdasd","43222","234.234.2342","0","234.234.3242","sdfsdf","1420621310",,"0000-00-00 00:00:00","1"
+"33","14","1","Tower 3","kjhkj","kjnkj",NULL,"kjnkj","nkjnm","56456","555.555.5555","5","356.666.6666","0","Twin Tech Solutions","kjhkj","kjnkj","dsvds","kjnkj","nkjnm","56456","555.555.5555","5","356.666.6666","scfsd","1420723925",,"0000-00-00 00:00:00","1"
+"34","14","1","Tower5","sdfasd","asdasd",NULL,"asdasd","asdasd","43214","234.234.2343","0","234.234.3242","0","Twin Tech Solutions","sdfasd","asdasd","23423","asdasd","asdasd","43214","234.234.2343","0","234.234.3242","4234234","1420726381",,"0000-00-00 00:00:00","1"
+"35","14","1","Tower6","asdasd","asdasd",NULL,"asdasd","asdasd","32423","234.234.2343","0","234.324.3243","0","Twin Tech Solutions","asdasd","asdasd","wdsfdsd","asdasd","asdasd","32423","234.234.2343","0","234.324.3243","sdsdfsdf","1420726916",,"0000-00-00 00:00:00","1"
+"36","17","1","Tower One","Tower one address","Tower one address two",NULL,"Miami","FL","33026","971.677.7567","123","971.677.7567","0","vishal construction group.","Tower one address","Tower one address two","vishal suites","Miami","FL","33026","971.677.7567","123","971.677.7567","vishal attentions","1420798086",,"0000-00-00 00:00:00","1"
+"37","4","1","10 High Street","10 High Street",,NULL,"Boston","MA","02109","617.555.5555","0","617.555.2555","0","Farley White Interest","10 High Street",,"2014","Boston","MA","02109","617.555.5555","0","617.555.2555","Sam Alt","1421271050",,"0000-00-00 00:00:00","1"
+"38","2","1","develper building","321321","22",NULL,"232","2231","32132","231.321.3123","0","321.321.3213","0","Amarpali","321321","22","2323","232","2231","32132","231.321.3123","0","321.321.3213","231231","1421332565",,"0000-00-00 00:00:00","1"
+"39","14","1","tower8","mhjnbmn","jmhbmn",NULL,"jhbn","hbvnb ","78888","788.888.8888","0",,"0","Twin Tech Solutions","mhjnbmn","jmhbmn","cvsd","jhbn","hbvnb ","78888","788.888.8888","0",,"asdaZSS","1421334744",,"0000-00-00 00:00:00","1"
+"40","2","1","new test","232","23",NULL,"23","213","23233","231.231.2312","0","232.313.2121","0","Amarpali","232","23","2323","23","213","23233","231.231.2312","0","232.313.2121","32231231","1421416016",,"0000-00-00 00:00:00","0"
+"41","18","1","Farm Bureau","B-27","Sector 2",NULL,"Noida","Uttar Pradesh","12364","456.878.9654","0","544.444.4444","0","Bureau Veritas","B-27","Sector 2","Classic","Noida","Uttar Pradesh","12364","456.878.9654","2147483647","544.444.4444","No Tension or attention","1421416709","jhgfyhb
+kjhnm
+jhbn
+jhbn
+hbvh
+
+
+hbvhb","0000-00-00 00:00:00","1"
+"42","18","1","Design Bureau","K-86","sector 63",NULL,"5452101210","544214251","87544","354.153.2132","0","857.452.1352","3","Bureau Veritas"," K-86","sector 63","sdvfsd123","5452101210","544214251","87544","354.153.2132","0","857.452.1352","123123","1421418030",,"0000-00-00 00:00:00","1"
+"43","18","1","Census Bureau","C-125","sector 4",NULL,"Noida","UP","21323","253.333.3333","0",,"10","Bureau Veritas","C-125","sector 4","dsc dzs","Noida","UP","21323","253.333.3333","0",,"sdczs","1421418791",,"0000-00-00 00:00:00","1"
+"45","18","1","hgfjhb","jhugb",,NULL,"asvfad","sdvsd","25453","325.432.5111","22222",,"0","Bureau Veritas","jhugb",,"324cxs vS","asvfad","sdvsd","25453","325.432.5111","22222","214.133.3333","3334321","1422443517",,"0000-00-00 00:00:00","1"
+"46","19","1","Plazma","sec-84","nsez",NULL,"noida","up","11111","333.333.3333","444","121.212.1212","66","hca","sec-84","nsez","751","noida","up","12452","258.525.8956","254","125.458.8455","123","751","sec-17
+noida","0000-00-00 00:00:00","1"
+"50","2","1","test xyz","abc","weqewq",NULL,"weqewq","2232","23233","231.322.3132","0","321.231.2312","0","Amarpali","abc","weqewq","23321","weqewq","2232","23233","231.322.3132","0","321.231.2312","231231","1423663692",,"0000-00-00 00:00:00","1"
+"51","4","1","Pautucket, LLC","1001 Pawtucket BLVD",,NULL,"Lowell","MA","02108","978.252.5252","0",,"0","Farley White Interest","1001 Pawtucket BLVD",,"1700","Boston","MA","02108","978.252.5252","0",,"Meridith","70",,"0000-00-00 00:00:00","1"
+"59","25","1","DLF cyber city","Gurgaon","Haryana",NULL,"Haryana","Haryana","12345","9999999999","123","9999999999","21","DLF Limited","Gurgaon","Haryana","Cyber city suite","Haryana","Haryana","12345","9999999999","123","9999999999","Cyber Sity attention","1424352548",,"0000-00-00 00:00:00","1"

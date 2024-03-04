@@ -1,0 +1,205 @@
+<?php    $this->headLink()->appendStylesheet($this->baseUrl() . '/public/tabs.css');
+         $this->headLink()->appendStylesheet($this->baseUrl() . '/public/css/bootstrap.css');
+         $this->headLink()->appendStylesheet($this->baseUrl() . '/public/css/bootstrap-editable.css');
+ ?>
+<?php
+ $this->headScript()->appendFile($this->baseUrl() . '/public/js/user_info.js');
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/bootstrap.js');
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/bootstrap-editable.js');
+
+// to check the read,write and no access
+$user_info = $this->acessHelper->checkAccess($this->roleId,$this->user_info_id); 
+/*
+ * users info section
+ */
+?>
+<?php
+$roleMapper = new Model_Role();
+$roleDetail = $roleMapper->getRole();
+//var_dump($roleDetail);
+$role_data = array();
+foreach($roleDetail as $rd){
+	$role_data[$rd['roleID']] = $rd['title'];
+}
+?>
+<div class="container-right" id="userinfo-data">
+    <?php 
+       if($this->roleId!=1 && $user_info->is_access == 0){ 
+    if($this->custID!=null && $this->custID && $this->companyListing!='' && $this->companyListing!=false){?>
+		<div id="contents">
+			<ol id="toc">
+				<?php 
+					$j = 1;
+					foreach($this->companyListing as $cb){ ?>
+					<?php /*<li><a href="#page-<?php echo $j; ?>"><span><?php echo $cb['buildingName']; ?></span></a></li>*/?>
+		            <li><a href="<?php echo $this->baseUrl().'/company/users/bid/'.$cb['build_id']; ?>" <?php if($cb['build_id']==$this->select_build_id) echo 'class="active"';?>><span><?php echo $cb['buildingName']; ?></span></a></li> 
+				<?php $j++; } ?>
+			</ol>					
+				<div class="content" id="page">
+					<div id="msg">
+						<span class="message"></span>
+						<span class="error-txt" style="color:red;"></span>
+					</div>					
+				     <div id="accordion-info">
+				       <?php 
+							$companyModel = new Model_Company();
+							$buildId      = $this->select_build_id;
+							if(!empty($buildId)){
+								$nottenant = 1; // this for not listing the tenant user here.
+								$userList = $companyModel->getUserByBuildingId($buildId,$nottenant);
+								if($userList){
+									foreach($userList as $uinfo){
+									 if($user_info->is_access==0 && ($user_info->is_write==1 || $user_info->is_read==1)){									 
+										 
+								?>
+									 <h3><?php echo $uinfo->lastName.', '.$uinfo->firstName;?></h3>
+									 <div id="user-remove-div">									 
+									 <?php if($user_info->is_write==1){ ?>
+										 <div id="user-info-div">
+										  <div class="field_edit_popup">
+											 <label>First Name</label><span>:</span>
+									         <a href="#" class="firstName" id="firstName-<?php echo $uinfo->uid; ?>" data-type="text" data-pk="<?php echo $uinfo->uid; ?>" data-url="<?php echo $this->baseUrl().'/company/updateuser';?>" data-title="Enter User's First Name" data-placeholder="Required" data-name="firstName"><?php echo (!empty($uinfo->firstName))?$uinfo->firstName:''; ?></a>
+									       </div>
+											
+										  <div class="field_edit_popup">
+											 <label>Last Name</label> <span>:</span>
+										     <a href="#" class="lastName" id="lastName-<?php echo $uinfo->uid; ?>" data-type="text" data-pk="<?php echo $uinfo->uid; ?>" data-url="<?php echo $this->baseUrl().'/company/updateuser';?>" data-title="Enter User's Last Name" data-placeholder="Required" data-name="lastName"><?php echo (!empty($uinfo->lastName))?$uinfo->lastName:''; ?></a>										
+										  </div>
+										  <div class="field_edit_popup">
+											 <label>Title</label> <span>:</span>
+										     <a href="#" class="title" id="title-<?php echo $uinfo->uid; ?>" data-type="text" data-pk="<?php echo $uinfo->uid; ?>" data-url="<?php echo $this->baseUrl().'/company/updateuser';?>" data-title="Enter User's Title" data-placeholder="Required" data-name="Title"><?php echo (!empty($uinfo->Title))?$uinfo->Title:''; ?></a>										
+										  </div>
+										  <div class="field_edit_popup">
+											 <label>Phone Number</label> <span>:</span>
+										     <a href="#" class="phone" id="phone-<?php echo $uinfo->uid; ?>" data-type="text" data-pk="<?php echo $uinfo->uid; ?>" data-url="<?php echo $this->baseUrl().'/company/updateuser';?>" data-title="Enter User's Phone Number" data-placeholder="Required" data-name="phoneNumber"><?php echo (!empty($uinfo->phoneNumber))?$uinfo->phoneNumber:''; ?></a>										
+										    </div>
+										    <div class="field_edit_popup"> 
+										      <label>Ext</label> <span>:</span>
+										     <a href="#" class="phoneExt" id="phoneExt-<?php echo $uinfo->uid; ?>" data-type="text" data-pk="<?php echo $uinfo->uid; ?>" data-url="<?php echo $this->baseUrl().'/company/updateuser';?>" data-title="Enter User's Phone Ext"  data-name="phoneExt"><?php echo (!empty($uinfo->phoneExt))?$uinfo->phoneExt:''; ?></a>
+										  </div>
+										  <div class="field_edit_popup">
+											  <label>Email</label> <span>:</span>
+											  <?php echo (!empty($uinfo->email))?$uinfo->email:''; ?>
+										  </div>
+										   <div class="field_edit_popup">
+											 <label>User Access</label> <span>:</span>
+											 <?php echo $role_data[$uinfo->role_id]; ?>
+										     <?php /*<a href="#" class="access" id="access-<?php echo $uinfo->uid; ?>" data-type="select" data-pk="<?php echo $uinfo->uid; ?>" data-url="<?php echo $this->baseUrl().'/company/updateuser';?>" data-title="Enter User's Phone Number" data-placeholder="Required" data-name="role_id" data-value="<?php echo $uinfo->role_id;?>"><?php echo $role_data[$uinfo->role_id]; ?></a>
+										        */?>
+										  </div>
+										 </div>
+										 <?php /*****not delete himself****/
+										 if($this->userId!=$uinfo->uid){
+											 /********* Check user in email distribution group **********/
+											 $deletUserByGroup = 'Yes';
+											 $distributionGroup ='';
+											 $group_Ids=''; 
+											 $userGroupModel = new Model_EmailGroupUsers();
+											 $emailGroup = $userGroupModel->getGroupByUserId($uinfo->uid);											 
+											 if($emailGroup){
+												 foreach($emailGroup as $eg){
+												    $groupId = $eg->group_id;
+												    if($eg->building_id == $this->select_build_id){
+														$groups_users = $userGroupModel->getUsersByGid($groupId);
+														//echo 'Count User'.count($groups_users);
+														//echo 'Gropd name:'.$eg->group_name;
+														if(count($groups_users)==1){
+															$distributionGroup .= ($distributionGroup!='')?',':'';
+															$distributionGroup .= $eg->group_name;
+															$deletUserByGroup = 'No';
+														}
+														$group_Ids .= ($group_Ids!='')?',':'';
+													    $group_Ids .= $groupId;
+													}
+											     }
+											 }
+											 ?>
+										 <div id="remove-user-div">
+											  <label>Remove User </label> <span>:</span>
+											   <input type="hidden" name="distribution_group" id="distribution_group_<?php echo $uinfo->uid;?>" value="<?php echo $distributionGroup;?>"/>
+											   <input type="hidden" name="group_Ids" id="group_Ids_<?php echo $uinfo->uid;?>" value="<?php echo $group_Ids;?>"/>
+											   <span><a href="javascript:void(0);"  title="Delete" onclick="removeUser('<?php echo $uinfo->uid;?>','<?php echo $buildId;?>','<?php echo count($userList);?>','<?php echo $deletUserByGroup?>')"><img src="<?php echo BASEURL . 'public/images/delete.png'?>" /></a></span>
+										 </div> 
+										  <?php
+										     }
+										    
+										   }
+										  else{
+										   ?>
+
+										  <div class="field_edit_popup">
+											 <label>First Name</label><span>:</span>
+									         <?php echo (!empty($uinfo->firstName))?$uinfo->firstName:'Empty'; ?>
+									       </div>
+											
+										  <div class="field_edit_popup">
+											 <label>Last Name</label> <span>:</span>
+										     <?php echo (!empty($uinfo->lastName))?$uinfo->lastName:'Empty'; ?>										
+										  </div>
+										  <div class="field_edit_popup">
+											 <label>Title</label> <span>:</span>
+										     <?php echo (!empty($uinfo->Title))?$uinfo->Title:'Empty'; ?>										
+										  </div>
+										  <div class="field_edit_popup">
+											 <label>Phone Number</label> <span>:</span>
+										     <?php echo (!empty($uinfo->phoneNumber))?$uinfo->phoneNumber:'Empty'; ?>										
+										    </div>
+										    <div class="field_edit_popup"> 
+										      <label>Ext</label> <span>:</span>
+										     <?php echo (!empty($uinfo->phoneExt))?$uinfo->phoneExt:'Empty'; ?>
+										  </div>
+										  <div class="field_edit_popup">
+											  <label>Email</label> <span>:</span>
+											  <?php echo (!empty($uinfo->email))?$uinfo->email:'Empty'; ?>
+										  </div>
+										   <div class="field_edit_popup">
+											 <label>User Access</label> <span>:</span>
+										     <?php echo $role_data[$uinfo->role_id]; ?>									
+										  </div>
+										  <?php } ?>									 
+									 </div>
+							<?php 	}
+							        }
+							      }else{
+									  echo 'No User is listed for this building';
+								  }
+								 }
+							 ?>
+				     </div>
+				</div>			
+			
+	  </div>    
+   <?php }
+	   else{
+		   echo 'No Building has assign to you.';
+	   }  
+	  }else{?>
+	    You don't have access for this module.
+	  <?php }?>
+</div>
+
+<div class="messageBox"></div>
+<div class="loader" style="display:none;" > <img src="<?php echo BASEURL.'public/images/loader.gif';?>"><div>
+<script type="text/javascript">	
+	$(function() {		
+			$( "#accordion-info" ).accordion({
+				heightStyle: "content",
+				animate: 1000,
+				collapsible: true
+			});
+		
+		$('.access').editable({
+		source: [
+		<?php foreach($roleDetail as $role){
+			if($role['roleID']!='1' && $role['roleID']!=9){
+			?>
+        {value: <?php echo $role['roleID']?>, text: '<?php echo $role['title']?>'},       
+        <?php }
+        }?>
+       ],
+		validate: function(value) {
+           if($.trim(value) == '') return 'This field is required';
+        }
+	});		
+	});	
+</script>

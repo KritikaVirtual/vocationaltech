@@ -1,0 +1,144 @@
+<?php
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/coidetails.js');
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/jquery/multiple-select1.js');
+echo $this->headLink()->appendStylesheet($this->baseUrl() . '/public/css/multiple-select.css');
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/ckeditor/ckeditor.js');
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/ckeditor/adapters/jquery.js');
+?>
+<style>
+    .create_table_btn {
+        width: 250px !important;
+    }
+
+    .middle_btn>ul {
+        margin-top: 20px;
+    }
+
+    .coi-details h1 {
+        font-weight: bold;
+    }
+    .coi-details p {
+        width: 45%;
+        margin-left: 25px;
+        border: 1px solid;
+        padding: 10px 10px 40px;
+        margin-top: 20px;
+    }
+    .cke_bottom{
+        padding:0 !important;
+        background-image:none !important;
+        background:none !important;
+        border-top:none !important;
+        position: relative;
+        float:right;
+        margin:-25px 0px;
+    }
+ .cke_contents{
+    /* float:left !important; */
+    border:1px solid #ccc;
+    margin:5px -9px;
+ }
+ .cke_chrome{
+    border:none !important;
+ }
+ .cke_top{
+    display:none !important;
+}
+.cke_path{
+    display:none;
+}
+.cke_resizer_ltr{
+    /* margin-right:7px !important;
+    margin-top: 5px !important; */
+    margin-right:-3px !important;
+}
+.cke_inner {
+    display:block;
+}
+
+</style>
+<div class="container-right" id="user-Complete" >
+
+    <div class="gridContainer" >       
+
+        <section style="z-index:9999;min-height:525px;" class="w-48 fr ch-home-form1 ch-home-form" id="first_step">
+            <section class="ch-form-header">
+                <h3>Create New Certificate information</h3>
+            </section>
+            <div class="tableGrid" style="padding:0px 0 20px 0">
+                <div id="first" class="step">
+                <form method="post"  class="bbq">
+                        <div style="padding: 0px 0px 15px 20px; text-align:center;"><h4 style="font-weight:bold">New Certificate information</h4></div>
+                        <div id="report_nameDiv" class="row">
+                            <label for="report_name">Certificate Holder information : <span class="required">*</span></label>
+                            <span id="holder_name_error" class="uofficeErr"></span>
+                            <textarea class="input_field_12em et_editor" name="certificate_holder" id="certificate_holder"  style="width: 300px;
+    height:90px;"/></textarea>
+                        </div>
+						<div id="report_nameDiv" class="row">
+                            <label for="report_name">Description of Special Terms: <span class="required">*</span></label>
+                            <span id="description_error" class="uofficeErr"></span>
+                            <textarea class="input_field_12em et_editor" name="certificate_description" id="certificate_description"  style="width: 300px;
+    height:90px;"/></textarea>
+                        </div>
+
+                        <div id="report_nameDiv" class="row">
+                            <label for="report_name">Send Certificate To: <span class="required">*</span></label>
+                            <span id="send_to_error" class="uofficeErr"></span>
+                            <textarea class="input_field_12em et_editor" name="send_certificate_to" id="send_certificate_to"  style="width: 300px;
+    height:90px;"/></textarea>
+                        </div>
+						
+
+                        <div class="confirmBtn float_none">
+                            <input type="button" value="Save" id='addnewcoidetails' name="add" class="confirm next" onclick="checkNewcoidetails()"/>
+                            <input type="button" value="Cancel" name="cancel" class="cancel" onclick="cancelReport()"/>                                
+                        </div>
+
+                    </form>                       
+                </div>
+            </div>
+        </section>  
+
+    </div></div>
+<div class="loader" style="display:none;"><img src="<?php echo BASEURL . 'public/images/loader.gif'; ?>"></div>
+<script>
+    $(function () {
+        $('#report_option').change(function () {
+            console.log($(this).val());
+        }).multipleSelect({
+            width: '100%'
+        });
+        $('.multicheckdd').click(function () {
+            $(".multicheckdd:eq(0)").prop("checked", false);
+            var selectedoption = $(".ms-choice span").text();
+            var res = selectedoption.replace(/Select Option,/g, "");
+            $(".ms-choice span").text(res);
+        });
+
+        $('.ms-choice').click(function () {
+            $(".ms-drop ul li:eq(1)").css("display", "none");
+        });
+
+        CKEDITOR.disableAutoInline = false;
+        CKEDITOR.replace('certificate_description', {
+            //removePlugins: 'toolbar,elementspath',
+            height: ['70px'],
+        });
+        CKEDITOR.replace('certificate_holder', {
+            //removePlugins: 'toolbar,elementspath',
+           // allowedContent: 'p h1 h2 strong em; a[!href]; img[!src,width,height];',
+            //width: ['250px'],
+            height: ['70px'],
+
+        });
+        CKEDITOR.replace('send_certificate_to', {
+            //removePlugins: 'toolbar,elementspath',
+            //allowedContent: 'p h1 h2 strong em; a[!href]; img[!src,width,height];',
+            //width: ['250px'],
+            height: ['70px'],
+
+        });  
+
+    });
+</script>

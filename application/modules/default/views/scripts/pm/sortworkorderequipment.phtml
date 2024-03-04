@@ -1,0 +1,110 @@
+<?php
+$workorderList = $this->workorderList;
+$id = $this->id;
+?>
+<div class="tble-left-gp">
+    <table class="table table-bordered text-center">
+        <thead>
+            <tr>
+                <th class="w_180">Floor<span>
+                        <?php
+                        if($id){
+                            ?>
+                        <a href="#<?php echo $workorderList[0]['AU_Equipment_Name_ID']; ?>" id="sortingidbyfloor" onclick="sortingbyfloor('floor', '<?php echo $workorderList[0]['AU_Equipment_Name_ID']; ?>');">
+                            <span class="shorting-icon-white glyphicon glyphicon-sort-by-attributes arrow-shrting"></span>
+                            <input type="hidden" value="0" name="sortingvaluebyfloor" id="sortingvaluebyfloor-<?php echo $workorderList[0]['AU_Equipment_Name_ID']; ?>"></a>
+                        <?php
+                            
+                        }else {
+                            ?>
+                        <a href="#<?php echo $workorderList[0]['AU_Equipment_Name_ID']; ?>" id="sortingidbyfloor" onclick="sortingbyfloor('floor', '<?php echo $workorderList[0]['AU_Equipment_Name_ID']; ?>');">
+                            <span class="glyphicon glyphicon-sort-by-attributes-alt arrow-shrting"></span>
+                            <input type="hidden" value="1" name="sortingvaluebyfloor" id="sortingvaluebyfloor-<?php echo $workorderList[0]['AU_Equipment_Name_ID']; ?>"></a>
+                        <?php                            
+                            
+                        }
+                        ?>
+                        
+                    </span></th>
+                <th class="w_180">Unit<span>
+                        <?php
+                        if($id){
+                            ?>
+                        <a href="#<?php echo $workorderList[0]['AU_Equipment_Name_ID']; ?>" id="sortingidbyunit" onclick="sortingbyunit('unit', '<?php echo $workorderList[0]['AU_Equipment_Name_ID']; ?>');">
+                            <span class="shorting-icon-white glyphicon glyphicon-sort-by-attributes arrow-shrting"></span>
+                            <input type="hidden" value="0" name="sortingvaluebyunit" id="sortingvaluebyunit-<?php echo $workorderList[0]['AU_Equipment_Name_ID']; ?>"></a>
+                        
+                        <?php
+                            
+                        }else {
+                            ?>
+                        <a href="#<?php echo $workorderList[0]['AU_Equipment_Name_ID']; ?>" id="sortingidbyunit" onclick="sortingbyunit('unit', '<?php echo $workorderList[0]['AU_Equipment_Name_ID']; ?>');">
+                            <span class="glyphicon glyphicon-sort-by-attributes-alt arrow-shrting"></span>
+                            <input type="hidden" value="1" name="sortingvaluebyunit" id="sortingvaluebyunit-<?php echo $workorderList[0]['AU_Equipment_Name_ID']; ?>"></a>
+                        
+                        <?php
+                            
+                        }
+                        ?>
+                        
+                    </span></th>
+                <th class="w_180">Work Order Number<span>
+                        <?php
+                        if($id){
+                            ?>
+                        <a href="#<?php echo $workorderList[0]['AU_Equipment_Name_ID']; ?>" id="sortingidbywo" onclick="sortingbywo('wo', '<?php echo $workorderList[0]['AU_Equipment_Name_ID']; ?>');">
+                            <span class="shorting-icon-white glyphicon glyphicon-sort-by-attributes arrow-shrting"></span>
+                            <input type="hidden" value="0" name="sortingvaluebywo" id="sortingvaluebywo-<?php echo $workorderList[0]['AU_Equipment_Name_ID']; ?>"></a>
+                        <?php
+                            
+                        }else {
+                            ?>
+                        <a href="#<?php echo $workorderList[0]['AU_Equipment_Name_ID']; ?>" id="sortingidbywo" onclick="sortingbywo('wo', '<?php echo $workorderList[0]['AU_Equipment_Name_ID']; ?>');">
+                            <span class="glyphicon glyphicon-sort-by-attributes-alt arrow-shrting"></span>
+                            <input type="hidden" value="1" name="sortingvaluebywo" id="sortingvaluebywo-<?php echo $workorderList[0]['AU_Equipment_Name_ID']; ?>"></a>                        
+                        <?php
+                            
+                        }
+                        ?>
+                        
+                    </span></th>
+                <th>Location</th>
+                <th class="w_130">Task or Reading</th>
+                <th class="w_130">Print</th>
+                <th class="w_130">Complete</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            foreach ($workorderList as $detail) {
+                ?>
+                <tr>
+                    <td><?php echo $detail['Equipment_Floor']; ?></td>
+                    <td><?php echo $detail['Equipment_Unit']; ?></td>
+                    <td><?php echo $detail['WO_Number']; ?></td>
+                    <td><?php echo $detail['Equipment_Location']; ?></td>
+                    <td>                                                      
+                        <a class="dyn" href="#">
+                            <?php
+                            if ($detail['Reading_Task'] == 'T') {
+                                ?>
+                                <img src="<?php echo $this->baseUrl(); ?>/public/images/task.png">
+                                <?php
+                            } else if ($detail['Reading_Task'] == 'R') {
+                                ?>
+                                <img src="<?php echo $this->baseUrl(); ?>/public/images/reading.png">
+                                <?php
+                            }
+                            ?>
+                        </a></td>
+                    <td><a target="_blank" href="#"><img src="<?php echo $this->baseUrl(); ?>/public/images/printer.png" style="width:20px;"></a></td>
+                    <td><a target="_blank" href="#"><img src="<?php echo $this->baseUrl(); ?>/public/images/complete.png" style="width:20px;"></a></td>
+                </tr>
+
+                <?php
+            }
+            ?>                                               
+
+        </tbody>
+    </table>      
+</div>  

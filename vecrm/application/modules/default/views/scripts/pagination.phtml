@@ -1,0 +1,46 @@
+<?php  
+  if(count($this->pagesInRange)>1){  ?>
+<div class="row">
+	<div class="pagination_link">
+		<ul class="pagination">   
+				<!-- First page link -->
+				<?php 
+				 if (isset($this->previous)): ?>
+					  <li class="paginate_button previous"><a href="<?php echo $this->url(array('page' => $this->first)); ?>">First</a></li>
+				<?php else: ?>
+						<li class="paginate_button previous disabled"><a href="javascript:void(0)">First</a></li> 
+				<?php endif; ?>
+			  
+				<!-- Previous page link -->
+			
+				<?php if (isset($this->previous)): ?>
+					  <li><a href="<?php echo $this->url(array('page' => $this->previous)); ?>">Previous</a> </li>
+				<?php else: ?>
+					<li class="paginate_button previous disabled"><a href="javascript:void(0)"> Previous </a></li>
+				<?php endif; ?>
+				<!-- Numbered page links -->
+				<?php foreach ($this->pagesInRange as $page): ?>
+					<?php if ($page != $this->current): ?>
+						<li class="paginate_button"><a href="<?php echo $this->url(array('page' => $page)); ?>"><?php echo $page; ?></a></li>
+					<?php else: ?>
+						<li class="paginate_button disabled"><a href="javascript:void(0)"><?php echo $page; ?></a></li>
+					<?php endif; ?>
+				<?php endforeach; ?>
+				<!-- Next page link -->
+				<?php if (isset($this->next)): ?>
+					 <li class="paginate_button next"><a href="<?php echo $this->url(array('page' => $this->next)); ?>">Next</a></li>
+				<?php else: ?>
+					 <li class="paginate_button next disabled"><a href="javascript:void(0)">Next </a></li> 
+				<?php endif; ?>
+				<!-- Last page link -->
+				<?php if (isset($this->next)): ?>
+					  <li class="paginate_button"><a href="<?php echo $this->url(array('page' => $this->last)); ?>">Last</a></li>
+				<?php else: ?>
+					<li class="paginate_button next disabled"><a href="javascript:void(0)">Last</a></li>
+				<?php endif; ?>
+			
+		     </ul>
+		 </div>
+        <div class="pagination_info">Page <?php echo $this->current; ?> of <?php echo $this->last; ?> </div>
+ </div>	
+ <?php }?>

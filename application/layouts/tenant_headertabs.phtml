@@ -1,0 +1,48 @@
+<?php
+$actionnTenantHelper=Zend_Controller_Action_HelperBroker::getStaticHelper('Tenantaccess'); 
+$tenantLocationArr = $actionnTenantHelper->checkTenantaccess();
+$controllerName = Zend_Controller_Front::getInstance()->getRequest()->getControllerName();
+$actioname= Zend_Controller_Front::getInstance()->getRequest()->getActionName();
+$tabs_allow_module_array= array('workorder','tenant');
+$tabs_allow_module_action_array= array('index','tenantuser','createworkorder');
+
+if(in_array($controllerName,$tabs_allow_module_array)){
+    if(in_array($actioname,$tabs_allow_module_action_array)){
+//allow pages
+?>
+<div id="fdw" class="tenantLocationTab">
+	<div class="tabmenu my_tabmenu">
+<?php if($tenantLocationArr){?>
+         <ul class="tenant_tabs">
+  <?php foreach($tenantLocationArr as $tenantCompany){?>
+      <li style="background-color:#800000" class="<?php echo (isset($_COOKIE['tenant_company']) && $tenantCompany->tenantId==$_COOKIE['tenant_company'])?'resp-tab-active':'';?>" tid="<?php echo $tenantCompany->tenantId;?>"><a class="" href="javascript:void(0);" ><?php echo $tenantCompany->tenantName;?></a>
+  <?php } ?>
+        </ul>
+<?php } ?>        
+    </div>	
+</div>		
+<style>
+#fdw .tabmenu .tenant_tabs{
+    padding:0x 4px;
+    margin:0x 4px;
+}
+#fdw .tabmenu .tenant_tabs li{
+    padding:0x 4px;
+
+}
+#fdw .tabmenu .tenant_tabs li a{
+        padding:0x 4px !important;
+
+}
+#fdw .tabmenu ul li {
+    margin-right:6px !important;
+    padding: 7px !important;
+}
+</style> 
+<?php 
+  }
+
+   } ?>
+
+
+<!---End Tenant Admin and Tenant User Tab Container-->

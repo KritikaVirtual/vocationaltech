@@ -1,0 +1,63 @@
+<div id="add_rate_div">
+	<span>Add New Rate Charges</span>
+	<div class="message">
+		<span id="success_msg" class="success"></span>
+		<span id="error_msg" class="error"></span>
+	</div>
+	<div class="rate_row">
+		  <label>Rate Name:</label>
+		  <div class="rate_ibox_row">
+			   <span class="field_error" id="rerror_name"></span>
+			   <input type="text" name="rate_name" id="rate_name"/>
+		  </div>			
+	</div>
+	<div class="rate_row">
+		  <label>Description:</label>
+		  <div class="rate_ibox_row">
+			   <span class="field_error" id="rerror_desc"></span>
+			   <input type="text" name="description" id="description"/>
+		  </div>			
+	</div>
+	<div class="rate_row">
+		 <label>Active:</label>
+		  <div class="rate_ibox_row">
+			   <span class="field_error" id="rerror_status"></span>
+			   <select name="status" id="status">
+				   <option value="1" selected="selected">Yes</option>
+				   <option value="0">No</option>
+			   </select>
+		  </div>
+	</div>
+	<div class="rate_row">
+		  <label>Multiplier:</label>
+		  <div class="rate_ibox_row">
+			   <span class="field_error" id="rerror_multiplier"></span>
+			   <input type="text" name="multiplier" id="multiplier" onkeypress="return isNumber(event)" maxlength="6"/>
+		  </div>			
+	</div>
+	<div class="rate_row">
+		 <label>Save as Global Template:</label>
+		  <div class="rate_ibox_row">
+			   <span class="field_error" id="rerror_global"></span>
+			   <select name="global_template" id="global_template">
+				   <option value="1">Yes</option>
+				   <option value="0" selected="selected">No</option>
+			   </select>
+			   <input type="hidden" name="import_template" id="import_template" value="0"/>
+		  </div>
+	</div>
+		<div class="rate_row">
+		 <label>Set as Default:</label>
+		  <div class="rate_ibox_row">
+			   <span class="field_error" id="rerror_default"></span>
+			   <select name="set_default" id="set_default">
+				   <option value="1">Yes</option>
+				   <option value="0" selected="selected">No</option>
+			   </select>
+		  </div>
+	</div>	
+	<div class="buttons">
+				   <button type="button" name="save_rate" id="save_rate" value="Save" onclick="saveRateCharge('<?php echo $this->bId;?>')">Save</button>
+				   <button type="button" name="cancel" id="cancel" value="Cancel" onclick="cancelAddRate()">Cancel</button>
+			  </div>
+</div>

@@ -1,0 +1,170 @@
+<?php
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/vendor.js');
+?>
+<?php
+	$this->headLink()->appendStylesheet($this->baseUrl() . '/public/css/bootstrap.css');
+	$this->headLink()->appendStylesheet($this->baseUrl() . '/public/css/bootstrap-editable.css');
+	echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/bootstrap.js');
+	echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/bootstrap-editable.js');
+	$sarray = array();
+	$servModel = new Model_Services();
+	$serviceList = $servModel->getServices();
+	$search_by = '';
+	$search_value='';
+	$service_value ='';
+	if(!empty($this->search) && isset($this->search['search_by'])){
+		$search_by = $this->search['search_by'];
+		if($search_by!='services')
+	       $search_value=$this->search['search_value'];
+	     else 
+	      $service_value=$this->search['search_value']; 
+	}
+$vendor_access = $this->acessHelper->checkAccess($this->roleId,$this->vendor_location);		
+?>
+<div class="container-right" id="userinfo-data">
+	 <?php 
+       if($this->roleId!=1 && $vendor_access->is_access == 0){ 
+           if($this->custID!=null && $this->custID && $this->companyListing!='' && $this->companyListing!=false){
+			       $order = $this->order;
+				   $dir = $this->dir;
+				   $cdir= 'ASC';
+				   $fdir = 'ASC';
+				   $edir = 'ASC';
+				   $sdir = 'ASC';
+				  if($order=='company_name')
+					  $cdir = ($dir=='ASC')?'DESC':'ASC';
+			     else if($order=='first_name')
+					  $fdir = ($dir=='ASC')?'DESC':'ASC';
+				   else if($order=='email')
+					  $edir = ($dir=='ASC')?'DESC':'ASC';
+				   else if($order=='services')
+					  $sdir = ($dir=='ASC')?'DESC':'ASC';
+					  
+				$url = BASEURL.'vendor/index/bid/'.$this->select_build_id;	  
+			   ?>
+			  <div id="contents">
+					<ol id="toc">
+						<?php
+						    $sarray = array();
+						    $servModel = new Model_Services();
+						    $serviceList = $servModel->getServices();
+						    foreach($serviceList as $sl){
+								$sarray[$sl['sid']]=$sl['service'];
+							}
+							$j = 1;
+							foreach($this->companyListing as $cb){ ?>					
+							<li><a href="<?php echo $this->baseUrl().'/vendor/index/bid/'.$cb['build_id']; ?>" <?php if($cb['build_id']==$this->select_build_id) echo 'class="active"';?>><span><?php echo $cb['buildingName']; ?></span></a></li>
+						<?php $j++; } ?>
+					</ol>
+					<div id="page" class="content">
+					     <span class="vendor-heading"><h1>Vendor Console</h1></span>
+					     <div id="vendor_search_div">
+							 <div id="search_form_div">
+								 <div id="search_message"></div>
+								 <form name="search_form" id="search_form" method="post" onsubmit="return checkSearch(this)">
+									 <div id="form_field">
+								        <label>Search For</label>
+								        <select name="search_by" id="search_by" onchange="showServiceDropdown(this)">
+											<option value="company_name" <?php echo ($search_by=='company_name')?'selected':''?>>Vendor Name</option>
+											<option value="first_name" <?php echo ($search_by=='first_name')?'selected':''?>>Contact</option>
+											<option value="phone_number" <?php echo ($search_by=='phone_number')?'selected':''?>>Phone or Cell Number</option>
+											<option value="email" <?php echo ($search_by=='email')?'selected':''?>>Email</option>
+											<option value="services" <?php echo ($search_by=='services')?'selected':''?>>Service</option>
+											<option value="account_number" <?php echo ($search_by=='account_number')?'selected':''?>>Account</option>
+								        </select>
+                                        <div class="text-select-div">
+								        <div id="search_txt" <?php if($search_by=='services') echo 'style="display:none"';?>><input type="text" name="search_value" id="search_value" value="<?php echo $search_value;?>"/></div>
+								        <div id="service_select" <?php if($search_by!='services') echo 'style="display:none"';?>>
+											 <select name="service_value" id="service_value">
+												 <option value="">Select Services</option>
+													<?php 
+													   if($serviceList){
+															foreach ($serviceList as  $service) {											
+																  echo '<option value="'.$service['sid'].'"';
+																  echo ($service_value==$service['sid'])?'selected':'';
+																   echo '>'.$service['service'].'</option>';				   
+															}
+														}
+													?>
+											 </select>
+								        </div>
+                                        </div>
+								      </div>
+								      <div class="form-button">
+								           <input type="submit" name="search" id="search" value="Search"/>
+								           <input type="button" name="reset" id="reset" value="Reset" onclick="window.location.href='<?php echo BASEURL.'vendor/index/vid/'.$this->select_build_id;?>'"/>
+								      </div>  
+								 </form>
+								 
+							 </div>
+					     </div>
+					     <div id="message">
+					        <span class="success_message"></span>
+					        <span class="error-txt"></span>
+					     </div>
+					     <div id="vendor_data_div">
+							 <table id="vendor_data_table" class="building_table_grid" width="100%">
+								 <tr>
+									 <th>&nbsp;</th>
+									 <th><a href="<?php echo $url.'/order/company_name/dir/'.$cdir?>" 
+                          class="<?php if($order=='company_name') echo $cdir; else echo 'sorting';?>">Vendor Name</a></th>
+									 <th><a href="<?php echo $url.'/order/first_name/dir/'.$fdir?>" 
+                          class="<?php if($order=='first_name') echo $fdir; else echo 'sorting';?>">Main Contact</a></th>
+									 <th>Phone Number</th>
+									 <th>Cell Number</th>
+									 <th><a href="<?php echo $url.'/order/email/dir/'.$edir?>" 
+                          class="<?php if($order=='email') echo $edir; else echo 'sorting';?>">Email</a></th>
+									 <th><a href="<?php echo $url.'/order/services/dir/'.$sdir?>" 
+                          class="<?php if($order=='services') echo $sdir; else echo 'sorting';?>">Service</a></th>
+									 <th>Account Number</th>
+								 </tr>
+								 <?php if($this->vendorList){
+									    foreach($this->vendorList as $vl){
+											$vid = $vl['vid'];
+											?>
+										<tr>
+											<td><div class="open_plus" id="open_div_<?php echo $vid;?>"><a href="javascript:void(0);" id="<?php echo $vid;?>" onClick="loadVendor(<?php echo $vid;?>)";><?php echo '&nbsp;&nbsp;';?></a></div></div>
+						                       <div class="open_close" id="close_div_<?php echo $vid;?>" style="display:none"><a href="javascript:void(0);" id="<?php echo $vid;?>" onClick="hideVendor(<?php echo $vid;?>)";><?php echo '&nbsp;&nbsp;';?></a></div></div></td>
+											<td><?php echo $vl['company_name']?></td>
+											<td><?php echo $vl['last_name'].', '.$vl['first_name'];?></td>
+											<td><?php echo $vl['phone_number']?></td>
+											<td><?php echo $vl['cell_number']?></td>
+											<td><?php echo $vl['email']?></td>
+											<td><?php echo $sarray[$vl['services']]?></td>
+											<td><?php echo $vl['account_number']?></td>
+										</tr>
+										<tr id="vendor_tr_<?php echo $vid;?>" class="trvendor-class" style="display:none">
+											<td>&nbsp;</td>
+											<td id="vendor_data_<?php echo $vid;?>" colspan="7" class="tdvendor-class"></td>
+										</tr>	
+									   <?php
+								        }
+									 }else {?>
+								<tr>
+									<td colspan="8">No Vendor Exist..</td>
+								</tr>		 
+								 <?php }?>
+								 <?php if($vendor_access->is_write==1){?>		 
+									 <tr>
+										 <th colspan="8" style="text-align:left"><a href="<?php echo $this->baseUrl().'/vendor/createvendor/bid/'.$this->select_build_id; ?>">Add New Vendor</a></th>
+									 </tr>
+								 <?php }?>
+							 </table>
+					     </div>
+					</div>
+				</div>
+			    <input type="hidden" name="building_id" id="building_id" value="<?php echo $this->select_build_id;?>"/>
+			<?php }
+		   else{
+			   echo 'No Building has assign to you.';
+		   }  
+		  }else{?>
+			You don't have access for this module.
+		  <?php }?>
+</div>
+<?php if($this->vId){?>
+<script type="text/javascript">
+	loadVendor('<?php echo $this->vId;?>');
+</script>	
+<?php }?>        			
+<div class="loader" style="display:none;" > <img src="<?php echo BASEURL.'public/images/loader.gif';?>"><div>

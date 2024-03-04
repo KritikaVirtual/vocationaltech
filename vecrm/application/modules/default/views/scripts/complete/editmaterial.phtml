@@ -1,0 +1,81 @@
+<?php	
+	 $materialModel = new Model_Material();
+	 $materialList = $materialModel->getActiveMaterialByBId($this->bId);
+	 $mData = $this->materialData[0];	
+?>
+<script type="text/javascript">
+	var material_cost = [];
+	var material_markup = [];
+	<?php 
+	     if($materialList){
+			 foreach($materialList as $ml){
+			 ?>
+				 material_cost['<?php echo $ml['mid'];?>'] = '<?php echo $ml['cost'];?>';
+				 material_markup['<?php echo $ml['mid'];?>'] = '<?php echo $ml['markup'];?>';
+			<?php
+			 }
+		 }
+	?>
+</script>
+<div id="ct_material_fm_div">
+	<span class="form_title">Edit Material(s) Charge(s)</span>	
+	<div class="message">
+		<span id="success_msg" class="success"></span>
+		<span id="error_msg" class="error"></span>
+	</div>
+	<div id="material_form_ data">
+		 <div class="cw_row">
+			 <label>Description</label>
+			 <div class="cw-ibox-row">
+				 <span class="field_error" id="cwerr_desc"></span>
+				 <select name="material_id" id="material_id" onchange="setMaterial(this.value)">
+					 <option value="">-- Select --</option>
+					 <?php
+					 if($materialList){ 
+					     foreach ($materialList as  $ml) { ?>
+							<option value="<?php echo $ml['mid']; ?>"
+							<?php if($mData['material_id']== $ml['mid']) echo 'selected="selected"';?>>
+								<?php echo $ml['description']; ?>
+							</option>
+					<?php }
+					} ?>
+				 </select>
+			 </div>
+		 </div>
+		 <div class="cw_row">
+			  <label>Cost ($)</label>
+			  <div class="cw-ibox-row">
+				 <span class="field_error" id="cwerr_cost"></span>				 
+					   <input type="text" name="cost" id="cost" onkeypress="return isNumber(event)" value="<?php echo $mData['cost'];?>">			 
+			  </div>
+		 </div>
+		 <div class="cw_row">
+			  <label>Markup(%)</label>
+			  <div class="cw-ibox-row">
+				 <span class="field_error" id="cwerr_markup"></span>				 
+					   <input type="text" name="markup" id="markup" onkeypress="return isNumber(event)" value="<?php echo $mData['markup'];?>">			 
+			  </div>
+		 </div>	
+		 <div class="cw_row">
+			  <label>Quantity</label>
+			  <div class="cw-ibox-row">
+				 <span class="field_error" id="cwerr_qty"></span>				 
+					   <input type="text" name="quantity" id="quantity" onkeypress="return isNumber(event)" value="<?php echo $mData['quantity'];?>">			 
+			  </div>
+		 </div>		 
+		 <div class="cw_row">
+			 <label>Tax</label>
+			 <div class="cw-ibox-row">				  
+				    <select name="show_tax" id="show_tax" disabled="disabled">
+					   <option value="1" <?php echo ($mData['tax']=='1')?'selected="selected"':''?>>Yes</option>
+					   <option value="0" <?php echo ($mData['tax']=='0')?'selected="selected"':''?>>No</option>
+				   </select>
+				  <input type="hidden" name="tax" id="tax" value="<?php echo $mData['tax'];?>"/> 
+			 </div>
+		 </div>
+	</div>
+	<div class="buttons">
+				   <button type="button" name="save_material" id="save_material" value="Save" onclick="updateMaterialData('<?php echo $this->mcId;?>')">Save</button>
+				   <button type="button" name="cancel" id="cancel" value="Cancel" onclick="cancelMaterial()">Cancel</button>
+	  </div>
+</div>

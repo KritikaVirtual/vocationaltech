@@ -1,0 +1,111 @@
+<div id="category_popup" style="display:none;"></div>
+<section class="w-48 fr ch-home-form">
+	<?php 
+		  // making array priority list data to show in category section
+			$priority_array=array();
+				if(!empty($this->priorityDetail)){
+					foreach($this->priorityDetail as $key => $pridata) {
+						$priority_array[$pridata['pid']]=$pridata['priorityName'];
+					}
+				}
+
+
+				// to check the read,write and no access
+				 
+	$actionnHelper=Zend_Controller_Action_HelperBroker::getStaticHelper('Access');
+	$category_info_access = $actionnHelper->checkAccess($this->roleId,10); 
+	$priority_info_access = $actionnHelper->checkAccess($this->roleId,11);
+		 ?>
+	<input type="hidden" name="category_page" id="category_page" value="<?php echo $this->page;?>"/>
+							<table class="category-list" width="100%">
+								 <tr>
+									 <th>&nbsp;</th>
+									 <th>Category Name</th>
+									 <th>Priority Schedule</th>
+									 <th>Send E-mail To</th>
+									 <th>Include/Exclude</th>
+									 <th>Active</th>
+									 <th>Action</th>
+								 </tr>
+								 
+								 <?php 
+								      if(!empty($this->categoryDetail)){
+								        foreach($this->categoryDetail as $cat_detail){ 
+								        $priority_name = '';
+								        $status = '';
+								            if(!empty($this->priorityDetail) && $cat_detail['prioritySchedule']!=-1 && $cat_detail['prioritySchedule']!=0){
+									            $priority_name = $priority_array[$cat_detail['prioritySchedule']];
+									        }
+								            else{
+												$priority_name = 'Not Assigned';
+								            	/*if($cat_detail['prioritySchedule'] == -1)
+								            		$priority_name = 'Not Assigned';
+								            	else
+								            		$priority_name = 'default';*/
+								            }
+								            
+								        ?>
+											<tr class="show-category" id="show_category_id_<?php echo $cat_detail['cat_id']; ?>">
+											    <td>
+													<div class="open_plus" id="open_cat_<?php echo $cat_detail['cat_id'];?>">
+											            <a href="javascript:void(0);" id="<?php echo $cat_detail['cat_id'];?>" onClick="showEditcategory('<?php echo $cat_detail['cat_id'];?>')";>
+											                <?php echo '&nbsp;&nbsp;';?>
+											              </a>
+											          </div>
+											          <div class="open_close" id="close_cat_<?php echo $cat_detail['cat_id'];?>" style="display:none">
+											            <a href="javascript:void(0);" id="<?php echo $cat_detail['cat_id'];?>" onClick="hideEditcategory('<?php echo $cat_detail['cat_id'];?>')";>
+											                <?php echo '&nbsp;&nbsp;';?>
+											              </a>
+											          </div>
+											    </td>
+												<td><?php echo $cat_detail['categoryName']?></td>
+												<td> <?php echo $priority_name?></td>
+												<td>
+												    <?php if($cat_detail['send_email']==''){
+														 echo 'None Selected';
+													   }else{
+														   echo 'Selected';
+													     // echo $cat_detail['send_email'];
+													    }
+														?>
+												</td>
+												<td>
+												    <?php
+												         if($cat_detail['include_exclude']=='' && $cat_detail['visible_status']=='1'){
+															 echo 'Visible to All Tenants';
+														 }else if($cat_detail['visible_status']=='1'){
+															 echo 'Visible to- Selected Tenant';
+														 }else{
+															 echo 'Not visible to- Selected Tenant';
+														 }
+												    ?>
+												</td>
+												<td><?php echo ($cat_detail['status']=='1')?'Yes':'No';?></td>
+												<td class="yesnotooltips"><a class="editCat" href="javascript:void(0);" onclick="showEditcategory('<?php echo $cat_detail['cat_id'];?>')" title="Edit"><img src="<?php echo BASEURL .'public/images/edit.png';?>"></a>
+
+											    <a href="javascript:void(0);" onclick="deleteCategory(<?php echo $cat_detail['cat_id'];?>)" class="delCat" data-id="<?php echo $cat_detail['cat_id'];?>" title="Delete"><img src="<?php echo BASEURL .'public/images/delete.png';?>"></a>
+
+												</td>
+											</tr>								
+                                            <tr style="display:none;" class="edit-category" id="edit_category_id_<?php echo $cat_detail['cat_id']; ?>">
+											
+												<td colspan="7" id="edit_cat_form_<?php echo $cat_detail['cat_id']; ?>"></td>
+
+											</tr>
+								  <?php }}else{ ?>
+
+								  			<tr>
+												<td colspan="7">No Category created. Pease create new category!!! </td>
+											</tr>
+
+									  <?php }?>
+									  <tr id="show_cat_tr" style="display:none;">
+										  <td id="add_cat_form" colspan="7"></td>
+									  </tr>
+									  <tr>
+										  <td colspan="7" class="add_record"><a href="javascript:void(0)" onclick="showCategroyFrom()"><span>Add New Record</span></a></td>
+									  </tr>	 
+							 </table>
+							</section>
+				
+

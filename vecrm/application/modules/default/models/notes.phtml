@@ -1,0 +1,63 @@
+<?php
+/**
+ * Description of services
+ *
+ * @author brijesh
+ */
+class Model_Notes extends Zend_Db_Table_Abstract {
+
+   protected $_name = 'notes_predefined';   
+   protected $_tab_role = 'notes_predefined';  
+   public $_errorMessage='';
+   
+   /* Get all predefined notes list */
+    public function getNotes($nid = "") {       
+        
+        $select = $this->select();
+        if(!empty($sid)){
+            $select = $select->where( 'nid = ? ', $nid );
+        }
+        
+        $select = $select->order(array('notes ASC'));
+        $res = $this->fetchAll( $select );
+        
+        return ($res && sizeof($res)>0)? $res->toArray() : false ;
+
+    } 
+    
+         /* Save Service */
+    public function insertServices($data) {
+        try{	
+            return $this->insert($data);		
+        } catch(Exception $e)	{	
+            echo $e->getMessage();die;
+        }
+    }
+    
+    /* Update Services */
+    public function updateServices($data, $sid) {        
+        $this->_errorMessage="";
+        $where = $this->getAdapter()->quoteInto('sid = ?', $sid);	
+        unset($data['sid']);
+        try {
+            $this->update($data,$where);
+            return true;
+        }catch(Exception $e){    		
+            echo $e->getMessage(); die();
+        }	
+    }
+    
+    
+    public function checkServiceByName($service,$sid=""){
+	   $select=$this->select()->where('service = ?', $service);	   
+	   if(!empty($sid)){
+		   $select = $select->where('sid <>?', $sid);
+	   }				
+       $res=$this->fetchAll($select);
+       return ($res && sizeof($res)>0)? $res->toArray() : false ;
+	}
+        
+   
+}
+
+?>

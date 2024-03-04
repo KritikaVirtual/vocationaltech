@@ -1,0 +1,59 @@
+<?php
+$layoutDetails = $this->layoutDetails;
+//$did=$this->did;
+//print_r($this->crDetails);
+$maxplan=$this->crDetails[0]->plan;
+foreach($this->crDetails as $getplan){
+    $maxp[$getplan->plan]=$getplan->plan;
+    $dplan[$getplan->plan]=$getplan;
+}
+
+for($i=0;$i<$maxplan;$i++){
+    $dplan[$this->crDetails[$i]->plan]=$this->crDetails[$i];
+}
+$plan=$this->plan;
+if(empty($plan)){
+   $plan=0; 
+}
+
+asort($maxp);
+?>
+  
+<div class="row" id="sch_content">
+    <div class='col-lg-5 col-sm-5 col-xs-5'> 
+        <label> Select Schedule:<span class="required">*</span></label><span class="ugroupErr" id="schedule-error"></span>
+        </div>
+    <?php 
+    $j=1;
+    $hr=true;
+    $hlf=true;
+    $full=true;
+    foreach($maxp as $maxpl): 
+        if($j > 3)
+            break;
+        ?>
+    <?php if($maxpl == 1 && $hr ): ?>
+        <div class='col-lg-2 col-sm-2 col-xs-2'> 
+            <input type="radio" name='schedule_id' checked="checked" <?php echo ($plan==1?"CHECKED":""); ?> value="1" id="hrday"   onclick="hrday(<?php echo $dplan[1]->min; ?>,<?php echo $dplan[1]->max; ?>);" > Hourly
+        </div>
+    <?php 
+    $hr=false;
+    endif; if($maxpl == 2  && $hlf): ?>
+        <div class='col-lg-2 col-sm-2 col-xs-2'> 
+            <input type="radio" name='schedule_id' <?php echo ($plan==2?"CHECKED":""); ?> id="halfday"   onclick="halfday(<?php echo $dplan[2]->min; ?>,<?php echo $dplan[2]->max; ?>);" value='2'> 1/2 Day
+        </div>
+    <?php 
+    $hlf=false;
+    endif; if($maxpl == 3  && $full): ?>
+        <div class='col-lg-2 col-sm-2 col-xs-2'> 
+            <input type="radio" <?php echo ($plan==3?"CHECKED":""); ?> onclick="allday(<?php echo $dplan[3]->min; ?>,<?php echo $dplan[3]->max; ?>);" id="allday" name='schedule_id' value='3'> All Day
+        </div>
+    <?php 
+    $full=false;
+    endif; ?>
+    <?php
+    $j++;
+    endforeach;
+    ?>
+</div>
+

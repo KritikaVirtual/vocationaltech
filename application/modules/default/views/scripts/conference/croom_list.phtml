@@ -1,0 +1,74 @@
+<?php
+$cscheduleDetails = $this->cscheduleDetails;
+$crDetails = $this->crDetails;
+$not_permit = array(2, 3, 6);
+
+$croom_access = $this->acessHelper->checkAccess($this->roleId, $this->croom_location);
+/* override access by custom user access if exist */
+$customeAccessmodel = new Model_UserAccess();
+$customeAccessmodeld = $customeAccessmodel->getUserCustomAccess($this->userId, $this->croom_location);
+if ($customeAccessmodeld[0]) {
+    $croom_access = $customeAccessmodeld[0];
+}
+?>
+
+<div id="category_popup" style="display:none;"></div>
+<section class="w-48 fr ch-home-form">
+
+    <input type="hidden" name="conference_page" id="conference_page" value=""/>
+    <input type="hidden" name="cn_order" id="cn_order" value=""/>
+    <table class="conference-list" width="100%">
+        <tr>
+            <th>&nbsp;</th>
+            <th><a href="<?php echo BASEURL . '/category/index/cn_order/' . $cn_order; ?>" class="">Conference Room Name</a></th>
+            <th>Location</th>
+            <th>Active</th>
+            <th>Multi Mode</th>
+            <?php if (!in_array($this->roleId, $not_permit) && $croom_access->is_write == 1) { ?>
+                <th>Action</th>
+            <?php } ?>
+        </tr>
+        <?php if($crDetails) { foreach ($crDetails as $crVal) { ?>
+            <tr class="show-category" id="show_category_id_">
+                <td>
+                    <div class="open_plus" id="open_cat_">
+                       <div class="open_plus" id="open_cat_">
+                                                        <?php if(!in_array($this->roleId, $not_permit) && $croom_access->is_write == 1) {  ?>
+                                                       <a href="#editConRoom" class="editCat" href="javascript:void(0);" onclick="editConRoom('<?php
+                                                        if ($crVal->multi_mode == 0) {
+                                                            echo $this->baseUrl() . '/conference/editconroom/cid/' . $crVal->cid . '/bid/' . $this->select_build_id;
+                                                        } else {
+                                                            echo $this->baseUrl() . '/conference/editconmultiroom/cid/' . $crVal->cid . '/bid/' . $this->select_build_id;
+                                                        }
+                                                        ?>')"></a>
+                                        <?php  } else { ?>
+                                                        <a href="javascript:void(0);"  >  <?php echo '&nbsp;&nbsp;'; ?></a>    
+                                        <?php } ?>
+                                                    </div>
+                    </div>
+                    
+                </td>
+                <td><?php echo $crVal->room_name; ?></td>
+                <td><?php echo $crVal->location; ?> </td>
+                <td><?php echo($crVal->status == 1) ? "Yes" : "No"; ?></td>
+                <td><?php echo($crVal->multi_mode == 1) ? "Yes" : "No"; ?></td>
+                <?php if (!in_array($this->roleId, $not_permit) && $croom_access->is_write == 1) { ?>
+                    <td class="yesnotooltips"><a href="#editConRoom" class="editCat" href="javascript:void(0);" onclick="editConRoom('<?php
+                        if ($crVal->multi_mode == 0) {
+                            echo $this->baseUrl() . '/conference/editconroom/cid/' . $crVal->cid . '/bid/' . $this->select_build_id;
+                        } else {
+                            echo $this->baseUrl() . '/conference/editconmultiroom/cid/' . $crVal->cid . '/bid/' . $this->select_build_id;
+                        }
+                        ?>')"><img src="<?php echo BASEURL . 'public/images/edit.png'; ?>"></a>
+                        <a href="javascript:void(0);" onclick="deleteCRoom('<?php echo $crVal->cid; ?>')" class="delCat" data-id="" title="Delete"><img src="<?php echo BASEURL . 'public/images/delete.png'; ?>"></a>
+
+                    </td>
+            <?php } ?>
+            </tr>
+    <?php } } ?>
+    </table>
+            <?php if (!in_array($this->roleId, $not_permit) && $croom_access->is_write == 1) { ?>
+        <a class="modalbox create_conf " onclick="javascript:createConRoom('<?php echo $this->baseUrl() . '/conference/createconroom/bid/' . $this->select_build_id; ?>');" href="#CreateNewCon"> <button value="Memorize" name="memorize" type="button">Create New <br>Conference Room</button> </a>
+        <a class="modalbox create_conf " onclick="javascript:createMultiConRoom('<?php echo $this->baseUrl() . '/conference/createconmultiroom/bid/' . $this->select_build_id; ?>');" href="#CreateNewMultiCon"> <button value="Memorize" name="memorize" type="button">Create Multi Mode <br>Conference Room</button> </a>
+<?php } ?>
+</section>

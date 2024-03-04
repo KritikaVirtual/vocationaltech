@@ -1,0 +1,27 @@
+#sct_main{
+    float: left;
+    height: 180px;
+    padding: 10px 0 0 30px;
+    width: 300px;
+}
+
+#sct_my_acc{
+    float: left;
+    margin-left: 10px;
+    margin-top: 8px;
+    width: 250px;
+}
+
+#sct_my_acc input{
+	width:144px;
+}
+
+#sct_my_acc a.cmd_s{
+	float:right;
+}
+
+#sct_my_acc .msg{
+	clear:both;
+	text-align:right;
+	color:#03C
+}

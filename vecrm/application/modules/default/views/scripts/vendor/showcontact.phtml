@@ -1,0 +1,15 @@
+<?php 
+$contactMapper = new Model_ContactType();
+$contactlist = $contactMapper->getContactType();
+?>
+<a href="javascript:void(0)" onclick="showContactForm()">----Add New Type----</a>
+<select required id="contact_type" class="status" name="contact_type">
+	   <option value="">Select Contact Type</option>
+		<?php 
+		  if($contactlist){
+				foreach ($contactlist as $contact) {					
+					  echo '<option value="'.$contact['cid'].'">'.$contact['contact'].'</option>';				  
+				}
+			}
+		?>		                    
+</select>

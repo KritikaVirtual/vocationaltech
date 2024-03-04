@@ -1,0 +1,167 @@
+<?php
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/jquery/jquery.multiple.select.js');
+echo $this->headLink()->appendStylesheet($this->baseUrl() . '/public/css/multiple-select.css');
+$resultBuild = $this->resultBuild;
+$attachModule = $this->attachModule;
+?>
+<div class="building_block_main_">
+    <div id="formBuild" class="building-block_">
+        <div class="addbuild build-form">
+            <div class="message"></div>
+            <div class="edit_heading">
+                <h1>Edit Building Account</h1>
+            </div> 
+            <form method="post" id="addNewBuilding" >
+                <input type="hidden" id="companyID" name="companyID" value="<?php echo $this->cust_id; ?>" />
+                <input type="hidden" id="buildingID" name="buildingID" value="<?php echo $resultBuild['build_id'] ?>" />
+                <div class="ed-build-frow"> 
+                    <label>(Auto Fill) Account Number :</label>
+                    <div class="ed-build-ibox"> 
+                        <span class="accountNumberErr"></span>
+                        <input type="text" name="accountNumber" class="" id="accountNumber" value="<?php echo $this->corp_account_number; ?>" disabled="disabled" >
+                    </div>
+                </div>
+                <div class="ed-build-frow">
+                    <label>Cost Center :<span class="required">*</span></label> <div class="ed-build-ibox"> 	<span class="costCenterErr"></span><input type="text" name="costCenter" value="<?php echo $resultBuild['uniqueCostCenter'] ?>" id="costCenter" disabled="disabled" >
+                    </div>
+                </div>
+                <div class="ed-build-frow">      
+                    <label>Building Name :<span class="required">*</span></label><div class="ed-build-ibox">  	<span class="buildingNameErr"></span><input type="text" name="buildingName" value="<?php echo $resultBuild['buildingName'] ?>" id="buildingName" >
+                    </div>
+                </div>
+                <div class="ed-build-frow">     
+                    <label>Address :<span class="required">*</span></label>	<div class="ed-build-ibox"> 	<span class="addressErr"></span><input type="text" name="address" value="<?php echo $resultBuild['address'] ?>" id="address"  >
+                    </div>
+                </div>
+                <div class="ed-build-frow">
+                    <label>Address2 :</label> 		<div class="ed-build-ibox"> <span class="address2Err"></span><input type="text" name="address2" value="<?php echo $resultBuild['address2'] ?>" id="address2" >
+                    </div>
+                </div>
+                <div class="ed-build-frow">
+                    <label>City :<span class="required">*</span></label>	<div class="ed-build-ibox"> <span class="cityErr"></span>		<input type="text" name="city" value="<?php echo $resultBuild['city'] ?>" id="city"  >
+                    </div>
+                </div>
+                <div class="ed-build-frow">
+                    <label>State :<span class="required">*</span></label> 	<div class="ed-build-ibox"> 		<span class="stateErr"></span>
+
+
+                        <select name="state" id="state">
+                            <option value="">Select State</option>
+                            <?php
+                            if (isset($this->states) && is_array($this->states)) {
+                                foreach ($this->states as $values) {
+                                    ?>
+                                    <option value="<?php echo $values->state_code ?>" <?php if ($resultBuild['state_code'] == $values->state_code) { ?>  selected  <?php } ?>><?php echo $values->state ?></option>
+                                    <?php
+                                }
+                            }
+                            ?>
+                        </select>
+
+                    </div>
+                </div>
+                <div class="ed-build-frow">
+                    <label>Postal Code :<span class="required">*</span></label> <div class="ed-build-ibox"> 	<span class="postalCodeErr"></span><input type="text" name="postalCode" id="postalCode" onkeypress="return isNumberKey(event);" value="<?php echo $resultBuild['postalCode'] ?>" id="postalCode" maxlength="5" >
+                    </div>
+                </div>
+                <div class="ed-build-frow">
+                    <label>Phone Number :<span class="required">*</span></label> <div class="ed-build-ibox"> 	<span class="phoneNumberErr"> </span><input type="text" name="phoneNumber" id="phoneNumber" onkeypress="return isNumberKey(event);" value="<?php echo $resultBuild['phoneNumber'] ?>" id="phoneNumber"  ><label class="ext_label">EXT</label> <input type="text" name="ext" id="ext" onkeypress="return isNumberKey(event);" class="ext" value="<?php echo ($resultBuild['phoneExt']==0?"":$resultBuild['phoneExt']); ?>">
+                    </div>
+                </div>
+                <div class="ed-build-frow">
+                    <label>Fax Number :</label> 	<div class="ed-build-ibox"> <span class="faxNumberErr"></span><input type="text" name="faxNumber" id="faxNumber" onkeypress="return isNumberKey(event);" value="<?php echo $resultBuild['faxNumber'] ?>" id="faxNumber"  >
+                    </div>
+                </div>
+                <div class="ed-build-frow">
+                    <label>Time Zone:</label><div class="ed-build-ibox"> <span class="tzone-err"></span>
+
+
+                        <select name="timezone" id="timezone">
+                            <option value="">Select Time Zone</option>
+                            <?php
+                            $tModel = new Model_TimeZone();
+                            $tzonelist = $tModel->getTimeZone();
+                            foreach ($tzonelist as $tzone) {
+                                if ($resultBuild['timezone'] == $tzone['id'])
+                                    echo '<option value="' . $tzone['id'] . '" selected="selected">' . $tzone['time_value'] . '</option>';
+                                else
+                                    echo '<option value="' . $tzone['id'] . '">' . $tzone['time_value'] . '</option>';
+                            }
+                            ?>				
+                        </select>
+                    </div>
+                </div>
+
+                <div class="ed-build-frow">
+                    <label>Module:</label><div class="ed-build-ibox"> <span class="module-err"></span>
+                        <?php
+                        $j = json_encode($attachModule);
+                        $attachModuleArr = array();
+                        if (!empty($attachModule)) {
+                            foreach ($attachModule as $am) {
+                                $attachModuleArr[] = $am->module_id;
+                            }
+                        }
+                        ?>
+                        <select name="module_id" id="module_id" multiple="multiple">
+                            <?php
+                            foreach ($this->moduleList as $mlist) {
+								
+								print_r($mlist);
+                                //print_r($am->module_id); 
+                                if (in_array($mlist['module_id'], $attachModuleArr)) {
+                                    ?>
+                                    <option value="<?php echo $mlist['module_id']; ?>" selected="selected" <?php
+                                            if ($mlist['module_id'] == 1) {
+                                                echo 'disabled';
+                                            }
+                                            ?>> <?php echo $mlist['module_name']; ?> </option>
+                                <?php } else { ?>
+                                    <option value="<?php echo $mlist['module_id']; ?>" <?php
+                                            if ($mlist['module_id'] == 1) {
+                                                echo 'disabled selected="selected"';
+                                            }
+                                            ?>> <?php echo $mlist['module_name']; ?></option>
+                                            <?php
+                                        }
+                                    }
+                                    ?>				
+                        </select>
+                    </div>
+                </div>
+
+                <div class="ed-build-frow">
+                    <?php
+                    $select_yes = '';
+                    $select_no = '';
+                    if ($resultBuild['status'] == '1')
+                        $select_yes = 'selected';
+                    else
+                        $select_no = 'selected';
+                    ?>
+                    <label>Active? :</label> <div class="ed-build-ibox"> <select name="status" class="status" id="status" >
+                            <option value="1" <?php echo $select_yes; ?> >Yes</option>
+                            <option value="0" <?php echo $select_no; ?>>No</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="confirmBtn"><input type="submit" onClick="return updateBuilding();" class="confirm" name="confirm" value="Confirm">
+                    <input type="reset" class="cancel" name="cancel" value="Cancel" onClick="return cancelForm('<?php echo $this->cust_id ?>');"></div></form> 
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $("#postalCode").mask("?99999");
+        $("#phoneNumber").mask("?999.999.9999");
+        $("#faxNumber").mask("?999.999.9999");
+    });
+    $(function () {
+        $('#module_id').change(function () {
+            $('input:checkbox[name="search_chkboxstatus"][value="1"]').prop('checked', true);
+        }).multipleSelect({
+            width: '100%'
+        });
+    });
+</script>

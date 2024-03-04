@@ -1,0 +1,130 @@
+<?php echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/complete_workorder.js');  
+
+
+$reportDetail=$this->reportDetailLinks; 
+$reportDetailLinks='';
+$uniqueCostCenter='';
+$allWorkOrder='';
+$reportDetailLinksbw='';
+$reportOptionbw='';
+$reportModel = new Model_Report();
+$reportDetailLinks=$reportModel->getReport($this->custID, 33); 
+if($reportDetailLinks!=0) {
+	$reportDetailLinks=$reportDetailLinks[0];
+	$reportOption=explode(',',$reportDetailLinks->report_option);
+}
+
+$reportDetailLinksbw=$reportModel->getReport($this->custID, 34); 
+if($reportDetailLinksbw!=0) {
+	$reportDetailLinksbw=$reportDetailLinksbw[0];
+	$reportOptionbw=explode(',',$reportDetailLinksbw->report_option);
+}
+?>
+<div class="container-right invoice_margin" id="user-Complete" style="min-height:450px;">
+
+<div class="gridContainer  invoice_margin">       
+<?php  
+  $color_code = array('00FFFF','FF0000','FF00FF','800000','008000','800080','808000','0000FF','00FF00','00008075','FFFF00','808000','008080','FFA500');						
+  $building_color = array();  
+ ?>               
+<section style="z-index:9999" class="w-48 fr ch-home-form invoice_margin" id="first_step" style="display:block!important;">
+<div id="fdw" class="cmp_order_container invoice_margin" >
+<div class="building-list tabmenu my_tabmenu" >
+			   <ul class="invoice_tab_menu">
+		<?php  
+					$j = 1;
+					foreach($this->companyListing as $cb){ 
+						if(isset($color_code[$j])) $building_color[$cb['build_id']] = $color_code[$j];
+						else{ 
+							$j=0;
+							$building_color[$cb['build_id']] = $color_code[$j];
+						}
+						?>
+					<li style="background-color:#<?php echo $color_code[$j]?>"><a href="<?php echo $this->baseUrl().'/complete/showbatch/bid/'.$cb['build_id']; ?>" <?php if($cb['build_id']==$this->select_build_id) echo 'class="resp-tab-active my_resp-tab-active"';?>><?php echo $cb['buildingName']; ?></a></li>
+		<?php if($cb['build_id']==$this->select_build_id) { $uniqueCostCenter=$cb['uniqueCostCenter'];  } ?>
+				<?php $j++; } ?>         
+        
+        </ul>
+		 </div>
+    </div>
+	<section class="ch-form-header">
+        <h3 >Batch Invoices Detail</h3>
+    </section>
+    <div class="invoice_wrap">
+    
+	
+	<div class="content" id="page" style="border:none">
+	<input type="hidden" id="bId" value="<?php echo $this->buildingid;?>">
+	<div class="col-sm-4">
+   <span id="page_heading"><h3>Batch Information</h3></span>
+   </div> <div class="col-sm-6" style="padding-top:2px"> <span><h3 class="filter_tenant">Filter By Tenant Name: &nbsp; &nbsp; </h3> </span>
+	<select  onchange="showBatchInfo()" id="tenantId" name="tenant" >
+	   <option value="">All Tenants</option>
+	   <?php foreach($this->tenantList as  $value) {?>
+        <option value="<?php echo $value->id; ?>" <?php if($this->tuid==$value->id) { ?> selected <?php } ?> ><?php echo $value->tenantName; ?></option>
+      <?php } ?> 
+	   </select>	
+</div>	 <div class="col-sm-3"> &nbsp; </div> 
+
+  <div class="col-sm-12" style="margin-top:10px;">
+			 <div class="tenant-data">
+				 <table width="100%" border="1" class="batch_popup">
+					 <tr>
+						<th width="4%">&nbsp;</th>
+						<th>Batch Number</th> 
+						<th style='text-align:center'>Batch Invoice</th> 
+						<th style='text-align:center'>Batch Invoices w/backup</th> 
+					 </tr> 
+					 <?php
+					      if(!empty($this->batchlisting)){									
+							 foreach($this->batchlisting as $uinfo){
+					 ?>
+					 <tr>
+						<td><div class="open_plus" id="open_div_<?php echo $uinfo['batch_number'];?>"><a href="javascript:void(0);" id="<?php echo $uinfo['batch_number'];?>" onClick="loadBatches(<?php echo $uinfo['batch_number'];?>, <?php echo $this->buildingid;?>)";><?php echo '&nbsp;&nbsp;';?></a></div></div>
+						    <div class="open_close" id="close_div_<?php echo $uinfo['batch_number'];?>" style="display:none"><a href="javascript:void(0);" id="<?php echo $uinfo['batch_number'];?>" onClick="hideBatches(<?php echo $uinfo['batch_number'];?>)";><?php echo '&nbsp;&nbsp;';?></a></div></div>
+						</td>
+						<td>B<?php echo $uinfo['batch_number'];?></td> 
+						<?php $worklistingbybatch=''; $wob = new Model_WoBatch();
+							  $worklistingbybatch = $wob->loadBatches($uinfo['batch_number'], $this->buildingid);
+							  $allWorkOrder='';
+							  if($worklistingbybatch!='') {
+								foreach($worklistingbybatch as $batchlisting) {
+									$allWorkOrder=$allWorkOrder.$batchlisting->wo_number .',';
+								}
+								} 
+							  ?>
+						 <td style='text-align:center'><a  <?php if($reportDetailLinks!='') {  
+						                                     if ($reportDetailLinks->Report_Type == 'Flash') {$report_type = 'reports/VisionReportEngine/index.php?stimulsoft_client_key=ViewerFx&stimulsoft_';}
+						                                     else { $report_type = 'vnsreports/index.php?';}
+                                                             if($reportDetailLinks->report_target==1) { ?> target="_blank" <?php } }?> href="<?php if($reportDetailLinks!='') { echo BASEURL.$report_type.'report_key='.$reportDetailLinks->report_mrt; ?><?php if(in_array('[[++user_id]]',$reportOption)) { echo '&User='.$this->userId; } ?><?php if(in_array('[[++CostCenterNumber]]',$reportOption)) { echo '&Cost_Center_Number='.$uniqueCostCenter; } ?><?php if(in_array('[[++KeyBuildingNumber]]',$reportOption)) { echo '&buildkey='.$this->select_build_id; } ?><?php if(in_array('[[++BatchNumber]]',$reportOption)) { echo '&Batch_Number='.rtrim($uinfo['batch_number'],','); } ?><?php if(in_array('[[++InvoiceNumber]]',$reportOption)) { echo '&Invoice_Number='.rtrim($allWorkOrder,','); } ?><?php if(in_array('[[++WONumber]]',$reportOption)) { echo "&WO_Number=".rtrim($allWorkOrder,','); } } else{ echo "#";}?>" style="text-decoration:underline">Print</a></td>
+						 
+						 <td style='text-align:center'><a <?php if($reportDetailLinksbw!='') { 
+						                                      if ($reportDetailLinksbw->Report_Type == 'Flash') {$report_type = 'reports/VisionReportEngine/index.php?stimulsoft_client_key=ViewerFx&stimulsoft_';}
+						                                     else { $report_type = 'vnsreports/index.php?';}
+						                                      if($reportDetailLinksbw->report_target==1) { ?> target="_blank" <?php } }?> href="<?php if($reportDetailLinksbw!='') { echo BASEURL.$report_type.'report_key='.$reportDetailLinksbw->report_mrt; ?><?php if(in_array('[[++user_id]]',$reportOptionbw)) { echo '&User='.$this->userId; } ?><?php if(in_array('[[++CostCenterNumber]]',$reportOptionbw)) { echo '&Cost_Center_Number='.$uniqueCostCenter; } ?><?php if(in_array('[[++KeyBuildingNumber]]',$reportOptionbw)) { echo '&buildkey='.$this->select_build_id; } ?><?php if(in_array('[[++BatchNumber]]',$reportOptionbw)) { echo '&Batch_Number='.rtrim($uinfo['batch_number'],','); } ?><?php if(in_array('[[++InvoiceNumber]]',$reportOptionbw)) { echo '&Invoice_Number='.rtrim($allWorkOrder,','); } ?><?php if(in_array('[[++WONumber]]',$reportOptionbw)) { echo "&WO_Number=".rtrim($allWorkOrder,',');  } } else{ echo "#";}?>" style="text-decoration:underline">Print</a> </td>
+						 
+					 </tr>
+					 <tr id="trId_<?php echo $uinfo['batch_number']; ?>" class="trtenant-class" style="display:none">
+					     <td>&nbsp;</td>
+					     <td  colspan="3" id="loadtenant_<?php echo $uinfo['batch_number']; ?>" class="tdtenant-class"></td>
+						
+					 </tr>
+					 <?php }
+					 }else{?>
+						 <tr>
+						<td colspan="4" class="no_batch"> No batch is listed for this tenant.</td>
+					 </tr>
+					 <?php }?>	 
+				 </table>
+				 
+    </div> <?php if(count($this->batchlisting)>0 && !empty($this->batchlisting)){
+					 echo $this->paginationControl($this->batchlisting, 'Sliding', 'pagination.phtml'); 
+					 }?>
+	<div class="confirmBtn float_none">
+							<input type="button" value="Cancel" name="cancel" class="cancel" onclick="cancelBatchList()"/>
+						</div>
+    </section>                 
+        </div>          
+	</div> </div>  
+<div class="loader" style="display:none;"><img src="<?php echo BASEURL.'public/images/loader.gif';?>"></div>
+

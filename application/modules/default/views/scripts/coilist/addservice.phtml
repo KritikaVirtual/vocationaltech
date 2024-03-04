@@ -1,0 +1,71 @@
+<?php echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/coilist.js'); ?>
+<style>
+.message {margin: 30px 6px 4px;}
+.service_row { margin: 0 0 15px;}
+.service_row > label {width: 35%;}
+.buttons {margin: 190px 0 40px !important;}
+</style>
+<div id="add_build_serv_div" style='text-decoration:none'>
+	<h1>Add / Edit COI</h1>
+	<div class="message" style='text-align:center;'>
+		<span id="success_msg" class="success_message" style="text-align:center;width:100%;font-weight:bold;color:red;"></span>
+		<span id="error_msg" class="success_message" style="text-align:center;width:100%;font-weight:bold;color:red;"></span>
+	</div>
+	<div class="service_row">
+	<input type="hidden" name="tenant_id" id="tenant_id" value="<?php echo $this->bsList[0]->id;?>"/>
+	<input type="hidden" name="tenant_number" id="tenant_number"  value="<?php echo $this->bsList[0]->tenant_number;?>"/>
+	<input type="hidden" name="buliding_id"  id="buliding_id" value="<?php echo $this->bsList[0]->buildingId;?>"/>
+		  <label>Company Name</label>
+		  <div class="serv_ibox_row">
+			   <span class="field_error" id="cerror_name"></span>
+			   <input type="text" name="company_name" id="company_name" class="addbuildingserviceinput" value="<?php echo $this->bsList[0]->tenantName;?>"/>
+		  </div>			
+	</div>
+	<div class="service_row">
+		  <label>Expiration Date</label>
+		  <div class="serv_ibox_row">
+			   <span class="field_error" id="cerror_expiration"></span>
+			   <input type="text" name="expiration_date" id="expiration_date" class="cac_date"/>
+		  </div>			
+	</div>
+	<div class="service_row">
+		  <label>Upload / Replace COI</label>
+		  <div class="serv_ibox_row">
+			   <input type="file" name="equipmentmenual" id="equipmentmenual">
+                <span class="ugroupErr" id="equipmentmenual_error"></span>
+		</div>
+       	  
+	</div>
+	<!---<div class="service_row">
+		  <label>Minimum Required:</label>
+		  <div class="serv_ibox_row">
+			   <span class="field_error" id="serror_minimum"></span>
+			   <input type="text" name="minimum" id="minimum" onkeypress="return isNumber(event)" maxlength="6" value="1" class="addbuildingserviceinput"/>
+		  </div>			
+	</div>
+	<div class="service_row">
+		 <label>Save as Global Template:</label>
+		  <div class="serv_ibox_row">
+			   <span class="field_error" id="serror_global"></span>
+			   <select name="global_template" id="global_template" class="addbuildingserviceinput">
+				   <option value="1">Yes</option>
+				   <option value="0" selected="selected">No</option>
+			   </select>
+			   <input type="hidden" name="import_template" id="import_template" value="0" class="addbuildingserviceinput"/>
+		  </div>
+	</div>
+	<div class="service_row">
+		 <label>Active:</label>
+		  <div class="serv_ibox_row">
+			   <span class="field_error" id="serror_status"></span>
+			   <select name="status" id="status" class="addbuildingserviceinput">
+				   <option value="1" selected="selected">Yes</option>
+				   <option value="0">No</option>
+			   </select>
+		  </div>
+	</div>-->
+	<div class="buttons">
+				   <button type="button" name="save_coi" class="addbuildingserviceinput" id="save_coi" value="Save" onclick="saveCoiTenant()">Save</button>
+				   <button type="button" name="cancel" class="addbuildingserviceinput" id="cancel" value="Cancel" onclick="cancelAddService()">Cancel</button>
+			  </div>
+</div>

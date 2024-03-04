@@ -1,0 +1,661 @@
+<?php
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/pm-equipment.js');
+$startdateadj =  $this->startdateadjustment; 
+$taskjobtime = $this->jobtime;
+$FreqData = $this->frequency;
+$CustomFreq = $this->CustmeFreq;
+$reportModel = new Model_Report();
+$reportDetailLinks = '';
+function buildTree(array $elements, $parentId = 0) {
+    $branch = array();
+    foreach ($elements as $element) {
+        if ($element['Parent_ID'] == $parentId) {
+            $children = buildTree($elements, $element['AU_Template_Task_ID']);
+            if ($children) {
+                $element['children'] = $children;
+            }
+            $branch[] = $element;
+        }
+    }
+    return $branch;
+}
+
+$equipment = new Model_PmTemplate();
+$moduleMapper = new Model_UserBuildingModule();
+$moduleAccess = $moduleMapper->getModuleByBuildingId($this->select_build_id, 3);
+$buildhasAccess = array();
+if ($moduleAccess) {
+    foreach ($moduleAccess as $moduleAccessVal) {
+        $buildhasAccess[] = $moduleAccessVal->module_id;
+    }
+}
+
+$dashboard_menu = array(44);
+if (in_array(3, $buildhasAccess)) {    
+    $reportDetailLinks = $reportModel->getReport($this->custID, $dashboard_menu);            
+} else {
+    $reportDetailLinks = false;
+}
+foreach ($this->companyListing as $cb) {
+            if ($cb['build_id'] == $this->select_build_id) {
+                    $uniqueCostCenter = $cb['uniqueCostCenter'];
+                }
+}
+?>
+<style>
+    .container-right {max-width:100%;}
+    table.background-collr {border-collapse: collapse;}
+    table.background-collr tr td, table.background-collr tr th{ padding: 0 10px;  border: 1px solid #ccc; height: 30px;  vertical-align: middle;  line-height: 29px; }
+    table.background-collr tr td td { border:none; }
+    table.background-collr tr td i.pull-right{margin-top:7px;  margin-right: 30%;}
+    .sub-bg-bckgrnd{ background: #92cddb;}
+    .sub-bg-bckgrnd-light {background:#dbeef4;}
+    table.background-collr.main_table  tr.greybgs {
+        background: #dbdbdb; background: -moz-linear-gradient(top, #dbdbdb 1%, #9798a3 49%, #dbdbdb 100%);  background: -webkit-linear-gradient(top, #dbdbdb 1%,#9798a3 49%,#dbdbdb 100%);
+        background: linear-gradient(to bottom, #dbdbdb 1%,#9798a3 49%,#dbdbdb 100%); filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dbdbdb', endColorstr='#dbdbdb',GradientType=0 );}
+    table.background-collr.main_table  tr.greybgs:hover { color: #2ea8e5;  background: #fff;}
+
+    button.confirm.active {
+        background-color: #45e4a8;
+    }
+    .ch-form-header ul.dropdown-menu.multi-level {
+        width: 650px;
+        padding: 15px;
+    }
+    .ch-form-header ul.dropdown-menu.multi-level li, .ch-form-header ul.dropdown-menu.multi-level li a {display:inline-block;}
+    .modified_btn button{ background: #06af8f; color:#000; font-weight: bold;  padding: 3px 10px; border-radius: 3px; box-shadow: 2px 2px 5px #ccc; 
+                          border: none; font-size: 16px !important; line-height: 1; margin: 0;}
+    </style>
+    <div class="container-right pm-task-view" id="access-matrix">
+    <section class="ch-form-header top-header">
+        <h3>Equipment detail Task/Reading</h3>
+        <!-- Report Link -->
+        <?php if ($reportDetailLinks != '') { ?> <div class="tabmenu" ><ul style="padding:0px;list-style: none;"><?php
+            foreach ($reportDetailLinks as $reportvalue) {
+                if ($reportvalue->Report_Type == 'Flash') {
+                    $report_type = 'reports/VisionReportEngine/index.php?stimulsoft_client_key=ViewerFx&stimulsoft_';
+                } else {
+                    $report_type = 'vnsreports/index.php?';
+                }
+                $reportOption = explode(',', $reportvalue->report_option);
+                ?> <li class="report_text" ><a   <?php if ($reportvalue->report_target == 1) { ?> target='_blank' <?php } ?> href="<?php echo BASEURL; ?><?php echo $report_type; ?>report_key=<?php echo $reportvalue->report_mrt; ?><?php
+                if (in_array('[[++user_id]]', $reportOption)) {
+                    echo '&User=' . $this->userId;
+                }
+                ?><?php
+                        if ((in_array('[[++CostCenterNumber]]', $reportOption)) && $uniqueCostCenter != '') {
+                            echo '&Cost_Center_Number=' . $uniqueCostCenter;
+                        }
+                        ?><?php
+                        if ((in_array('[[++KeyBuildingNumber]]', $reportOption)) && $this->select_build_id != '') {
+                            echo '&buildkey=' . $this->select_build_id;
+                        }
+                        ?><?php
+                        if ((in_array('[[++AU_Equipment_Detail_ID]]', $reportOption)) && $this->eqp_detail_id != '') {
+                            echo '&AU_Equipment_Detail_ID=' . $this->eqp_detail_id;
+                        }
+                        ?>" ><?php echo $reportvalue->report_name; ?> </a> </li> <?php } ?> </ul></div>	<?php } ?>
+        
+
+    </section>
+    <section class="section-menu">
+        <a class="modalbox create_conf "  href="<?php echo $this->baseUrl() . '/pm/createequipmentdetailtask/eqp_detail_id/' . $this->eqp_detail_id . '/eqp_name/' . $this->eqp_name . '/temp/' . $this->temp; ?>"> 
+            <button  style="width: 6%;" class="confirm active"  >Task(s)</button>
+        </a>
+        <a class="modalbox create_conf "  href="<?php echo $this->baseUrl() . '/pm/createequipmentdetailreading/eqp_detail_id/' . $this->eqp_detail_id . '/eqp_name/' . $this->eqp_name . '/temp/' . $this->temp; ?>"> 
+            <button  style="width: 6%;" class="confirm"  >Reading(s)</button>
+        </a>
+        <?php
+        if ($this->nooftask > 0 || $this->noofreading > 0) {
+            ?>
+            <a class="modalbox create_conf modified_btn" href="<?php echo $this->baseUrl() . '/pm/modifiedequipmentlist'; ?>"><button  class="confirm" >Return to Modified Equipment List </button></a> 
+        <?php } ?>
+            
+            <a style="float: right;" href="<?php echo $this->baseUrl() . '/pm/equipment'; ?>">
+            <button type="button" class="confirm">Complete</button>
+        </a>
+    </section>
+
+    <div class="message">
+        <div class="success_message" style="text-align:center;width:100%;font-weight:bold;color:red;"></div>				  			
+        <span id="success_msg"></span>
+        <span id="error_msg"></span>
+    </div>
+    <section style="z-index:9999" class="w-48 fr ch-home-form" id="first">
+        <section class="ch-form-header">
+            <h3 style="float:left;"><?php echo $this->eqp_name; ?> - Type Designation - <?php echo $this->temp; ?></h3>
+            <!-- view all table column name -->
+            <div class="dropdown multiSelect">
+                <a id="dLabel" role="button" data-toggle="dropdown" class="btn btn-primary" data-target="#" href="/page.html">
+                    View list  <span class="caret"></span>
+                </a>
+                <?php //print_r($this->listview); ?>
+                <ul class="dropdown-menu multi-level inline-list-wrap" role="menu" aria-labelledby="dropdownMenu">
+                    <li><input type="checkbox" class="showlistoption" id="1" value="1" onclick="view_equipmentdetail_update(<?php echo $this->eqp_detail_id; ?>);" <?php echo (in_array(1, $this->listview) ? "checked" : ""); ?> />Task Instruction</li>
+                    <li><input type="checkbox" class="showlistoption" id="2" value="2"  onclick="view_equipmentdetail_update(<?php echo $this->eqp_detail_id; ?>);"  <?php echo (in_array(2, $this->listview) ? "checked" : ""); ?> />Frequency</li>
+                    <li><input type="checkbox" class="showlistoption" id="3" value="3" onclick="view_equipmentdetail_update(<?php echo $this->eqp_detail_id; ?>);" <?php echo (in_array(3, $this->listview) ? "checked" : ""); ?> />Start date</li>
+                    <li><input type="checkbox" class="showlistoption" id="4" value="4" onclick="view_equipmentdetail_update(<?php echo $this->eqp_detail_id; ?>);" <?php echo (in_array(4, $this->listview) ? "checked" : ""); ?> />End date</li>
+                    <li><input type="checkbox" class="showlistoption" id="5" value="5" onclick="view_equipmentdetail_update(<?php echo $this->eqp_detail_id; ?>);" <?php echo (in_array(5, $this->listview) ? "checked" : ""); ?> />Seasonal</li>
+                    <li><input type="checkbox" class="showlistoption" id="6" value="6" onclick="view_equipmentdetail_update(<?php echo $this->eqp_detail_id; ?>);" <?php echo (in_array(6, $this->listview) ? "checked" : ""); ?> />Seasonal Start Month</li>
+                    <li><input type="checkbox" class="showlistoption" id="7" value="7" onclick="view_equipmentdetail_update(<?php echo $this->eqp_detail_id; ?>);" <?php echo (in_array(7, $this->listview) ? "checked" : ""); ?> />Seasonal End Month</li>
+                    <li><input type="checkbox" class="showlistoption" id="8" value="8" onclick="view_equipmentdetail_update(<?php echo $this->eqp_detail_id; ?>);" <?php echo (in_array(8, $this->listview) ? "checked" : ""); ?>/>Start Date Of Month</li>
+                    <li><input type="checkbox" class="showlistoption" id="9" value="9" onclick="view_equipmentdetail_update(<?php echo $this->eqp_detail_id; ?>);"  <?php echo (in_array(9, $this->listview) ? "checked" : ""); ?> />Start date Adjustment</li>
+                    <li><input type="checkbox" class="showlistoption" id="10" value="10" onclick="view_equipmentdetail_update(<?php echo $this->eqp_detail_id; ?>);"  <?php echo (in_array(10, $this->listview) ? "checked" : ""); ?>/>Task job Time(Hour)</li>
+                    <li><input type="checkbox" class="showlistoption" id="11" value="11" onclick="view_equipmentdetail_update(<?php echo $this->eqp_detail_id; ?>);" <?php echo (in_array(11, $this->listview) ? "checked" : ""); ?> />Over Time/Off Hour</li>
+                    <li><input type="checkbox" class="showlistoption" id="12" value="12" onclick="view_equipmentdetail_update(<?php echo $this->eqp_detail_id; ?>);" <?php echo (in_array(12, $this->listview) ? "checked" : ""); ?> />Assign To</li>                    
+                </ul>
+            </div>
+            <!--  End filter view -->
+        </section>
+        <!-- satrt listing  -->
+        <div id="viewtask">
+            <?php
+            if (empty($this->results)) {
+                echo 'Sorry no data!';
+            } else {
+                ?>
+               <div class="table-responsive">
+                <table class="background-collr main_table table-bordered" width="100%" border="0">
+                    <thead>
+                        <tr  class="row100  blue-header-wrap" >
+                            <th>Task - Order </th>
+                            <?php
+                            if (in_array(1, $this->listview)) {
+                                ?>
+                                <th style="width: 1000px;">  Task Instruction </th>
+                                <?php
+                            }
+                            ?>
+
+                            <?php
+                            if (in_array(2, $this->listview)) {
+                                ?>
+                                <th>Frequency</th>
+                                <?php
+                            }
+                            ?>
+
+                            <?php
+                            if (in_array(3, $this->listview)) {
+                                ?>
+                                <th> Start date <a onclick="javascript:openpopup('<?php echo $this->baseUrl(); ?>/pm/equipmentdetailtaskstartdateroot/eqp_detail_id/<?php echo $this->eqp_detail_id; ?>');" href="#CreateNewMultiCon">
+                                        <span class="glyphicon glyphicon-chevron-down"></span>
+                                    </a></th>
+                                <?php
+                            }
+                            ?>
+                            <?php
+                            if (in_array(4, $this->listview)) {
+                                ?>
+                                <th>End date</th>
+                                <?php
+                            }
+                            ?>
+
+                            <?php
+                            if (in_array(5, $this->listview)) {
+                                ?>
+                                <th>Seasonal</th>
+                                <?php
+                            }
+                            ?>
+
+                            <?php
+                            if (in_array(6, $this->listview)) {
+                                ?>
+                                <th>Seasonal Start Month</th>
+                                <?php
+                            }
+                            ?>
+                            <?php
+                            if (in_array(7, $this->listview)) {
+                                ?>
+                                <th>Seasonal End Month</th>
+                                <?php
+                            }
+                            ?>
+
+                            <?php
+                            if (in_array(8, $this->listview)) {
+                                ?>
+                                <th>Start Day of Month<a onclick="javascript:openpopup('<?php echo $this->baseUrl(); ?>/pm/equipmentdetailtaskstartdateofmonthroot/eqp_detail_id/<?php echo $this->eqp_detail_id; ?>');" href="#CreateNewMultiCon">
+                                        <span class="glyphicon glyphicon-chevron-down"></span>
+                                    </a></th>
+                                <?php
+                            }
+                            ?>
+
+                            <?php
+                            if (in_array(9, $this->listview)) {
+                                ?>
+                                <th>Start Date Adjustment</th>
+                                <?php
+                            }
+                            ?> 
+
+                            <?php
+                            if (in_array(10, $this->listview)) {
+                                ?>
+                                <th>Task job </th>
+                                <?php
+                            }
+                            ?>
+
+                            <?php
+                            if (in_array(11, $this->listview)) {
+                                ?>
+                                <th>Over Time/Off Hour</th>
+                                <?php
+                            }
+                            ?>
+
+                            <?php
+                            if (in_array(12, $this->listview)) {
+                                ?>
+                                <th>Assigned to</th>
+                                <?php
+                            }
+                            ?>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <?php
+                    $equipmentDetailId = $this->equ_detail_id;
+                    $tree = buildTree($this->results);
+                    /**
+                     * This is for sorting purpose
+                     */
+                    $mainArray = array();
+                    $mergeArray = array();
+                    foreach ($tree as $treeval) {
+                        if ((empty($treeval['AU_Frequency_ID']) && (sizeof($treeval['children']) == 0))) {
+                            $mergeArray[] = $treeval;
+                        } else {
+                            $mainArray[] = $treeval;
+                        }
+                    }
+                    $finalArray = array_merge($mainArray, $mergeArray);
+                    $tree = $finalArray;
+                    $month = array('January', 'February', 'March', 'April', 'Mayy', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
+
+                    for ($i = 1; $i <= count($tree); $i++) {
+
+                        if (array_key_exists("children", $tree[$i - 1]) || $tree[$i - 1]['AU_Frequency_ID'] == '') {
+
+                            $fullMonth = explode(' ', $tree[$i - 1]['Start_date']);
+                            if (in_array($fullMonth[0], $month)) {
+                                $fontColor = 'color_red';
+                            } else {
+                                $fontColor = '';
+                            }
+                            ?>
+                            <tr class="row100 sub-bg-bckgrnd <?php echo $fontColor; ?>">
+                                <td class="border-left-0 fa-icon"><span><?php echo $i; ?></span><a href="#" onclick="eqpdetailplusminus(this.id);" id="plus<?php echo $tree[$i - 1]['AU_Template_Task_ID']; ?>"><i class="fa fa fa-minus-circle pull-right" aria-hidden="true"></i></a></td>
+
+                                <?php
+                                if (in_array(1, $this->listview)) {
+                                    ?>
+                                    <td><b>Task subset - <?php echo $tree[$i - 1]['Task_Instruction'] ?></b></td>
+                                    <?php
+                                }
+                                ?>
+
+                                <?php
+                                if (in_array(2, $this->listview)) {
+                                    ?>
+                                    <td><b>Frequency</b></td>
+                                    <?php
+                                }
+                                ?>
+
+                                <?php
+                                if (in_array(3, $this->listview)) {
+                                    ?>
+                                    <td><b>Start date</b><a onclick="javascript:openpopup('<?php echo $this->baseUrl(); ?>/pm/equipmentdetailtaskstartdatesubset/eqp_detail_id/<?php echo $this->eqp_detail_id; ?>/subset_id/<?php echo $tree[$i - 1]['AU_Template_Task_ID'] ?>');" href="#CreateNewMultiCon">
+                                            <span class="glyphicon glyphicon-chevron-down"></span>
+                                        </a></td>
+                                    <?php
+                                }
+                                ?> 
+                                <?php
+                                if (in_array(4, $this->listview)) {
+                                    ?>
+                                    <td><b>End date</b></td>
+                                    <?php
+                                }
+                                ?> 
+
+                                <?php
+                                if (in_array(5, $this->listview)) {
+                                    ?>
+                                    <td><b>Seasonal</b></td>
+                                    <?php
+                                }
+                                ?> 
+
+                                <?php
+                                if (in_array(6, $this->listview)) {
+                                    ?>
+                                    <td><b>Seasonal Start Month</b></td>
+                                    <?php
+                                }
+                                ?>
+
+                                <?php
+                                if (in_array(7, $this->listview)) {
+                                    ?>
+                                    <td><b>Seasonal End Month</b></td>
+                                    <?php
+                                }
+                                ?>
+
+                                <?php
+                                if (in_array(8, $this->listview)) {
+                                    ?>
+                                    <td><b>Start Day of Month</b><a onclick="javascript:openpopup('<?php echo $this->baseUrl(); ?>/pm/equipmentdetailtaskstartdateofmonthsubset/eqp_detail_id/<?php echo $this->eqp_detail_id; ?>/subset_id/<?php echo $tree[$i - 1]['AU_Template_Task_ID'] ?>');" href="#CreateNewMultiCon">
+                                            <span class="glyphicon glyphicon-chevron-down"></span>
+                                        </a></td>
+                                    <?php
+                                }
+                                ?>
+                                <?php
+                                if (in_array(9, $this->listview)) {
+                                    ?>
+                                    <td><b>Start Date Adjustment</b></td>
+                                    <?php
+                                }
+                                ?>
+
+                                <?php
+                                if (in_array(10, $this->listview)) {
+                                    ?>
+                                    <td><b>Task job </b></td>
+                                    <?php
+                                }
+                                ?>
+
+                                <?php
+                                if (in_array(11, $this->listview)) {
+                                    ?>
+                                    <td><b>Over Time/Off Hour</b></td>
+                                    <?php
+                                }
+                                ?>
+
+                                <?php
+                                if (in_array(12, $this->listview)) {
+                                    ?>
+                                    <td><b>Assigned to</b></td>
+                                    <?php
+                                }
+                                ?>  
+
+                                <td></td>
+                            </tr>
+                            <tbody id="mnoplus<?php echo $tree[$i - 1]['AU_Template_Task_ID']; ?>">
+                                <?php
+                                for ($k = 1; $k <= count($tree[$i - 1]['children']); $k++) {
+
+                                    $fullMonth = explode(' ', $tree[$i - 1]['children'][$k - 1]['Start_date']);
+                                    if (in_array($fullMonth[0], $month)) {
+                                        $fontColor = 'color_red';
+                                    } else {
+                                        $fontColor = '';
+                                    }
+                                    ?>
+                                    <tr class="row100 sub-bg-bckgrnd-light <?php echo $fontColor; ?>">
+                                        <td class="border-left-0">
+                                            <table class="background-collr" width="100%" border="0">
+                                                <tbody>
+                                                    <tr class="row100">
+                                                        <td class="border-corner">&nbsp;</td>
+                                                        <td class="border-corner-1"><?php echo $k; ?></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+
+                                        <?php
+                                        if (in_array(1, $this->listview)) {
+                                            ?>
+                                            <td><?php echo $tree[$i - 1]['children'][$k - 1]['Task_Instruction']; ?></td>
+                                            <?php
+                                        }
+                                        ?>
+                                        <?php
+                                        if (in_array(2, $this->listview)) {
+                                            
+                                            if($tree[$i - 1]['children'][$k - 1]['Interval_Value']==1 || $tree[$i - 1]['children'][$k - 1]['Interval_Value']==0){
+                                            $frequency = $FreqData[$tree[$i - 1]['children'][$k - 1]['AU_Frequency_ID']];
+                                        }else{
+                                            $frequency = $tree[$i - 1]['children'][$k - 1]['Interval_Value'].'   '.$CustomFreq[$tree[$i - 1]['children'][$k - 1]['AU_Frequency_ID']];
+                                        }
+                                            
+                                            
+                                            ?>
+                                            <td><?php echo $frequency;//echo $tree[$i - 1]['children'][$k - 1]['Frequency_name']; ?></td>
+                                            <?php
+                                        }
+                                        ?>
+                                        <?php
+                                        if (in_array(3, $this->listview)) {
+                                            ?>
+                                            <td><?php echo $tree[$i - 1]['children'][$k - 1]['Start_date']; ?></td>
+                                            <?php
+                                        }
+                                        ?>
+                                        <?php
+                                        if (in_array(4, $this->listview)) {
+                                            ?>
+                                            <td><?php echo $tree[$i - 1]['children'][$k - 1]['End_date']; ?></td>
+                                            <?php
+                                        }
+                                        ?>
+                                        <?php
+                                        if (in_array(5, $this->listview)) {
+                                            ?>
+                                            <td><?php echo $tree[$i - 1]['children'][$k - 1]['Seasonal_Task']; ?></td>
+                                            <?php
+                                        }
+                                        ?>
+                                        <?php
+                                        if (in_array(6, $this->listview)) {
+                                            ?>
+                                            <td><?php echo $tree[$i - 1]['children'][$k - 1]['Seasonal_Start_Date']; ?></td>
+                                            <?php
+                                        }
+                                        ?>
+                                        <?php
+                                        if (in_array(7, $this->listview)) {
+                                            ?>
+                                            <td><?php echo $tree[$i - 1]['children'][$k - 1]['Seasonal_End_Date']; ?></td>
+                                            <?php
+                                        }
+                                        ?>
+                                        <?php
+                                        if (in_array(8, $this->listview)) {
+                                            if(empty($tree[$i - 1]['children'][$k - 1]['eqp_Startdate_month'])){
+                                                $startDateMonth = $tree[$i - 1]['children'][$k - 1]['Startdate_month'];                                                
+                                            }else{
+                                                $startDateMonth = $tree[$i - 1]['children'][$k - 1]['eqp_Startdate_month'];                                                
+                                            }
+                                            ?>
+                                            <td><?php echo $startDateMonth; ?></td>
+                                            <?php
+                                        }
+                                        ?>
+                                        <?php
+                                        if (in_array(9, $this->listview)) {
+                                            ?>
+                                            <td><?php echo $tree[$i - 1]['children'][$k - 1]['startdateadj_name']; ?></td>
+                                            <?php
+                                        }
+                                        ?>
+                                        <?php
+                                        if (in_array(10, $this->listview)) {
+                                            ?>
+                                            <td><?php echo $tree[$i - 1]['children'][$k - 1]['JobTime_Name']; ?></td>
+                                            <?php
+                                        }
+                                        ?>
+                                        <?php
+                                        if (in_array(11, $this->listview)) {
+                                            ?>
+                                            <td><?php
+                        if ($tree[$i - 1]['children'][$k - 1]['overtime'] == 0) {
+                            echo 'No';
+                        } else {
+                            echo 'Yes';
+                        }
+                                            ?></td>
+                                                <?php
+                                        }
+                                        ?>
+                                        <?php
+                                        if (in_array(12, $this->listview)) {
+                                            ?>
+                                            <td><?php echo $tree[$i - 1]['children'][$k - 1]['group_name']; ?></td>
+                                            <?php
+                                        }
+                                        ?>                                          
+                                        <td><a onclick="javascript:openpopup('<?php echo $this->baseUrl(); ?>/pm/editequipmentdetailtask/eqp_detail_id/<?php echo $this->eqp_detail_id; ?>/subset_id/<?php echo $tree[$i - 1]['children'][$k - 1]['AU_Template_Task_ID']; ?>');" href="#CreateNewMultiCon"><img src="<?php echo $this->baseUrl(); ?>/public/images/edit.png"></a></td>
+                                    </tr>
+                                    <?php
+                                }
+                                ?>
+                            </tbody>
+                            <?php
+                        } else {
+
+                            $fullMonth = explode(' ', $tree[$i - 1]['Start_date']);
+                            if (in_array($fullMonth[0], $month)) {
+                                $fontColor = 'color_red';
+                            } else {
+                                $fontColor = '';
+                            }
+                            ?>                            
+                            <tr class="row100 right-x <?php echo $fontColor; ?>">
+                                <td class="border-left-0 "><?php echo $i; ?></td>
+
+                                <?php
+                                if (in_array(1, $this->listview)) {
+                                    ?>
+                                    <td><?php echo $tree[$i - 1]['Task_Instruction']; ?></td>
+                                    <?php
+                                }
+                                ?>
+                                <?php
+                                if (in_array(2, $this->listview)) {
+                                    
+                                    if($tree[$i - 1]['Interval_Value']==1 || $tree[$i - 1]['Interval_Value']==0){
+                                            $frequency = $FreqData[$tree[$i - 1]['AU_Frequency_ID']];
+                                        }else{
+                                            $frequency = $tree[$i - 1]['Interval_Value'].'   '.$CustomFreq[$tree[$i - 1]['AU_Frequency_ID']];
+                                        }
+                                    
+                                    
+                                    ?>
+                                    <td><?php echo $frequency;//echo $tree[$i - 1]['Frequency_name']; ?></td>
+                                    <?php
+                                }
+                                ?>
+                                <?php
+                                if (in_array(3, $this->listview)) {
+                                    ?>
+                                    <td><?php echo $tree[$i - 1]['Start_date']; ?></td>
+                                    <?php
+                                }
+                                ?>
+                                <?php
+                                if (in_array(4, $this->listview)) {
+                                    ?>
+                                    <td><?php echo $tree[$i - 1]['End_date']; ?></td>
+                                    <?php
+                                }
+                                ?>
+                                <?php
+                                if (in_array(5, $this->listview)) {
+                                    ?>
+                                    <td><?php echo $tree[$i - 1]['Seasonal_Task']; ?></td>
+                                    <?php
+                                }
+                                ?>
+                                <?php
+                                if (in_array(6, $this->listview)) {
+                                    ?>
+                                    <td><?php echo $tree[$i - 1]['Seasonal_Start_Date']; ?></td>
+                                    <?php
+                                }
+                                ?>
+                                <?php
+                                if (in_array(7, $this->listview)) {
+                                    ?>
+                                    <td><?php echo $tree[$i - 1]['Seasonal_End_Date']; ?></td>
+                                    <?php
+                                }
+                                ?>
+                                <?php
+                                if (in_array(8, $this->listview)) {
+                                    
+                                    if(empty($tree[$i - 1]['eqp_Startdate_month'])){
+                                       $startdateMonth =  $tree[$i - 1]['Startdate_month'];                                        
+                                    }else{                                        
+                                        $startdateMonth = $tree[$i - 1]['eqp_Startdate_month'];
+                                    }
+                                    ?>
+                                    <td><?php echo $startdateMonth; ?></td>
+                                    <?php
+                                }
+                                ?>
+                                <?php
+                                if (in_array(9, $this->listview)) {
+                                    ?>
+                                    <td><?php echo $tree[$i - 1]['startdateadj_name']; ?></td>
+                                    <?php
+                                }
+                                ?>
+                                <?php
+                                if (in_array(10, $this->listview)) {
+                                    ?>
+                                    <td><?php echo $tree[$i - 1]['JobTime_Name']; ?></td>
+                                    <?php
+                                }
+                                ?>
+                                <?php
+                                if (in_array(11, $this->listview)) {
+                                    ?>
+                                    <td><?php
+                    if ($tree[$i - 1]['overtime'] == 0) {
+                        echo 'No';
+                    } else {
+                        echo 'Yes';
+                    }
+                                    ?></td>
+                                        <?php
+                                }
+                                ?>
+                                <?php
+                                if (in_array(12, $this->listview)) {
+                                    ?>
+                                    <td><?php echo $tree[$i - 1]['group_name']; ?></td>
+                                    <?php
+                                }
+                                ?>                        
+
+                                <td><a onclick="javascript:openpopup('<?php echo $this->baseUrl(); ?>/pm/editequipmentdetailtask/eqp_detail_id/<?php echo $this->eqp_detail_id; ?>/subset_id/<?php echo $tree[$i - 1]['AU_Template_Task_ID']; ?>');" href="#CreateNewMultiCon"><img src="<?php echo $this->baseUrl(); ?>/public/images/edit.png"></a></td>
+                            </tr>
+                            <?php
+                        }
+                    }
+                    ?>
+                </table>  
+               </div>
+                <?php
+            }
+            ?>            
+        </div>
+        <!-- End listing  -->
+    </section>
+</div>
+<div class="loader" style="display:none;" > <img src="<?php echo BASEURL . 'public/images/loader.gif'; ?>"></div>
+

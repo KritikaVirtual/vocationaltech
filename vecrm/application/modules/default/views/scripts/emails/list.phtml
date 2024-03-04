@@ -1,0 +1,51 @@
+<div class="container-right">
+	<section style="z-index:9999" class="w-48 fr ch-home-form">
+        <section class="ch-form-header ">
+            <h3>List of Email Template </h3>
+        </section>
+        
+        
+        <div class="message">
+			<?php $em = new Zend_Session_Namespace('etemp_message'); 
+		    echo $em->msg;
+		     $em->setExpirationSeconds(1);
+		 ?>
+        </div>
+        <div id="email_list">
+			<?php if($this->emailData){?>
+				<table width="98%" class="priority-list">
+				   <tr>
+					   <th>Title</th>
+					   <th>Subject</th>
+					   <th>Status</th>
+					   <th>Action</th>
+				   </tr>
+				   <?php foreach($this->emailData as $edata){?>
+					   <tr>
+						   <td><?php echo $edata['email_title'];?></td>
+						   <td><?php echo $edata['email_subject'];?></td>
+						   <td><?php echo ($edata['status'])? 'Active' : 'Deactive';?></td>
+						   <td>
+							   <div class="col02 coladdlastcol lastcol edit_delete_icon">
+							      <a href="<?php echo BASEURL.'emails/editemail/id/'.$edata['id'];?>"  title="Edit"><img src="<?php echo BASEURL . 'public/images/edit.png'?>" /></a> 
+							      <?php /*<a href="javascript:void(0);"  title="Delete" onclick="if (confirm('Are you sure to delete this email template?'))location.href='<?php echo BASEURL.'emails/deleteemail/id/'.$edata['id'];?>'"><img src="<?php echo BASEURL . 'public/images/delete.png'?>" /></a>*/?>
+							   </div>
+							</td>
+					   </tr>
+					<?php }?>
+                    <tr><th colspan="4"><div class="addbutton email_head"><a href="<?php echo BASEURL.'emails/create';?>">Add Email Template</a></div></th></tr>
+				</table>
+				<?php 
+				/*
+				 pagination code. 
+				*/
+				?>   
+				 <?php if(count($this->emailData)>0 && !empty($this->emailData)){
+				 echo $this->paginationControl($this->emailData, 'Sliding', 'pagination.phtml'); 
+				 }?>
+			<?php }
+			else 
+			    echo 'No email template added.';?>	
+        </div>
+       </section> 
+</div>

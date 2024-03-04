@@ -1,0 +1,197 @@
+<?php 
+/*
+ *  Edit work order section *
+*/
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/editworkorder.js');
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/ckeditor/ckeditor.js');
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/ckeditor/adapters/jquery.js');
+$work_status = new Model_WorkStatus();
+$workstatus = $work_status->getWorkStatus();
+?>
+<div class="container-right" id="work-order-data">
+	<section id="first" class="w-48 fr ch-home-form" style="z-index:9999">
+    <section class="ch-form-header ">
+        <h3>Update Work Order</h3>
+    </section>
+	<div class="create-work-order">		
+		<form name="createWorkOrderForm" id="createWorkOrderForm" method="post" action="<?php echo $this->baseUrl().'/workorder/updateorder'?>" onsubmit="return checkFormValidation()">
+           <div class="form-section">
+	<div class="workorder_error" id="message"></div>
+	<div class="left-order">
+		<div class="tenant-name">
+			<span>Tenant Name</span>
+			<div>
+				<?php ?>
+				<input type="hidden" name="wo_id" value="<?php echo $this->woId;?>"/>
+				<?php echo $this->tenantData['tenantName'];?>	
+			</div>
+		</div>
+		<div class="suite">
+				<span>Suite/Location</span>
+				<div>
+					<?php echo $this->workOrder['suite_location'];?>
+				</div>
+				<div>
+					<?php echo $this->workOrder['suite_location2'];?>
+				</div>
+		</div>
+		<div class="tenant-address" id="tenant_address">
+		   <span><?php echo $this->tenantData['tenantName'];?></span>
+		  <span><?php echo $this->tenantData['tenantContact'];?></span>
+		   <span><?php echo $this->tenantData['address1'];?></span>
+		   <?php if($this->tenantData['address2']!=''){?>
+			   <span><?php echo $this->tenantData['address2'];?></span>
+		   <?php }?>
+		   <span>Suite No-<?php echo $this->tenantData['suite'];?></span>
+		   <span><?php echo $this->tenantData['city'];?></span>
+		   <span><?php echo $this->tenantData['state'];?>,<?php echo $this->tenantData['postalCode'];?></span>
+		</div>
+		<div class="email-id">
+				<?php echo $this->tenantData['email']?>
+		</div>
+	</div>
+	<div class="right-order">
+		  <div class="date-requested">
+			  <span>Date Requested</span>
+			  <div>
+				 <input type="text" name="date_requested" id="date_requested" placeholder="YYYY-MM-DD"  value="<?php echo $this->workOrder['date_requested']?>" readonly/>
+			  </div>   
+		  </div>
+		  <div class="time-requested">
+			  <?php 
+			     $timeRequest = $this->workOrder['time_requested'];
+			     $trequest = explode(':',$timeRequest);
+			     $hour = $trequest[0];
+			     $time_minute = explode(" ", $trequest[1]);
+			     $minute = $time_minute[0];
+			     $am_pm = $time_minute[1];
+			  ?>
+			  <span>Time Requested</span>
+			   <div class="time-field">
+				   <select name="hour" id="hour">
+					   <option value="">Hour</option>
+					   <?php 
+						  for($i=1; $i<=12; $i++){
+							  if($i<10)
+							   $i= '0'.$i;
+							 echo '<option value="'.$i.'"';
+							 if($i== $hour)
+							 echo 'selected';
+							 echo '>'.$i.'</option>';  
+						  }
+					   ?>
+				   </select> :
+				   <select name="minute" id="minute">
+					   <option value="">Minute</option>
+					   <?php 
+						  for($i=0; $i<60; $i+=5){
+							  if($i<10)
+							   $i= '0'.$i;
+							 echo '<option value="'.$i.'"';
+							  if($i== $minute)
+							 echo 'selected';
+							 echo '>'.$i.'</option>';  
+						  }
+					   ?>
+				   </select>
+				   <select name="am_pm" id="am_pm">
+					   <option value="am" <?php if($am_pm=='am') echo 'selected';?>>am</option>
+					   <option value="pm" <?php if($am_pm=='pm') echo 'selected';?>>pm</option>
+				   </select>								   
+				</div>   
+			</div>
+			<div class="building-priority">
+			   <span>Priority</span>
+			   <div class="priority-field">
+				  <select name="priority" id="priority">
+					  <option value="">Select Priority</option>
+					  <?php foreach($this->priorityDetail as $priorData){
+						    echo '<option value="'.$priorData['pid'].'"';
+						    if ($priorData['pid']==$this->workOrder['priority'])
+						    echo 'selected';
+						    
+						    echo '>'.$priorData['priorityName'].'</option>';
+						  }?>
+				  </select>
+			   </div>
+		   </div>
+		   <div class="building-category">
+			   <span>Category</span>
+			   <div class="category-field">
+				  <select name="category" id="category">
+					  <option value="">Select Category</option>
+					  <?php foreach($this->categoryDetail as $catData){
+								 if($catData['visible_status']=='1' && $catData['include_exclude']==''){
+									echo '<option value="'.$catData['cat_id'].'"';
+									 if ($catData['cat_id']==$this->workOrder['category'])
+									echo 'selected';
+									echo '>'.$catData['categoryName'].'</option>';
+								 }else if ($catData['visible_status']=='1' && $catData['include_exclude']!=''){
+									 $tenant_array = explode(",",$catData['include_exclude']);
+									 if(in_array($this->tenantData['tenantId'],$tenant_array)){
+										echo '<option value="'.$catData['cat_id'].'"';
+										 if ($catData['cat_id']==$this->workOrder['category'])
+										echo 'selected';
+										echo '>'.$catData['categoryName'].'</option>';
+									 }
+								 }else{
+									 $tenant_array = explode(",",$catData['include_exclude']);
+									 if(!in_array($this->tenantData['tenantId'],$tenant_array)){
+										echo '<option value="'.$catData['cat_id'].'"';
+										 if ($catData['cat_id']==$this->workOrder['category'])
+										echo 'selected';
+										echo '>'.$catData['categoryName'].'</option>';
+									 }
+								 }
+							  }?>
+					  
+				    </select>
+			   </div>
+		   </div>
+		   <div class="work-status">
+			   <span>Status</span>
+			   <div class="status-dropdown">
+					<select name="work_status" id="work_status">
+						<?php foreach($workstatus as $ws){?>
+							<option value="<?php echo $ws['id'];?>" <?php if($ws['id']==$this->workOrder['work_status']) echo 'selected';?>><?php echo $ws['title'];?></option>
+						<?php } ?>	
+					</select>
+			   </div>
+			   
+		   </div>
+	</div>
+	<div class="work-order-request">
+		  <span>Work Order Request</span>
+		  <div>
+			  <textarea name="work_order_request" id="work_order_request" cols="80" rows="10">
+			  <?php 
+			    echo $this->workOrder['work_order_request'];
+			  ?>
+			  </textarea>
+		  </div>
+	</div>
+	<div class="buttons">
+		  <input type="submit" name="save" value="Update" class="confirm"/>
+		  <input type="button" name="cancel" value="Cancel" class="cancel" onclick="cancelUser()"/>
+	</div>
+</div>
+</form>
+</div>
+</section>
+<script type="text/javascript">
+		CKEDITOR.disableAutoInline = true;
+
+		$( document ).ready( function() {
+			$( '#work_order_request' ).ckeditor(); // Use CKEDITOR.replace() if element is <textarea>.
+		} );
+    </script>
+</div>	
+<script type="text/javascript">
+	$(function() {
+	$( "#date_requested" ).datepicker({
+		 dateFormat:'yy-mm-dd',
+		 changeMonth: true,
+		 changeYear: true,minDate: 0
+		 });
+});
+</script>

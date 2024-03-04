@@ -1,0 +1,24 @@
+#sct_main ul li{
+}
+
+#sct_main ul li a{
+	display:block;
+	width:126px;
+	height:20px;
+	float:left;
+	text-align:center;;
+	border:1px solid #CCC;
+	margin:0 10px 10px 0;
+	padding-top:125px;
+}
+
+#sct_main ul li a.last{
+	margin:0;
+}
+
+#sct_main ul li a.my-account{background:url(../img/menu/my-account.png) no-repeat top center}
+#sct_main ul li a.bgas{background:url(../img/menu/leads.png) no-repeat top center}
+#sct_main ul li a.call-back{background:url(../img/menu/leads.png) no-repeat top center}
+#sct_main ul li a.ban-ip{background:url(../img/menu/pages.png) no-repeat top center}
+#sct_main ul li a.excel-to-database{background:url(../img/menu/excel.png) no-repeat top center}
+#sct_main ul li a.log-out{background:url(../img/menu/log-out.png) no-repeat top center}

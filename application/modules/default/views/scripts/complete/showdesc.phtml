@@ -1,0 +1,27 @@
+<div id="work_description_div">
+	<h1>Description Of Work</h1>
+	<div class="desc_row">
+			<select name="pre_notes" id="pre_notes" onchange="setNote(this)" width="60">
+			  <option value="">Select From Predefined Note</option>
+			  <?php
+				 if($this->noteList!=''){
+					 foreach($this->noteList as $nl){
+						?>
+						<option value="<?php echo $nl['notes']?>"><?php echo $nl['notes'];?></option>
+						<?php
+					 }
+				 }
+			  ?>
+			</select>
+	</div>
+	<div class="desc_row">
+		<span id="desc_error" class="field_error"></span>
+		<input type="hidden" id="addtempdecs" value="">
+		<textarea name="work_description" id="work_description" cols="50" rows="5"><?php if($this->wdData!=''){			  echo stripslashes ($this->wdData['description']);
+			  }?></textarea>
+	</div>
+	<div class="buttons">
+				   <button type="button" name="save" id="save" value="Save" onclick="saveDescriptionTemp('<?php echo $this->woId?>')">Save</button>
+				   <button type="button" name="cancel" id="cancel" value="Cancel" onclick="cancelWoDesc()">Cancel</button>
+			  </div>
+</div>

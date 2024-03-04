@@ -1,0 +1,380 @@
+<?php
+
+
+   // to check the read,write and no access
+	$user_info = $this->acessHelper->checkAccess($this->roleId,$this->user_info_id); 
+	
+   /*override access by custom user access if exist */
+	$customeAccessmodel = new Model_UserAccess();
+	$customeAccessmodeld = $customeAccessmodel->getUserCustomAccess($this->userId,$this->user_info_id);
+	if($customeAccessmodeld[0]) {
+		$user_info = $customeAccessmodeld[0];
+	}
+	/* end overriding access */
+
+    $moduleMapper = new Model_UserBuildingModule();
+	//print_r($this->select_build_id);
+    $moduleAccess = $moduleMapper->getModuleByBuildingId($this->select_build_id, 4);
+	
+    $buildhasAccess = array();
+    if ($moduleAccess) {
+            foreach ($moduleAccess as $moduleAccessVal) {
+                    $buildhasAccess[] = $moduleAccessVal->module_id;
+            }
+    }
+    
+
+$reportModel = new Model_Report();
+$reportDetailLinks = '';
+$dashBoardViewsdetails = '';
+$coiIdAll = '';
+
+
+if ($this->view_type != 'detail') {
+    $reportDetailLinks = $reportModel->getReport($this->custID, 59);
+    $dashBoardViewsdetails = $reportModel->getReport($this->custID, 58);
+	 
+} else {
+    $reportDetailLinks = $reportModel->getReport($this->custID, 3);
+}
+
+?>
+
+
+
+
+<style>
+    .bs-example{
+        margin: 20px;
+    }
+</style>
+<div class="container-right " style="padding: 10px;">
+
+<ol id="toc">
+            <?php
+            foreach ($this->companyListing as $cb) {
+                if ($cb['build_id'] == $this->select_build_id) {
+                    $uniqueCostCenter = $cb['uniqueCostCenter'];
+                }
+            ?>
+                <li>
+                    <a class="<?php if ($cb['build_id'] == $this->select_build_id) echo 'active'; ?>" href="<?php echo $this->baseUrl() . '/coi/requirements/bid/' . $cb['build_id']; ?>">
+                        <span>
+                            <?php echo $cb['buildingName']; ?>
+                        </span>
+                    </a>
+                </li>
+            <?php } ?>
+        </ol>
+<br/>
+<br/>
+
+
+<?php
+                    $woCOI = new Model_CioRequirement();                    
+                    if ($reportDetailLinks != '') {
+                        if ($this->select_build_id != '') {
+                                
+                                $coilist = $woCOI->getReportByBId($this->select_build_id);
+								
+                               if ($coilist != '') {
+                                    foreach ($coilist as $coiId) {
+		
+                                        $coiIdAll = $coiIdAll . $coiId['coi_au_requir_ID'] . ',';
+										
+                                    }
+                                }
+                            }
+                       
+                    }
+					
+                    ?>
+				    
+	
+<!-- Report Link -->
+            <?php if ($reportDetailLinks != '') { ?> <div class="tabmenu" ><ul style="padding:0px;"><?php
+                foreach ($reportDetailLinks as $reportvalue) {
+					if ($reportvalue->Report_Type == 'Flash') {
+                        $report_type = 'reports/VisionReportEngine/index.php?stimulsoft_client_key=ViewerFx&stimulsoft_';
+                       } else {
+                        $report_type = 'vnsreports/index.php?';
+                        }
+					
+                    $reportOption = explode(',', $reportvalue->report_option);
+				
+					
+                    ?> <li class="report_text" ><a   <?php if ($reportvalue->report_target == 1) { ?> target='_blank' <?php } ?> href="<?php echo BASEURL; ?><?php echo $report_type; ?>report_key=<?php echo $reportvalue->report_mrt; ?><?php
+                            if (in_array('[[++user_id]]', $reportOption)) {
+                                echo '&User=' . $this->userId;
+                            }
+                            ?><?php
+                            if ((in_array('[[++CostCenterNumber]]', $reportOption)) && $uniqueCostCenter != '') {
+                                echo '&Cost_Center_Number=' . $uniqueCostCenter;
+                            }
+                            ?><?php
+                            if ((in_array('[[++CostCenterAllBuildings]]', $reportOption)) && $uniqueCostCenterAll != '' && $this->select_build_id == '') {
+                                echo '&Cost_Center_Number=' . rtrim($uniqueCostCenterAll, ',');
+                            }
+                            ?><?php
+                            if ((in_array('[[++KeyBuildingNumber]]', $reportOption)) && $this->select_build_id != '') {
+                                echo '&buildkey=' . $this->select_build_id;
+                            }
+                            ?><?php
+                            if ((in_array('[[++KeyBuildingAllBuildings]]', $reportOption)) && $buildIdReportAll != '' && $this->select_build_id == '') {
+                                echo '&buildkey=' . rtrim($buildIdReportAll, ',');
+                            }
+                            
+                            ?><?php
+                            if ((in_array('[[++coi_au_requir_id]]', $reportOption)) && $coiIdAll != '') {
+                                echo "&coiAuRequirId=" . rtrim($coiIdAll, ',');
+                            }
+                            ?>" ><?php echo $reportvalue->report_name; ?> </a> </li> <?php } ?> </ul></div>	<?php } ?>	
+
+
+<br/> 
+
+   <?php 
+		
+        if (in_array(4, $buildhasAccess)) {
+        ?>
+    <ul class="nav nav-tabs">
+        <li class="nav-item active">
+            <a href="#home" class="nav-link" data-toggle="tab">General Liability</a>
+        </li>
+        <li class="nav-item">
+            <a href="#profile" class="nav-link" data-toggle="tab">Automobile Liability</a>
+        </li>
+        <li class="nav-item">
+            <a href="#messages" class="nav-link" data-toggle="tab">Umbrella Liability</a>
+        </li>
+
+        <li class="nav-item">
+            <a href="#Workers" class="nav-link" data-toggle="tab">Workers Compensation</a>
+        </li>
+
+        
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane active" id="home">
+            <br>
+           <table width="98%" class="priority-list">
+
+                        
+                        <tr>
+                            <th>Description</th>
+                            <th>Tenant</th>
+                            <th>Vender</th>
+                            <?php if($user_info->is_write == 1){ ?>
+                            <th>Action</th>
+                            <?php }?>
+                        </tr>
+                        <tbody>
+                        <?php 
+						if(!empty($this->templatedetails)){
+						foreach ($this->templatedetails as $val){ ?>
+                                 <tr>
+                                <td><?php echo $val->coi_vt_default_description ;?></td>
+                                <td style="text-align: right;"><?php echo number_format($val->coi_au_defaults_Tenant);?></td>
+                                <td style="text-align: right;"><?php echo number_format($val->coi_au_defaults_Vendor);?></td>
+                                <?php if($user_info->is_write == 1){ ?>
+                               <td style="text-align: center;"><div class="col02 coladdlastcol lastcol edit_delete_icon">
+                                    <?php $id= $val->coi_au_requir_ID;?>
+                                        <a href="<?php echo BASEURL . 'coi/editrequirement/id/' . $id; ?>"  title="Edit"><img src="<?php echo BASEURL . 'public/images/edit.png' ?>" /></a> 
+                                    </div>
+                                </td>
+                            <?php }?>
+                            </tr>
+                            <?php
+                        }}else{?>
+						<tr>
+									  <td colspan="6">No Record Exist.</td>
+								  </tr>					
+						<?php } ?>
+
+                    </tbody></table>
+
+        </div>
+        <div class="tab-pane fade" id="profile">
+            
+
+             <br>
+           <table width="98%" class="priority-list">
+
+                        
+                        <tr>
+                            <th>Description</th>
+                            <th>Tenant</th>
+                            <th>Vender</th>
+                            <?php if($user_info->is_write == 1){ ?>
+                            <th>Action</th>
+                            <?php }?>
+                        </tr>
+                        <tbody>
+                        <?php 						
+						if(!empty($this->templatedetailsseconnd)){
+							foreach ($this->templatedetailsseconnd as $valst){ ?>
+                                 <tr>
+                                <td><?php echo $valst->coi_vt_default_description ;?></td>
+                                <td style="text-align: right;"><?php echo number_format($valst->coi_au_defaults_Tenant);?></td>
+                                <td style="text-align: right;"><?php echo number_format($valst->coi_au_defaults_Vendor);?></td>
+                                <?php if($user_info->is_write == 1){ ?>
+                              <td style="text-align: center;">
+                                    <div class="col02 coladdlastcol lastcol edit_delete_icon">
+
+                                         <?php $id= $valst->coi_au_requir_ID;?>
+                                        
+
+                                             <a href="<?php echo BASEURL . 'coi/editrequirement/id/' . $id; ?>"  title="Edit"><img src="<?php echo BASEURL . 'public/images/edit.png' ?>" /></a> 
+                                        
+                                                                            </div>
+                                </td>
+                            <?php }?>
+                            </tr>
+                           <?php
+                        }}else{?>
+						<tr>
+									  <td colspan="6">No Record Exist.</td>
+								  </tr>					
+						<?php } ?>
+                                                   
+                                                   
+                                                   
+                                                 
+                                                   
+                                                 
+                                            
+                      
+
+                    </tbody></table>
+
+
+
+         </div>
+        <div class="tab-pane fade" id="messages">
+
+
+            <br>
+           <table width="98%" class="priority-list">
+
+                        
+                        <tr>
+                            <th>Description</th>
+                            <th>Tenant</th>
+                            <th>Vender</th>
+                            <?php if($user_info->is_write == 1){ ?>
+                            <th>Action</th>
+                            <?php }?>
+                        </tr>
+                        <tbody>
+                        <?php 
+						if(!empty($this->templatedetailsthird)){
+						foreach ($this->templatedetailsthird as $ute){ ?>
+                                 <tr>
+                                <td><?php echo $ute->coi_vt_default_description ;?></td>
+                                <td style="text-align: right;"><?php echo number_format($ute->coi_au_defaults_Tenant);?></td>
+                                <td style="text-align: right;"><?php echo number_format($ute->coi_au_defaults_Vendor);?></td>
+                                <?php if($user_info->is_write == 1){ ?>
+                                <td style="text-align: center;">
+                                    <div class="col02 coladdlastcol lastcol edit_delete_icon">
+                                        <?php $id= $ute->coi_au_requir_ID;?>
+                                        
+
+                                             <a href="<?php echo BASEURL . 'coi/editrequirement/id/' . $id; ?>"  title="Edit"><img src="<?php echo BASEURL . 'public/images/edit.png' ?>" /></a> 
+                                        
+                                                                            </div>
+                                </td>
+                            <?php }?>
+                            </tr>
+                            <?php
+                        }}else{?>
+						<tr>
+									  <td colspan="6">No Record Exist.</td>
+								  </tr>					
+						<?php } ?>
+                                                   
+                                                   
+                                                   
+                                                 
+                                                   
+                                                 
+                                            
+                      
+
+                    </tbody></table>
+
+
+
+             
+        </div>
+
+
+        <div class="tab-pane fade" id="Workers">
+
+
+             <br>
+           <table width="98%" class="priority-list">
+
+                        
+                        <tr>
+                            <th>Description</th>
+                            <th>Tenant</th>
+                            <th>Vender</th>
+                            <?php if($user_info->is_write == 1){ ?>
+                            <th>Action</th>
+                            <?php }?>
+                        </tr>
+                        <tbody>
+                        <?php 
+						if(!empty($this->templatteWorkers)){
+						foreach ($this->templatteWorkers as $workorv){
+
+
+            //echo $val->coi_vt_default_description
+            ?>
+                                 <tr>
+                                <td><?php echo $workorv->coi_vt_default_description ;?></td>
+                                <td style="text-align: right;"><?php echo number_format($workorv->coi_au_defaults_Tenant);?></td>
+                                <td style="text-align: right;"><?php echo number_format($workorv->coi_au_defaults_Vendor);?></td>
+                                <?php if($user_info->is_write == 1){ ?>
+                                <td style="text-align: center;">
+                                    <div class="col02 coladdlastcol lastcol edit_delete_icon">
+                                        <?php $id= $workorv->coi_au_requir_ID;?>
+                                        
+
+                                             <a href="<?php echo BASEURL . 'coi/editrequirement/id/' . $id; ?>"  title="Edit"><img src="<?php echo BASEURL . 'public/images/edit.png' ?>" /></a> 
+                                        
+                                                                            </div>
+                                </td>
+                          <?php }?>
+                            </tr>
+                            <?php
+                        }}else{?>
+						<tr>
+									  <td colspan="6">No Record Exist.</td>
+								  </tr>					
+						<?php } ?>
+                                                   
+                                                   
+                                                   
+                                                 
+                                                   
+                                                 
+                                            
+                      
+
+                    </tbody></table>
+
+
+
+           
+             
+        </div>
+    </div>
+	<?php
+    } else {
+        echo '<div class="clearfix"> </div>';
+        echo 'This Building does not have the access of this module.';
+    }
+    ?>
+</div>
+

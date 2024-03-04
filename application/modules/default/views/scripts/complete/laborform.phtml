@@ -1,0 +1,181 @@
+<?php
+	$companyModel = new Model_Company();
+	$nottenant = 1; // this for not listing the tenant user here.
+	$users = $companyModel->getUserByBuildingId($this->bId,$nottenant);
+	$blModel = new Model_BillLabor();
+	$blList = $blModel->getActiveBillLaborByBId($this->bId);
+	
+	 $brModel = new Model_BillRate();
+	 $brList = $brModel->getActiveBillRateByBId($this->bId);
+	 
+	 $job_time = '00:00'; 
+	 
+	$wpModel = new Model_WoParameter();
+	$wpDetails = $wpModel->getWoParameterByBid($this->bId);
+	
+	if($wpDetails){
+		$time_charge = $wpDetails[0]['time_min_charge'];
+		$time_fact = explode(" ",$time_charge);
+		$time_fact_measure=trim($time_fact[1]);
+		$time_fact_minute=trim($time_fact[0]);
+		if($time_fact_measure=='Minutes') { 
+                    $job_time = '00:'.$time_fact[0]; 
+                } else { 
+                    $job_time = $time_fact[0].':00';  
+                    
+                }
+		
+	}
+	
+?>
+<script type="text/javascript">
+	var labor_user = [];
+	var labor_charge = [];
+	var default_lcharge = [];
+	<?php if($blList){
+		  foreach($blList as $bl){
+			  if($bl['assign_to']!=''){
+				  $bl_users = explode(",",$bl['assign_to']);
+				  foreach($bl_users as $buser){					  
+					  ?>
+					  if(!labor_user['<?php echo $buser?>']){
+						  labor_user['<?php echo $buser?>'] = '<?php echo $bl['blid'];?>';
+					  }
+				 <?php	  
+				  }
+		      }
+		      
+		      if($bl['set_default']=='1'){ 
+			  $default_lcharge['dft_labor'] = $bl['blid'];
+			  $default_lcharge['dft_charge'] = $bl['charge_hour'];
+				  ?>
+				  default_lcharge['dft_charge'] = '<?php echo $bl['charge_hour'];?>';
+				  default_lcharge['dft_labor'] = '<?php echo $bl['blid'];?>';
+				 <?php 
+			  }
+		      ?>
+		      labor_charge['<?php echo $bl['blid'];?>'] = '<?php echo $bl['charge_hour'];?>';
+		   <?php 
+		   }		
+		}?>
+	
+</script>
+<div id="ct_labor_fm_div" class="bd-dft-cls">
+	<h1>Add New Labor Charges</h1>
+	<span>Enter Employee Informations</span>
+	<div class="message">
+		<span id="success_msg" class="success"></span>
+		<span id="error_msg" class="error"></span>
+	</div>
+	<div id="labor_form_ data">
+		 <div class="cw_row">
+			 <label>Employee</label>
+			 <div class="cw-ibox-row">
+				 <span class="field_error" id="cwerr_emp"></span>
+				 <select name="emp_id" id="emp_id" onchange="setCharge(this.value)">
+					 <option value="">-- Select --</option>
+					 <?php
+					 if($users){ 
+					     foreach ($users as $key => $value) { ?>
+							<option value="<?php echo $value->uid; ?>">
+								<?php echo stripslashes($value->lastName).','.stripslashes($value->firstName); ?>
+							</option>
+					<?php }
+					} ?>
+				 </select>
+			 </div>
+		 </div>
+		 <div class="cw_row">
+			  <label>Charge/Hour</label>
+			  <div class="cw-ibox-row">
+				 <span class="field_error" id="cwerr_charge"></span>
+				 <div class="charge_field"> 
+					   <input type="text" name="charge_hour" id="charge_hour" onkeypress="return isNumber(event)" value='<?php foreach ($blList as $bl) { if($bl['set_default']==1) { echo $bl['charge_hour']; }} ?>'>
+					   <span class="field_error" id="cwerr_charge1"></span>
+					   <select name="labor_charge" id="labor_charge" onchange="setLaborCharge(this.value)">
+							 <option value="">-- Select --</option>
+							 <?php
+							 if($blList){ 
+								 foreach ($blList as $bl) { ?>
+									<option value="<?php echo $bl['blid']; ?>" <?php if($bl['set_default']==1) { ?> selected <?php }?> >
+										<?php echo $bl['description']; ?>
+									</option>
+							<?php }
+							} ?>
+						</select>
+				 </div>	 
+			  </div>
+		 </div>
+		 <div class="cw_row">
+			 <label>Rate Charge</label>
+			 <div class="cw-ibox-row">
+				 <span class="field_error" id="cwerr_rate"></span>
+				 <select name="rate_charge" id="rate_charge">
+					 <option value="">-- Select --</option>
+					 <?php
+							 if($brList){ 
+								 foreach ($brList as $br) { ?>
+									<option value="<?php echo $br['brid']; ?>" <?php if($br['set_default']==1) { ?> selected  <?php } ?>>
+										<?php echo $br['description']; ?>
+									</option>
+							<?php }
+							} ?>
+				 </select>
+	 		 </div>
+		 </div>
+		 <div class="cw_row">
+			 <label>Job Time (HH:MM)</label>
+			 <div class="cw-ibox-row">
+				 <span class="field_error" id="cwerr_job"></span>
+				 <input type="text" name="job_time" id="job_time" value="<?php echo $this->job_time;?>" onkeypress="return isTime(event)" onkeydown="return isOldValue(event)" maxlength="5"/>
+			 </div>
+		 </div>
+	</div>
+	<div class="buttons">
+	<input type="hidden" id="addtemplabor" value="">
+				   <button type="button" name="save_labor" id="save_labor" value="Save" onclick="saveLaborDataTemp('<?php echo $this->woId;?>')">Save</button>
+				   <button type="button" name="cancel" id="cancel" value="Cancel" onclick="cancelLaborForm()">Cancel</button>
+	  </div>
+</div>
+<script>
+    var old_job_time=$("#job_time").val();
+	function isOldValue() {
+	old_job_time=$("#job_time").val();
+	}
+    $('#job_time').bind('input', function() {
+        var job_time= $("#job_time").val();
+		
+        var job_time_split = job_time.split(":");
+		if(job_time_split.length == 2) {
+		    if(job_time_split[1].length <= 2 && job_time_split[0].length <= 2 ) {
+               if(parseInt(job_time_split[1]) < 60 || isNaN(parseInt(job_time_split[1]))) {
+				  if(parseInt(job_time_split[0])!=0) {
+				  if(isNaN(parseInt(job_time_split[0]))) {
+				   $("#job_time").val('00'+':'+job_time_split[1]);
+				  } else{
+				     $("#job_time").val(parseInt(job_time_split[0])+':'+job_time_split[1]);
+					 }
+					 }
+		        } else {
+				     var old_job_time_split = old_job_time.split(":");
+					 if(parseInt(old_job_time_split[0])!=0) {
+				     $("#job_time").val(parseInt(old_job_time_split[0])+':'+old_job_time_split[1]);
+					 } else {
+					 $("#job_time").val(old_job_time);
+					 }
+				}		
+		
+				} else { 
+					//return false;  
+					}
+		
+			} else {
+				
+				//return false; 
+			} 
+    }); 
+	
+	function checkJobTime() {
+	
+	}
+</script>

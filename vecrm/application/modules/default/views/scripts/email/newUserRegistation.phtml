@@ -1,0 +1,49 @@
+<table cellpadding="0" cellspacing="0" align="center" style="margin:0 auto; box-shadow:0 0 10px #888; width:60%;">
+ <tr>
+    <td align="left"><a href="<?php echo BASEURL;?>"><img src="<?php echo BASEURL.'/public/images/logo.png';?>" style="height: 50px; margin: 10px 0 10px 12px; width: 250px;" ></a></td>
+    </tr>
+  <tr>
+    <td align="center"><table border="0" cellspacing="3" cellpadding="3" style="background: none repeat scroll 0 0 gray; color: white; margin: 12x; padding: 10px; width: 97%; font-size: 14px; <?php if(!count($this->building)>0) echo 'margin-bottom: 10px;';?>">
+        <tr>
+          <td align="left" valign="middle"><span style="float: left; width: 150px;">Date :</span> <span style="width: 80px; display:inline-block"><?php echo date('m/d/y');?></span> <span style="width: 80px; display:inline-block">Time :</span> <?php echo date('h:i a');?></td>
+        </tr>
+         <tr>
+          <td align="left" valign="middle"><span style="float: left; width: 150px;"><?php echo $this->name; ?>,</span></td>
+        </tr>
+        <tr>
+          <td align="left" valign="middle"><span style="float: left; width: 150px;">Username :</span> <?php echo $this->email; ?></td>
+        </tr>
+        <tr>
+          <td align="left" valign="middle"><span style="float: left; width: 150px;">User Password :</span> <?php echo $this->password; ?></td>
+        </tr>
+        <tr>
+          <td align="left" valign="middle"><span style="float: left; width: 150px;">User Access :</span> <?php echo $this->access; ?></td>
+        </tr>
+        <tr>
+          <td align="left" valign="middle"><a href="<?php echo BASEURL;?>">Please click this link to login to system</a></td>
+        </tr>
+        <?php if(count($this->building)>0){?>
+        <tr>
+          <td align="left" valign="middle">Access to the following building(s) has been granted :</td>
+        </tr>
+        <?php }?>
+      </table></td>
+  </tr>
+  <?php if(count($this->building)>0){?>
+  <tr>
+    <td align="center"><table cellpadding="5" cellspacing="3" style="background: none repeat scroll 0 0 #f2f2f2; color: black; margin: 0 0 12px; padding: 10px; width: 97%; font-size: 14px;">
+        <tr>
+          <th align="left" valign="middle">Building Name(s)</th>
+          <th align="left" valign="middle">Module(s)</th>
+        </tr>
+        <?php foreach($this->building as $bulid){?>
+        <tr>
+          <td align="left" valign="middle"><?php echo $bulid['building'];?></td>
+          <td align="left" valign="middle"><?php echo $bulid['module'];?></td>
+        </tr>
+        <?php }?>
+        </table>
+      </td>
+  </tr>
+  <?php }?>
+</table>

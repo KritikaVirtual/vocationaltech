@@ -1,0 +1,893 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<StiSerializer version="1.02" type="Net" application="StiReport">
+  <Dictionary Ref="1" type="Dictionary" isKey="true">
+    <BusinessObjects isList="true" count="0" />
+    <Databases isList="true" count="1">
+      <Con_workorders Ref="2" type="Stimulsoft.Report.Dictionary.StiMySqlDatabase" isKey="true">
+        <Alias>Con_workorders</Alias>
+        <ConnectionStringEncrypted>w9rP680MS91vFTHc6kwhD9V00YjmDKmZYmixhE1c8RfZeP8Cx0+rhWl37ZDqXOJj71LPwmJdo5l0S83MZQTjZ8JW2cJIBWPF7FrR3GEcpUbGes3LRldDgeE=</ConnectionStringEncrypted>
+        <Key>30b5de0f21bc4e1aaceddf6f2508f4c5</Key>
+        <Name>Con_workorders</Name>
+      </Con_workorders>
+    </Databases>
+    <DataSources isList="true" count="3">
+      <rsMainInfo Ref="3" type="Stimulsoft.Report.Dictionary.StiMySqlSource" isKey="true">
+        <Alias>rsMainInfo</Alias>
+        <Columns isList="true" count="9">
+          <value>Management_Company,System.String</value>
+          <value>Building_Name,System.String</value>
+          <value>Building_Address_1,System.String</value>
+          <value>Building_Address_2,System.String</value>
+          <value>Management_Logo,System.String</value>
+          <value>Key_Building_Number,System.UInt32</value>
+          <value>Building_Cost_Center,System.UInt32</value>
+          <value>Tennt_User_ID,System.UInt32</value>
+          <value>Building_Address,System.String</value>
+        </Columns>
+        <CommandTimeout>30</CommandTimeout>
+        <Dictionary isRef="1" />
+        <Key>894435ad65814339b7594e636703b59c</Key>
+        <Name>rsMainInfo</Name>
+        <NameInSource>Con_workorders</NameInSource>
+        <Parameters isList="true" count="0" />
+        <SqlCommand>Select
+	company.companyName As Management_Company,
+	bu.buildingName As Building_Name,
+	bu.address As Building_Address_1,
+	bu.address2 As Building_Address_2,
+	company.company_logo As Management_Logo,
+	bu.build_id As Key_Building_Number,
+	bu.uniqueCostCenter As Building_Cost_Center,
+	users.uid As Tennt_User_ID,
+	concat(company.companyName, '\n' , 
+	IF (bu.buildingName &lt;&gt; "", bu.buildingName,""), 
+	IF (bu.buildingName &lt;&gt; "", '\n', null), 
+	IF (bu.buildingName &lt;&gt; bu.address, bu.address, NULL) ,
+	IF (bu.buildingName &lt;&gt; bu.address, '\n', NULL) ,
+	bu.city, ', ', bu.state, ' ', bu.postalCode
+	) as Building_Address
+	From
+	buildings As bu Left Join
+	company On bu.cust_id = company.cust_id Right Join
+    user_building_module_access On user_building_module_access.building_id = bu.build_id Right Join
+    users On users.uid = user_building_module_access.user_id
+Where
+    users.uid = {User} And
+    bu.build_id In ({buildkey}) And
+    bu.uniqueCostCenter In ({Cost_Center_Number})</SqlCommand>
+      </rsMainInfo>
+      <rsCOITenants Ref="4" type="Stimulsoft.Report.Dictionary.StiMySqlSource" isKey="true">
+        <Alias>rsCOITenants</Alias>
+        <Columns isList="true" count="14">
+          <value>Key_Building_Number,System.UInt32</value>
+          <value>Number_Of_Days,System.Int64</value>
+          <value>COI_Description_Status,System.String</value>
+          <value>Cost_Center_Number,System.Int64</value>
+          <value>Tenant_Number,System.Int64</value>
+          <value>Active,System.String</value>
+          <value>Date_From,System.DateTime</value>
+          <value>Date_To,System.DateTime</value>
+          <value>COI_pdf,System.String</value>
+          <value>COI_reminder,System.String</value>
+          <value>tenantName,System.String</value>
+          <value>tenantContact,System.String</value>
+          <value>coi_au_Ten_or_Vendor,System.String</value>
+          <value>status,System.Int32</value>
+        </Columns>
+        <CommandTimeout>30</CommandTimeout>
+        <Dictionary isRef="1" />
+        <Key>ce16bd40f70440018ccfb9ed6038f1af</Key>
+        <Name>rsCOITenants</Name>
+        <NameInSource>Con_workorders</NameInSource>
+        <Parameters isList="true" count="0" />
+        <SqlCommand>Select
+	bu.build_id As Key_Building_Number,
+	IfNull(DateDiff(coi_au_tenant.coi_au_date_to, CurDate()), -99999999) As Number_Of_Days,
+Case
+        When DateDiff(coi_au_tenant.coi_au_date_to, CurDate()) &lt; -1
+        Then "COI is Expired"
+        When DateDiff(coi_au_tenant.coi_au_date_to, CurDate()) Between 90 And 1000000
+        Then "Current"
+        When DateDiff(coi_au_tenant.coi_au_date_to, CurDate()) Between 60 And 90
+        Then "Expires 60 - 90 Days"
+        When DateDiff(coi_au_tenant.coi_au_date_to, CurDate()) Between 30 And 60
+        Then "Expires 30 - 60 Days"
+        When DateDiff(coi_au_tenant.coi_au_date_to, CurDate()) Between 0 And 30
+        Then "Expires 0 - 30 Days"
+        Else "No COI has been assigned / Setup for Tenant"
+    End As COI_Description_Status,
+    IfNull(coi_au_tenant.uniquecostcenter, -99999999) As Cost_Center_Number,
+    IfNull(coi_au_tenant.tenant_number,-99999999) As Tenant_Number,
+    IfNull(coi_au_tenant.coi_au_tenant_active, 0) As Active,
+    IfNull(coi_au_tenant.coi_au_date_from, CurDate()) As Date_From,
+    IfNull(coi_au_tenant.coi_au_date_to, CurDate()) As Date_To,
+    IfNull(coi_au_tenant.coi_au_pdf_upload, "---") As COI_pdf,
+    IfNull(coi_au_tenant.coi_au_send_reminder, "N") As COI_reminder,
+    tenant.tenantName,
+    tenant.tenantContact,
+    coi_au_tenant.coi_au_Ten_or_Vendor,
+    tenant.status
+From
+    coi_au_tenant Right Join
+    tenant On tenant.id = coi_au_tenant.tenant_Id Right Join
+    buildings As bu On tenant.buildingId = bu.build_id
+Where
+    tenant.buildingId In ({buildkey}) And
+    tenant.remove_status = 0
+Order By
+    Key_Building_Number,
+    tenant.tenantName</SqlCommand>
+      </rsCOITenants>
+      <rsCOIVendor Ref="5" type="Stimulsoft.Report.Dictionary.StiMySqlSource" isKey="true">
+        <Alias>rsCOIVendor</Alias>
+        <Columns isList="true" count="14">
+          <value>Key_Building_Number,System.UInt32</value>
+          <value>Number_Of_Days,System.Int64</value>
+          <value>COI_Description_Status,System.String</value>
+          <value>Cost_Center_Number,System.Int64</value>
+          <value>Tenant_Number,System.Int64</value>
+          <value>Active,System.String</value>
+          <value>Date_From,System.DateTime</value>
+          <value>Date_To,System.DateTime</value>
+          <value>COI_pdf,System.String</value>
+          <value>COI_reminder,System.String</value>
+          <value>company_name,System.String</value>
+          <value>Vendor_contact,System.String</value>
+          <value>coi_au_Ten_or_Vendor,System.String</value>
+          <value>remove_status,System.Int32</value>
+        </Columns>
+        <CommandTimeout>30</CommandTimeout>
+        <Dictionary isRef="1" />
+        <Key>13f8e303017c4dcbb75d922767a05c1e</Key>
+        <Name>rsCOIVendor</Name>
+        <NameInSource>Con_workorders</NameInSource>
+        <Parameters isList="true" count="0" />
+        <SqlCommand>Select
+	bu.build_id As Key_Building_Number,
+	IfNull(DateDiff(coi_au_tenant.coi_au_date_to, CurDate()), -99999999) As Number_Of_Days,
+    Case
+        When DateDiff(coi_au_tenant.coi_au_date_to, CurDate()) &lt; -1
+        Then "COI is Expired"
+        When DateDiff(coi_au_tenant.coi_au_date_to, CurDate()) Between 90 And 1000000
+        Then "Current"
+        When DateDiff(coi_au_tenant.coi_au_date_to, CurDate()) Between 60 And 90
+        Then "Expires 60 - 90 Days"
+        When DateDiff(coi_au_tenant.coi_au_date_to, CurDate()) Between 30 And 60
+        Then "Expires 30 - 60 Days"
+        When DateDiff(coi_au_tenant.coi_au_date_to, CurDate()) Between 0 And 30
+        Then "Expires 0 - 30 Days"
+        Else "No COI has been assigned / Setup for Tenant"
+    End As COI_Description_Status,
+    IfNull(coi_au_tenant.uniquecostcenter, -99999999) As Cost_Center_Number,
+    IfNull(coi_au_tenant.tenant_number, -99999999) As Tenant_Number,
+    IfNull(coi_au_tenant.coi_au_tenant_active, 0) As Active,
+    IfNull(coi_au_tenant.coi_au_date_from, CurDate()) As Date_From,
+    IfNull(coi_au_tenant.coi_au_date_to, CurDate()) As Date_To,
+    IfNull(coi_au_tenant.coi_au_pdf_upload, "---") As COI_pdf,
+    IfNull(coi_au_tenant.coi_au_send_reminder, "N") As COI_reminder,
+    vendor.company_name,
+    concat(vendor.first_name, " " , vendor.last_name)as Vendor_contact,
+    coi_au_tenant.coi_au_Ten_or_Vendor,
+    vendor.remove_status
+From
+    coi_au_tenant Right Join
+    vendor On vid = coi_au_tenant.tenant_Id Right Join
+    buildings As bu On vendor.buildingId = bu.build_id
+Where
+    vendor.buildingId In ({buildkey}) And
+   vendor.remove_status = 0
+Order By
+    Key_Building_Number,
+    vendor.company_name</SqlCommand>
+      </rsCOIVendor>
+    </DataSources>
+    <Relations isList="true" count="2">
+      <relTenants Ref="6" type="DataRelation" isKey="true">
+        <Alias>relTenants</Alias>
+        <ChildColumns isList="true" count="1">
+          <value>Key_Building_Number</value>
+        </ChildColumns>
+        <ChildSource isRef="4" />
+        <Dictionary isRef="1" />
+        <Name>relTenants</Name>
+        <NameInSource>relTenants</NameInSource>
+        <ParentColumns isList="true" count="1">
+          <value>Key_Building_Number</value>
+        </ParentColumns>
+        <ParentSource isRef="3" />
+      </relTenants>
+      <relVendor Ref="7" type="DataRelation" isKey="true">
+        <Alias>relVendor</Alias>
+        <ChildColumns isList="true" count="1">
+          <value>Key_Building_Number</value>
+        </ChildColumns>
+        <ChildSource isRef="5" />
+        <Dictionary isRef="1" />
+        <Name>relVendor</Name>
+        <NameInSource>relVendor</NameInSource>
+        <ParentColumns isList="true" count="1">
+          <value>Key_Building_Number</value>
+        </ParentColumns>
+        <ParentSource isRef="3" />
+      </relVendor>
+    </Relations>
+    <Report isRef="0" />
+    <Resources isList="true" count="0" />
+    <Variables isList="true" count="3">
+      <value>,User,User,,System.String,_x0034_21,False,False,False,False,,,True</value>
+      <value>,buildkey,buildkey,,System.String,_x0034_4,False,False,False,False</value>
+      <value>,Cost_Center_Number,Cost_Center_Number,,System.String,_x0031_460335468,False,False,False,False</value>
+    </Variables>
+  </Dictionary>
+  <EngineVersion>EngineV2</EngineVersion>
+  <GlobalizationStrings isList="true" count="0" />
+  <Key>3205b4e0b01740e4b32859d68b37a909</Key>
+  <MetaTags isList="true" count="0" />
+  <Pages isList="true" count="1">
+    <Page1 Ref="8" type="Page" isKey="true">
+      <Border>None;Black;2;Solid;False;4;Black</Border>
+      <Brush>Transparent</Brush>
+      <Components isList="true" count="7">
+        <HeaderBand1 Ref="9" type="HeaderBand" isKey="true">
+          <Brush>Transparent</Brush>
+          <ClientRectangle>0,0.2,10.6,1.27</ClientRectangle>
+          <Components isList="true" count="5">
+            <Image1 Ref="10" type="Image" isKey="true">
+              <AspectRatio>True</AspectRatio>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0.01,0,2,0.8</ClientRectangle>
+              <ComponentPlacement>h.ap.HeaderBand1</ComponentPlacement>
+              <Conditions isList="true" count="0" />
+              <DataColumn isNull="true" />
+              <Expressions isList="true" count="0" />
+              <Guid>b3ab2d2393f34a2e978369853944c90a</Guid>
+              <IconColor>68, 114, 196</IconColor>
+              <ImageURL>https://www.visionworkorders.com/public/images/clogo/{rsMainInfo.Management_Logo}</ImageURL>
+              <Margins>0,0,0,0</Margins>
+              <Name>Image1</Name>
+              <Page isRef="8" />
+              <Parent isRef="9" />
+              <ProcessingDuplicates>Merge</ProcessingDuplicates>
+              <Stretch>True</Stretch>
+            </Image1>
+            <Text1 Ref="11" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>8.32,0.04,2.28,0.91</ClientRectangle>
+              <ComponentPlacement>h.ap.HeaderBand1</ComponentPlacement>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,12</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <Guid>8dd677c1816247e89d65ff9d7abd21ac</Guid>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text1</Name>
+              <Page isRef="8" />
+              <Parent isRef="9" />
+              <Text>{rsMainInfo.Building_Address}
+
+
+{Today.ToString("MMMM d, yyyy")}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text1>
+            <Text15 Ref="12" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>1.11,0.87,7.06,0.23</ClientRectangle>
+              <ComponentPlacement>h.ap.HeaderBand1</ComponentPlacement>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,12,Italic</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text15</Name>
+              <Page isRef="8" />
+              <Parent isRef="9" />
+              <Text>{rsMainInfo.Building_Name}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text15>
+            <Text16 Ref="13" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,0.87,1.1,0.23</ClientRectangle>
+              <ComponentPlacement>h.ap.HeaderBand1</ComponentPlacement>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,10,Bold</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text16</Name>
+              <Page isRef="8" />
+              <Parent isRef="9" />
+              <Text>Building Name</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text16>
+            <Text2 Ref="14" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>2.02,0.01,6.27,0.79</ClientRectangle>
+              <ComponentPlacement>h.ap.HeaderBand1</ComponentPlacement>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,25,Bold</Font>
+              <Guid>87b78854f0854fd59d13018d3b44f833</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text2</Name>
+              <Page isRef="8" />
+              <Parent isRef="9" />
+              <Text>Certificate of Insurance
+</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text2>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>HeaderBand1</Name>
+          <Page isRef="8" />
+          <Parent isRef="8" />
+        </HeaderBand1>
+        <DBMainInfo Ref="15" type="DataBand" isKey="true">
+          <Brush>Transparent</Brush>
+          <BusinessObjectGuid isNull="true" />
+          <ClientRectangle>0,1.87,10.6,0.3</ClientRectangle>
+          <Components isList="true" count="0" />
+          <Conditions isList="true" count="0" />
+          <DataRelationName isNull="true" />
+          <DataSourceName>rsMainInfo</DataSourceName>
+          <Expressions isList="true" count="0" />
+          <Filters isList="true" count="0" />
+          <Name>DBMainInfo</Name>
+          <Page isRef="8" />
+          <Parent isRef="8" />
+          <Sort isList="true" count="2">
+            <value>ASC</value>
+            <value>{rsMainInfo.Building_Name}</value>
+          </Sort>
+        </DBMainInfo>
+        <GroupHeaderBand1 Ref="16" type="GroupHeaderBand" isKey="true">
+          <Border>All;Black;1;Solid;False;4;Black</Border>
+          <Brush>MediumAquamarine</Brush>
+          <CanShrink>True</CanShrink>
+          <ClientRectangle>0,2.57,10.6,0.58</ClientRectangle>
+          <Components isList="true" count="5">
+            <Text17 Ref="17" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>2.41,0.01,0.63,0.4</ClientRectangle>
+              <ComponentPlacement>gh.GroupHeaderBand1</ComponentPlacement>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,11,Bold</Font>
+              <Guid>eb783c6bea494e10ba917cc590bd3479</Guid>
+              <Interaction Ref="18" type="Stimulsoft.Report.Components.StiInteraction" isKey="true">
+                <SortingColumn>DBTenants.Number_Of_Days</SortingColumn>
+              </Interaction>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text17</Name>
+              <Page isRef="8" />
+              <Parent isRef="16" />
+              <Text>Status</Text>
+              <TextBrush>Black</TextBrush>
+              <ToolTip>Sort Report by Status</ToolTip>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text17>
+            <Text6 Ref="19" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0.29,0.01,1.24,0.39</ClientRectangle>
+              <ComponentPlacement>gh.GroupHeaderBand1</ComponentPlacement>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,11,Bold</Font>
+              <Guid>e1c56f1b3f7640649b4e642a51086a2c</Guid>
+              <Interaction Ref="20" type="Stimulsoft.Report.Components.StiInteraction" isKey="true">
+                <SortingColumn>DBTenants.tenantName</SortingColumn>
+              </Interaction>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text6</Name>
+              <Page isRef="8" />
+              <Parent isRef="16" />
+              <Text>Tenant Name</Text>
+              <TextBrush>Black</TextBrush>
+              <ToolTip>Sort Report by Tenant Name</ToolTip>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text6>
+            <Text18 Ref="21" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>6.4,0.01,1.26,0.4</ClientRectangle>
+              <ComponentPlacement>gh.GroupHeaderBand1</ComponentPlacement>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,11,Bold</Font>
+              <Guid>4c0152c862e749c6ade76fdd290e97b4</Guid>
+              <Interaction Ref="22" type="Stimulsoft.Report.Components.StiInteraction" isKey="true">
+                <SortingColumn>DBTenants.Date_To</SortingColumn>
+              </Interaction>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text18</Name>
+              <Page isRef="8" />
+              <Parent isRef="16" />
+              <Text>Expiration Date </Text>
+              <TextBrush>Black</TextBrush>
+              <ToolTip>Sort Report by Status</ToolTip>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text18>
+            <Text_5 Ref="23" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>7.83,0.01,2.63,0.39</ClientRectangle>
+              <ComponentPlacement>gh.GroupHeaderBand1</ComponentPlacement>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,11,Bold</Font>
+              <Guid>e40aaabcc8414bcea4e4f8c09d48b12d</Guid>
+              <Interaction Ref="24" type="Stimulsoft.Report.Components.StiInteraction" isKey="true">
+                <SortingColumn>DBTenants.Number_Of_Days</SortingColumn>
+              </Interaction>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text_5</Name>
+              <Page isRef="8" />
+              <Parent isRef="16" />
+              <Text>Number of Day(s) when COI Expires </Text>
+              <TextBrush>Black</TextBrush>
+              <ToolTip>Sort Report by Status</ToolTip>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text_5>
+            <Text3 Ref="25" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,0,0.18,0.54</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,6</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text3</Name>
+              <Page isRef="8" />
+              <Parent isRef="16" />
+              <Text>Line Number</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,,Angle=90</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text3>
+          </Components>
+          <Condition>{rsMainInfo.Building_Name}</Condition>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>GroupHeaderBand1</Name>
+          <Page isRef="8" />
+          <Parent isRef="8" />
+          <PrintOnAllPages>True</PrintOnAllPages>
+        </GroupHeaderBand1>
+        <DBTenants Ref="26" type="DataBand" isKey="true">
+          <Border>All;Black;1;Solid;False;4;Black</Border>
+          <Brush>Transparent</Brush>
+          <BusinessObjectGuid isNull="true" />
+          <ClientRectangle>0,3.55,10.6,0.3</ClientRectangle>
+          <Components isList="true" count="6">
+            <Text4 Ref="27" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>2.3,0.03,0.33,0.2</ClientRectangle>
+              <Conditions isList="true" count="1">
+                <value>IconSet,rsCOITenants.Number_Of_Days,QuartersGreen5,MiddleLeft,QuarterFullGreen_x002C_MoreThanOrEqual_x002C_Value_x002C__x005F_x0039_1,QuarterThreeFourthGreen_x002C_MoreThanOrEqual_x002C_Value_x002C__x005F_x0036_0,QuarterHalfGreen_x002C_MoreThanOrEqual_x002C_Value_x002C__x005F_x0033_0,CircleExclamationYellow_x002C_MoreThanOrEqual_x002C_Value_x002C__x005F_x0031_,FromRedToBlackRed_x002C_MoreThan_x002C_Percent_x002C__x005F_x0030_</value>
+              </Conditions>
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text4</Name>
+              <Page isRef="8" />
+              <Parent isRef="26" />
+              <TextBrush>Black</TextBrush>
+            </Text4>
+            <Text32 Ref="28" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,0.03,0.16,0.15</ClientRectangle>
+              <ComponentPlacement>d.DataBand1</ComponentPlacement>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,8,Bold</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text32</Name>
+              <Page isRef="8" />
+              <Parent isRef="26" />
+              <Text>{LineThrough}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>SystemVariables</Type>
+            </Text32>
+            <Text_1 Ref="29" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0.28,0.03,1.92,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text_1</Name>
+              <Page isRef="8" />
+              <Parent isRef="26" />
+              <Text>{rsCOITenants.tenantName}</Text>
+              <TextBrush>Black</TextBrush>
+            </Text_1>
+            <Text_6 Ref="30" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>2.69,0.04,3.73,0.2</ClientRectangle>
+              <Conditions isList="true" count="5">
+                <value>BreakIfTrue,rsCOITenants.Number_Of_Days,EqualTo,_x002D_99999999,,Numeric,[255:0:0],Transparent,Arial_x002C_8,True,False,,No_x0020_COI_x0020_Assigned,None</value>
+                <value>BreakIfTrue,rsCOITenants.Number_Of_Days,Between,_x0030_,_x0033_0,Numeric,[255:0:0],Transparent,Arial_x002C_8,True,False,,Expires_x0020_with_x0020_in_x0020_30_x0020_days,None</value>
+                <value>BreakIfTrue,rsCOITenants.Number_Of_Days,Between,_x0033_1,_x0036_0,Numeric,[255:0:0],Transparent,Arial_x002C_8,True,False,,Expires_x0020_30_x0020_to_x0020_60,None</value>
+                <value>BreakIfTrue,rsCOITenants.Number_Of_Days,Between,_x0036_1,_x0039_0,Numeric,[255:0:0],Transparent,Arial_x002C_8,True,False,,Expires_x0020_60_x0020_to_x0020_90_x0020_days,None</value>
+                <value>BreakIfTrue,rsCOITenants.Number_Of_Days,GreaterThanOrEqualTo,_x0039_1,,Numeric,[255:0:0],Transparent,Arial_x002C_8,True,False,,Current,None</value>
+              </Conditions>
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>7a84dcd14be4401d8b260f010b068905</Guid>
+              <Margins>0.5,0.5,0,0</Margins>
+              <Name>Text_6</Name>
+              <Page isRef="8" />
+              <Parent isRef="26" />
+              <Text>{rsCOITenants.COI_Description_Status}</Text>
+              <TextBrush>Black</TextBrush>
+            </Text_6>
+            <Text_3 Ref="31" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>6.55,0.03,1.2,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text_3</Name>
+              <Page isRef="8" />
+              <Parent isRef="26" />
+              <Text>{IIF(rsCOITenants.Number_Of_Days != -99999999, (rsCOITenants.Date_To),"---")}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="32" type="DateFormat" isKey="true">
+                <StringFormat>y</StringFormat>
+              </TextFormat>
+              <Type>Expression</Type>
+            </Text_3>
+            <Text_2 Ref="33" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>8.75,0.04,1.2,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text_2</Name>
+              <Page isRef="8" />
+              <Parent isRef="26" />
+              <Text>{IIF(rsCOITenants.Number_Of_Days != -99999999, (rsCOITenants.Number_Of_Days),"---")}
+</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text_2>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <DataRelationName>relTenants</DataRelationName>
+          <DataSourceName>rsCOITenants</DataSourceName>
+          <EvenStyle>SBack_Boarder</EvenStyle>
+          <Expressions isList="true" count="0" />
+          <Filters isList="true" count="0" />
+          <MasterComponent isRef="15" />
+          <Name>DBTenants</Name>
+          <Page isRef="8" />
+          <Parent isRef="8" />
+          <Sort isList="true" count="0" />
+        </DBTenants>
+        <GroupFooterBand1 Ref="34" type="GroupFooterBand" isKey="true">
+          <Brush>Transparent</Brush>
+          <ClientRectangle>0,4.25,10.6,0.3</ClientRectangle>
+          <Components isList="true" count="0" />
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>GroupFooterBand1</Name>
+          <Page isRef="8" />
+          <Parent isRef="8" />
+        </GroupFooterBand1>
+        <GroupHeaderBand2 Ref="35" type="GroupHeaderBand" isKey="true">
+          <Border>All;Black;1;Solid;False;4;Black</Border>
+          <Brush>MediumAquamarine</Brush>
+          <CanShrink>True</CanShrink>
+          <ClientRectangle>0,4.95,10.6,0.58</ClientRectangle>
+          <Components isList="true" count="5">
+            <Text5 Ref="36" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>2.41,0.01,0.63,0.4</ClientRectangle>
+              <ComponentPlacement>gh.GroupHeaderBand1</ComponentPlacement>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,11,Bold</Font>
+              <Guid>972c3647fc06450eac5ec773840d1497</Guid>
+              <Interaction Ref="37" type="Stimulsoft.Report.Components.StiInteraction" isKey="true">
+                <SortingColumn>DBTenants.Number_Of_Days</SortingColumn>
+              </Interaction>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text5</Name>
+              <Page isRef="8" />
+              <Parent isRef="35" />
+              <Text>Status</Text>
+              <TextBrush>Black</TextBrush>
+              <ToolTip>Sort Report by Status</ToolTip>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text5>
+            <Text7 Ref="38" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0.29,0.01,1.24,0.39</ClientRectangle>
+              <ComponentPlacement>gh.GroupHeaderBand1</ComponentPlacement>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,11,Bold</Font>
+              <Guid>2dc12390174647e4b29a13165209d9fc</Guid>
+              <Interaction Ref="39" type="Stimulsoft.Report.Components.StiInteraction" isKey="true">
+                <SortingColumn>DBTenants.tenantName</SortingColumn>
+              </Interaction>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text7</Name>
+              <Page isRef="8" />
+              <Parent isRef="35" />
+              <Text>Vendor Name</Text>
+              <TextBrush>Black</TextBrush>
+              <ToolTip>Sort Report by Tenant Name</ToolTip>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text7>
+            <Text8 Ref="40" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>6.4,0.01,1.26,0.4</ClientRectangle>
+              <ComponentPlacement>gh.GroupHeaderBand1</ComponentPlacement>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,11,Bold</Font>
+              <Guid>ebb1f9072fe84a14b4fffbf3a7a6db47</Guid>
+              <Interaction Ref="41" type="Stimulsoft.Report.Components.StiInteraction" isKey="true">
+                <SortingColumn>DBTenants.Date_To</SortingColumn>
+              </Interaction>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text8</Name>
+              <Page isRef="8" />
+              <Parent isRef="35" />
+              <Text>Expiration Date </Text>
+              <TextBrush>Black</TextBrush>
+              <ToolTip>Sort Report by Status</ToolTip>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text8>
+            <Text9 Ref="42" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>7.83,0.01,2.63,0.39</ClientRectangle>
+              <ComponentPlacement>gh.GroupHeaderBand1</ComponentPlacement>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,11,Bold</Font>
+              <Guid>7ea2a17690db4831b65cb3ee81076d41</Guid>
+              <Interaction Ref="43" type="Stimulsoft.Report.Components.StiInteraction" isKey="true">
+                <SortingColumn>DBTenants.Number_Of_Days</SortingColumn>
+              </Interaction>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text9</Name>
+              <Page isRef="8" />
+              <Parent isRef="35" />
+              <Text>Number of Day(s) when COI Expires </Text>
+              <TextBrush>Black</TextBrush>
+              <ToolTip>Sort Report by Status</ToolTip>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text9>
+            <Text10 Ref="44" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,0,0.18,0.54</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,6</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text10</Name>
+              <Page isRef="8" />
+              <Parent isRef="35" />
+              <Text>Line Number</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,,Angle=90</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text10>
+          </Components>
+          <Condition>{rsMainInfo.Building_Name}</Condition>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>GroupHeaderBand2</Name>
+          <Page isRef="8" />
+          <Parent isRef="8" />
+          <PrintOnAllPages>True</PrintOnAllPages>
+        </GroupHeaderBand2>
+        <DataBand1 Ref="45" type="DataBand" isKey="true">
+          <Border>All;Black;1;Solid;False;4;Black</Border>
+          <Brush>Transparent</Brush>
+          <ClientRectangle>0,5.93,10.6,0.3</ClientRectangle>
+          <Components isList="true" count="6">
+            <Text21 Ref="46" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>6.55,0.03,1.2,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text21</Name>
+              <Page isRef="8" />
+              <Parent isRef="45" />
+              <Text>{IIF(rsCOIVendor.Number_Of_Days != -99999999, (rsCOIVendor.Date_To),"---")}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="47" type="DateFormat" isKey="true">
+                <StringFormat>y</StringFormat>
+              </TextFormat>
+              <Type>Expression</Type>
+            </Text21>
+            <Text22 Ref="48" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>8.75,0.03,1.2,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text22</Name>
+              <Page isRef="8" />
+              <Parent isRef="45" />
+              <Text>{IIF(rsCOIVendor.Number_Of_Days != -99999999, (rsCOIVendor.Number_Of_Days),"---")}
+</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text22>
+            <Text23 Ref="49" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,0.03,0.16,0.15</ClientRectangle>
+              <ComponentPlacement>d.DataBand1</ComponentPlacement>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Times New Roman,8,Bold</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text23</Name>
+              <Page isRef="8" />
+              <Parent isRef="45" />
+              <Text>{LineThrough}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>SystemVariables</Type>
+            </Text23>
+            <Text24 Ref="50" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0.28,0.03,1.92,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text24</Name>
+              <Page isRef="8" />
+              <Parent isRef="45" />
+              <Text>{rsCOIVendor.company_name}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text24>
+            <Text26 Ref="51" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>2.69,0.03,3.7,0.2</ClientRectangle>
+              <Conditions isList="true" count="5">
+                <value>BreakIfTrue,rsCOIVendor.Number_Of_Days,EqualTo,_x002D_99999999,,Numeric,[255:0:0],Transparent,Arial_x002C_8,True,False,,No_x0020_COI_x0020_Assigned,None</value>
+                <value>BreakIfTrue,rsCOIVendor.Number_Of_Days,Between,_x0030_,_x0033_0,Numeric,[255:0:0],Transparent,Arial_x002C_8,True,False,,Expires_x0020_with_x0020_in_x0020_30_x0020_days,None</value>
+                <value>BreakIfTrue,rsCOIVendor.Number_Of_Days,Between,_x0033_1,_x0036_0,Numeric,[255:0:0],Transparent,Arial_x002C_8,True,False,,Expires_x0020_30_x0020_to_x0020_60,None</value>
+                <value>BreakIfTrue,rsCOIVendor.Number_Of_Days,Between,_x0036_1,_x0039_0,Numeric,[255:0:0],Transparent,Arial_x002C_8,True,False,,Expires_x0020_60_x0020_to_x0020_90_x0020_days,None</value>
+                <value>BreakIfTrue,rsCOIVendor.Number_Of_Days,GreaterThanOrEqualTo,_x0039_1,,Numeric,[255:0:0],Transparent,Arial_x002C_8,True,False,,Current,None</value>
+              </Conditions>
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Guid>03ee4ad3aed447db92380bfb9900e56f</Guid>
+              <Margins>0.5,0.5,0,0</Margins>
+              <Name>Text26</Name>
+              <Page isRef="8" />
+              <Parent isRef="45" />
+              <Text>{rsCOIVendor.COI_Description_Status}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>DataColumn</Type>
+            </Text26>
+            <Text25 Ref="52" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>2.3,0.03,0.32,0.2</ClientRectangle>
+              <Conditions isList="true" count="6">
+                <value>rsCOIVendor.Number_Of_Days,EqualTo,_x002D_99999999,,Numeric,[255:0:0],Transparent,Arial_x002C_8,True,False,,No_x0020_COI_x0020_Assigned,None</value>
+                <value>rsCOIVendor.Number_Of_Days,Between,_x0030_,_x0033_0,Numeric,[255:0:0],Transparent,Arial_x002C_8,True,False,,Expires_x0020_with_x0020_in_x0020_30_x0020_days,None</value>
+                <value>rsCOIVendor.Number_Of_Days,Between,_x0033_1,_x0036_0,Numeric,[255:0:0],Transparent,Arial_x002C_8,True,False,,Expires_x0020_30_x0020_to_x0020_60,None</value>
+                <value>rsCOIVendor.Number_Of_Days,Between,_x0036_1,_x0039_0,Numeric,[255:0:0],Transparent,Arial_x002C_8,True,False,,Expires_x0020_60_x0020_to_x0020_90_x0020_days,None</value>
+                <value>rsCOIVendor.Number_Of_Days,GreaterThanOrEqualTo,_x0039_1,,Numeric,[255:0:0],Transparent,Arial_x002C_8,True,False,,Current,None</value>
+                <value>IconSet,rsCOIVendor.Number_Of_Days,QuartersGreen5,MiddleLeft,QuarterFullGreen_x002C_MoreThanOrEqual_x002C_Value_x002C__x005F_x0039_1,QuarterThreeFourthGreen_x002C_MoreThanOrEqual_x002C_Value_x002C__x005F_x0036_1,QuarterHalfGreen_x002C_MoreThanOrEqual_x002C_Value_x002C__x005F_x0033_1,CircleYellow_x002C_MoreThanOrEqual_x002C_Value_x002C__x005F_x0031_,FromRedToBlackRed_x002C_MoreThanOrEqual_x002C_Percent_x002C__x005F_x0030_</value>
+              </Conditions>
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>0.5,0.5,0,0</Margins>
+              <Name>Text25</Name>
+              <Page isRef="8" />
+              <Parent isRef="45" />
+              <TextBrush>Black</TextBrush>
+              <Type>DataColumn</Type>
+            </Text25>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <DataRelationName>relVendor</DataRelationName>
+          <DataSourceName>rsCOIVendor</DataSourceName>
+          <EvenStyle>SBack_Boarder</EvenStyle>
+          <Expressions isList="true" count="0" />
+          <Filters isList="true" count="0" />
+          <MasterComponent isRef="15" />
+          <Name>DataBand1</Name>
+          <Page isRef="8" />
+          <Parent isRef="8" />
+          <Sort isList="true" count="0" />
+        </DataBand1>
+      </Components>
+      <Conditions isList="true" count="0" />
+      <Expressions isList="true" count="0" />
+      <Guid>713282caee8a4bc996a114721df22596</Guid>
+      <Margins>0.2,0.2,0.39,0.39</Margins>
+      <Name>Page1</Name>
+      <Orientation>Landscape</Orientation>
+      <PageHeight>8.5</PageHeight>
+      <PageWidth>11</PageWidth>
+      <PaperSize>Letter</PaperSize>
+      <Report isRef="0" />
+    </Page1>
+  </Pages>
+  <ReferencedAssemblies isList="true" count="8">
+    <value>System.Dll</value>
+    <value>System.Drawing.Dll</value>
+    <value>System.Windows.Forms.Dll</value>
+    <value>System.Data.Dll</value>
+    <value>System.Xml.Dll</value>
+    <value>Stimulsoft.Controls.Dll</value>
+    <value>Stimulsoft.Base.Dll</value>
+    <value>Stimulsoft.Report.Dll</value>
+  </ReferencedAssemblies>
+  <ReportAlias>Report</ReportAlias>
+  <ReportChanged>7/18/2022 7:30:42 AM</ReportChanged>
+  <ReportCreated>7/18/2022 6:30:36 AM</ReportCreated>
+  <ReportFile>C:\Users\RobPalermo\Documents\Deramweaver\VE Test Site for workorders\reports\reports\HTML_COI_Detail_Report.mrt</ReportFile>
+  <ReportGuid>a559c9b5249e4f16a81780566636ca60</ReportGuid>
+  <ReportName>Report</ReportName>
+  <ReportUnit>Inches</ReportUnit>
+  <ReportVersion>2022.3.2.0</ReportVersion>
+  <Script>using System;
+using System.Drawing;
+using System.Windows.Forms;
+using System.Data;
+using Stimulsoft.Controls;
+using Stimulsoft.Base.Drawing;
+using Stimulsoft.Report;
+using Stimulsoft.Report.Dialogs;
+using Stimulsoft.Report.Components;
+
+namespace Reports
+{
+    public class Report : Stimulsoft.Report.StiReport
+    {
+        public Report()        {
+            this.InitializeComponent();
+        }
+
+        #region StiReport Designer generated code - do not modify
+		#endregion StiReport Designer generated code - do not modify
+    }
+}
+</Script>
+  <ScriptLanguage>CSharp</ScriptLanguage>
+  <Styles isList="true" count="1">
+    <SBack_Boarder Ref="53" type="Stimulsoft.Report.StiStyle" isKey="true">
+      <Border>All;Black;1;Solid;False;4;Black</Border>
+      <Brush>[213:240:230]</Brush>
+      <Conditions isList="true" count="0" />
+      <Font>Arial,8</Font>
+      <Name>SBack_Boarder</Name>
+      <NegativeTextBrush>Red</NegativeTextBrush>
+      <TextBrush>Black</TextBrush>
+    </SBack_Boarder>
+  </Styles>
+</StiSerializer>

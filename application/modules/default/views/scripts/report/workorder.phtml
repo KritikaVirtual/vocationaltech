@@ -1,0 +1,152 @@
+<?php
+$reportDetailLinks = ''; $dashBoardViewsdetails=''; $dashBoardViews=''; $woNumberAll=''; $invoiceAll=''; $uniqueCostCenterAll=''; $buildIdReportAll=''; $batch_number_report=''; $uniqueCostCenter='';$workorderstatus=''; $workorderallstatus='';
+$reportModel = new Model_Report();
+$reportDetailLinks = $reportModel->getReport($this->custID, 9); 
+//$reportDetailLinks = $reportDetailLinks[0]; 
+if($reportDetailLinks!='') {   
+	$woReport = new Model_Report();
+	$woBatch = new Model_WoBatch();
+	foreach($this->companyListing as $cb){ 
+		$uniqueCostCenterAll=$uniqueCostCenterAll.$cb['uniqueCostCenter'].',';
+		$buildIdReportAll=$buildIdReportAll.$cb['build_id'].',';
+		$batchDetails=$woBatch->showBatch($cb['build_id']);
+		if($batchDetails!='') {
+			 foreach($batchDetails as $bd ) {
+					$batch_number_report= $batch_number_report.$bd['batch_number'].',';
+				}
+		}
+		if($this->select_build_id=='') {
+			$order='woId';
+			$dir='DESC';
+			$wolist = $woReport->getWorkOrderByBuilding($cb['build_id'],$order,$dir);
+			$invoicelist = $woReport->invoiceByBatch($cb['build_id'],$order,$dir);
+			if($wolist!='') {
+				foreach($wolist as $woNumber) {
+					$woNumberAll=$woNumberAll.$woNumber->wo_number .',' ;
+					}
+				}
+			if($invoicelist!='') {
+				foreach($invoicelist as $invoiceNumber) {
+						$invoiceAll=$invoiceAll.$invoiceNumber->wo_number .',' ;
+				}
+			}
+								
+		} 		
+	}  
+
+//echo $woNumberAll; echo '<br>';
+//echo $invoiceAll;
+
+?>
+
+
+<?php
+}
+
+
+
+?>
+<div class="woreport-section">
+	 <div class="report-title">
+		 <span><h1>Work Order Report</h1></span>
+	 </div>
+	 <div class="work-order-report">
+		  <div class="download-report">
+			  <div class="download-button"> <?php if($reportDetailLinks!='') {  foreach($reportDetailLinks as $reportValue) { 
+			  if ($reportValue->Report_Type == 'Flash') {
+                     $report_type = 'reports/VisionReportEngine/index.php?stimulsoft_client_key=ViewerFx&stimulsoft_';
+              } else {
+                    $report_type = 'vnsreports/index.php?';
+                }
+			  ?>
+			  <a <?php  if($reportValue->report_target==1) {  $reportOption=explode(',',$reportValue->report_option); ?> target='_blank' <?php } ?> href="<?php echo BASEURL; ?><?php echo $report_type; ?>report_key=<?php echo $reportValue->report_mrt; ?><?php if(in_array('[[++user_id]]',$reportOption)) { echo '&User='.$this->userId; } ?><?php if((in_array('[[++CostCenterNumber]]',$reportOption)) && $uniqueCostCenter!=''){ echo '&Cost_Center_Number='.$uniqueCostCenter;} ?><?php if((in_array('[[++CostCenterAllBuildings]]',$reportOption)) && $uniqueCostCenterAll!='' && $this->select_build_id=='' ) { echo '&Cost_Center_Number='.rtrim($uniqueCostCenterAll,','); } ?><?php if((in_array('[[++KeyBuildingNumber]]',$reportOption)) && $this->select_build_id!='') { echo '&buildkey='.$this->select_build_id; } ?><?php if((in_array('[[++KeyBuildingAllBuildings]]',$reportOption)) && $buildIdReportAll!='' && $this->select_build_id=='' ) { echo '&buildkey='.rtrim($buildIdReportAll,','); } ?><?php if(in_array('[[++BatchNumber]]',$reportOption) && $batch_number_report!='') { echo '&Batch_Number='.rtrim($batch_number_report,','); } ?><?php if((in_array('[[++WONumber]]',$reportOption)) && $woNumberAll!='') { echo "&WO_Number=".rtrim($woNumberAll,','); } ?><?php if((in_array('[[++InvoiceNumber]]',$reportOption)) && $invoiceAll!='') { echo '&Invoice_Number='.rtrim($invoiceAll,','); } ?><?php if((in_array('[[++Status_id]]',$reportOption))) { if($workorderstatus!='') { echo '&Status='.$workorderstatus; } } ?>" ><input type="button" name="download_csv" value="<?php  echo $reportValue->report_name;  ?>" /> </a>  <?php }  }?>
+			  
+			   <?php /* <a href='<?php echo BASEURL.'report/dlworkreport/type/pdf';?>' target='_blank'>  <input type="button" name="download_csv" value="Download PDF Report" /> </a> */ ?>
+			   
+			  
+			   
+			   <?php /*  <a href='<?php echo BASEURL.'report/dlworkreport/type/excel';?>' target='_blank'> <input type="button" name="download_csv" value="Download Excel Report" /> </a> */ ?>
+			   </div>
+		  </div>
+		  <div class="table-responsive">
+                  <div role="grid" class="dataTables_wrapper form-inline" id="dataTables-example_wrapper">
+					  <table class="table table-striped table-bordered table-hover dataTable no-footer">
+						  <thead>
+							  <tr class="rpr-header">
+								  <th>Date Received</th>
+								  <th>Time Received</th>
+								  <th>Work Order#</th>
+								  <th>Current Status</th>
+								  <th>Category</th>
+								  <?php /* <th>Company</th> */?>
+								  <th>Building</th>
+								  <th>Contact Information</th>
+							  </tr>
+						  </thead>
+						  <?php 
+							 if($this->wolist){
+								  $ssModel = new Model_ScheduleStatus();
+								$status_list = $ssModel->getScheduleStatus();
+								$status_array= array();
+								foreach($status_list as $sl){
+									if($sl['ssID']!=8)
+									$status_array[$sl['ssID']] = $sl['title'];
+								}
+								
+								$woModel = new Model_WorkOrder();
+								$j=0;
+								
+								foreach($this->wolist as $wl){
+
+									$wodetail = $woModel->getWorkOrderInfo($wl->woId);
+									$woData = $wodetail[0];
+									$row_class = ($j%2==0)?'even-row':'odd-row';
+								 ?>
+								 <tr class="<?php echo $row_class;?>">
+									 <td><?php echo date("m/d/Y",strtotime($wl->created_at))?></td>
+									 <td><?php echo $wl->time_requested?></td>
+									  <td><?php echo $wl->wo_number?></td>
+									  <td><?php echo $status_array[$wl->wo_status];?></td>
+									  <td><?php echo $wl->categoryName?></td>
+									  <?php /*<td><?php echo $wl->tenantName?></td>*/?>
+								      <td><?php echo $wl->buildingName?></td>
+								      <td rowspan="2">
+								          <div class="contact_information">
+											  <table width="100%">
+											       <tr>
+													   <th>Request By:</th>
+													   <td><?php echo $woData->firstName.' '.$woData->lastName;?></td>
+											       </tr>
+											       <tr>
+													   <th>Email:</th>
+													   <td><?php echo $woData->email;?></td>
+											       </tr>
+											       <tr>
+													   <th>Location:</th>
+													   <td><?php echo $woData->tenant_suite;?></td>
+											       </tr>
+											       <tr>
+													   <th>Phone:</th>
+													   <td><?php echo $woData->phoneNumber;?></td>
+											       </tr>
+											  </table>
+								          </div>								      
+								      </td>
+								 </tr>
+								 <tr class="<?php echo $row_class;?>">
+									 <th>Work Request:</th>
+									 <td colspan="5"><p><?php echo $wl->work_order_request;?></p></td>
+								 </tr>
+								<?php 
+								$j++;
+								}
+						      }
+						  ?>
+					  </table>
+					   <?php if(count($this->wolist)>0 && !empty($this->wolist)){
+					 echo $this->paginationControl($this->wolist, 'Sliding', 'pagination.phtml'); 
+					 }?>
+				  </div>
+		   </div>		  	  
+	 </div>
+</div>

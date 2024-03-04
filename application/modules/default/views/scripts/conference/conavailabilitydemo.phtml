@@ -1,0 +1,510 @@
+<?php echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/conference.js'); ?>
+<?php
+    $reportModel = new Model_Report();
+    $reportDetailLinks = '';
+    $dashBoardViewsdetails = '';
+    $dashBoardViews = '';
+    $woNumberAll = '';
+    $invoiceAll = '';
+    $uniqueCostCenterAll = '';
+    $buildIdReportAll = '';
+    $batch_number_report = '';
+    $uniqueCostCenter = '';
+    $batch_number_reportallbuilding = '';
+    $buildIdReport = $this->select_build_id;
+    $woNumberAllbuilding = '';
+    $invoiceAllbuilding = '';
+    $batch_number_reportall = '';
+    $cscheduleDetails = $this->cscheduleDetails;
+    $crDetails = $this->crDetails;
+    $not_permit = array(2, 3, 6);
+    $today_day = date('j');
+    $current_month = date('n');
+
+    // echo $this->roleId;
+    // echo $this->croom_location;
+	
+    $croom_access = $this->acessHelper->checkAccess($this->roleId, $this->croom_location);
+    //print_r($croom_access);
+    /* override access by custom user access if exist */
+    $customeAccessmodel = new Model_UserAccess();
+    $customeAccessmodeld = $customeAccessmodel->getUserCustomAccess($this->user_Id, $this->croom_location);
+    if ($customeAccessmodeld[0]) {
+            $croom_access = $customeAccessmodeld[0];
+    }
+    $moduleMapper = new Model_UserBuildingModule();
+    $moduleAccess = $moduleMapper->getModuleByBuildingId($this->select_build_id, 2);
+    $buildhasAccess = array();
+    if ($moduleAccess) {
+            foreach ($moduleAccess as $moduleAccessVal) {
+                    $buildhasAccess[] = $moduleAccessVal->module_id;
+            }
+    }
+    if (in_array(2, $buildhasAccess)) {
+            $reportDetailLinks = $reportModel->getReport($this->custID, 36);
+    } else {
+            $reportDetailLinks = false;
+    }
+    $timezoneMapper = new Model_TimeZone();
+    $timezoneMapper->setTimezone($this->select_build_id);
+    $currentdate = date("Y-m-d");
+    $booking_arr = array();
+    
+    if ($this->roleId != 1 && $croom_access->is_access == 0) {
+
+            if ($this->custID != null && $this->custID && $this->companyListing != '' && $this->companyListing != false) {
+
+                    if ($reportDetailLinks != '') {
+                            $woReport = new Model_Report();
+                            $woBatch = new Model_WoBatch();
+                            foreach ($this->companyListing as $cb) {
+                                    $uniqueCostCenterAll = $uniqueCostCenterAll . $cb['uniqueCostCenter'] . ',';
+                                    $buildIdReportAll = $buildIdReportAll . $cb['build_id'] . ',';
+                                    $batchDetails = $woBatch->showBatch($cb['build_id']);
+                                    if ($batchDetails != '') 
+                                    {
+                                        foreach ($batchDetails as $bd)
+                                        {
+                                            $batch_number_reportallbuilding = $batch_number_reportallbuilding . $bd['batch_number'] . ',';
+                                        }
+                                    }
+                                    $order = 'woId';
+                                    $dir = 'DESC';
+                                    $wolist = $woReport->getWorkOrderByBuilding($cb['build_id'], $order, $dir);
+                                    $invoicelist = $woReport->invoiceByBatch($cb['build_id'], $order, $dir);
+                                    if ($wolist != '') {
+                                            foreach ($wolist as $woNumber) {
+                                                    $woNumberAllbuilding = $woNumberAllbuilding . $woNumber->wo_number . ',';
+                                            }
+                                    }
+                                    if ($invoicelist != '') {
+                                            foreach ($invoicelist as $invoiceNumber) {
+                                                    $invoiceAllbuilding = $invoiceAllbuilding . $invoiceNumber->wo_number . ',';
+                                            }
+                                    }
+
+                                    $batchDetails = $woBatch->showBatch($cb['build_id']);
+
+                                    if ($batchDetails != '') {
+                                            foreach ($batchDetails as $bd) {
+                                                    $batch_number_reportall = $batch_number_reportall . $bd['batch_number'] . ',';
+                                            }
+                                    }
+                            }
+                    }
+    ?>
+        <!-- End all report Link -->
+        <div id="contents">
+            <ol id="toc">
+		   
+                <?php
+                $j = 1;
+                foreach ($this->companyListing as $cb) {
+                    ?>
+                    <li><a class="<?php if ($cb['build_id'] == $this->select_build_id) echo 'active'; ?>"  href="<?php echo $this->baseUrl() . '/conference/conavailability/bid/' . $cb['build_id']; ?>" ><span><?php echo $cb['buildingName']; ?></span></a>
+                        <?php
+                        if ($reportDetailLinks != '') {
+                            if ($cb['build_id'] == $this->select_build_id) {
+                                $uniqueCostCenter = $cb['uniqueCostCenter'];
+                                $batchDetails = $woBatch->showBatch($cb['build_id']);
+                                $batch_number_report = '';
+                                if ($batchDetails != '') {
+                                    foreach ($batchDetails as $bd) {
+                                        $batch_number_report = $batch_number_report . $bd['batch_number'] . ',';
+                                    }
+                                }
+                                $order = 'woId';
+                                $dir = 'DESC';
+                                $wolist = $woReport->getWorkOrderByBuilding($cb['build_id'], $order, $dir);
+                                $invoicelist = $woReport->invoiceByBatch($cb['build_id'], $order, $dir);
+                                if ($wolist != '') {
+                                    foreach ($wolist as $woNumber) {
+                                        $woNumberAll = $woNumberAll . $woNumber->wo_number . ',';
+                                    }
+                                }
+                                if ($invoicelist != '') {
+                                    foreach ($invoicelist as $invoiceNumber) {
+                                        $invoiceAll = $invoiceAll . $invoiceNumber->wo_number . ',';
+                                    }
+                                }
+                            }
+                        }
+                        ?> 
+                    </li>
+
+                <?php } ?>
+            </ol>
+            <!-- Report Link -->
+            
+        <?php   
+                if (in_array(2, $buildhasAccess))
+                { 
+                    if ($reportDetailLinks != '')
+                    {  ?> 
+                            <div class="clearfix"></div>
+                            <div class="tabmenu report_tab_menus" ><ul>
+                            <?php
+                        foreach ($reportDetailLinks as $reportvalue) {
+                            if ($reportvalue->Report_Type == 'Flash') {
+                                 $report_type = 'reports/VisionReportEngine/index.php?stimulsoft_client_key=ViewerFx&stimulsoft_';
+                            } else {
+                                $report_type = 'vnsreports/index.php?';
+                            }
+                            $reportOption = explode(',', $reportvalue->report_option);?> 	
+                    <li class="report_text" >
+                            <a  <?php if ($reportvalue->report_target == 1) { ?> target='_blank' <?php } ?> href="<?php echo BASEURL; ?><?php echo $report_type; ?>report_key=<?php echo $reportvalue->report_mrt; ?><?php
+                                if (in_array('[[++user_id]]', $reportOption)) {
+                                    echo '&User=' . $this->userId;
+                                }
+                                ?><?php
+                                if ((in_array('[[++CostCenterAllBuildings]]', $reportOption)) && $uniqueCostCenterAll != '') {
+                                    echo '&Cost_Center_Number=' . rtrim($uniqueCostCenterAll, ',');
+                                } else if ((in_array('[[++CostCenterNumber]]', $reportOption)) && $uniqueCostCenter != '') {
+                                    echo '&Cost_Center_Number=' . $uniqueCostCenter;
+                                }
+                                ?><?php
+                                if ((in_array('[[++KeyBuildingAllBuildings]]', $reportOption)) && $buildIdReportAll != '') {
+                                    echo '&buildkey=' . rtrim($buildIdReportAll, ',');
+                                } else if ((in_array('[[++KeyBuildingNumber]]', $reportOption)) && $buildIdReport != '') {
+                                    echo '&buildkey=' . $this->select_build_id;
+                                }
+                                ?><?php
+                                if (in_array('[[++BatchNumber]]', $reportOption)) {
+                                    if ((in_array('[[++CostCenterAllBuildings]]', $reportOption)) && (in_array('[[++CostCenterAllBuildings]]', $reportOption))) {
+                                        echo '&Batch_Number=' . rtrim($batch_number_reportall, ',');
+                                    } else {
+                                        echo '&Batch_Number=' . rtrim($batch_number_report, ',');
+                                    }
+                                }
+                                ?><?php
+                                if ((in_array('[[++WONumber]]', $reportOption))) {
+                                    if ((in_array('[[++CostCenterAllBuildings]]', $reportOption)) && (in_array('[[++CostCenterAllBuildings]]', $reportOption))) {
+                                        echo "&WO_Number=" . rtrim($woNumberAllbuilding, ',');
+                                    } else {
+                                        echo "&WO_Number=" . rtrim($woNumberAll, ',');
+                                    }
+                                }
+                                ?><?php
+                                if ((in_array('[[++InvoiceNumber]]', $reportOption))) {
+                                    if ((in_array('[[++CostCenterAllBuildings]]', $reportOption)) && (in_array('[[++CostCenterAllBuildings]]', $reportOption))) {
+                                        echo '&Invoice_Number=' . rtrim($invoiceAllbuilding, ',');
+                                    } else {
+                                        echo '&Invoice_Number=' . rtrim($invoiceAll, ',');
+                                    }
+                                }
+                                ?>" ><?php echo $reportvalue->report_name; ?> </a> 
+                            </li> <?php } ?> </ul>							
+
+                            </div>	<?php } ?>
+			<div class="clearfix"></div>
+			<button type="button" onclick="changeMonth('<?php echo date("n"); ?>','<?php echo date("Y"); ?>','auser');" class="btn btn-info active"> Monthly Availabilities </button>						
+			<?php /*<button type="button" onclick="changeweekly('<?php echo date("Y"); ?>','<?php echo $this->month; ?>','<?php echo $this->lastdate; ?>','auser');" class="btn btn-info active"> Weekly Availabilities </button>						
+			<button type="button" onclick="changedaily('<?php echo date("Y"); ?>','<?php echo $this->month; ?>','<?php echo date("d"); ?>','auser');" class="btn btn-info active"> Daily Availabilities </button>	
+			<button type="button" onclick="schedulefirst('<?php echo date("d"); ?>','<?php echo date("n"); ?>','<?php echo date("Y"); ?>','auser','refresh');" class="btn btn-info active"> Schedule  </button>  */ ?>					
+											
+            <div class="clearfix"> </div>
+            <?php           
+            $month = date("m");
+            $year = date("Y");
+            $m = $month;
+            $y = $year;
+            $mName = date("F");
+            $mp = date("m") - 1;
+            $yp = date("Y");
+            if ($mp < 1)
+			{
+                $mp = 12;
+                $yp = date("Y") - 1;
+            }
+            $mn = date("m") + 1;
+            $yn = date("Y");
+            if ($mn > 12)
+			{
+                $mn = 1;
+                $yn = date("Y") + 1;
+            }
+            $tdate = date('t', mktime(0, 0, 0, $month, 1, $year));
+            $add_date=6 - date("w",strtotime("$tdate-$month-$year"));
+            $add_date = sprintf("%02d", $add_date);
+            $from_date = $y . '-' . $m . '-' . '01';
+            $to_date = $yn . '-' .$mn. '-' .$add_date;
+            //die;
+			
+            $cscheduleMapper = new Model_ConferenceSchedule();
+            $bookingDetails = $cscheduleMapper->getBookingEvent($from_date, $to_date, $this->select_build_id);
+
+            if($bookingDetails) {
+                foreach ($bookingDetails as $bookingDetailsVal) {
+                    //print_r($bookingDetailsVal); 
+                    $index = date('Y-m-d', strtotime($bookingDetailsVal->requested_date));
+                    $booking_arr[$index] = $bookingDetailsVal;
+                }
+            }
+            //print_r($booking_arr);
+            ?>
+
+            <div id="calender_change">
+                <div style='text-align:left;'><h2>
+                        <a href="#" onclick="changeMonth('<?php echo $mp; ?>', '<?php echo $yp; ?>','auser')"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 128 128"><path fill="#666" d="M88.2 3.8L35.8 56.23 28 64l7.8 7.78 52.4 52.4 9.78-7.76L45.58 64l52.4-52.4z"></path></svg> </a> 
+                            <?php echo $mName.' '.$year; ?>
+                        <a href="#" onclick="changeMonth('<?php echo $mn; ?>', '<?php echo $yn; ?>','auser')"> <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 128 128"><path fill="#666" d="M38.8 124.2l52.4-52.42L99 64l-7.77-7.78-52.4-52.4-9.8 7.77L81.44 64 29 116.42z"></path></svg> </a>
+                        <a  style="display:none" id="curr_mo" href="#" onclick="changeMonth('<?php echo $m; ?>', '<?php echo $y; ?>', '<?php echo "auser"; ?>')"> > </a>
+                    </h2></div>
+                <?php //echo draw_calendar($m, $y);  ?>
+                <?php
+                /* draws a calendar */
+
+                $current = date("Y-m-d ",strtotime("now"));
+                $currentdate = strtotime($current."00:00:00");
+
+                /* draw table */
+                $calendar = '<table cellpadding="0" cellspacing="0" class="calendar">';
+
+                /* table headings */
+                $headings = array('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday');
+                $colors = array('bg-primary', 'bg-success', 'bg-info',  'bg-danger', 'text-muted');
+                $calendar.= '<tr class="calendar-row"><td class="calendar-day-head">' . implode('</td><td class="calendar-day-head">', $headings) . '</td></tr>';
+
+                /* days and weeks vars now ... */
+                $running_day = date('w', mktime(0, 0, 0, $month, 1, $year));
+                $days_in_month = date('t', mktime(0, 0, 0, $month, 1, $year));
+                $days = date('t', mktime(0, 0, 0, $month, 1, $year));
+				$days_in_month= $days_in_month + $add_date;
+                $days_in_this_week = 1;
+                $day_counter = 0;
+                $dates_array = array();
+
+                /* row for week one */
+                $calendar.= '<tr class="calendar-row test-calseee" valign="top">';
+				$running_day1  = $running_day-1;
+				$running_day = 0;
+                /* print "blank" days until the first of the current week */
+                for ($x = 0; $x < $running_day; $x++):
+                    $calendar.= '<td class="calendar-day-np"> </td>';
+                    $days_in_this_week++;
+                endfor;
+			
+				$days_in_month1 = date('t', mktime(0, 0, 0, $month-1, 1, $year));
+				for($k=$days_in_month1-$running_day1; $k<=$days_in_month1; $k++)
+				{
+					$calendar.= '<td class="calendar-day-pre">';
+					$calendar.= '<div class="day-number-pre">' . $k . '</div>';
+					$calendar.= '</td>';
+					$running_day++;
+				}
+				$nextmo=true;
+                                $roomname=array();
+                /* keep going with days.... */
+                for ($list_day = 1; $list_day <= $days_in_month; $list_day++):
+					if($list_day > $days ){
+						$calendar.= '<td class="calendar-day-next">';
+						$nextmo=false;
+					}else if($running_day==0 || $running_day==6 ){
+						$calendar.= '<td class="calendar-day weekday">';
+					}else{
+                        $today_class = ( $list_day==$today_day)?"today":'';
+						$calendar.= '<td class="calendar-day '.$today_class.'">';
+					}
+					
+                    
+					if($list_day > $days ){
+
+                       
+						if($list_day==($days+1))
+						{
+							$month=($month+1);
+                                                        $month= sprintf("%02d", $month);	
+						}
+						$l_days=$list_day - $days;
+							
+						$calendar.= '<div class="day-number-next">' . $l_days . '</div>';
+						$url = "'" . $this->baseUrl() . '/conference/createbooking/month/' . $month . '/year/' . $year . '/bid/' . $this->select_build_id . '/day/' . $list_day . "'";
+						$num_padded = sprintf("%02d", $l_days);
+						$index2 = $year . '-' . $month . '-' . $num_padded;
+					}else{
+                                               
+						$calendar.= '<div class="day-number">' . $list_day . '</div>';
+						$url = "'" . $this->baseUrl() . '/conference/createbooking/month/' . $month . '/year/' . $year . '/bid/' . $this->select_build_id . '/day/' . $list_day . "'";
+                                               	$num_padded = sprintf("%02d", $list_day);
+						$index2 = $year . '-' . $month . '-' . $num_padded;
+					}
+                                        if($bookingDetails) 
+					{
+					$i=1;
+					$calendar.= '<div class="date-bg">';
+                                        
+					foreach ($bookingDetails as $bookingDetailsVal)
+					{
+						//print_r($bookingDetailsVal);
+							//print_r($bookingDetailsVal); 
+							$index = date('Y-m-d', strtotime($bookingDetailsVal->requested_date));
+							if ($index == $index2)
+							{
+                                                               
+                                                               
+                                                               $icon = "";
+                                                               $access = true;
+								//print_r($bookingDetailsVal);
+                                                                if($bookingDetailsVal->booking_type!=""){
+                                                                    $icon = '<i class="glyphicon glyphicon-refresh"></i>';
+                                                                    $access =false;
+                                                                }
+                                                                $tnModel = new Model_Tenant();
+								$tndetail = $tnModel->getTenantNameById($bookingDetailsVal->tenant);
+								//echo $tndetail[0]->id;
+								//echo "<hr>";
+								$rname= md5($bookingDetailsVal->room_name);
+								$calendar.= '<div  class="tooltip-vcm  book_week book_det_container  '.$rname.' ">';
+								$roomname[$rname]=$rname;
+								$calendar.='<div class="mtime">'. $bookingDetailsVal->start_time . ' - ' . $bookingDetailsVal->end_time ;
+								$calendar.= "&nbsp;&nbsp;".$bookingDetailsVal->room_name.'&nbsp;&nbsp;'.$icon.' </div>';
+								$calendar.= '<span><div class="t_name">'.$tndetail[0]->tenantName.'</div>';
+								$calendar.= '<div class="r_name">'.$bookingDetailsVal->room_name.'</div>';
+								$calendar.='<div>'. $bookingDetailsVal->start_time . ' - ' . $bookingDetailsVal->end_time . '</div>';
+								$edit_url = "'" . $this->baseUrl() . '/conference/editbooking/month/' . $month . '/year/' . $year . '/bid/' . $this->select_build_id .'/day/'. $list_day . '/crid/'.$bookingDetailsVal->crid."'";
+                                                                if($currentdate <= strtotime($bookingDetailsVal->requested_date)){
+                                                                    if($access===true){
+                                                                        $calendar.='<div class="edit_del_room"><div class="edit_broom">'
+                                                                                    . '<a href="#editbookroom" class="editCat" onclick="editbookroom('.$edit_url.')">'
+                                                                                    . '<img src="'.BASEURL . 'public/images/edit.png'.'"></a></div>';
+                                                                    }
+                                                                    $calendar.='<div class="delete_broom">'
+                                                                                . '<a href="javascript:void(0);" onclick="deleteCrRoom('.$bookingDetailsVal->crid.')" class="delCat" data-id="" title="Delete">'
+                                                                                . '<img src="'.BASEURL . 'public/images/delete.png'.'"></a></div></div><div class="clearfix"></div>';                                                       
+                                                                }
+								$calendar.= '</span></div>';
+								$i++;
+							}
+							
+					}
+                    $calendar.= '<span class="readmore" alt="show more">...</span>';
+                    
+					$calendar.= '</div>';
+                                            
+					}else{
+						$calendar.= '<div class="date-bg">';
+						$calendar.= '</div>';
+					}
+                                        //echo ""
+                                        $build_ID=$this->select_build_id;
+                                        $da=$index2;
+                                        $cscheduleMapper = new Model_ConferenceSchedule();
+                                        $getvalidday=$cscheduleMapper->getcrvaliddays($build_ID,$da);
+                                        
+                                        if(in_array($running_day, $this->viewacess)  && !empty($getvalidday)){
+                                            $plus='<div class="conbooking"><a href="#createBooking" onclick="createBooking('.$url.')">+</a> </div>';
+                                        }else{
+                                            $plus="";
+                                        }
+					if($croom_access->is_write==1 && $croom_access->is_read==1)
+					{
+						if(date("Y") < $year && ($nextmo)){
+						$calendar.= $plus;
+						}else if(date("Y")==$year && ($nextmo)){
+							if(date("m") < $m && ($nextmo)){
+								$calendar.= $plus;
+							}else if(date("m") == $m && date("d") <= $list_day && ($nextmo)){
+								$calendar.= $plus;
+							}
+
+						}
+					}
+                    
+
+                    /** QUERY THE DATABASE FOR AN ENTRY FOR THIS DAY !!  IF MATCHES FOUND, PRINT THEM !! * */
+                    $calendar.= str_repeat('<p> </p>', 2);
+                    $calendar.= '</td>';
+                    if ($running_day == 6):
+                        $calendar.= '</tr>';
+                        if (($day_counter + 1) != $days_in_month):
+                            $calendar.= '<tr class="calendar-row" valign="top">';
+                        endif;
+                        $running_day = -1;
+                        $days_in_this_week = 0;
+                    endif;
+                    $days_in_this_week++;
+                    $running_day++;
+                    $day_counter++;
+                endfor;
+
+                /* finish the rest of the days in the week */
+                if ($days_in_this_week < 8):
+                    for ($x = 1; $x <= (8 - $days_in_this_week); $x++):
+                        //$calendar.= '<td class="calendar-day-np"> </td>';
+                    endfor;
+                endif;
+
+                /* final row */
+                $calendar.= '</tr>';
+
+                /* end the table */
+                $calendar.= '</table>';
+
+                /* all done, return result */
+                echo $calendar;
+
+
+                /* sample usages */
+                ?>
+
+
+            </div>
+                <?php }else{
+                    echo '<div class="clearfix"> </div>';
+                    echo 'This Building does not have the access of this module.';  
+                }
+
+        } else {
+            echo 'No Building has assign to you.';
+        }
+    } else {
+        ?>
+        You don't have access for this module.
+    <?php }
+        $j=1; 
+if(!empty($roomname))
+foreach($roomname as $val){
+    
+  echo '<script>$(".'.str_replace(" ","_",$val).'").addClass("book_hot_schedule'.$j.'"); </script>';
+  $j++;
+}
+    ?>
+
+<div class="loader" style="display:none;" > <img src="<?php echo BASEURL.'public/images/loader.gif';?>"><div>
+<style>
+.loader {
+    height: 100% !important;
+}
+</style>
+<script type="text/javascript">
+$(".calendar-day .readmore").click(function(){
+    $(this).parent().parent().addClass("moreinfo");
+    $(this).parent().find('.tooltip-vcm').removeClass('hide').show();
+    $(this).parent().find('.tooltip-vcm').show();
+    $(this).hide();
+});
+$('.calendar-day').each(function () {
+    var meetingCount = $(this).find('.tooltip-vcm').length;       
+     if (meetingCount >3 ) {
+        jQuery(this).find('.readmore').show();
+        $(this).find('.readmore').css("display", "block");
+        $(this).find('.tooltip-vcm').each(function (index) {
+            if(index>2){
+               $meetingDiv =  $(this);
+               $meetingDiv.addClass("hide");
+            }
+        });
+     }   
+});
+</script>
+
+
+
+
+
+
+
+
+
+
+    

@@ -1,0 +1,89 @@
+<?php
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/pm.js');
+
+?>
+<div class="container-right table-container-wrap">
+    <div class="message">               
+            <span class="error-txt" style="color:red; text-align:center;"></span>
+    </div>
+    <section style="z-index:9999" class="w-48 fr ch-home-form">
+        <section class="ch-form-header ">
+            <h3>Vision Work Orders </h3>
+        </section>
+        <div class="room-setup">
+            <div class="tableGrid list_tableGrid my_table_grid">
+                <div class="message">
+                    <div class="success_message" style="text-align:center;width:100%;font-weight:bold;color:red;"></div>				  			
+                    <span id="success_msg"></span>
+                    <span id="error_msg"></span>
+                </div>
+                <?php
+                if(count($this->equipmentDetail)>0){
+                    ?>
+                <div class="form-table-wrap"  style="height:300px"  >
+                    <div id="step1">
+                            <h5> The Type Designation  can not be deleted  Because the Following Equipment is currently using this Template: </h5>
+                        <div class="row row-wrap">
+                            <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <td><b>Equipment Name</b></td>
+                    <td><b>Floor</b></td>
+                    <td><b>Unit</b></td>
+                    
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                foreach ($this->equipmentDetail as $val) {
+                    ?>
+                    <tr>
+                        <td><?php echo $val->AU_Equipment_Name; ?></td>
+                        <td><?php echo $val->Equipment_Floor; ?></td>
+                        <td><?php echo $val->Equipment_Unit; ?></td>
+                        
+                    </tr>
+
+                    <?php
+                }
+                ?>
+
+            </tbody>
+        </table>   
+                        </div>
+                        
+                        <div class="confirmBtn float_none">
+                            
+                            <input type="button" value="Ok" name="" class="confirm" id='emailsave' onclick="canceltemplate();">
+                            <input type="button" value="Cancel" name="cancel" class="cancel" onclick="canceltemplate();">                           
+
+                            
+                        </div>
+
+                    </div>   
+                </div>
+                <?php
+                    
+                    
+                } else {
+                    ?>
+                <div class="form-table-wrap" style="height: 300px">
+                    <div id="step1">
+                            <h5>The Template Name can not be deleted 
+                                All Type Designation must be removed first. </h5> 
+                        <div class="confirmBtn float_none">                            
+                            <input type="button" value="Ok" name="" class="confirm" id='emailsave' onclick="canceltemplate();">
+                            <input type="button" value="Cancel" name="cancel" class="cancel" onclick="canceltemplate();"> 
+                        </div>
+                    </div>   
+                </div>
+                <?php                   
+                    
+                }
+                ?>                
+                
+            </div>
+        </div>
+    </section>
+</div>
+<div class="loader" style="display:none;" > <img src="<?php echo BASEURL.'public/images/loader.gif';?>"></div>

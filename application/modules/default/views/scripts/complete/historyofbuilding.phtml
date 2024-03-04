@@ -1,0 +1,70 @@
+<?php	
+	 $bsModel = new Model_BuildService();
+	 $bsList = $bsModel->getActiveBuildServiceByBId($this->bId);
+	 
+	 $bserviceData = $this->bserviceData[0];
+	 	
+?>
+
+<h1>Building Services</h1>
+			   <div id="lab_tab" class="tab_content cwo_content">
+			   <div class="grid_content" style="height:180px;">
+											  <table name="labor_grid" class="cw_table_grid" width="100%">
+												  <tr>
+													  <th>Service Name</th>
+													  <th>Charge</th>
+													  <th>Unit of Measure</th>
+													  <th>Amount Requested</th>
+													  <th>Comments</th>
+												  </tr> 
+												   <tr><?php if($this->current_value!='null' && $this->current_value!='' ) { ?><td><?php 
+										        if($bsList){ 
+												foreach ($bsList as  $bsl) { if($this->current_value['service']==$bsl['bsid']) {echo stripslashes($bsl['service_name']); }} } ?></td>
+												
+												<td><?php echo $this->current_value['charge'];?></td>
+												<td><?php $unitMessaure = new Model_WoHistoryLog();
+	                                              $unitMessaureList = $unitMessaure->getUnitmessaure(); 
+												  foreach($unitMessaureList as $Messaure){
+												  if($Messaure->bsid==$this->current_value['service']) { echo $Messaure->unit_measure;}
+												  }
+												  ?></td>
+												<td><?php echo $this->current_value['amount_requested']; ?></td>
+												<td><?php echo stripslashes($this->current_value['comment']); ?></td>
+											<?php } else { ?>
+											<td colspan=5 style="text-align:center"><?php echo HiSTORY_NONE; ?></td>
+											<?php } ?>
+											</tr>
+												  <tr style="background:none"> <td colspan="5" > 
+											<div style="text-align:center">	<span style="font-size:20px; font-weight:bold;"><i class="fa fa-arrow-circle-down big-arrow"></i>
+</span>  </div>
+											</td>
+											</tr>
+												 
+												  
+												 <?php if($this->change_value!='') { ?>
+												
+												  <tr>
+													<tr><td><?php 
+										        if($bsList){ 
+												foreach ($bsList as  $bsl) { if($this->change_value['service']==$bsl['bsid']) {echo stripslashes($bsl['service_name']); }} }  ?></td>
+												
+												<td><?php echo $this->change_value['charge'];?></td>
+												<td><?php $unitMessaure = new Model_WoHistoryLog();
+	                                              $unitMessaureList = $unitMessaure->getUnitmessaure(); 
+												  foreach($unitMessaureList as $Messaure){
+												  if($Messaure->bsid==$this->change_value['service']) { echo $Messaure->unit_measure;}
+												  }
+												  ?></td>
+												<td><?php echo $this->change_value['amount_requested']; ?></td>
+												<td><?php echo stripslashes($this->change_value['comment']); ?></td>
+												
+												  <?php }  else { ?>
+											<td colspan=5 style="text-align:center"><?php echo HiSTORY_NONE; ?></td>
+											<?php } ?>
+												
+											</tr>
+												  </table> 
+												  </div> </div>
+												  <div class="buttons">
+		<button type="button" name="cancel" id="cancel" value="Cancel" onclick="cancelWoDesc()">Cancel</button>
+	    </div> 

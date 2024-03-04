@@ -1,0 +1,1121 @@
+<?php
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/complete_workorder.js');
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/moment.js');
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/jquery.form.js');
+$closewo_access = $this->acessHelper->checkAccess($this->roleId, $this->closewo_location);
+/* override access by custom user access if exist */
+$customeAccessmodel = new Model_UserAccess();
+$customeAccessmodeld = $customeAccessmodel->getUserCustomAccess($this->userId, $this->closewo_location);
+if ($customeAccessmodeld[0]) {
+    $closewo_access = $customeAccessmodeld[0];
+}
+/* end overriding access */
+$reportModel = new Model_Report();
+$reportDetailLinks = '';
+$dashBoardViewsdetails = '';
+$dashBoardViews = '';
+$woNumberAll = '';
+$invoiceAll = '';
+$uniqueCostCenterAll = '';
+$buildIdReportAll = '';
+$batch_number_report = '';
+$uniqueCostCenter = '';
+$batch_number_reportallbuilding = '';
+$buildIdReport = $this->select_build_id;
+$woNumberAllbuilding = '';
+$uniqueCostCenter1 = '';
+$invoiceAllbuilding = '';
+$batch_number_reportall = '';
+$reportDetailLinks = $reportModel->getReport($this->custID, 5);
+$WorkOrdersCurrentWODetails = $reportModel->getReport($this->custID, 28);
+$WorkOrdersCurrentWODetails = $WorkOrdersCurrentWODetails[0];
+$WorkOrdersCurrentWOInvoiceDetails = $reportModel->getReport($this->custID, 29);
+$WorkOrdersCurrentWOInvoiceDetails = $WorkOrdersCurrentWOInvoiceDetails[0];
+
+if ($this->roleId != '1' && $closewo_access->is_access == 0) {
+    ?>
+    
+            <!-- Report Link -->
+    <?php if ($reportDetailLinks != '') { ?> <div class="clearfix"></div><div class="tabmenu report_tab_menus" ><ul><?php foreach ($reportDetailLinks as $reportvalue) {
+            $reportOption = explode(',', $reportvalue->report_option); ?> <li class="report_text" ><a   <?php if ($reportvalue->report_target == 1) { ?> target='_blank' <?php } ?> href="<?php echo BASEURL; ?>reports/VisionReportEngine/index.php?stimulsoft_client_key=ViewerFx&stimulsoft_report_key=<?php echo $reportvalue->report_mrt; ?><?php if (in_array('[[++user_id]]', $reportOption)) {
+                echo '&User=' . $this->userId;
+            } ?><?php if ((in_array('[[++CostCenterAllBuildings]]', $reportOption)) && $uniqueCostCenterAll != '') {
+                echo '&Cost_Center_Number=' . rtrim($uniqueCostCenterAll, ',');
+            } else if ((in_array('[[++CostCenterNumber]]', $reportOption)) && $uniqueCostCenter != '') {
+                echo '&Cost_Center_Number=' . $uniqueCostCenter;
+            } ?><?php if ((in_array('[[++KeyBuildingAllBuildings]]', $reportOption)) && $buildIdReportAll != '') {
+                echo '&buildkey=' . rtrim($buildIdReportAll, ',');
+            } else if ((in_array('[[++KeyBuildingNumber]]', $reportOption)) && $buildIdReport != '') {
+                echo '&buildkey=' . $this->select_build_id;
+            } ?><?php if (in_array('[[++BatchNumber]]', $reportOption)) {
+                if ((in_array('[[++CostCenterAllBuildings]]', $reportOption)) && (in_array('[[++CostCenterAllBuildings]]', $reportOption))) {
+                    echo '&Batch_Number=' . rtrim($batch_number_reportall, ',');
+                } else {
+                    echo '&Batch_Number=' . rtrim($batch_number_report, ',');
+                }
+            } ?><?php if ((in_array('[[++WONumber]]', $reportOption))) {
+                if ((in_array('[[++CostCenterAllBuildings]]', $reportOption)) && (in_array('[[++CostCenterAllBuildings]]', $reportOption))) {
+                    echo "&WO_Number=" . rtrim($woNumberAllbuilding, ',');
+                } else {
+                    echo "&WO_Number=" . rtrim($woNumberAll, ',');
+                }
+            } ?><?php if ((in_array('[[++InvoiceNumber]]', $reportOption))) {
+                if ((in_array('[[++CostCenterAllBuildings]]', $reportOption)) && (in_array('[[++CostCenterAllBuildings]]', $reportOption))) {
+                    echo '&Invoice_Number=' . rtrim($invoiceAllbuilding, ',');
+                } else {
+                    echo '&Invoice_Number=' . rtrim($invoiceAll, ',');
+                }
+            } ?>" ><?php echo $reportvalue->report_name; ?> </a> </li> <?php } ?> </ul></div>	<?php } ?>	
+
+
+            <div class="workorder-info">
+                <h1>Complete Work Orders</h1>
+                <div class="search-row">
+                    <div class="wo-search">
+                        <input type="hidden" value="<?php echo $this->select_build_id; ?>" id="building_id" >
+                        <label> Work Order Number:</label>
+                        <div id="cw_wo_search">
+                            <span class="field_error" id="wd_err"></span>
+                            <input type="text" name="work_order" value="" id="work_order" onkeypress="return isNumber(event)"/>
+                            <span class="my_se_icon">
+                                <a href="javascript:void(0)" name="submit" onclick="showWorkOrder('<?php echo $this->select_build_id; ?>')"><span aria-hidden="true" class="glyphicon glyphicon-search"></span></a>
+                            </span>
+                        </div> 
+                    </div>
+                    <div class="cw_message" id="cw_message">
+                        <span id="cw_success" class="success"></span>
+                        <span id="cw_error" class="error"></span>
+                    </div>
+                    <div class="chk-div">
+                        <label><input type="checkbox" name="billable_opt" id="billable_opt" value="1"/> Billable</label>
+                        <label><input type="checkbox" name="tenant_mail" id="tenant_mail" value="1" /> E-Mail Tenant When Completed </label>
+                    </div>  
+                </div>
+    <?php
+    if ($this->woData != '') {
+        $workOrder = $this->woData;
+        
+        $wpModel = new Model_WorkOrderUpdate();
+        //echo $workOrder->woId;
+        $cwpData = $wpModel->getCurrentWoUpdate($workOrder->woId);
+        //print_r($cwpData);
+        $work_status = ($cwpData) ? $cwpData[0]['wo_status'] : 0;
+        //$work_billable=($cwpData) ? $cwpData[0]['billable_opt'] : 0;
+        $work_billable=($cwpData) ? $cwpData[0]['billable_opt'] : 0;
+       
+        $catModel = new Model_Category();
+        $catlist = $catModel->getBuildingCategoryList($workOrder->building);
+        $cat_array = array();
+        foreach ($catlist as $cat)
+            $cat_array[$cat['cat_id']] = $cat['categoryName'];
+
+        $ssModel = new Model_ScheduleStatus();
+        $status_list = $ssModel->getScheduleStatus();
+        $status_array = array();
+        foreach ($status_list as $sl) {
+            $status_array[$sl['ssID']] = $sl['title'];
+        }
+
+        $default_data = array('status_closed' => 1, 'billable' => '', 'inc_tnt_rqt' => '', 'email_tenant' => '',
+            'sale_tax' => '0', 'auto_charge' => '0', 'dft_markup' => '15', 'override_markup' => '0',
+            'time_in_start' => '8:00 AM', 'time_in_incmt' => '30 Minutes', 'time_min_charge' => '30 Minutes');
+        
+        //$wpModel = new Model_WorkOrderUpdate();
+        //$currWo = $wpModel->getCurrentWoUpdate($woId);
+        
+        $wpModel = new Model_WoParameter();
+        $wpDetails = $wpModel->getWoParameterByBid($this->select_build_id);
+        $wpData = ($wpDetails) ? $wpDetails[0] : $default_data;
+        $work_desc = '';
+        $wdModel = new Model_WorkDescription();
+        $wdDetails = $wdModel->getDescByWoId($workOrder->woId);
+        
+        if ($wdDetails) {
+            $work_desc = $wdDetails[0]['description'];
+        }
+        //print_r($work_billable);
+        if($cwpData[0]['user_id']==0){
+            $work_billable=$wpData['billable'];
+        }
+        //echo $work_billable;
+        //print_r($wpData);
+        ?>
+                    <script type="text/javascript">
+        <?php if ($work_billable == '1') { ?>
+                            $('#billable_opt').prop('checked', true);
+        <?php } ?>
+        <?php if ($wpData['email_tenant'] == '1') { ?>
+                            $('#tenant_mail').prop('checked', true);
+        <?php } ?>
+                    </script>
+        <?php if ($work_status == '7') { ?>					  
+                        <div id="wo_closed_info_div" class="wclose_alert_txt">
+                            <span>********* Work Order is Closed ********</span>
+                        </div>
+        <?php } ?>
+                    <div class="view-detial-row">
+                        <div class="view-column">
+                            <input type="hidden" value="<?php echo $workOrder->woId; ?>" id="workOrder_id">
+                            <label class="red_head_bg">Work Order (<?php echo $status_array[$work_status]; ?>)</label>
+                            <div class="view-info-div">
+                                <ul>
+                                    <li>
+                                        <span>WO Number :</span> <p id="set_wo_number"><?php echo $workOrder->wo_number ?> </p>
+                                    </li>
+                                    <li>
+                                        <span>Tenant :</span> <p id="set_tenantName"> <?php echo stripslashes($workOrder->tenantName); ?></p>
+                                    </li>
+                                    <li>
+                                        <span>Date Received :</span> <p id="set_date_requested"><?php echo date("m/d/Y", strtotime($workOrder->date_requested)) ?></p>
+                                    </li>
+                                    <li>
+                                        <span>Time Received :</span> <p id="set_time_requested"><?php echo $workOrder->time_requested ?></p>
+                                    </li>
+                                    <li>
+                                        <span>Priority :</span> <p id="set_change_priority"><?php echo $workOrder->priorityName ?></p>
+                                    </li>
+                                    <li>
+                                        <span>Requested By :</span> <p id="set_name"> <?php echo stripslashes($workOrder->firstName) . ' ' . stripslashes($workOrder->lastName); ?> </p>
+                                    </li>
+                                    <li>
+                                        <span>Suite/Location :</span> <p id="set_tenant_suite"> <?php echo stripslashes($workOrder->tenant_suite); ?> </p>
+                                    </li>
+                                    <li>
+                                        <span>Email :</span> <p id="set_email"> <?php echo $workOrder->email ?> </p>
+                                    </li>
+                                    <li>
+                                        <span>Phone Number :</span> <p id="set_phoneNumber"> <?php echo $workOrder->phoneNumber ?> </p>
+                                    </li>
+                                    <li>
+                                        <span>Category :</span> <p id="set_categoryName"> <?php echo stripslashes($workOrder->categoryName); ?></p>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="wrequest-div">
+                                <span>Work Order Request</span>
+                                <div class="request-content" id="set_work_order_request">
+                                        <?php echo nl2br($workOrder->work_order_request) ?>
+                                </div>
+                            </div>
+                            <div class="button">
+                                <button type="button" name="edit" class="close_bt_hide_cls" value="Edit" onclick="showEditForm('<?php echo $workOrder->woId ?>')">Edit</button>
+                            </div>
+                        </div>
+                        <div class="detail-column">
+                            <label class="red_head_bg">Work Order Details</label>
+                            <div class="detial-div">						    
+                                <div class="time-status">
+                                    <div id="date-in-div" class="date-in-div">
+        <?php
+        $time_factor = explode(" ", $wpData['time_min_charge']);
+        if ($time_factor[1] == 'Hour') {
+            $charge_time = $time_factor[0] * 60;
+        } else {
+            $charge_time = $time_factor[0];
+        }
+        $curr_date = strtotime(date('Y-m-d')) + $charge_time;
+        $curr_date = ($curr_date != '') ? $curr_date : strtotime(date('Y-m-d'));
+        ?>
+        <?php
+        $date_cp_in = date('m/d/Y');
+        $date_cp_out = date('m/d/Y');
+        $time_in = '';
+        $time_out = '';
+        $wcId = '';
+        $cw_status = '';
+        $wcModel = new Model_WoComplete();
+        $wcData = $wcModel->getWoCompleteByWoId($workOrder->woId);
+        if ($wcData) {
+            $wcInfo = $wcData[0];
+            $date_in = ($wcInfo['date_cp_in'] != '0000-00-00') ? $wcInfo['date_cp_in'] : date('Y-m-d');
+            $date_out = ($wcInfo['date_cp_out'] != '0000-00-00') ? $wcInfo['date_cp_out'] : date('Y-m-d');
+            $date_cp_in = date('m/d/Y', strtotime($date_in));
+            $date_cp_out = date('m/d/Y', strtotime($date_out));
+            $time_in = $wcInfo['time_in'];
+            $time_out = $wcInfo['time_out'];
+            $cw_status = $wcInfo['wo_status'];
+            $wcId = $wcInfo['wcId'];
+        } else {
+            $date_cp_in = date('m/d/Y');
+            $date_cp_out = date('m/d/Y', $curr_date);
+            $time_in = $wpData['time_in_start'];
+            $time_out = '';
+            $cw_status = ($wpData['status_closed'] == '1') ? '7' : '';
+        }
+        ?>
+                                        <div class="date-comp">
+                                            <span>Date Completed:</span>
+                                            <input type="text" name="date_cp_in" id="date_cp_in" value="<?php echo $date_cp_in; ?>" readonly="true" class="close_fd_dsbl"/>
+                                            <input type="hidden" name="wcId" id="wcId" value="<?php echo $wcId; ?>"/>
+                                        </div>
+                                        <div class="time">
+                                            <span>Time In</span>
+                                            <select name="time_in" id="time_in" class="close_fd_dsbl" onchange="minChargeSub(this.value, '<?php echo $wpData['time_in_start']; ?>', '<?php echo $charge_time; ?>')">
+                                        <?php
+                                        $start = strtotime($wpData['time_in_start']);
+                                        $end = strtotime('11:59pm');
+                                        $time_factor = explode(" ", $wpData['time_in_incmt']);
+                                        $inc_time = $time_factor[0];
+                                        $increment = $inc_time * 60;
+                                        for ($i = $start; $i <= $end; $i += $increment) {
+                                            $selected = ( $time_in == date('g:i A', $i)) ? ' selected="selected"' : '';
+                                            echo '<option value="' . date('g:i A', $i) . '" ' . $selected . '>' . date('g:i A', $i) . '</option>';
+                                        }
+                                        ?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div id="date-out-div" class="date-out-div">
+                                        <div class="date-comp">
+                                            <span>Date Completed:</span>
+
+                                            <input type="text" name="date_cp_out"  id="date_cp_out" class="close_fd_dsbl" value="<?php echo $date_cp_out; ?>" readonly="true"/>
+                                        </div>
+                                        <div class="time">
+                                            <span>Time Out</span>
+                                            <select name="time_out" id="time_out" class="close_fd_dsbl" onchange="minChargeAdd(this.value, '<?php echo $wpData['time_in_start']; ?>', '<?php echo $charge_time; ?>')">
+        <?php
+        //$start = strtotime('12:00am');
+        $start = strtotime($wpData['time_in_start']);
+        $statTime = $start + ($charge_time * 60);
+        $end = strtotime('11:59pm');
+        for ($i = $statTime; $i <= $end; $i += 900) {
+            $selected = ( $time_out == date('g:i A', $i)) ? ' selected="selected"' : '';
+            echo '<option value="' . date('g:i A', $i) . '" ' . $selected . '>' . date('g:i A', $i) . '</option>';
+        }
+        ?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="wd-status">
+                                        <span>Status</span>
+                                                    <?php
+                                                $select_status = $cw_status; // ($wpData['status_closed']=='1')?'7':'';
+                                                ?>
+                                        <select name="wo_status" id="wo_status" class="close_fd_dsbl">
+
+        <?php
+        foreach ($status_array as $key => $value) {
+            if ($key != '1') {
+                echo '<option value="' . $key . '"';
+                echo ($key == $select_status) ? 'selected="selected"' : '';
+                echo '>' . $value . '</option>';
+            }
+        }
+        ?>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div id="order-info-tab" class="order-info-tabb cwo-tabs-section">
+                                    <div id="tabs" class="tab_style" style="display:none">
+                                        <ul class="com_ord_tab">
+                                            <li><a href="#desc_tab">Description of Work</a></li>
+                                            <li><a href="#lab_tab">Labor</a></li>
+                                            <li><a href="#bs_tab">Building Service</a></li>
+                                            <li><a href="#mat_tab">Materials</a></li>
+                                            <li><a href="#os_tab">Outside Service</a></li>
+                                            <li><a href="#note_tab">Notes</a></li>
+                                        </ul>
+                                        <div id="desc_tab" class="grid_content">
+                                            <div id="desc_tab_inner" class="grid_content_inner">
+                                                        <?php if (nl2br($work_desc) == '') { ?>
+                                                    <table width="100%" >
+                                                        <tbody>
+                                                            <tr><td ></td></tr>												  
+                                                        </tbody></table>
+                                                        <?php } else { ?>
+                                                    <p> <!-- style="min-height:267px;" -->
+
+
+                                                            <?php echo stripslashes(nl2br($work_desc)); ?></p>
+                                                        <?php } ?>
+                                            </div>
+                                            <div class="footer_tab">
+                                                <div class="add_link_cls">
+                                                    <a href="javascript:void(0)" onclick="showDescription('<?php echo $workOrder->woId ?>')" class="close_bt_hide_cls">Add/Modify</a>
+                                                    &nbsp;
+                                                </div>
+                                                <div class="total_cls">
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div id="lab_tab" class="tab_content cwo_content adjust_popup">
+                                            <div class="grid_content">
+                                                <div class="grid_content_inner">
+                                                    <table name="labor_grid" id="labor_tab_table"  class="cw_table_grid" width="100%">
+                                                        <tr>
+                                                            <th>Employee Name</th>
+                                                            <th>Charge/Hour</th>
+                                                            <th>Rate Charge</th>
+                                                            <th>Job Time (HH:MM)</th>
+                                                            <th>Action</th>
+                                                        </tr>
+        <?php
+        $total_labor_charge = 0.00;
+        $laborModel = new Model_Labor();
+        $laborList = $laborModel->getLaborByWoId($workOrder->woId);
+        if ($laborList) {
+            foreach ($laborList as $ll) {
+                /*                 * **start calculation of total labor charge ** */
+                $lab_charge = 0;
+                $time = explode(":", $ll->job_time);
+                $jb_min = (isset($time[1])) ? $time[1] : '00';
+                $jb_time = $time[0] * 60 + $jb_min;
+                $lab_charge = number_format(($ll->charge_hour / 60) * $ll->multiplier * $jb_time, '2', '.', '');
+                $total_labor_charge = $total_labor_charge + $lab_charge;
+                /*                 * ****end calculation of total labor charge ****** */
+                ?>
+                                                                <tr id="labor_tab_table_<?php echo $ll->lid; ?>">
+                                                                    <td><?php echo stripslashes($ll->firstName) . ', ' . stripslashes($ll->lastName); ?></td>
+                                                                    <td><?php echo '$' . $ll->charge_hour; ?></td>
+                                                                    <td><?php echo $ll->description; ?></td>
+                                                                    <td><?php echo $ll->job_time; ?></td>
+                                                                    <td>
+
+                                                                        <a title="Edit" href="javascript:void(0)" onclick="showEditLabor('<?php echo $ll->lid; ?>', '<?php echo $workOrder->building ?>')" class="close_bt_hide_cls"><img src="<?php echo BASEURL . 'public/images/edit.png' ?>" /></a>
+                                                                        <a href="javascript:void(0);"  title="Delete" onclick="deleteLaborChargeTemp('<?php echo $ll->lid; ?>')" class="close_bt_hide_cls"><img src="<?php echo BASEURL . 'public/images/delete.png' ?>" /></a>
+                                                                    </td>
+                                                                </tr>
+                                                                <?php
+                                                            }
+                                                        } else {
+                                                            echo '<tr><td colspan="5"></td></tr>';
+                                                        }
+                                                        ?>
+
+
+                                                    </table>
+                                                </div> 
+                                            </div>
+                                            <div class="footer_tab">
+                                                <div class="add_link_cls">
+                                                    <a href="javascript:void(0)" class="close_bt_hide_cls" onclick="showLaborForm('<?php echo $workOrder->building ?>', '<?php echo $workOrder->woId ?>')">Add New Labor Charge</a>
+                                                    &nbsp;
+                                                </div>
+                                                <div class="total_cls">
+        <?php echo '$' . $total_labor_charge; ?>
+                                                </div>
+                                            </div>
+                                            <div class="clear"></div>
+                                        </div>
+                                        <div id="bs_tab" class="tab_content cwo_content adjust_popup">
+                                            <div class="grid_content">
+                                                <div class="grid_content_inner">
+                                                    <table name="bdservice_grid" id="service_tab_table" class="cw_table_grid" width="100%">
+                                                        <tr>
+                                                            <th>Service Name</th>
+                                                            <th>Charge</th>
+                                                            <th>Unit of Measure</th>
+                                                            <th>Amount Requested</th>
+                                                            <th>Comments</th>
+                                                            <th>Action</th>
+                                                        </tr>
+        <?php
+        $total_bs_charge = 0.00;
+        $bserviceModel = new Model_BuildingService();
+        $bserviceList = $bserviceModel->getBuildingServiceByWoId($workOrder->woId);
+        if ($bserviceList) {
+            foreach ($bserviceList as $bl) {
+                /*                 * **start calculation of total labor charge ** */
+                $bs_charge = 0;
+                $bs_charge = number_format(($bl->charge * $bl->amount_requested), '2', '.', '');
+                $total_bs_charge = $total_bs_charge + $bs_charge;
+                /*                 * ****end calculation of total labor charge ****** */
+                ?>
+                                                                <tr id="service_tab_table_<?php echo $bl->bsId; ?>">
+                                                                    <td><?php echo stripslashes($bl->service_name); ?></td>
+                                                                    <td><?php echo '$' . $bl->charge; ?></td>
+                                                                    <td><?php echo $bl->unit_measure; ?></td>
+                                                                    <td><?php echo $bl->amount_requested; ?></td>
+                                                                    <td><?php echo stripslashes($bl->comment); ?></td>
+                                                                    <td>
+                                                                        <a class="close_bt_hide_cls" title="Edit" href="javascript:void(0)" onclick="showEditBService('<?php echo $bl->bsId; ?>', '<?php echo $workOrder->building ?>')"><img src="<?php echo BASEURL . 'public/images/edit.png' ?>" /></a>
+                                                                        <a class="close_bt_hide_cls" href="javascript:void(0);"  title="Delete" onclick="deleteBserviceTemp('<?php echo $bl->bsId; ?>')"><img src="<?php echo BASEURL . 'public/images/delete.png' ?>" /></a>
+                                                                    </td>
+                                                                </tr>
+                                                                <?php
+                                                            }
+                                                        } else {
+                                                            echo '<tr><td colspan="6"></td></tr>';
+                                                        }
+                                                        ?>
+
+                                                    </table>
+                                                </div> </div>
+                                            <div class="footer_tab">
+                                                <div class="add_link_cls">
+                                                    <a href="javascript:void(0)" class="close_bt_hide_cls" onclick="showBServiceForm('<?php echo $workOrder->building ?>', '<?php echo $workOrder->woId ?>')">Add New Building Service Charge</a>
+                                                    &nbsp;
+                                                </div>
+                                                <div class="total_cls">
+                                                        <?php echo '$' . $total_bs_charge; ?>
+                                                </div>
+                                            </div>
+                                            <div class="clear"></div>
+                                        </div>
+                                        <div id="mat_tab" class="tab_content cwo_content adjust_popup">
+                                            <div class="grid_content">
+                                                <div class="grid_content_inner">
+                                                    <table name="material_grid" id="material_tab_table" class="cw_table_grid" width="100%">
+                                                        <tr>
+                                                            <th>Description</th>
+                                                            <th>Cost</th>
+                                                            <th>Quantity</th>
+                                                            <th>Mark-Up(%)</th>
+                                                            <th>Tax</th>
+                                                            <th>Action</th>
+                                                        </tr>
+                                                        <?php
+                                                        $total_material_charge = 0.00;
+                                                        $tot_material_tax = 0;
+                                                        $tot_mat_mkp = 0;
+                                                        $mcModel = new Model_MaterialCharge();
+                                                        $materialList = $mcModel->getMaterialChargeByWoId($workOrder->woId);
+                                                        if ($materialList) {
+                                                            foreach ($materialList as $mcl) {
+                                                                /*                                                                 * **start calculation of total labor charge ** */
+                                                                $mcharge = 0;
+                                                                $mat_mkp = 0;
+                                                                $mat_tax = 0;
+                                                                $mcharge = ($mcl->cost * $mcl->quantity);
+                                                                $mat_mkp = number_format(($mcharge * $mcl->markup) / 100, 2, '.', '');
+                                                                $total_material_charge = $total_material_charge + $mcharge;
+                                                                $tot_mat_mkp = $tot_mat_mkp + $mat_mkp;
+                                                                if ($mcl->tax == '1') {
+                                                                    $mat_tax = number_format((($mcharge + $mat_mkp) * $wpData['sale_tax']) / 100, 2, '.', '');
+                                                                }
+
+                                                                $tot_material_tax = $tot_material_tax + $mat_tax;
+
+                                                                /*                                                                 * ****end calculation of total labor charge ****** */
+                                                                ?>
+                                                                <tr id="material_tab_table_<?php echo $mcl->mcId; ?>">
+                                                                    <td><?php echo $mcl->description; ?></td>
+                                                                    <td><?php echo '$' . $mcl->cost; ?></td>
+                                                                    <td><?php echo $mcl->quantity; ?></td>
+                                                                    <td><?php echo $mcl->markup; ?></td>
+                                                                    <td><?php echo ($mcl->tax == '1') ? 'Yes' : 'No'; ?></td>
+                                                                    <td>
+                                                                        <a class="close_bt_hide_cls" title="Edit" href="javascript:void(0)" onclick="showEditMaterial('<?php echo $mcl->mcId; ?>', '<?php echo $workOrder->building ?>')"><img src="<?php echo BASEURL . 'public/images/edit.png' ?>" /></a>
+                                                                        <a class="close_bt_hide_cls" href="javascript:void(0);"  title="Delete" onclick="deleteMaterialTemp('<?php echo $mcl->mcId; ?>')"><img src="<?php echo BASEURL . 'public/images/delete.png' ?>" /></a>
+                                                                    </td>
+                                                                </tr>
+                                                                <?php
+                                                            }
+                                                        } else {
+                                                            echo '<tr><td colspan="6"></td></tr>';
+                                                        }
+                                                        ?>
+                                                    </table>
+                                                </div> </div>
+                                            <div class="footer_tab">
+                                                <div class="add_link_cls">
+                                                    <a href="javascript:void(0)" class="close_bt_hide_cls" onclick="showMaterialForm('<?php echo $workOrder->building ?>', '<?php echo $workOrder->woId ?>')">Add New Material Charge</a>
+                                                    &nbsp;
+                                                </div>
+                                                <div class="total_cls">
+                                                        <?php echo '$' . $total_material_charge; ?>
+                                                </div>
+                                            </div>
+                                            <div class="clear"></div>
+                                        </div>
+                                        <div id="os_tab" class="tab_content cwo_content adjust_popup">
+                                            <div class="grid_content">
+                                                <div class="grid_content_inner">
+                                                    <table name="outside_grid" id="outside_tab_table" class="cw_table_grid" width="100%">
+                                                        <tr>
+                                                            <th>Vendor Name</th>
+                                                            <th>Job Description/<br>Work Completed</th>
+                                                            <th>Job Cost $</th>
+                                                            <th>Mark-Up(%)</th>
+                                                            <th>Tax</th>
+                                                            <th>Action</th>
+                                                        </tr>
+        <?php
+        $total_outside_charge = 0.00;
+        $tot_outside_tax = 0;
+        $tot_outside_mkp = 0;
+        $outModel = new Model_OutsideService();
+        $outsideList = $outModel->getOutsideServiceByWoId($workOrder->woId);
+        if ($outsideList) {
+            foreach ($outsideList as $osl) {
+                /*                 * **start calculation of total outside service charge ** */
+                $mcharge = 0;
+                $os_mkp = 0;
+                $osl_tax = 0;
+                $osl_cost = $osl->job_cost;
+                $os_mkp = number_format(($osl_cost * $osl->markup) / 100, 2, '.', '');
+                $total_outside_charge = $total_outside_charge + $osl_cost;
+                $tot_outside_mkp = $tot_outside_mkp + $os_mkp;
+                if ($osl->tax == '1') {
+                    $osl_tax = number_format((($osl_cost + $os_mkp) * $wpData['sale_tax']) / 100, 2, '.', '');
+                }
+
+                $tot_outside_tax = $tot_outside_tax + $osl_tax;
+
+                /*                 * ****end calculation of total labor charge ****** */
+                ?>
+                                                                <tr id="outside_tab_table_<?php echo $osl->osId; ?>">
+                                                                    <td><?php echo $osl->company_name; ?></td>
+                                                                    <td><?php echo $osl->job_description; ?></td>
+                                                                    <td><?php echo '$' . $osl->job_cost; ?></td>
+                                                                    <td><?php echo $osl->markup; ?></td>
+                                                                    <td><?php echo ($osl->tax == '1') ? 'Yes' : 'No'; ?></td>
+                                                                    <td>
+                                                                        <a class="close_bt_hide_cls" title="Edit" href="javascript:void(0)" onclick="showEditOutside('<?php echo $osl->osId; ?>', '<?php echo $workOrder->building ?>')"><img src="<?php echo BASEURL . 'public/images/edit.png' ?>" /></a>
+                                                                        <a class="close_bt_hide_cls" href="javascript:void(0);"  title="Delete" onclick="deleteOutsideTemp('<?php echo $osl->osId; ?>')"><img src="<?php echo BASEURL . 'public/images/delete.png' ?>" /></a>
+                                                                    </td>
+                                                                </tr>
+                                                                <?php
+                                                            }
+                                                        } else {
+                                                            echo '<tr><td colspan="6"></td></tr>';
+                                                        }
+                                                        ?>
+                                                    </table>
+                                                </div> </div>
+                                            <div class="footer_tab">
+                                                <div class="add_link_cls">
+                                                    <a href="javascript:void(0)" class="close_bt_hide_cls" onclick="showOutsideForm('<?php echo $workOrder->building ?>', '<?php echo $workOrder->woId ?>')">Add New Outside Service Charge</a>
+                                                    &nbsp;
+                                                </div>
+                                                <div class="total_cls">
+                                                                <?php echo '$' . $total_outside_charge; ?>
+                                                </div>
+                                            </div>
+                                            <div class="clear"></div>
+                                        </div>
+                                        <div id="note_tab" class="tab_content cwo_content adjust_popup">
+                                            <div class="grid_content">
+                                                <div class="grid_content_inner">
+                                                    <table name="note_grid" id="notes_tab_table" class="cw_table_grid" width="100%">
+                                                        <tr>
+                                                            <th>Date</th>
+                                                            <th width="60%">Notes</th>
+                                                            <th>Internal</th>
+                                                        <?php if ($this->admin_role_id == 1 || $this->roleId == 2 || $this->roleId == 3 || $this->roleId == 4) { ?>
+                                                                <th>Action</th>
+        <?php } ?>													  
+                                                        </tr>
+        <?php
+        $wnModel = new Model_WoNote();
+        $wnList = $wnModel->getWoNoteByWoId($workOrder->woId);
+        if ($wnList) {
+            foreach ($wnList as $wn) {
+                ?>
+                                                                <tr id="notes_tab_table_<?php echo $wn['wnId']; ?>">
+                                                                    <td><?php echo date('m/d/Y', strtotime($wn['note_date'])); ?></td>
+                                                                    <td width="60%"><?php echo $wn['note']; ?></td>																 
+                                                                    <td><?php echo ($wn['internal'] == '1') ? 'Yes' : 'No'; ?></td>
+                <?php if ($this->admin_role_id == 1 || $this->roleId == 2 || $this->roleId == 3 || $this->roleId == 4) { ?>
+                                                                        <td>
+                                            <?php if ($this->admin_role_id == 1 || $this->roleId == 2 || $this->roleId == 3 || $this->roleId == 4) { ?>
+                                                                                <a class="close_bt_hide_cls" title="Edit" href="javascript:void(0)" onclick="showEditNote('<?php echo $wn['wnId']; ?>')"><img src="<?php echo BASEURL . 'public/images/edit.png' ?>" /></a>
+                                            <?php } ?>
+                                            <?php if ($this->admin_role_id == 1) { ?>
+                                                                                <a class="close_bt_hide_cls" href="javascript:void(0);"  title="Delete" onclick="deleteNoteTemp('<?php echo $wn['wnId']; ?>')"><img src="<?php echo BASEURL . 'public/images/delete.png' ?>" /></a>
+                                            <?php } ?>
+                                                                        </td>
+                <?php } ?>
+                                                                </tr>
+                <?php
+            }
+        } else {
+            echo '<tr><td colspan="6"></td></tr>';
+        }
+        ?>
+                                                    </table>
+                                                </div></div>
+                                            <div class="footer_tab">
+                                                <div class="add_link_cls">
+                                                    <a href="javascript:void(0)" class="close_bt_hide_cls" onclick="showNoteForm('<?php echo $workOrder->woId ?>')">Add New Note</a>
+                                                    &nbsp;
+                                                </div>
+                                                <div class="total_cls">
+                                                    &nbsp;
+                                                </div>
+                                            </div>
+                                            <div class="clear"></div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                                <?php
+                                                $whlModel = new Model_WoHistoryLog();
+                                                $whlList = $whlModel->getWoHistoryLog($workOrder->woId);
+                                                ?>
+                                <div id="history-section" class="history-sectionn">
+                                    <label class="red_head_bg">History</label>
+                                    <table>
+                                        <tr>
+                                            <th>Log Type</th>
+                                            <th>Date</th>
+                                            <th>Time</th>									  
+                                            <th>Employee Name</th>
+                                            <th>Updated By</th>
+                                                <?php /* <th>Notes</th> */ ?>
+                                            <th>Changes</th>								  
+                                        </tr>
+                                                <?php if ($whlList) {
+                                                    foreach ($whlList as $whl) {
+                                                        if ($whl->log_type == 'status' || $whl->log_type == 'category') {
+                                                            ?>
+                                                    <tr>
+                                                        <td><?php echo ucfirst($whl->log_type); ?></td>
+                                                        <td><?php echo substr($whl->created_at, 0, 10); ?></td>
+                                                        <td><?php echo date_format(date_create($whl->created_at), 'g:i A'); ?></td>
+                                                        <td><?php echo $whl->firstName . ' ' . $whl->lastName; ?></td>
+                                                        <td><?php echo $whl->role_title; ?></td>
+                                                            <?php /* <td>---</td> */ ?>
+                                                        <td><?php
+                                        if ($whl->log_type == 'category')
+                                            echo $cat_array[$whl->current_value] . ' -> ' . $cat_array[$whl->change_value];
+                                        else
+                                            echo $status_array[$whl->current_value] . ' -> ' . $status_array[$whl->change_value];
+                                                            ?>
+                                                        </td>
+                                                    </tr>
+                <?php } else if ($whl->log_type == 'Description of Work') { ?>
+
+                                                    <tr>
+                                                        <td><?php echo ucfirst($whl->log_type); ?></td>
+                                                        <td><?php echo substr($whl->created_at, 0, 10); ?></td>
+                                                        <td><?php echo date_format(date_create($whl->created_at), 'g:i A'); ?></td>
+                                                        <td><?php echo $whl->firstName . ' ' . $whl->lastName; ?></td>
+                                                        <td><?php echo $whl->role_title; ?></td>
+                                                        <td>
+                    <?php
+                    if ($whl->current_value != '') {
+                        $current_value_histoy = json_decode($whl->current_value);
+                        $change_value_history = json_decode($whl->change_value);
+                        ?>
+                                                                <input type="hidden" id="current_value_<?php echo $whl->whId; ?>" value="<?php echo addslashes($current_value_histoy->description); ?>">
+                                                                <input type="hidden" id="change_value_<?php echo $whl->whId; ?>" value="<?php echo addslashes($change_value_history->description); ?>">
+                                                        <?php
+                                                        } else {
+                                                            $change_value_history = json_decode($whl->change_value);
+                                                            ?>
+
+                                                                <input type="hidden" id="current_value_<?php echo $whl->whId; ?>" value="null">
+                                                                <input type="hidden" id="change_value_<?php echo $whl->whId; ?>" value="<?php echo addslashes($change_value_history->description); ?>">
+                                                    <?php } ?>
+                    <?php if ($whl->current_value != '') {
+                        echo HiSTORY_TEXT_EDIT;
+                    } else {
+                        echo HiSTORY_NEW_TEXT_ADDED;
+                    } ?> <a href="javascript:void(0)" onclick='showHistoryDescription(<?php echo $whl->whId; ?>)' class="vend_tooltip"><i class="fa fa-file-text-o textFile"></i> </a>
+                                                            <a href="#add_new_description_div" id="add_new_description_div_href" class="modalbox" style="display:none;">&nbsp;</a>
+
+                                                        </td>
+                                                    </tr>
+
+                <?php } else if ($whl->log_type == 'Labor') { ?>
+
+                                                    <tr>
+                                                        <td><?php echo ucfirst($whl->log_type); ?></td>
+                                                        <td><?php echo substr($whl->created_at, 0, 10); ?></td>
+                                                        <td><?php echo date_format(date_create($whl->created_at), 'g:i A'); ?></td>
+                                                        <td><?php echo $whl->firstName . ' ' . $whl->lastName; ?></td>
+                                                        <td><?php echo $whl->role_title; ?></td>
+                                                        <?php $current_value_histoy = ($whl->current_value != '') ? $whl->current_value : 'null' ?>
+                                                        <td><?php if ($whl->current_value != '' && $whl->change_value != '') {
+                                                            echo HiSTORY_TEXT_EDIT;
+                                                        } else if ($whl->change_value == '') {
+                                                            echo HiSTORY_TEXT_DLETED;
+                                                        } else {
+                                                            echo HiSTORY_NEW_TEXT_ADDED;
+                                                        } $labordecode = json_decode($whl->change_value); ?> <a href="javascript:void(0)" onclick='historyoflabor(<?php echo $this->select_build_id; ?>, <?php echo $whl->whId; ?>)' class="vend_tooltip"><i class="fa fa-file-text-o textFile"></i></a>
+                                                            <a href="#add_new_labor_div" id="add_new_labor_div_href" class="modalbox" style="display:none;">&nbsp;</a>
+
+                                                        </td>
+                                                    </tr><?php } else if ($whl->log_type == 'building services') { ?>
+                                                    <tr>
+                                                        <td><?php echo ucfirst($whl->log_type); ?></td>
+                                                        <td><?php echo substr($whl->created_at, 0, 10); ?></td>
+                                                        <td><?php echo date_format(date_create($whl->created_at), 'g:i A'); ?></td>
+                                                        <td><?php echo $whl->firstName . ' ' . $whl->lastName; ?></td>
+                                                        <td><?php echo $whl->role_title; ?></td>
+                    <?php $current_value_histoy = ($whl->current_value != '') ? $whl->current_value : 'null' ?>
+                                                        <td><?php if ($whl->current_value != '' && $whl->change_value != '') {
+                        echo HiSTORY_TEXT_EDIT;
+                    } else if ($whl->change_value == '') {
+                        echo HiSTORY_TEXT_DLETED;
+                    } else {
+                        echo HiSTORY_NEW_TEXT_ADDED;
+                    } $buildingdecode = json_decode($whl->change_value); ?> <a href="javascript:void(0)" onclick='historyofBuilding(<?php echo $this->select_build_id; ?>, <?php echo $whl->whId; ?>)' class="vend_tooltip"><i class="fa fa-file-text-o textFile"></i> </a>
+                                                            <a href="#add_history_building_div" id="add_history_building_div_href" class="modalbox" style="display:none;">&nbsp;</a>
+
+                                                        </td>
+                                                    </tr>
+                                                <?php } else if ($whl->log_type == 'materials') { ?>
+                                                    <tr>
+                                                        <td><?php echo ucfirst($whl->log_type); ?></td>
+                                                        <td><?php echo substr($whl->created_at, 0, 10); ?></td>
+                                                        <td><?php echo date_format(date_create($whl->created_at), 'g:i A'); ?></td>
+                                                        <td><?php echo $whl->firstName . ' ' . $whl->lastName; ?></td>
+                                                        <td><?php echo $whl->role_title; ?></td>
+                                                        <?php $current_value_histoy = ($whl->current_value != '') ? $whl->current_value : 'null' ?>
+                                                        <td><?php if ($whl->current_value != '' && $whl->change_value != '') {
+                                                            echo HiSTORY_TEXT_EDIT;
+                                                        } else if ($whl->change_value == '') {
+                                                            echo HiSTORY_TEXT_DLETED;
+                                                        } else {
+                                                            echo HiSTORY_NEW_TEXT_ADDED;
+                                                        } $materialdecode = json_decode($whl->change_value); ?> <a href="javascript:void(0)" onclick='historyofMaterial(<?php echo $this->select_build_id; ?>, <?php echo $whl->whId; ?>)' class="vend_tooltip"><i class="fa fa-file-text-o textFile"></i></a>
+                                                            <a href="#add_history_material_div" id="add_history_material_div_href" class="modalbox" style="display:none;">&nbsp;</a>
+
+                                                        </td>
+                                                    </tr>
+                                                <?php } else if ($whl->log_type == 'outside service') { ?>  
+                                                    <tr>
+                                                        <td><?php echo ucfirst($whl->log_type); ?></td>
+                                                        <td><?php echo substr($whl->created_at, 0, 10); ?></td>
+                                                        <td><?php echo date_format(date_create($whl->created_at), 'g:i A'); ?></td>
+                                                        <td><?php echo $whl->firstName . ' ' . $whl->lastName; ?></td>
+                                                        <td><?php echo $whl->role_title; ?></td>
+                    <?php $current_value_histoy = ($whl->current_value != '') ? $whl->current_value : 'null' ?>
+                                                        <td><?php if ($whl->current_value != '' && $whl->change_value != '') {
+                        echo HiSTORY_TEXT_EDIT;
+                    } else if ($whl->change_value == '') {
+                        echo HiSTORY_TEXT_DLETED;
+                    } else {
+                        echo HiSTORY_NEW_TEXT_ADDED;
+                    } $outsidedecode = json_decode($whl->change_value); ?> <a href="javascript:void(0)" onclick='historyofoutside(<?php echo $this->select_build_id; ?>, <?php echo $whl->whId; ?>)' class="vend_tooltip"><i class="fa fa-file-text-o textFile"></i></a>
+                                                            <a href="#add_history_outside_div" id="add_history_outside_div_href" class="modalbox" style="display:none;">&nbsp;</a>
+
+                                                        </td>
+                                                    </tr>
+                                                                                                                                                                                                                                <?php } else if ($whl->log_type == 'notes') { ?>   
+                                                    <tr>
+                                                        <td><?php echo ucfirst($whl->log_type); ?></td>
+                                                        <td><?php echo substr($whl->created_at, 0, 10); ?></td>
+                                                        <td><?php echo date_format(date_create($whl->created_at), 'g:i A'); ?></td>
+                                                        <td><?php echo $whl->firstName . ' ' . $whl->lastName; ?></td>
+                                                        <td><?php echo $whl->role_title; ?></td>
+                    <?php $current_value_histoy = ($whl->current_value != '') ? $whl->current_value : 'null' ?>
+                                                        <td><?php if ($whl->current_value != '' && $whl->change_value != '') {
+                        echo HiSTORY_TEXT_EDIT;
+                    } else if ($whl->change_value == '') {
+                        echo HiSTORY_TEXT_DLETED;
+                    } else {
+                        echo HiSTORY_NEW_TEXT_ADDED;
+                    } $notesdecode = json_decode($whl->change_value); ?> <a href="javascript:void(0)" onclick='historyofnotes(<?php echo $this->select_build_id; ?>, <?php echo $whl->whId; ?>)' class="vend_tooltip"><i class="fa fa-file-text-o textFile"></i> </a>
+                                                            <a href="#add_history_notes_div" id="add_history_notes_div_href" class="modalbox" style="display:none;">&nbsp;</a>
+
+                                                        </td>
+                                                    </tr>
+
+                                                <?php } else if ($whl->log_type == 'Attachment') { ?>   
+                                                    <tr>
+                                                        <td><?php echo ucfirst($whl->log_type); ?></td>
+                                                        <td><?php echo substr($whl->created_at, 0, 10); ?></td>
+                                                        <td><?php echo date_format(date_create($whl->created_at), 'g:i A'); ?></td>
+                                                        <td><?php echo $whl->firstName . ' ' . $whl->lastName; ?></td>
+                                                        <td><?php echo $whl->role_title; ?></td>
+                                                        <td><?php if ($whl->current_value != '') {
+                                        echo "Attachment Deleted";
+                                    } else {
+                                        echo "Attachment Added";
+                                    } ?> </td>
+                                                    </tr>
+
+                <?php } else if ($whl->log_type == 'work order') { ?>
+                                                    <tr>
+                                                        <td><?php echo ucfirst($whl->log_type); ?></td>
+                                                        <td><?php echo substr($whl->created_at, 0, 10); ?></td>
+                                                        <td><?php echo date_format(date_create($whl->created_at), 'g:i A'); ?></td>
+                                                        <td><?php echo $whl->firstName . ' ' . $whl->lastName; ?></td>
+                                                        <td><?php echo $whl->role_title; ?></td>
+                    <?php /* <td>---</td> */ ?>
+                                                        <td><?php
+                    $current_value_histoy = ($whl->current_value != '') ? $whl->current_value : 'null';
+                    if ($whl->current_value == '') {
+                        echo HiSTORY_NEW_TEXT_ADDED;
+                    } else {
+                        echo HiSTORY_TEXT_EDIT;
+                    }
+                    ?>
+                                                            <a href="javascript:void(0)" onclick='hostoryofworkorder(<?php echo $this->select_build_id; ?>,<?php echo $this->woData->woId; ?>, <?php echo $current_value_histoy; ?>, <?php echo $whl->change_value; ?>)' class="vend_tooltip"><i class="fa fa-file-text-o textFile"></i>
+
+                                                            </a>
+
+                                                            <a href="#add_histroy_workorder_div" id="add_histroy_workorder_div_href" class="modalbox" style="display:none;">&nbsp;</a>	
+                                                        </td>
+                                                    </tr>
+                <?php }
+            } ?>
+        <?php } else {
+            ?>
+                                            <tr>
+                                                <td colspan="7">
+                                                    No History Record Exists.
+                                                </td>
+                                            </tr>
+                                                <?php }
+                                            ?> 
+                                    </table>
+                                </div>
+
+                            </div>
+
+                            <div class="right-column">
+                                <div class="cwo-buttons">
+                                    <div class="print-wo-inovice"> <?php $invoicheck = $reportModel->getBillableInvoice($workOrder->woId); ?>
+                                        <a <?php if ($WorkOrdersCurrentWODetails != '') {
+                                        $reportOptionwo = explode(',', $WorkOrdersCurrentWODetails->report_option);
+                                        if ($WorkOrdersCurrentWODetails->report_target == 1) { ?> target="_blank" <?php }
+                                    } ?> class="changes showmodel" href="<?php if ($WorkOrdersCurrentWODetails != '') {
+                                        echo BASEURL . 'reports/VisionReportEngine/index.php?stimulsoft_client_key=ViewerFx&stimulsoft_report_key=' . $WorkOrdersCurrentWODetails->report_mrt;
+                                        ?><?php if (in_array('[[++user_id]]', $reportOptionwo)) {
+                                            echo '&User=' . $this->userId;
+                                        } ?><?php if ((in_array('[[++CostCenterNumber]]', $reportOptionwo)) && $uniqueCostCenter != '') {
+                                            echo '&Cost_Center_Number=' . $uniqueCostCenter;
+                                        } ?><?php if ((in_array('[[++KeyBuildingNumber]]', $reportOptionwo)) && $this->select_build_id != '') {
+                                            echo '&buildkey=' . $this->select_build_id;
+                                        } ?><?php if (in_array('[[++BatchNumber]]', $reportOptionwo) && $workOrder->wo_batch != 0) {
+                echo '&Batch_Number=' . $workOrder->wo_batch;
+            } ?><?php if (in_array('[[++WONumber]]', $reportOptionwo)) {
+                echo "&WO_Number=" . $workOrder->wo_number;
+            } ?><?php if (in_array('[[++InvoiceNumber]]', $reportOptionwo) && $invoicheck != '') {
+                echo "&Invoice_Number=" . $workOrder->wo_number;
+            }
+        } else {
+            echo "javascript:void(0)";
+        } ?>"><button type="button" name="print_wo" value="Print Work Order"  >Print Current WO</button> </a>
+
+
+
+                                        <a onclick="return validateEditModeCheck()" style='display:none;' href='javascript:void(0)' class="changes hidemodel" ><button type="button" name="print_wo" value="Print Work Order"  >Print Current WO</button> </a>
+
+
+
+
+                                        <a  id="validprint" <?php if ($WorkOrdersCurrentWOInvoiceDetails != '') {
+            $reportOptioninv = explode(',', $WorkOrdersCurrentWOInvoiceDetails->report_option);
+            if ($WorkOrdersCurrentWOInvoiceDetails->report_target == 1 && ($cwpData[0]['wo_status'] == 7 && $cwpData[0]['billable_opt'] == 1 )) { ?> target="_blank" <?php }
+        } ?> class="changes showmodel" href="<?php if ($WorkOrdersCurrentWOInvoiceDetails != '') {
+            if ($cwpData[0]['wo_status'] == 7 && $cwpData[0]['billable_opt'] == 1) {
+                echo BASEURL . 'reports/VisionReportEngine/index.php?stimulsoft_client_key=ViewerFx&stimulsoft_report_key=' . $WorkOrdersCurrentWOInvoiceDetails->report_mrt; ?><?php if (in_array('[[++user_id]]', $reportOptioninv)) {
+                    echo '&User=' . $this->userId;
+                } ?><?php if ((in_array('[[++CostCenterNumber]]', $reportOptioninv)) && $uniqueCostCenter != '') {
+                    echo '&Cost_Center_Number=' . $uniqueCostCenter;
+                } ?><?php if ((in_array('[[++KeyBuildingNumber]]', $reportOptioninv)) && $this->select_build_id != '') {
+                    echo '&buildkey=' . $this->select_build_id;
+                } ?><?php if (in_array('[[++BatchNumber]]', $reportOptioninv) && $workOrder->wo_batch != 0) {
+                    echo '&Batch_Number=' . $workOrder->wo_batch;
+                } ?><?php if (in_array('[[++WONumber]]', $reportOptioninv)) {
+                    echo "&WO_Number=" . $workOrder->wo_number;
+                } ?><?php if (in_array('[[++InvoiceNumber]]', $reportOptioninv) && $invoicheck != '') {
+                    echo "&Invoice_Number=" . $workOrder->wo_number;
+                }
+            } else {
+                echo "javascript:void(0)";
+            }
+        } else {
+            echo "#";
+        } ?>"><button type="button" name="print_invoice" value="Print Invoice">Print Current Invoice</button> </a>
+
+
+
+
+
+                                        <a href='javascript:void(0)' onclick="return validateEditModeCheck()" style='display:none;' id="validateprint" class="changes hidemodel"  ><button type="button" name="print_invoice" value="Print Invoice">Print Current Invoice</button> </a>
+
+
+
+        <?php if ($closewo_access->is_write == 1) { ?>
+                                            <div  class="changes" style="margin-bottom:0px;">
+            <?php if ($work_status == '7') { ?>
+                                                    <button type="button" name="edit_wwork_order" id="edit_wwork_order" value="Edit Work Order" onclick="showAlertBox()">Edit Work Order</button>
+            <?php } ?>
+                                                <button type="button" name="save_changes" class="close_bt_hide_cls" id="save_changes" value="Save Changes" onclick="saveCompleteChanges('<?php echo $workOrder->woId; ?>')">Save Changes</button>
+
+            <?php /* <button type="button" name="discard_changes" value="Discard Changes">Discard Changes</button> */ ?>
+                                            </div>
+        <?php } ?>
+                                        <div class="memorize">
+                                            <a class="modalbox changes showmodel" href="#addNewBatch"  onclick="addNewBatch('<?php echo BASEURL . 'complete/index/bid/' . $this->select_build_id; ?>')"  ><button  type="button" name="memorize"  value="Memorize">Print Batch Invoices</button>  
+
+                                                <a onclick="return validateEditModeCheck()" style='display:none;' class="changes hidemodel" href="href='javascript:void(0)'"  ><button  type="button" name="memorize"  value="Memorize">Print Batch Invoices</button> </a> 
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="billable-attached">
+                                    <div class="billable">
+                                        <label class="red_head_bg">Work Order Billable Total</label>
+                                        <ul>
+                                            <li><span>Labor Cost:</span> <?php echo '$' . $total_labor_charge; ?></li>
+                                            <li><span>Building Services</span> <?php echo '$' . $total_bs_charge; ?></li>
+                                            <li><span>Cost of Materials:</span> <?php echo '$' . $total_material_charge; ?></li>
+                                            <li><span>Outside services:</span> <?php echo '$' . $total_outside_charge; ?></li>
+                                            <li><span>Mark-up:</span> <?php echo '$' . ($tot_mat_mkp + $tot_outside_mkp); ?></li>
+                                            <li><span>Tax:</span> <?php echo '$' . ($tot_material_tax + $tot_outside_tax); ?></li>
+                                            <li>&nbsp;</li>
+                                            <li><span>Total:</span> 
+        <?php
+        $total_charge = ($total_labor_charge + $total_bs_charge + $total_material_charge + $total_outside_charge);
+        $total_markup = ($tot_mat_mkp + $tot_outside_mkp);
+        $total_tax = ($tot_material_tax + $tot_outside_tax);
+        $total_sum = ($total_charge + $total_markup + $total_tax);
+        echo $total_sum;
+        ?>
+
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div>
+                                        <label class="red_head_bg">Attached Files</label>
+                                        <ul id="showTempAttachment">
+        <?php
+        $fileModel = new Model_WoFiles();
+        $fileList = $fileModel->getWoFilesByWoId($workOrder->woId);
+        if ($fileList) {
+            foreach ($fileList as $fl) {
+                ?>
+                                                    <li id="tempfile_<?php echo $fl['wfId']; ?>">
+                                                        <span><a href="<?php echo BASEURL . 'public/work_order/' . $fl['file_name']; ?>" target="_blank"><?php echo $fl['file_title']; ?></a></span>
+                                                        <a class="close_bt_hide_cls" href="javascript:void(0)" class="delete_wo_file" onclick="deleteFilesHide('<?php echo $fl['wfId']; ?>')"><img src="<?php echo BASEURL . 'public/images/delete.png' ?>" /></a>
+                                                    </li>										
+                <?php
+            }
+        }
+        ?>
+
+                                        </ul>
+                                        <div class="upload_file_link">
+                                            <span><a class="close_bt_hide_cls" href="javascript:void(0)" onclick="showUploadForm('<?php echo $workOrder->building ?>', '<?php echo $workOrder->woId ?>', '<?php echo $workOrder->wo_number ?>')">Upload Attachment Files</a></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+        <?php if ($work_status == '7' || $closewo_access->is_write != 1) { ?>
+                        <script type="text/javascript">
+                            $('.close_bt_hide_cls').hide();
+                            $('.close_fd_dsbl').attr('disabled', 'disabled');
+                        </script>
+        <?php } ?>
+    <?php
+    } else {
+        echo $this->msg;
+    }
+    ?>
+            </div>	
+
+        <a href="#edit_wo_form" id="edit_wo_form_href" class="modalbox">&nbsp;</a>	
+        <div class="fade_edit_wo" id="editwo_div" style="display:none">
+            <div id="edit_wo_form" class="edit-wo-class">
+            </div>
+        </div>
+
+<!--        <div class="fade_default_opt" id="fd_dft_div" style="display:none">	
+            <a href="#bd_dft_fm" id="bd_dft_fm_href" class="modalbox">&nbsp;</a>	
+            <div id="bd_dft_fm" class="bd-dft-cls" style="display:none"></div>
+            <a href="#wo_desc" id="wo_desc_href" class="modalbox">&nbsp;</a>	
+            <div id="wo_desc" style="display:none"></div>
+            <a href="#labor_form" id="labor_form_href" class="modalbox">&nbsp;</a>	
+            <div id="labor_form" style="display:none"></div>
+            <div id="edit_labor_form" style="display:none"></div>
+            <a href="#bservice_form" id="bservice_form_href" class="modalbox">&nbsp;</a>	
+            <div id="bservice_form" class="bd-dft-cls" style="display:none"></div>
+            <a href="#edit_bservice_form" id="edit_bservice_form_href" class="modalbox">&nbsp;</a>	
+            <div id="edit_bservice_form" class="bd-dft-cls" style="display:none"></div>
+            <a href="#material_form" id="material_form_href" class="modalbox">&nbsp;</a>	
+            <div id="material_form" class="bd-dft-cls" style="display:none"></div>
+            <a href="#edit_material_form" id="edit_material_form_href" class="modalbox">&nbsp;</a>	
+            <div id="edit_material_form" class="bd-dft-cls" style="display:none"></div>
+            <a href="#outside_form" id="outside_form_href" class="modalbox">&nbsp;</a>	
+            <div id="outside_form" class="bd-dft-cls" style="display:none"></div>
+            <a href="#edit_outside_form" id="edit_outside_form_href" class="modalbox">&nbsp;</a>	
+            <div id="edit_outside_form" class="bd-dft-cls" style="display:none"></div>
+            <a href="#note_form" id="note_form_href" class="modalbox">&nbsp;</a>	
+            <div id="note_form" class="bd-dft-cls" style="display:none"></div>
+            <a href="#edit_note_form" id="edit_note_form_href" class="modalbox">&nbsp;</a>	
+            <div id="edit_note_form" class="bd-dft-cls" style="display:none"></div>
+            <a href="#file_form" id="file_form_href" class="modalbox">&nbsp;</a>	
+            <div id="file_form" class="bd-dft-cls" style="display:none"></div>
+            <a href="#alert_wo_edit" id="alert_wo_edit_href" class="modalbox">&nbsp;</a>	
+            <div id="alert_wo_edit" class="cwo_alert_wo" style="display:none">
+
+                <div class="txt-alert">
+                    <span>Work Order has been closed, Do you want to modified it? </span>
+                </div>
+                <div class="alert_button">
+                    <button name="at_cancel" class="cancel_btn" id="at_cancel" onclick="cancelWoEdit();">Cancel</button>
+                    <button name="at_yes" class="yes_btn" id="at_yes" onclick="showWoEdit();">Yes</button>
+                </div>
+            </div>
+        </div>-->
+    </div>
+    <div class="loader" style="display:none;" > <img src="<?php echo BASEURL . 'public/images/loader.gif'; ?>"></div>
+    <div id="add_histroy_workorder_div" style="display:none" class="bd-dft-cls-history">  </div>
+    <script type="text/javascript">
+        var rdr_bid = '<?php echo $this->select_build_id ?>';
+        var rdr_wnum = '<?php echo $this->wnum ?>';
+    </script>
+<?php } else { ?>
+    You don't have access for this module.
+<?php } ?>
+
+
+<style>
+    .ui-autocomplete{ width:14% !important; height:auto; max-height:200px; overflow-y:auto; overflow-x:hidden;   }
+    @media (max-width:360px) {
+        .ui-autocomplete{ width:42% !important; height:auto; max-height:200px; overflow-y:auto; overflow-x:hidden;   }
+    }
+    @media (max-width:768px) {
+        .ui-autocomplete{ width:20% !important; height:auto; max-height:200px; overflow-y:auto; overflow-x:hidden;   }
+    }
+    .ui-menu .ui-state-focus, .ui-menu .ui-state-active { margin-bottom: 0px; } 
+    .modalbox:hover, .modalbox:focus { }
+</style>
+
+<div class="loader" style="display:none;" > <img src="<?php echo BASEURL . 'public/images/loader.gif'; ?>"></div>
+<div id="add_new_description_div" style="display:none; width:410px;" >
+
+    <h1>Description Of Work</h1>
+    <div class="desc_row">
+        <div id="work_current_description" >  </div>
+        <div style="text-align:center"><span style="font-size:20px; font-weight:bold;"><i class="fa fa-arrow-circle-down big-arrow"></i>
+            </span> </div>
+        <div id="work_change_description" >  </div>
+    </div>
+    <div class="buttons">
+        <button type="button" name="cancel" id="cancel" value="Cancel" onclick="cancelWoDesc()">Cancel</button>
+    </div> 
+</div>
+<a href="#edit_labor_form" id="edit_labor_form_href" class="modalbox">&nbsp;</a>
+<div id="add_new_labor_div" style="display:none" > </div> 
+<div id="add_history_building_div" style="display:none" > </div> 
+<div id="add_history_material_div" style="display:none" > </div>
+<div id="add_history_outside_div" style="display:none" > </div>
+<div id="add_history_notes_div" style="display:none" > </div>
+
+
+<script>
+    function showHistoryDescription(whId) {
+
+        var current_value_description = $('#current_value_' + whId).val();
+        current_value_description = stripslashes(current_value_description);
+        var change_value_description = $('#change_value_' + whId).val();
+        change_value_description = stripslashes(change_value_description);
+        if (current_value_description != 'null' && current_value_description != '') {
+            $('#work_current_description').html(current_value_description);
+        } else {
+            var none = '<?php echo HiSTORY_NONE; ?>';
+            $('#work_current_description').html("<p style='text-align:center;'>None</p>");
+        }
+        $('#work_change_description').html(change_value_description);
+        $('#add_new_description_div_href').trigger('click');
+    }
+
+    function stripslashes(str) {
+        str = str.replace(/\\/g, '')
+        return str;
+    }
+</script>
+
+

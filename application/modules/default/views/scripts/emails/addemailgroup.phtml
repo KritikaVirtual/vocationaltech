@@ -1,0 +1,156 @@
+<?php
+
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/tinymce/js/tinymce/tinymce.min.js');
+echo $this->headScript()->appendFile($this->baseUrl() . '/public/js/emails.js');
+$roles = $this->companyListing['roles'];
+?>
+<div class="container-right">
+    <section style="z-index:9999" class="w-48 fr ch-home-form">
+        <section class="ch-form-header ">
+            <h3>New Distribution Wizard </h3>
+        </section>
+        <div class="gridContainer">
+            <div class="tableGrid list_tableGrid my_table_grid">
+                <div class="message">
+                    <div class="success_message" style="text-align:center;width:100%;font-weight:bold;color:red;"></div>				  			
+                    <span id="success_msg"></span>
+                    <span id="error_msg"></span>
+                </div>             
+                <div id="step1">
+                    <form name="emailgroup" id="email_group" action="<?php echo BASEURL . 'emails/saveusers'; ?>" method="post">
+
+                        <input type="hidden" value="<?php echo $this->bid; ?>" name="bid" id="bid"/>
+
+                        <div class="row">
+                            <label>Group Name<span class="required">*</span></label><span class="ugroupErr" id="group-error"></span> 
+                           <?php if (!empty($this->controllerName)){?>
+                            <input type="text"  value="PM-WorkOrders"  id="group" class="" name="group" readonly>
+                            <?php } else { ?>
+                            <input type="text"  value=""  id="group" class="" name="group" > 
+                            <?php } ?>
+                        </div>
+
+                        <div class="row">
+                            <label> Active </label>
+                            <select name="active" id="active">
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+                            </select>
+                        </div>
+
+                        <div class="row">    
+
+                            <label> Days of the week </label>
+                            <select name="days_of_the_week" id="days_of_the_week">
+                                <?php foreach ($this->days_of_the_week as $key => $value) { ?>
+                                    <option value="<?php echo $value['wdID']; ?>">
+                                        <?php echo $value['title']; ?>
+                                    </option>
+                                <?php } ?>
+                            </select>
+                        </div>
+
+                        <div class="row">
+                            <label> Send As </label>
+                            <select name="send_as" id="send_as">
+                                <?php foreach ($this->send_as as $key => $value) { ?>
+                                    <option value="<?php echo $value['sid']; ?>" <?php echo ('1' == $value['sid']) ? 'selected' : ''; ?>>
+                                        <?php echo $value['title']; ?>
+                                    </option>
+                                <?php } ?>
+                            </select>
+                        </div>
+
+                        <div class="row">
+                            <label> Complete Notification </label>
+                            <select name="complete_notification" id="complete_notification">
+                                <option value="1">Yes</option>
+                                <option value="0" selected >No</option>
+                            </select>
+                        </div>
+
+                        <div class="eg-user-div">
+
+                            <table cellpadding="5" cellspacing="5" class="list_user">
+
+                                <tbody>
+
+                                    <tr>
+
+                                        <td colspan="2">
+                                            <span class="span">List of Users</span>
+                                            <select id="from_select_list" multiple="multiple" name="from_select_list"> 
+                                                <?php foreach ($this->userList as $key => $value) { ?>
+                                                    <option value="<?php echo $value->uid; ?>">
+                                                        <?php echo stripslashes($value->firstName) . ' ' . stripslashes($value->lastName); ?>
+                                                    </option>
+                                                <?php } ?>
+                                            </select>
+                                        </td>
+
+
+
+                                        <td style="border:none;">
+                                            <div id="arrow-switcher">
+                                                <a href="javascript:void(0)" onClick="move_list_items('from_select_list', 'to_select_list')">
+                                                    <img src="<?php echo BASEURL . 'public/images/right-arrow.png'; ?>" width="50"/>
+                                                </a>
+                                                <a href="javascript:void(0)" onClick="move_list_items('to_select_list', 'from_select_list')">
+                                                    <img src="<?php echo BASEURL . 'public/images/left-arrow.png'; ?>" width="50"/>
+                                                </a>
+                                            </div>
+                                        </td>
+
+                                        <td colspan="2">
+                                            <span class="span">List of Selected Users</span>
+                                            <select id="to_select_list" name="to_select_list[]" multiple="multiple"> 
+
+                                            </select>
+                                        </td>
+
+                                    </tr>
+
+                                    <tr>
+                                        <td colspan="4"> <span class="ugroupErr" id="list-error"></span> </td>
+                                    </tr>
+
+                               <!--  <tr>
+
+                                    <td><input id="moveright" type="button" value="Move Right" onclick="move_list_items('from_select_list','to_select_list');" /></td>
+                                    
+                                    <td><input id="moverightall" type="button" value="Move Right All" onclick="move_list_items_all('from_select_list','to_select_list');" /></td>
+                                    
+                                    <td><input id="moveleft" type="button" value="Move Left" onclick="move_list_items('to_select_list','from_select_list');" /></td>
+                                    
+                                    <td><input id="moveleftall" type="button" value="Move Left All" onclick="move_list_items_all('to_select_list','from_select_list');" /></td>
+
+                                </tr> -->
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+
+                        <div class="confirmBtn float_none">
+                            <input type="button" value="Save" name="save" class="confirm" id='emailsave' onclick="checkGroupName()">
+                            <input type="button" value="Cancel" name="cancel" class="cancel" onclick="cancelEmailGroup();">
+                        </div>
+                    </form>  
+                </div>   
+            </div>
+        </div>
+    </section>
+</div>
+
+<script type="text/javascript">
+    tinymce.init({
+        selector: "textarea",
+        width: "300",
+        height: "500"
+    });
+
+
+
+</script>

@@ -1,0 +1,41 @@
+<?php
+$interval = 1800; // Interval in seconds
+//echo $this->max;
+
+   $date_first     = date("H:i",strtotime("+".$this->min." hours", strtotime($this->start_time)));
+   $date_second    = date("H:i",strtotime("+".$this->max." hours",  strtotime($this->start_time)));
+
+$time_first     = strtotime($date_first);
+$time_second    = strtotime($date_second);
+
+$time_second=strtotime($this->end_time);
+
+if($time_first > $time_second){
+    //$time_second=strtotime($this->end_time);
+    echo "<option value='".date('h:i A', strtotime($this->end_time))."'>".date('h:i A', strtotime($this->end_time))."</option>";
+}
+
+
+for ($i = $time_first; $i <= $time_second; $i += $interval)
+    echo "<option value='".date('h:i A', $i)."'>".date('h:i A', $i)."</option>";
+die;
+?>
+
+<?php
+
+/*
+ $endTime=($this->end_time==""?"09:00 AM":$this->end_time);
+ $startTime=($this->start_time==""?"08:00 AM":$this->start_time);
+
+        for ($i = 0; $i <= 23; $i++) {
+            $fDate = date("h:i A", strtotime($i . ':00'));
+            $sDate = date("h:i A", strtotime($i . ':30'));     
+            echo "<option value='".$fDate."' ".($endTime == $fDate?'selected':"")." >".$fDate."</option>";
+            echo "<option value='".$sDate."' ".($endTime == $sDate?'selected':"")." >".$sDate."</option>";           
+
+        }
+die;
+*/
+?>
+
+    

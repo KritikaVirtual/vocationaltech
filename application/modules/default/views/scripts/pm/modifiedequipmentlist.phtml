@@ -1,0 +1,64 @@
+<?php
+$nooftask = $this->nooftask;
+$noofreading = $this->noofreading;
+$taskData = $this->taskData;
+$readingData = $this->readingData;
+
+?>
+<div class="custome_modified_table">
+    <h3>Modified Equipment List</h3>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <tr>
+                <th>Equipment Name</th>
+                <th>Floor</th>
+                <th>Unit</th>
+                <th>Template Name</th>
+                <th>Date last Modified</th>
+                <th>Task</th>
+                <th>Reading</th>
+                <th>Verified</th>
+            </tr>
+            <?php
+            if(!empty($taskData)){
+            
+                foreach ($taskData as $vals) {
+                    
+                    ?>
+                    <tr>
+                        <td><a href="<?php echo $this->baseUrl() . '/pm/createequipmentdetailtask/eqp_detail_id/'. $vals->AU_Equipment_Detail_ID.'/eqp_name/'.$vals->AU_Equipment_Name . '/temp/' . $vals->template_name.'/modified/1' ; ?>"><?php echo $vals->AU_Equipment_Name; ?></a></td>
+                        <td><a href="<?php echo $this->baseUrl() . '/pm/createequipmentdetailtask/eqp_detail_id/'. $vals->AU_Equipment_Detail_ID.'/eqp_name/'.$vals->AU_Equipment_Name . '/temp/' . $vals->template_name.'/modified/1' ; ?>"><?php echo $vals->Equipment_Floor; ?></a></td>
+                        <td><a href="<?php echo $this->baseUrl() . '/pm/createequipmentdetailtask/eqp_detail_id/'. $vals->AU_Equipment_Detail_ID.'/eqp_name/'.$vals->AU_Equipment_Name . '/temp/' . $vals->template_name.'/modified/1' ; ?>"><?php echo $vals->Equipment_Unit; ?></a></td>
+                        <td><a href="<?php echo $this->baseUrl() . '/pm/createequipmentdetailtask/eqp_detail_id/'. $vals->AU_Equipment_Detail_ID.'/eqp_name/'.$vals->AU_Equipment_Name . '/temp/' . $vals->template_name.'/modified/1' ; ?>"><?php echo $vals->template_name; ?></a></td>
+                        <td><a href="<?php echo $this->baseUrl() . '/pm/createequipmentdetailtask/eqp_detail_id/'. $vals->AU_Equipment_Detail_ID.'/eqp_name/'.$vals->AU_Equipment_Name . '/temp/' . $vals->template_name.'/modified/1' ; ?>"><?php echo date('m/d/Y', strtotime($vals->Created_at)); ?></a></td>                
+                        <td><a href="<?php echo $this->baseUrl() . '/pm/createequipmentdetailtask/eqp_detail_id/'. $vals->AU_Equipment_Detail_ID.'/eqp_name/'.$vals->AU_Equipment_Name . '/temp/' . $vals->template_name.'/modified/1' ; ?>"><?php echo $vals->Numberoftask; ?></a></td>
+                        <td>0</td>
+                        <td><a href="<?php echo $this->baseUrl() . '/pm/modifiedequipmentlist/eqpdetailid/' . $vals->AU_Equipment_Detail_ID; ?>">Ok</a></td>
+                    </tr>
+                    <?php
+                }
+            }
+                /*** This is for Reading only **/
+            if(!empty($readingData)){
+                
+                foreach ($readingData as $vals) {
+                    
+                    ?>
+                    <tr>
+                        <td><a href="<?php echo $this->baseUrl() . '/pm/createequipmentdetailreading/eqp_detail_id/'. $vals->AU_Equipment_Detail_ID.'/eqp_name/'.$vals->AU_Equipment_Name . '/temp/' . $vals->template_name.'/modified/1' ; ?>"><?php echo $vals->AU_Equipment_Name; ?></a></td>
+                        <td><a href="<?php echo $this->baseUrl() . '/pm/createequipmentdetailreading/eqp_detail_id/'. $vals->AU_Equipment_Detail_ID.'/eqp_name/'.$vals->AU_Equipment_Name . '/temp/' . $vals->template_name.'/modified/1' ; ?>"><?php echo $vals->Equipment_Floor; ?></a></td>
+                        <td><a href="<?php echo $this->baseUrl() . '/pm/createequipmentdetailreading/eqp_detail_id/'. $vals->AU_Equipment_Detail_ID.'/eqp_name/'.$vals->AU_Equipment_Name . '/temp/' . $vals->template_name.'/modified/1' ; ?>"><?php echo $vals->Equipment_Unit; ?></a></td>
+                        <td><a href="<?php echo $this->baseUrl() . '/pm/createequipmentdetailreading/eqp_detail_id/'. $vals->AU_Equipment_Detail_ID.'/eqp_name/'.$vals->AU_Equipment_Name . '/temp/' . $vals->template_name.'/modified/1' ; ?>"><?php echo $vals->template_name; ?></a></td>
+                        <td><a href="<?php echo $this->baseUrl() . '/pm/createequipmentdetailreading/eqp_detail_id/'. $vals->AU_Equipment_Detail_ID.'/eqp_name/'.$vals->AU_Equipment_Name . '/temp/' . $vals->template_name.'/modified/1' ; ?>"><?php echo date('m/d/Y', strtotime($vals->Created_at)); ?></a></td>
+                        <td>0</td>                                               
+                        <td><a href="<?php echo $this->baseUrl() . '/pm/createequipmentdetailreading/eqp_detail_id/'. $vals->AU_Equipment_Detail_ID.'/eqp_name/'.$vals->AU_Equipment_Name . '/temp/' . $vals->template_name.'/modified/1' ; ?>"><?php echo $vals->Numberofreading; ?></a></td>
+                        <td><a href="<?php echo $this->baseUrl() . '/pm/modifiedequipmentlist/eqpdetailid/' . $vals->AU_Equipment_Detail_ID; ?>">Ok</a></td>
+                    </tr>
+                    <?php
+                }
+            }
+                
+           ?>
+        </table>
+    </div>
+</div>
